@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com", // Google OAuth profile pictures
       },
+      {
+        protocol: "https",
+        hostname: "content.jdmagicbox.com",
+      },
     ],
   },
   // Move turbo rules here and rename to turbopack

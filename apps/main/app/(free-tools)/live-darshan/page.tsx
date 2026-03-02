@@ -1,0 +1,290 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
+import CTA from "@/components/layout/main/CTA";
+
+interface DarshanSite {
+    id: number;
+    name: string;
+    location: string;
+    image: string;
+    status: string;
+    videoUrl: string;
+    description: string;
+}
+
+const LiveDarshanPage = () => {
+    const [selectedSite, setSelectedSite] = useState<DarshanSite | null>(null);
+    const [darshanSites, setDarshanSites] = useState<DarshanSite[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        const fetchDarshanSites = async () => {
+            try {
+                // Determine the base backend URL. (e.g., from environment variables)
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+                const response = await fetch(`${apiUrl}/api/v1/live-darshan`);
+
+                if (!response.ok) {
+                    throw new Error('Network response from backend was not ok');
+                }
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    setDarshanSites(result.data);
+                } else {
+                    console.error("Invalid response format from backend API", result);
+                }
+            } catch (error) {
+                console.error("Failed to fetch Live Darshan sites from backend", error);
+
+                // Fallback dummy data if backend server is not running locally yet
+                const dummyData: DarshanSite[] = [
+                    {
+                        id: 1,
+                        name: "Kashi Vishwanath",
+                        location: "Varanasi, Uttar Pradesh",
+                        image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/UXB0unZtVbs",
+                        description: "Experience the divine energy of Kashi Vishwanath temple live from Varanasi."
+                    },
+                    {
+                        id: 2,
+                        name: "Mahakaleshwar Jyotirlinga",
+                        location: "Ujjain, Madhya Pradesh",
+                        image: "https://images.unsplash.com/photo-1600080645604-03714bca0ef6?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/BEPUQyrgbF0",
+                        description: "Watch the Bhasma Aarti and daily rituals of Lord Mahakal live from Ujjain."
+                    },
+                    {
+                        id: 3,
+                        name: "Somnath Temple",
+                        location: "Prabhas Patan, Gujarat",
+                        image: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/fopdU7c3mu4",
+                        description: "View the majestic Somnath temple situated on the shores of the Arabian Sea."
+                    },
+                    {
+                        id: 4,
+                        name: "Siddhivinayak Temple",
+                        location: "Mumbai, Maharashtra",
+                        image: "https://images.unsplash.com/photo-1599863266228-56ebbb2a47ea?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/XFg_Gcs2-kc",
+                        description: "Live Darshan of Lord Ganesha from the famous Siddhivinayak Temple in Mumbai."
+                    },
+                    {
+                        id: 5,
+                        name: "Shirdi Sai Baba",
+                        location: "Shirdi, Maharashtra",
+                        image: "https://images.unsplash.com/photo-1623943362142-b0cece9fb3c2?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/WQNTX3Cgc9I",
+                        description: "Experience the divine presence of Sai Baba through live Darshan from Shirdi."
+                    },
+                    {
+                        id: 6,
+                        name: "Iskcon Temple",
+                        location: "Vrindavan, Uttar Pradesh",
+                        image: "https://images.unsplash.com/photo-1605663711906-8dce2eac85ff?q=80&w=800&auto=format&fit=crop",
+                        status: "Live Now",
+                        videoUrl: "https://www.youtube.com/embed/TSs6sUyIjqo",
+                        description: "Live Darshan and Kirtan from the Krishna Balaram Mandir in Vrindavan."
+                    }
+                ];
+
+                setDarshanSites(dummyData);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDarshanSites();
+    }, []);
+
+    const filteredDarshanSites = darshanSites.filter(site => {
+        const query = searchQuery.toLowerCase();
+        return site.name.toLowerCase().includes(query) || site.location.toLowerCase().includes(query);
+    });
+
+    const SkeletonLoader = () => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100 animate-pulse">
+                    <div className="h-64 bg-slate-200"></div>
+                    <div className="p-8">
+                        <div className="w-24 h-6 bg-slate-200 rounded-full mb-4"></div>
+                        <div className="w-3/4 h-8 bg-slate-200 rounded mb-2"></div>
+                        <div className="w-1/2 h-4 bg-slate-200 rounded mb-6"></div>
+                        <div className="w-full h-16 bg-slate-200 rounded mb-6"></div>
+                        <div className="w-full h-12 bg-slate-200 rounded-2xl"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-[#FDFCFB]">
+            {/* Hero Header */}
+            <section className="relative py-24 md:py-32 px-4 overflow-hidden bg-brown text-white">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10">
+                    <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-orange rounded-full blur-[120px]"></div>
+                    <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-orange rounded-full blur-[100px]"></div>
+                </div>
+
+                <div className="container relative z-10 text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange/10 border border-orange/20 text-orange text-xs font-bold uppercase tracking-widest mb-6 transition-all hover:bg-orange/20">
+                        <span className="text-lg leading-none">ॐ</span> Real-time Spiritual Connection
+                    </div>
+
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 tracking-tight text-white leading-tight">
+                        Live <span className="text-orange drop-shadow-sm">Darshan</span>
+                    </h1>
+
+                    <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-body leading-relaxed mb-10">
+                        Connect with the divine from anywhere in the world. Experience real-time Darshan
+                        of India&apos;s most sacred Jyotirlingas and temples.
+                    </p>
+
+                    {/* Search Bar */}
+                    <div className="max-w-2xl mx-auto relative group">
+                        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                            <i className="fa-solid fa-search text-orange"></i>
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search by temple name or location (e.g., Kashi, Ujjain, Somnath)..."
+                            className="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/60 rounded-full py-5 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-orange/50 focus:bg-white/15 transition-all text-sm font-medium"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <main className="max-w-7xl mx-auto py-20 px-4">
+                {loading ? (
+                    <SkeletonLoader />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredDarshanSites.length > 0 ? (
+                            filteredDarshanSites.map((site, index) => (
+                                <div
+                                    key={index}
+                                    className="group relative bg-white rounded-[32px] overflow-hidden shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]"
+                                >
+                                    <div className="relative h-64 overflow-hidden">
+                                        <img
+                                            src={site.image}
+                                            alt={site.name}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.src = "/images/image-not-found.png";
+                                            }}
+                                        />
+                                        <div className="absolute top-4 right-4 z-20">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 ${site.status === "Live Now" ? "bg-red-500 text-white" : "bg-gray-500 text-white"}`}>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                                {site.status}
+                                            </span>
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    </div>
+
+                                    <div className="p-8">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <i className="fa-solid fa-location-dot text-orange text-xs"></i>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                {site.location}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-display font-bold text-brown mb-4 group-hover:text-orange transition-colors">
+                                            {site.name}
+                                        </h3>
+                                        <p className="text-slate-600 text-sm leading-relaxed mb-8 h-10 overflow-hidden text-ellipsis">
+                                            {site.description}
+                                        </p>
+                                        <button
+                                            onClick={() => setSelectedSite(site)}
+                                            className="w-full bg-orange hover:bg-brown text-white py-4 rounded-2xl font-bold text-xs transition-all duration-300 uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-brown/20 flex items-center justify-center gap-2"
+                                        >
+                                            <i className="fa-solid fa-play text-[10px]"></i>
+                                            Start Viewing
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-16">
+                                <div className="w-24 h-24 bg-orange/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i className="fa-solid fa-search text-3xl text-orange"></i>
+                                </div>
+                                <h3 className="text-2xl font-display font-bold text-brown mb-2">No Temples Found</h3>
+                                <p className="text-gray-500 font-body">We couldn&apos;t find any Live Darshan matching &quot;{searchQuery}&quot;.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </main>
+
+            {/* Video Modal */}
+            {selectedSite && (
+                <div
+                    className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-10"
+                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', backdropFilter: 'blur(10px)' }}
+                >
+                    <div className="relative w-full max-w-5xl bg-brown rounded-[40px] overflow-hidden shadow-2xl border border-white/10 animate-fade-in-up">
+                        <button
+                            onClick={() => setSelectedSite(null)}
+                            className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-all border border-white/20"
+                        >
+                            <i className="fa-solid fa-xmark text-xl"></i>
+                        </button>
+
+                        <div className="aspect-video w-full bg-black">
+                            <iframe
+                                src={`${selectedSite.videoUrl}?autoplay=1`}
+                                title={selectedSite.name}
+                                className="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+
+                        <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    <span className="text-[10px] font-bold text-orange uppercase tracking-widest">Live from {selectedSite.location}</span>
+                                </div>
+                                <h2 className="text-2xl md:text-3xl font-display font-black text-white">{selectedSite.name}</h2>
+                            </div>
+                            <div className="flex gap-4">
+                                <button className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                                    Share Darshan
+                                </button>
+                                <button className="px-8 py-3 bg-orange hover:bg-white text-white hover:text-brown rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                                    Book Special Puja
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <WhyChooseUs />
+            <CTA />
+        </div>
+    );
+};
+
+export default LiveDarshanPage;

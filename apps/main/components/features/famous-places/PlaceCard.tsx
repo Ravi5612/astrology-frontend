@@ -31,35 +31,35 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       href={`/famous-places/${place.slug}`}
       className="group no-underline text-inherit"
     >
-      <div className="bg-[#1e0b0f6e] rounded-2xl overflow-hidden border border-primary/30 hover:border-primary transition-all duration-300 flex flex-col h-full shadow-lg">
-        <div className="relative h-52 w-full overflow-hidden bg-slate-900">
-          <Image
+      <div className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-orange/20 transition-all duration-500 flex flex-col h-full shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(255,107,0,0.12)] hover:-translate-y-1">
+        {/* Image Section */}
+        <div className="relative h-60 w-full overflow-hidden bg-slate-100">
+          <img
             src={displayImage}
             alt={place.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-          <div className="absolute bottom-3 left-4 right-4">
-            <span className="inline-block bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-1.5 opacity-90">
+          <div className="absolute inset-0 bg-gradient-to-t from-brown/60 via-transparent to-transparent opacity-60"></div>
+
+          {/* Category Tag */}
+          <div className="absolute top-4 left-4">
+            <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-brown text-[10px] font-bold uppercase tracking-wider shadow-sm">
               {place.category || "Sacred Site"}
             </span>
-            <h3 className="text-white font-bold text-base leading-tight line-clamp-2 drop-shadow-md">
-              {place.title}
-            </h3>
           </div>
         </div>
 
-        <div className="p-4 flex-1 flex flex-col justify-between bg-white/90">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex items-center text-accent-gold">
+        {/* Content Section */}
+        <div className="p-6 flex-1 flex flex-col">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center text-orange">
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-3 h-3 ${i < Math.floor(place.rating || 4)
-                      ? "fill-current text-primary"
-                      : "text-gray-500 fill-current"
+                    className={`w-3.5 h-3.5 ${i < Math.floor(place.rating || 4)
+                      ? "fill-current"
+                      : "text-gray-200 fill-current"
                       }`}
                     viewBox="0 0 20 20"
                   >
@@ -67,21 +67,30 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
                   </svg>
                 ))}
               </div>
-              <span className="text-[10px] font-bold text-primary">
-                ({place.ratingCount || "4.5"})
+              <span className="text-[11px] font-bold text-gray-400">
+                {place.ratingCount || "100+"} Reviews
               </span>
             </div>
 
-            <div className="flex items-start gap-1.5 text-black mb-4">
-              <i className="fa-solid fa-location-dot mt-0.5 text-[#301118] text-xs"></i>
-              <p className="text-[11px] leading-relaxed line-clamp-2">
+            <h3 className="text-xl font-display font-bold text-brown leading-tight mb-3 group-hover:text-orange transition-colors line-clamp-2">
+              {place.title}
+            </h3>
+
+            <div className="flex items-start gap-2 text-gray-500">
+              <i className="fa-solid fa-location-dot mt-1 text-orange/60 text-xs"></i>
+              <p className="text-sm leading-relaxed line-clamp-2 italic">
                 {place.address || "Address available on request"}
               </p>
             </div>
           </div>
 
-          <div className="w-full bg-[#301118] text-white py-2 rounded-lg text-xs font-bold text-center group-hover:shadow-[0_0_15px_rgba(242,94,10,0.3)] transition-all uppercase tracking-widest">
-            Darshan Details
+          <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+            <span className="text-[11px] font-bold text-orange uppercase tracking-widest">
+              View Details
+            </span>
+            <div className="w-8 h-8 rounded-full bg-orange/5 flex items-center justify-center group-hover:bg-orange group-hover:text-white transition-all duration-300">
+              <i className="fa-solid fa-arrow-right text-[10px]"></i>
+            </div>
           </div>
         </div>
       </div>

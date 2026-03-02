@@ -94,13 +94,13 @@ const SERVICES_DATA = [
     href: PATHS.KUNDALI_MATCHING,
     isInternal: true,
   },
-  /* {
+  {
     id: 8,
-    label: "Match Analysis",
-    icon: "images/top-icon6.png",
-    href: PATHS.KUNDALI_MATCHING,
+    label: "Live Darshan",
+    icon: "images/top-icon3.png",
+    href: PATHS.LIVE_DARSHAN,
     isInternal: true,
-  }, */
+  },
 ];
 
 interface HeaderProps {
@@ -782,13 +782,24 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </li>
 
                     {/* Famous Places */}
-                    <li className={isMenuOpen ? 'w-full' : ''}>
+                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
                       <Link
                         className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
                         href={PATHS.FAMOUS_PLACES}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Famous Places
+                      </Link>
+                    </li>
+
+                    {/* Live Darshan */}
+                    <li className={isMenuOpen ? 'w-full' : ''}>
+                      <Link
+                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
+                        href={PATHS.LIVE_DARSHAN}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Live Darshan
                       </Link>
                     </li>
                   </ul>

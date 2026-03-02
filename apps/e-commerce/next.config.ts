@@ -14,6 +14,20 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "content.jdmagicbox.com",
+        pathname: "/**",
+      },
+    ],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

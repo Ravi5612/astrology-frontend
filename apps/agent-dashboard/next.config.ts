@@ -3,7 +3,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
-            { protocol: "https", hostname: "res.cloudinary.com" },
+            {
+                protocol: "https",
+                hostname: "res.cloudinary.com",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "content.jdmagicbox.com",
+                pathname: "/**",
+            },
         ],
     },
     async rewrites() {

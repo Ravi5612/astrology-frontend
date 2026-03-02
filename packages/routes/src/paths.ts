@@ -47,10 +47,5 @@ export const PATHS = {
   WHO_LOVES_MORE_CALCULATOR: "/calculator/who-loves-more",
   COMPATIBILITY_BY_ZODIAC_CALCULATOR: "/calculator/compatibility-by-zodiac",
   DAHEJ_CALCULATOR: "/calculator/dahej",
-
+  LIVE_DARSHAN: "/live-darshan",
 } as const;
-
-
-
-
-
