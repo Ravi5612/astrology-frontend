@@ -58,14 +58,24 @@ export default function AppointmentsPage() {
       let allSessions: any[] = [];
 
       if (pendingRes.status === 'fulfilled') {
-        allSessions = [...allSessions, ...(pendingRes.value as any).data];
+        const data = (pendingRes.value as any).data || pendingRes.value;
+        if (Array.isArray(data)) {
+          allSessions = [...allSessions, ...data];
+        } else {
+          console.warn("[AppointmentDebug] Pending response data is not an array:", data);
+        }
       }
 
       if (completedRes.status === 'fulfilled') {
-        allSessions = [...allSessions, ...(completedRes.value as any).data];
+        const data = (completedRes.value as any).data || completedRes.value;
+        if (Array.isArray(data)) {
+          allSessions = [...allSessions, ...data];
+        } else {
+          console.warn("[AppointmentDebug] Completed response data is not an array:", data);
+        }
       }
 
-      const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : [];
+      const reviews = (reviewsRes.status === 'fulfilled' ? ((reviewsRes.value as any).data || (Array.isArray(reviewsRes.value) ? reviewsRes.value : [])) : []);
 
       // Deduplicate sessions by ID (prevents double display if session is in both pending and completed)
       const uniqueSessionsMap = new Map();
@@ -91,7 +101,7 @@ export default function AppointmentsPage() {
         let sessionReview = session.review;
         if (!sessionReview || !sessionReview.comment) {
           const matchingReview = reviews.find((r: any) =>
-            r.sessionId === session.id ||
+            (r.session_id || r.sessionId) === session.id ||
             (session.user?.name && r.user?.name === session.user?.name &&
               Math.abs(new Date(r.created_at || r.createdAt || 0).getTime() - new Date(session.created_at || session.createdAt || 0).getTime()) < 24 * 60 * 60 * 1000)
           );
@@ -108,9 +118,10 @@ export default function AppointmentsPage() {
         if (currentStatus === 'active') {
           try {
             const verificationRes: any = await apiClient.get(`/chat/session/${session.id}?_t=${Date.now()}`);
-            if (verificationRes.data && verificationRes.data.status) {
-              console.log(`[AppointmentDebug] Verified status for session ${session.id}: ${verificationRes.data.status}`);
-              currentStatus = verificationRes.data.status;
+            const verifiedPayload = verificationRes?.data ?? verificationRes;
+            if (verifiedPayload && verifiedPayload.status) {
+              console.log(`[AppointmentDebug] Verified status for session ${session.id}: ${verifiedPayload.status}`);
+              currentStatus = verifiedPayload.status;
             }
           } catch (err) {
             console.warn(`[AppointmentDebug] Failed to verify session ${session.id}`, err);
@@ -126,7 +137,7 @@ export default function AppointmentsPage() {
         return {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
           service: "Chat Consultation",
           date: session.created_at || session.createdAt || new Date().toISOString(),
           status: currentStatus, // Use the verified status
@@ -134,17 +145,17 @@ export default function AppointmentsPage() {
           reminder: false,
           meetingLink: `/chat/${session.id}`,
           sessionId: session.id,
-          clientId: session.clientId,
-          expiresAt: session.expiresAt,
-          isFree: !!session.isFree,
-          freeMinutes: session.freeMinutes || 0,
+          clientId: session.client_id || session.userId || session.clientId,
+          expiresAt: session.expires_at || session.expiresAt,
+          isFree: !!(session.is_free ?? session.isFree),
+          freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
           durationMins: (() => {
-            let d = session.durationMins || session.duration || 0;
+            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? 0;
             if (d === 0 && (currentStatus === 'completed' || currentStatus === 'expired')) {
-              const start = session.activatedAt ? new Date(session.activatedAt).getTime() :
-                (session.startTime ? new Date(session.startTime).getTime() : 0);
-              const end = session.endedAt ? new Date(session.endedAt).getTime() :
-                (session.endTime ? new Date(session.endTime).getTime() : 0);
+              const start = (session.activated_at || session.activatedAt) ? new Date(session.activated_at || session.activatedAt).getTime() :
+                (session.start_time || session.startTime ? new Date(session.start_time || session.startTime).getTime() : 0);
+              const end = (session.ended_at || session.endedAt) ? new Date(session.ended_at || session.endedAt).getTime() :
+                (session.end_time || session.endTime ? new Date(session.end_time || session.endTime).getTime() : 0);
               if (start > 0 && end > 0) return Math.ceil((end - start) / (1000 * 60));
             }
             return d;
@@ -153,7 +164,7 @@ export default function AppointmentsPage() {
             rating: sessionReview.rating || 0,
             comment: sessionReview.comment || ""
           } : undefined,
-          terminatedBy: session.terminatedBy,
+          terminatedBy: session.terminated_by || session.terminatedBy,
         };
       }));
 
@@ -220,7 +231,7 @@ export default function AppointmentsPage() {
         const newAppt: Appointment = {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
           service: "Chat Consultation",
           date: session.created_at || session.createdAt || new Date().toISOString(),
           status: "pending",
@@ -228,13 +239,13 @@ export default function AppointmentsPage() {
           reminder: false,
           meetingLink: `/chat/${session.id}`,
           sessionId: session.id,
-          clientId: session.clientId || session.userId,
-          expiresAt: session.expiresAt,
-          isFree: !!session.isFree,
-          freeMinutes: session.freeMinutes || 0,
-          durationMins: session.durationMins || 0,
+          clientId: session.client_id || session.userId || session.clientId,
+          expiresAt: session.expires_at || session.expiresAt,
+          isFree: !!(session.is_free ?? session.isFree),
+          freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
+          durationMins: session.duration_mins ?? session.durationMins ?? 0,
           review: session.review,
-          terminatedBy: session.terminatedBy,
+          terminatedBy: session.terminated_by || session.terminatedBy,
         };
 
         setAppointments(prev => {
