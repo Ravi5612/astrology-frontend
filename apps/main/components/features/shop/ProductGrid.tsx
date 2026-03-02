@@ -7,16 +7,7 @@ import { ProductCard } from "./ProductCard";
 const SearchIcon = Search as any;
 const XIcon = X as any;
 
-interface Product {
-    id?: string;
-    _id?: string;
-    imageUrl?: string;
-    name: string;
-    description: string;
-    originalPrice?: number | string;
-    price: number | string;
-    percentageOff?: number | string;
-}
+import { Product } from "@/lib/types";
 
 interface ProductGridProps {
     products: Product[];

@@ -2,36 +2,9 @@ import { apiClient } from "../lib/api-client";
 
 const unwrap = <T = any>(response: any): T => (response as any)?.data ?? response;
 
-export interface ClientProfileData {
-    id?: number;
-    userId?: number;
-    full_name?: string;
-    username?: string;
-    date_of_birth?: string;
-    time_of_birth?: string;
-    place_of_birth?: string;
-    gender?: 'male' | 'female' | 'other';
-    phone?: string;
-    preferences?: string;
-    language_preference?: string;
-    profile_picture?: string;
-    marital_status?: 'single' | 'married' | 'divorced' | 'widowed' | 'other';
-    occupation?: string;
-    about_me?: string;
-    addresses?: AddressDto[];
-}
+import { ClientProfileData, AddressDto, SupportSettings, CreateDisputeDto } from "../lib/types";
 
-export interface AddressDto {
-    id?: number;
-    line1: string;
-    line2?: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode?: string;
-    zip_code?: string;
-    tag?: string;
-}
+export type { SupportSettings, CreateDisputeDto, ClientProfileData, AddressDto };
 
 export const getClientProfile = async () => {
     const response = await apiClient.get('/client/profile');
@@ -134,12 +107,6 @@ export const applyCoupon = async (code: string, amount: number, serviceType: str
     return unwrap(response);
 };
 
-// Support Settings
-export interface SupportSettings {
-    email?: string;
-    phone?: string;
-    whatsapp?: string;
-}
 
 export const getSupportSettings = async (): Promise<SupportSettings> => {
     const response = await apiClient.get('/settings/support');
@@ -147,15 +114,6 @@ export const getSupportSettings = async (): Promise<SupportSettings> => {
 };
 
 // Disputes / Support Tickets
-export interface CreateDisputeDto {
-    type: 'order' | 'consultation';
-    itemId: number;
-    orderId?: string | number;
-    consultationId?: number;
-    category: string;
-    description: string;
-    itemDetails: any;
-}
 
 export const createDispute = async (data: CreateDisputeDto) => {
     const response = await apiClient.post('/support/disputes', data);

@@ -11,6 +11,18 @@ import { SkeletonCard } from "./SkeletonCard";
 import AstrologerCard from "./AstrologerCard";
 import { socket } from "@/libs/socket";
 
+// Swiper imports
+import "swiper/css";
+import "swiper/css/navigation";
+import {
+  Swiper as SwiperComp,
+  SwiperSlide as SwiperSlideComp,
+} from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+
+const Swiper = SwiperComp as any;
+const SwiperSlide = SwiperSlideComp as any;
+
 import AstrologerListHeader from "./AstrologerListHeader";
 import AstrologerFilterModal from "./AstrologerFilterModal";
 
@@ -19,56 +31,7 @@ import { getApiUrl, getBasePath } from "@/utils/api-config";
 
 const API_BASE_URL = getApiUrl();
 
-interface ExpertProfile {
-  id: number;
-  user: {
-    id: number;
-    name: string;
-    avatar?: string;
-    language?: string;
-  };
-  name?: string; // Fallback
-  image?: string; // Fallback
-  specialization: string;
-  expertise?: string; // Fallback
-  experience_in_years: number;
-  experience?: number; // Fallback
-  languages: string[];
-  price: number;
-  rating: number;
-  ratings?: number; // Fallback
-  is_available: boolean;
-  video?: string;
-  chat_price?: number;
-  call_price?: number;
-  video_call_price?: number;
-  report_price?: number;
-  horoscope_price?: number;
-  total_likes?: number; // ADDED
-  custom_services?: { id: string; name: string; price: number; unit: string }[] | string;
-}
-
-interface ClientExpertProfile {
-  id: number;
-  userId: number; // ADDED
-  image: string;
-  ratings: number;
-  name: string;
-  expertise: string;
-  experience: number;
-  language: string;
-  price: number;
-  chat_price?: number;
-  call_price?: number;
-  video_call_price?: number;
-  report_price?: number;
-  horoscope_price?: number;
-  video?: string;
-  modalId: string;
-  is_available: boolean;
-  total_likes?: number; // ADDED
-  custom_services?: { id: string; name: string; price: number; unit: string }[];
-}
+import { ExpertProfile, ClientExpertProfile } from "@/lib/types";
 
 interface AstrologerListProps {
   initialExperts: ExpertProfile[];
@@ -141,13 +104,13 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
   const searchParams = useSearchParams();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const cardScrollRef = useRef<HTMLDivElement>(null);
 
   // State
   const [astrologers, setAstrologers] = useState<ClientExpertProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
   const limit = 20;
 
   // Filter State from URL or local defaults
@@ -336,26 +299,6 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
     [debouncedSearch, selectedSpecialization, filterState]
   );
 
-  const handleScroll = useCallback(() => {
-    if (layout === 'grid') return; // Only for slider layout
-    if (!cardScrollRef.current || isFetchingRef.current || !hasMore) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = cardScrollRef.current;
-    if (scrollLeft + clientWidth >= scrollWidth - 300) {
-      const nextOffset = offset + limit;
-      setOffset(nextOffset);
-      fetchMoreAstrologers(nextOffset);
-    }
-  }, [offset, hasMore, fetchMoreAstrologers, layout]);
-
-  useEffect(() => {
-    const scrollEl = cardScrollRef.current;
-    if (scrollEl && layout === 'slider') {
-      scrollEl.addEventListener("scroll", handleScroll);
-      return () => scrollEl.removeEventListener("scroll", handleScroll);
-    }
-  }, [handleScroll, layout]);
-
   const handleLoadMore = () => {
     const nextOffset = offset + limit;
     setOffset(nextOffset);
@@ -384,18 +327,6 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
     setSearchQuery("");
   };
 
-  const scrollCards = (direction: "left" | "right") => {
-    if (cardScrollRef.current) {
-      const { current } = cardScrollRef;
-      const scrollAmount = 300;
-      if (direction === "left") {
-        current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-      } else {
-        current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      }
-    }
-  };
-
   const scrollTabs = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
       const { current } = scrollContainerRef;
@@ -412,11 +343,24 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
   const sortModalId = "astrologerListSortModal";
 
   return (
-    <section className={`astrologer-list ${layout === 'slider' ? 'back-img' : ''}`}>
-      <div className="container">
-        <h2 className={`title-line ${layout === 'slider' ? 'color-light' : 'mt-4'}`}>
-          <span>{title}</span>
-        </h2>
+    <section
+      className="py-[50px] relative overflow-hidden"
+      style={{
+        backgroundColor: '#301118',
+        backgroundImage: 'url(/images/bg-dark.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
+        <div className="relative mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            {title}
+          </h2>
+          <div className="w-48 h-1 bg-orange"></div>
+        </div>
 
         {/* Header / Top Controls */}
         <AstrologerListHeader
@@ -445,26 +389,32 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
 
         {/* Astrologer List Content */}
         {layout === 'slider' ? (
-          <div className="flex items-center relative mt-4">
-            <button
-              onClick={() => scrollCards("left")}
-              className="shrink-0 w-10 h-10 flex items-center justify-center text-orange hover:scale-110 transition cursor-pointer z-10"
-              style={{ background: "transparent" }}
-            >
-              <i className="fa-solid fa-chevron-left fa-2x"></i>
-            </button>
-
-            <div
-              className="flex-1 min-w-0 flex overflow-x-auto gap-4 scroll-smooth [&::-webkit-scrollbar]:hidden py-4"
-              ref={cardScrollRef}
+          <div className="relative astrologer-swiper-wrapper mt-4 px-12">
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              speed={800}
+              spaceBetween={20}
+              slidesPerView={1}
+              navigation={{
+                nextEl: ".astro-next",
+                prevEl: ".astro-prev",
+              }}
+              breakpoints={{
+                480: { slidesPerView: 1.2, spaceBetween: 15 },
+                640: { slidesPerView: 2, spaceBetween: 20 },
+                992: { slidesPerView: 3, spaceBetween: 20 },
+                1200: { slidesPerView: 4, spaceBetween: 24 },
+              }}
+              className="astro-swiper !py-4"
             >
               {astrologers.length > 0 ? (
                 astrologers.map((item) => (
-                  <AstrologerCard
-                    key={item.id}
-                    astrologerData={item}
-                    cardClassName="min-w-[300px]"
-                  />
+                  <SwiperSlide key={item.id}>
+                    <AstrologerCard
+                      astrologerData={item}
+                      cardClassName="h-full"
+                    />
+                  </SwiperSlide>
                 ))
               ) : !loading && initialError ? (
                 <div className="w-full text-center py-10 flex flex-col items-center justify-center">
@@ -477,27 +427,31 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
                 </div>
               ) : (
                 Array.from({ length: 4 }).map((_, i) => (
-                  <div className="min-w-[300px]" key={i}>
+                  <SwiperSlide key={i}>
                     <SkeletonCard />
-                  </div>
+                  </SwiperSlide>
                 ))
               )}
 
               {loading && astrologers.length > 0 && (
-                <div className="d-flex align-items-center justify-content-center min-w-[200px]">
+                <SwiperSlide className="flex items-center justify-center">
                   <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                </div>
+                </SwiperSlide>
               )}
-            </div>
+            </Swiper>
 
+            {/* Custom Navigation Arrows */}
             <button
-              onClick={() => scrollCards("right")}
-              className="shrink-0 w-10 h-10 flex items-center justify-center text-orange hover:scale-110 transition cursor-pointer z-10"
-              style={{ background: "transparent" }}
+              className="astro-prev absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0"
             >
-              <i className="fa-solid fa-chevron-right fa-2x"></i>
+              <i className="fa-solid fa-chevron-left fa-lg"></i>
+            </button>
+            <button
+              className="astro-next absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0"
+            >
+              <i className="fa-solid fa-chevron-right fa-lg"></i>
             </button>
           </div>
         ) : (
@@ -536,10 +490,10 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
             )}
 
             {hasMore && !loading && (
-              <div className="view-all mt-4 mb-4 text-center">
+              <div className="flex justify-center mt-8 mb-8">
                 <button
                   onClick={handleLoadMore}
-                  className="btn bg-white border border-primary text-primary px-5 py-2.5 rounded-full font-bold hover:bg-primary hover:text-white transition duration-300 shadow-sm mx-auto"
+                  className="bg-white border border-orange text-orange px-8 py-2.5 rounded-full font-bold hover:bg-orange hover:text-white transition-all duration-300 shadow-md mx-auto"
                 >
                   Load More Experts
                 </button>

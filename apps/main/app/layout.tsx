@@ -13,6 +13,7 @@ import { WishlistInitializer } from "@/components/layout/WishlistInitializer";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AuthService } from "@/services/auth.service";
+import QueryProvider from "@/providers/QueryProvider";
 
 // Google Fonts setup
 const outfit = Outfit({
@@ -58,20 +59,17 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${outfit.variable} ${poppins.variable}`}>
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-        />
-      </head>
+
       <body className="min-h-screen bg-white text-black" suppressHydrationWarning>
-        <AuthInitializer initialUser={user}>
-          <CartInitializer>
-            <WishlistInitializer>
-              <ClientLayout>{children}</ClientLayout>
-            </WishlistInitializer>
-          </CartInitializer>
-        </AuthInitializer>
+        <QueryProvider>
+          <AuthInitializer initialUser={user}>
+            <CartInitializer>
+              <WishlistInitializer>
+                <ClientLayout>{children}</ClientLayout>
+              </WishlistInitializer>
+            </CartInitializer>
+          </AuthInitializer>
+        </QueryProvider>
       </body>
     </html>
   );

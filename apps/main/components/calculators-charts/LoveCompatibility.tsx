@@ -26,13 +26,7 @@ const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: s
 const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
 const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
-type ResultType = {
-  love: number;
-  trust: number;
-  romance: number;
-  communication: number;
-  message: string;
-};
+import { LoveCompatibilityResult as ResultType } from "@/lib/types";
 
 const premiumCardStyles = `
   .glass-card {
@@ -75,10 +69,7 @@ const getMessageByLove = (love: number): string => {
   return "Excellent match! Your bond feels deep, supportive, and long-term focused.";
 };
 
-type ProgressBarProps = {
-  label: string;
-  value: number;
-};
+import { CalculatorProgressBarProps as ProgressBarProps } from "@/lib/types";
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ label, value }) => {
   return (

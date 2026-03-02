@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @source "../../packages/ui/src";
 
+@theme {
+  --color-orange: #FF6B00;
+  --color-secondary: #301118;
+  --color-secondary-dark: #1A0E05;
+}
+
 /* Hide Scrolbar */
 .no-scrollbar {
   -ms-overflow-style: none;

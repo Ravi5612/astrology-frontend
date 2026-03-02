@@ -1,24 +1,7 @@
 "use client";
 import React from "react";
 
-interface FilterState {
-    language: string;
-    minPrice: number;
-    maxPrice: number;
-    addressState: string;
-    serviceType: string;
-    minRating: number;
-    onlyOnline: boolean;
-    sortBy: string;
-}
-
-interface AstrologerFilterModalProps {
-    modalId: string;
-    localFilter: FilterState;
-    setLocalFilter: (filter: FilterState) => void;
-    applyFilters: () => void;
-    resetFilters: () => void;
-}
+import { AstrologerFilterModalProps } from "@/lib/types";
 
 const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
     modalId,

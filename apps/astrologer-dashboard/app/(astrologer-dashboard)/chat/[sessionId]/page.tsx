@@ -362,8 +362,9 @@ function ExpertChatRoomContent() {
                 )}
 
                 {messages.map((msg) => {
-                    const isAdmin = msg.senderType === "admin";
-                    const isExpert = msg.senderType === "expert";
+                    const mSenderType = msg.senderType || (msg as any).sender_type;
+                    const isAdmin = mSenderType === "admin";
+                    const isExpert = mSenderType === "expert";
 
                     return (
                         <div key={msg.id} className={`flex items-start gap-3 ${isExpert ? "flex-row-reverse" : "flex-row"} ${isAdmin ? "justify-center w-full" : ""}`}>

@@ -22,13 +22,7 @@ const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: s
 const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
 const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
-type LifePathNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 22 | 33;
-
-type LifePathResult = {
-  lifePath: LifePathNumber;
-  title: string;
-  message: string;
-};
+import { LifePathNumber, LifePathResult } from "@/lib/types";
 
 const premiumCardStyles = `
   .glass-card {

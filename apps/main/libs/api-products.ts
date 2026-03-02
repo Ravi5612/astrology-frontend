@@ -1,15 +1,7 @@
-export interface Product {
-    id?: string;
-    _id?: string;
-    name: string;
-    description: string;
-    price: number;
-    originalPrice: number;
-    imageUrl: string;
-    percentageOff?: number;
-}
+import { Product } from "@/lib/types";
+import { getApiUrl } from "@/utils/api-config";
 
-import { API_BASE_URL } from '../utils/api-config';
+const API_BASE_URL = getApiUrl();
 
 const normalizeProduct = (raw: any): Product => {
     const images = Array.isArray(raw?.images) ? raw.images : [];

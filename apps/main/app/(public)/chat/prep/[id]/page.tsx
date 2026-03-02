@@ -9,23 +9,10 @@ import apiClient from "@/libs/api-profile";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 
+import { Astrologer } from "@/lib/types";
+
 const Image = NextImage as any;
 const { ChevronLeft, MessageSquare, User, Calendar, MapPin, UserX } = LucideIcons as any;
-
-interface AstrologerData {
-    id: string | number;
-    name: string;
-    image: string;
-    expertise: string;
-    experience: number;
-    price: number;
-    chat_price?: number;
-    call_price?: number;
-    video_call_price?: number;
-    languages: string[];
-    rating: number;
-    is_available: boolean;
-}
 
 const API_BASE_URL = getApiUrl();
 
@@ -34,7 +21,7 @@ export default function ConsultationPrep() {
     const router = useRouter();
     const id = params.id as string;
 
-    const [astrologer, setAstrologer] = useState<AstrologerData | null>(null);
+    const [astrologer, setAstrologer] = useState<Astrologer | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [askSomeoneElse, setAskSomeoneElse] = useState(true);
@@ -49,6 +36,7 @@ export default function ConsultationPrep() {
                     const data = await response.json();
                     setAstrologer({
                         id: data.id,
+                        userId: data.user?.id,
                         name: data.user?.name || "Astrologer",
                         image: data.user?.avatar || "/images/dummy-astrologer.jpg",
                         expertise: data.specialization || "Vedic Astrology",
@@ -57,8 +45,8 @@ export default function ConsultationPrep() {
                         chat_price: data.chat_price,
                         call_price: data.call_price,
                         video_call_price: data.video_call_price,
-                        languages: data.languages || [],
-                        rating: data.rating || 5,
+                        language: data.languages?.join(", ") || "",
+                        ratings: data.rating || 5,
                         is_available: data.is_available || false,
                     });
                 } else {
@@ -147,7 +135,7 @@ export default function ConsultationPrep() {
                     50% { transform: translateY(-10px) scale(1.08); }
                 }
                 .astro-card-glow {
-                    background: radial-gradient(circle at 50% 50%, rgba(253,100,16,0.15), transparent 70%);
+                    background: radial-gradient(circle at 50% 50%, rgba(255,107,0,0.15), transparent 70%);
                 }
                 `}
             </style>
@@ -181,7 +169,7 @@ export default function ConsultationPrep() {
                             </span>
                             <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
                                 Talk to <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange">
                                     {astrologer?.name}
                                 </span>
                             </h1>
@@ -193,7 +181,7 @@ export default function ConsultationPrep() {
                         {/* Feature Grid */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-6 rounded-[2.5rem] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:translate-y-[-5px] transition-all duration-500 group">
-                                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
+                                <div className="w-12 h-12 rounded-2xl bg-orange/5 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
                                     <MessageSquare className="w-6 h-6 text-primary group-hover:text-white" />
                                 </div>
                                 <h3 className="font-bold text-gray-900 mb-1">Live Chat</h3>
@@ -250,21 +238,21 @@ export default function ConsultationPrep() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
                                     {/* Availability Badge */}
-                                    <div className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border flex items-center gap-2 ${astrologer?.is_available
-                                        ? 'bg-white/10 border-white/20'
-                                        : 'bg-gray-900/30 border-gray-500/30'
+                                    <div className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border shadow-sm flex items-center gap-2 ${astrologer?.is_available
+                                        ? 'bg-orange border-white/20'
+                                        : 'bg-white border-gray-200'
                                         }`}>
                                         <div className={`w-2 h-2 rounded-full ${astrologer?.is_available
                                             ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]'
                                             : 'bg-gray-400'
                                             }`}></div>
-                                        <span className="text-white text-[10px] font-black uppercase tracking-widest">
+                                        <span className={`${astrologer?.is_available ? 'text-white' : 'text-gray-400'} text-[10px] font-black uppercase tracking-widest`}>
                                             {astrologer?.is_available ? 'Available Now' : 'Offline'}
                                         </span>
                                     </div>
 
                                     {/* Price Badge */}
-                                    <div className="absolute top-6 right-6 px-4 py-2 bg-[#fd6410] rounded-full shadow-lg flex items-center gap-2">
+                                    <div className="absolute top-6 right-6 px-4 py-2 bg-orange rounded-full shadow-lg flex items-center gap-2">
                                         <span className="text-white text-xs font-black uppercase tracking-widest">
                                             ₹{astrologer?.chat_price || astrologer?.price || 0} / min
                                         </span>
@@ -284,7 +272,7 @@ export default function ConsultationPrep() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-orange-400" />
+                                            <MapPin className="w-4 h-4 text-orange" />
                                             <span className="text-white/80 text-xs font-medium">Verified Astro Expert • Bharat</span>
                                         </div>
                                     </div>
@@ -299,7 +287,7 @@ export default function ConsultationPrep() {
                                         </div>
                                         <button
                                             onClick={() => setAskSomeoneElse(!askSomeoneElse)}
-                                            className="px-4 py-2 text-[10px] font-black text-[#fd6410] uppercase tracking-widest hover:bg-[#fd6410]/5 rounded-xl transition-colors"
+                                            className="px-4 py-2 text-[10px] font-black text-orange uppercase tracking-widest hover:bg-orange/5 rounded-xl transition-colors"
                                         >
                                             Change
                                         </button>
@@ -308,12 +296,12 @@ export default function ConsultationPrep() {
                                     {/* Big CTA with Hover Effects */}
                                     <div className="pt-6 relative group">
                                         {/* Glow Effect */}
-                                        <div className="absolute -inset-2 bg-gradient-to-r from-[#fd6410] to-orange-400 rounded-[45px] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
+                                        <div className="absolute -inset-2 bg-gradient-to-r from-orange to-orange/80 rounded-[45px] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
 
                                         <button
                                             onClick={handleStartConsultation}
                                             disabled={actionLoading}
-                                            className={`relative w-full py-6 bg-gradient-to-br from-orange-400 via-[#fd6410] to-[#fd6410] text-white rounded-[2.5rem] font-black text-xl flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(253,100,16,0.25)] hover:shadow-[0_25px_60px_rgba(253,100,16,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-[#fd6410]/80 overflow-hidden ${actionLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                            className={`relative w-full py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2.5rem] font-black text-xl flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-orange/80 overflow-hidden ${actionLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
                                             <MessageSquare className="w-7 h-7 fill-white/20" />
@@ -334,11 +322,11 @@ export default function ConsultationPrep() {
                             {/* Trust Pill */}
                             <div className="mt-8 flex items-center justify-center gap-4">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="w-2 h-2 bg-orange-400/20 rounded-full"></div>
+                                    <div key={i} className="w-2 h-2 bg-orange/20 rounded-full"></div>
                                 ))}
                                 <span className="text-[9px] font-black text-gray-300 uppercase tracking-[0.5em]">Trust & Integrity</span>
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="w-2 h-2 bg-orange-400/20 rounded-full"></div>
+                                    <div key={i} className="w-2 h-2 bg-orange/20 rounded-full"></div>
                                 ))}
                             </div>
                         </div>

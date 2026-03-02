@@ -54,17 +54,15 @@ export default function AddressManagement({
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
-                    <MapPin className="w-5 h-5 mr-2 text-yellow-600" /> Professional Addresses
+                    <MapPin className="w-5 h-5 mr-2 text-orange" /> Professional Addresses
                 </h2>
-                {!isEditing && (
-                    <button
-                        onClick={onEdit}
-                        className="flex items-center space-x-1 text-sm text-yellow-600 hover:text-yellow-700 font-medium"
-                    >
-                        <Edit3 className="w-4 h-4" />
-                        <span>Edit</span>
-                    </button>
-                )}
+                <button
+                    onClick={onEdit}
+                    className="flex items-center space-x-1 text-sm text-orange hover:text-orange/80 font-medium"
+                >
+                    <Edit3 className="w-4 h-4" />
+                    <span>Edit</span>
+                </button>
             </div>
 
             {isEditing ? (
@@ -74,7 +72,7 @@ export default function AddressManagement({
                         {tempProfile.addresses.map((addr, idx) => (
                             <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                                 <div className="text-sm">
-                                    <span className="font-bold text-yellow-700 uppercase text-[10px] block mb-1">{addr.tag}</span>
+                                    <span className="font-bold text-orange uppercase text-[10px] block mb-1">{addr.tag}</span>
                                     <p className="text-gray-800 font-medium">{addr.line1}</p>
                                     <p className="text-gray-500 text-xs">{addr.city}, {addr.state}, {addr.country} {addr.zipCode}</p>
                                 </div>
@@ -161,7 +159,7 @@ export default function AddressManagement({
                         </button>
                         <button
                             onClick={onSave}
-                            className="flex items-center space-x-2 bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 shadow-md text-sm font-medium"
+                            className="flex items-center space-x-2 bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/90 shadow-md text-sm font-medium"
                         >
                             <Save className="w-4 h-4" />
                             <span>Save Changes</span>
@@ -173,9 +171,9 @@ export default function AddressManagement({
                     {profile.addresses.length > 0 ? (
                         profile.addresses.map((addr, idx) => (
                             <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <MapPin className="w-4 h-4 text-yellow-600 mt-1 flex-shrink-0" />
+                                <MapPin className="w-4 h-4 text-orange mt-1 flex-shrink-0" />
                                 <div>
-                                    <span className="font-bold text-yellow-700 uppercase text-[9px] tracking-widest">{addr.tag}</span>
+                                    <span className="font-bold text-orange uppercase text-[9px] tracking-widest">{addr.tag}</span>
                                     <p className="text-sm font-medium text-gray-800">{addr.line1}</p>
                                     <p className="text-gray-500 text-xs">{addr.city}, {addr.state}, {addr.country} {addr.zipCode}</p>
                                 </div>

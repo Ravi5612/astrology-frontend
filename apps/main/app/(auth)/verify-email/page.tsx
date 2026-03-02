@@ -6,11 +6,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 
-// --- Types ---
-interface VerificationResponse {
-    message: string;
-    success?: boolean;
-}
+import { VerificationResponse } from "@/lib/types";
 
 // --- API ---
 const API_ENDPOINT = `${getApiUrl()}/auth/email/verify`;

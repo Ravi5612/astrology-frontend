@@ -14,34 +14,35 @@ export default function RegisterPage() {
   const { signUp } = authContent;
 
   return (
-    <section className="signin-part">
-      <div className="container">
-        <div className="row">
-          {/* Left Section (Static) */}
-          <div className="col-lg-5">
-            <div className="banner-data">
-              <h3>
-                <span style={{ color: "var(--secondary-color)" }}>Sign Up</span>{" "}
+    <section className="relative py-2 md:py-4 bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden">
+      <div className="max-w-[1320px] mx-auto px-4 md:px-8 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-12 items-start">
+
+          {/* Left Section: branding and info */}
+          <div className="w-full lg:w-5/12 pt-8">
+            <div className="mb-8">
+              <h3 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+                <span className="text-[#301118]">Sign Up</span>{" "}
                 to <br />
-                <span style={{ color: "var(--primary-color)" }}>
+                <span className="text-orange">
                   Astrology Bharat
                 </span>
               </h3>
-              <p className="text-muted">
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed">
                 {signUp.description}
               </p>
-              <p className="text-muted">
+              <p className="text-gray-500 mt-4 font-medium">
                 Join us and unlock personalized astrology insights.
               </p>
             </div>
 
-            {/* Top Experts (Client Component) */}
+            {/* Top Experts */}
             <TopExpertsSection />
           </div>
 
-          {/* Right Form Section (Client Component) */}
-          <div className="col-lg-7 col-sm-12 ms-auto">
-            <Suspense fallback={<div>Loading form...</div>}>
+          {/* Right Section: Form */}
+          <div className="w-full lg:w-7/12">
+            <Suspense fallback={<div className="flex items-center justify-center p-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange"></div></div>}>
               <SignUpForm />
             </Suspense>
           </div>

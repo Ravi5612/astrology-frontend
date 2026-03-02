@@ -129,21 +129,36 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="astrology-services py-5">
-        <div className="container">
-          <h2>Astrology Services</h2>
-          <div className="row">
+      <section className="py-16 md:py-24 !bg-white overflow-hidden">
+        <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
+          <div className="mb-12 relative">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#301118] mb-4 pb-4 relative inline-block">
+              Astrologfdhf   y Services
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-orange"></div>
+            </h2>
+            <div className="w-full h-[1px] bg-gray-200 absolute bottom-0 left-0 -z-10"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {AstrologyServicesData.map((item) => (
-              <div className="col-lg-3 col-md-6" key={item.id}>
-                <div className="ser-card vert-move">
+              <div
+                key={item.id}
+                className="group relative bg-[#fdfaf5] p-8 rounded-2xl border border-orange/10 hover:border-orange/30 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl text-center"
+              >
+                <div className="mb-6 relative inline-block">
+                  <div className="absolute inset-0 bg-orange/5 rounded-full scale-150 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="services-img"
+                    className="w-20 h-20 md:w-24 md:h-24 object-contain relative z-10 animate-bounce-slow"
                   />
-                  <h4>{item.title}</h4>
-                  <p>{item.description}</p>
                 </div>
+                <h4 className="text-xl font-bold mb-3 text-[#301118] group-hover:text-orange transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>

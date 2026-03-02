@@ -9,16 +9,7 @@ const Image = NextImage as any;
 const SearchIcon = Search as any;
 const XIcon = X as any;
 
-interface Product {
-    id?: string;
-    _id?: string;
-    imageUrl?: string;
-    name: string;
-    description: string;
-    originalPrice: number | string;
-    price: number | string;
-    percentageOff?: number | string;
-}
+import { Product } from "@/lib/types";
 
 interface ProductSectionProps {
     products: Product[];
@@ -56,18 +47,20 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
 
     return (
         <>
-            <div className="row mb-4 align-items-end">
-                <div className="col-md-8">
-                    <h2 className="title-line mb-2 c-1e0b0f">
-                        <span>Astrology Products</span>
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div className="max-w-2xl">
+                    <h2 className="text-[32px] font-semibold mb-[35px] relative pb-[15px] text-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#a9a9a92b] after:w-full inline-block md:block">
+                        <span className="relative after:content-[''] after:bg-orange after:w-full after:h-[2px] after:absolute after:left-0 after:bottom-[-15px]">
+                            Astrology Products
+                        </span>
                     </h2>
-                    <p className="aib-products-subtitle c-1e0b0f m-0">
+                    <p className="text-gray-700 m-0 font-medium">
                         Energized & Expert-Recommended Astrology Products for Positive
                         Life Changes
                     </p>
                 </div>
-                <div className="col-md-4 mt-3 mt-md-0 d-flex justify-content-md-end">
-                    <div className="w-100" style={{ maxWidth: '300px' }}>
+                <div className="w-full md:w-auto flex justify-start md:justify-end">
+                    <div className="w-full max-w-[300px]">
                         {/* 🔹 Local Search Input Implementation */}
                         <div className="relative w-full">
                             <SearchIcon className="absolute top-1/2 -translate-y-1/2 left-3 w-5 h-5 text-gray-400" />
@@ -77,7 +70,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search products..."
                                 className="w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-10 text-base outline-none transition-all 
-                                    hover:border-primary focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-400 text-gray-700 bg-white"
+                                    hover:border-orange focus:border-orange focus:ring-1 focus:ring-orange placeholder-gray-400 text-gray-700 bg-white"
                             />
                             {searchQuery && (
                                 <button
@@ -92,20 +85,22 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                 </div>
             </div>
 
-            <div className="row">
+            <div>
                 {products.length === 0 ? (
                     /* 🔥 4 Skeleton Cards for empty initial state */
-                    Array.from({ length: 4 }).map((_, index) => (
-                        <ProductSkeleton key={index} />
-                    ))
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <ProductSkeleton key={index} />
+                        ))}
+                    </div>
                 ) : filteredProducts.length === 0 ? (
-                    <div className="col-12 text-center py-10 bg-gray-50 rounded-xl">
-                        <p className="text-gray-500 font-medium">
+                    <div className="w-full text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                        <p className="text-gray-500 font-medium text-lg">
                             No products found for "{searchQuery}"
                         </p>
                     </div>
                 ) : (
-                    <div className="col-12">
+                    <div className="w-full">
                         <ProductCarousel products={filteredProducts} />
                     </div>
                 )}

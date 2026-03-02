@@ -1,34 +1,7 @@
 "use client";
 import React from "react";
 
-interface AstrologerListHeaderProps {
-    searchQuery: string;
-    setSearchQuery: (q: string) => void;
-    selectedSpecialization: string;
-    setSelectedSpecialization: (s: string) => void;
-    hasActiveFilters: boolean;
-    filterModalId: string;
-    sortModalId: string;
-    resetFilters: () => void;
-    scrollTabs: (direction: "left" | "right") => void;
-    scrollContainerRef: React.RefObject<HTMLDivElement | null>;
-}
-
-const specializations = [
-    "Numerology",
-    "Vedic",
-    "Zodiac Compatibility",
-    "Astrocartography",
-    "Lunar Node Analysis",
-    "Love Problem Solution",
-    "Marriage Problem",
-    "Divorce Problem Solution",
-    "Breakup Problem Solution",
-    "Get Your Ex Love Back",
-    "Family Problem Solution",
-    "Dispute Solution",
-    "Childless Couple Solution"
-];
+import { AstrologerListHeaderProps, astrologerSpecializations as specializations } from "@/lib/types";
 
 const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     searchQuery,
@@ -43,65 +16,64 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     scrollContainerRef,
 }) => {
     return (
-        <div className="row align gy-3">
-            <div className="col-lg-5 col-md-6">
-                <div className="search-box">
+        <div className="flex flex-col lg:flex-row items-center gap-6 mb-8 text-white">
+            {/* Search Box */}
+            <div className="w-full lg:w-5/12">
+                <div className="flex w-full shadow-lg">
                     <input
                         type="text"
-                        className="bg-white"
+                        className="w-full px-6 py-3 border-0 rounded-l-full outline-none text-base bg-white text-black"
                         placeholder="Search Astrologer by Name..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button type="button" className="bg-orange text-white hover:opacity-90 transition-all">Search</button>
+                    <button type="button" className="px-8 py-3 bg-orange text-white rounded-r-full font-bold text-base hover:opacity-90 transition-all">
+                        Search
+                    </button>
                 </div>
             </div>
-            <div className="col-lg-3 col-md-6 text-md-end text-center d-flex align-items-center justify-content-md-end justify-content-center">
+
+            {/* Filter & Reset */}
+            <div className="w-full lg:w-3/12 flex items-center justify-center lg:justify-end gap-6">
                 <button
                     type="button"
-                    className="filter-btn border-0 bg-transparent cursor-pointer hover:text-primary transition-colors relative"
+                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all relative"
                     data-bs-toggle="modal"
                     data-bs-target={`#${filterModalId}`}
                 >
-                    <i className="fa-solid fa-filter"></i> Filter
+                    <i className="fa-solid fa-filter text-orange"></i> Filter
                     {hasActiveFilters && (
-                        <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full translate-x-1/2 -translate-y-1/2"></span>
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-orange rounded-full"></span>
                     )}
                 </button>
-
-
 
                 {hasActiveFilters && (
                     <button
                         type="button"
-                        className="filter-btn text-red-500 border-0 bg-transparent cursor-pointer hover:text-red-700 transition-colors ml-3 text-sm font-medium"
+                        className="flex items-center gap-2 text-red-400 font-medium hover:text-red-500 transition-all text-sm"
                         onClick={resetFilters}
                     >
-                        <i className="fa-solid fa-xmark mr-1"></i> Reset
+                        <i className="fa-solid fa-xmark"></i> Reset
                     </button>
                 )}
             </div>
-            <div className="col-lg-4 col-md-12 d-flex align-items-center">
+
+            {/* Specialization Slider */}
+            <div className="w-full lg:w-4/12 flex items-center gap-2">
                 <button
                     onClick={() => scrollTabs("left")}
-                    className="d-flex align-items-center justify-content-center text-orange rounded-full mr-2 hover:bg-orange/10 transition shrink-0"
-                    style={{
-                        width: "30px",
-                        height: "30px",
-                        border: "none",
-                        background: "transparent",
-                    }}
+                    className="text-orange hover:scale-110 transition-transform p-1"
                 >
-                    <i className="fa-solid fa-chevron-left"></i>
+                    <i className="fa-solid fa-chevron-left text-xl"></i>
                 </button>
                 <div
-                    className="flex gap-2.5 overflow-x-auto overflow-y-hidden whitespace-nowrap pb-2.5 [&::-webkit-scrollbar]:hidden w-full px-1"
+                    className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden whitespace-nowrap py-2 w-full px-2"
                     id="list-slider"
                     ref={scrollContainerRef}
                 >
                     <div
                         onClick={() => setSelectedSpecialization("")}
-                        className={`px-[15px] py-2 rounded-[20px] text-sm font-medium border border-orange cursor-pointer transition duration-300 ${selectedSpecialization === "" ? "bg-orange text-white" : "bg-white text-[#1e0b0f] hover:bg-orange hover:text-white"}`}
+                        className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === "" ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
                     >
                         All
                     </div>
@@ -109,7 +81,7 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
                         <div
                             key={spec}
                             onClick={() => setSelectedSpecialization(spec)}
-                            className={`px-[15px] py-2 rounded-[20px] text-sm font-medium border border-orange cursor-pointer transition duration-300 ${selectedSpecialization === spec ? "bg-orange text-white" : "bg-white text-[#1e0b0f] hover:bg-orange hover:text-white"}`}
+                            className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === spec ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
                         >
                             {spec}
                         </div>
@@ -117,15 +89,9 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
                 </div>
                 <button
                     onClick={() => scrollTabs("right")}
-                    className="d-flex align-items-center justify-content-center text-orange rounded-full ml-2 hover:bg-orange/10 transition shrink-0"
-                    style={{
-                        width: "30px",
-                        height: "30px",
-                        border: "none",
-                        background: "transparent",
-                    }}
+                    className="text-orange hover:scale-110 transition-transform p-1"
                 >
-                    <i className="fa-solid fa-chevron-right"></i>
+                    <i className="fa-solid fa-chevron-right text-xl"></i>
                 </button>
             </div>
         </div>

@@ -13,16 +13,7 @@ const Image = NextImage as any;
 const SwiperComponent = Swiper as any;
 const SwiperSlideComponent = SwiperSlide as any;
 
-interface Product {
-    id?: string;
-    _id?: string;
-    imageUrl?: string;
-    name: string;
-    description: string;
-    originalPrice: number | string;
-    price: number | string;
-    percentageOff?: number | string;
-}
+import { Product } from "@/lib/types";
 
 interface ProductCarouselProps {
     products: Product[];

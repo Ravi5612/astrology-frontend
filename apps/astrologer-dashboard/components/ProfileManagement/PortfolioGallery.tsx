@@ -119,13 +119,13 @@ export default function PortfolioGallery({
     const introEmbedUrl = introVideoId ? `https://www.youtube.com/embed/${introVideoId}` : introVideo;
 
     return (
-        <div className={`bg-white rounded-2xl shadow-lg border-2 border-orange-400 ${isExpanded ? 'p-4 sm:p-6' : 'p-4'}`}>
+        <div className={`bg-white rounded-2xl shadow-lg border-orange/20 border-2 ${isExpanded ? 'p-4 sm:p-6' : 'p-4'}`}>
             <div
                 className="flex items-center justify-between mb-4 cursor-pointer"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <h2 className="text-lg font-bold text-gray-900 flex items-center">
-                    <ImageIcon className="w-5 h-5 mr-2 text-purple-600" /> Portfolio & Media
+                    <ImageIcon className="w-5 h-5 mr-2 text-orange" /> Portfolio & Media
                 </h2>
                 {/* @ts-ignore */}
                 {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
@@ -138,7 +138,7 @@ export default function PortfolioGallery({
                         <button
                             onClick={() => setActiveTab('images')}
                             className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'images'
-                                ? 'border-orange-600 text-orange-600'
+                                ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
                         >
@@ -147,7 +147,7 @@ export default function PortfolioGallery({
                         <button
                             onClick={() => setActiveTab('videos')}
                             className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'videos'
-                                ? 'border-orange-600 text-orange-600'
+                                ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
                         >
@@ -156,7 +156,7 @@ export default function PortfolioGallery({
                         <button
                             onClick={() => setActiveTab('intro-video')}
                             className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'intro-video'
-                                ? 'border-orange-600 text-orange-600'
+                                ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
                         >
@@ -309,7 +309,7 @@ export default function PortfolioGallery({
                                                 type="url"
                                                 name="video"
                                                 placeholder="https://www.youtube.com/watch?v=..."
-                                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black"
+                                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange text-black"
                                                 value={tempIntroVideo}
                                                 onChange={onIntroVideoChange}
                                             />
@@ -391,7 +391,7 @@ export default function PortfolioGallery({
                                                         onClick={onEditIntro}
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="text-orange-600 hover:text-orange-700"
+                                                        className="text-orange hover:text-orange/80"
                                                     >
                                                         Change
                                                     </Button>

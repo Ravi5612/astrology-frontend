@@ -18,17 +18,35 @@ export default function Wallet() {
     const loadData = async () => {
         setLoading(true);
         try {
-            const [balance, txData, accounts] = await Promise.all([
-                getWalletBalance(),
-                getWalletTransactions(),
-                getBankAccounts()
-            ]);
-            setStats(balance);
-            setTransactions(txData.transactions || []);
-            setBankAccounts(accounts || []);
+            // Fetch balance
+            try {
+                const balance = await getWalletBalance();
+                setStats(balance);
+            } catch (error) {
+                console.error("[Wallet] Failed to fetch balance:", error);
+            }
+
+            // Fetch transactions
+            try {
+                const txData = await getWalletTransactions();
+                setTransactions(txData.transactions || []);
+            } catch (error) {
+                console.error("[Wallet] Failed to fetch transactions:", error);
+            }
+
+            // Fetch bank accounts
+            try {
+                const accounts = await getBankAccounts();
+                // Check if response has data nested (some endpoints do)
+                const accountsData = (accounts as any)?.data || accounts;
+                setBankAccounts(Array.isArray(accountsData) ? accountsData : []);
+            } catch (error: any) {
+                console.error("[Wallet] Failed to fetch bank accounts (400 Bad Request investigation):", error);
+                const backendMsg = error?.body?.message || error?.data?.message || error?.message;
+                console.error("[Wallet] Backend error message:", backendMsg);
+            }
         } catch (error) {
-            console.error("Failed to load wallet data:", error);
-            // toast.error("Failed to load wallet information");
+            console.error("Critical error in loadData:", error);
         } finally {
             setLoading(false);
         }
@@ -60,13 +78,20 @@ export default function Wallet() {
         }
     };
 
-    if (loading || !stats) {
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
             </div>
         );
     }
+
+    // Default stats if fetch failed
+    const displayStats = stats || {
+        availableBalance: 0,
+        totalWithdrawn: 0,
+        pendingWithdrawals: 0
+    };
 
     return (
         <div className="min-h-screen bg-gray-50/50 p-4 sm:p-6 lg:p-8">
@@ -76,10 +101,10 @@ export default function Wallet() {
             </header>
 
             <div className="max-w-7xl mx-auto">
-                <WalletStats stats={stats} />
+                <WalletStats stats={displayStats} />
 
                 <WithdrawMoney
-                    availableBalance={stats.availableBalance}
+                    availableBalance={displayStats.availableBalance}
                     bankAccounts={bankAccounts}
                     onWithdraw={handleWithdraw}
                 />

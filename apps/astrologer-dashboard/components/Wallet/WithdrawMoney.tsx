@@ -38,19 +38,19 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
     return (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mb-8 overflow-hidden relative">
             {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-16 -mt-16 opacity-50" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange/5 rounded-full -mr-16 -mt-16 opacity-50" />
 
             <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-start lg:items-center">
                 <div className="flex-1 w-full">
                     <h2 className="text-xl font-black text-gray-900 mb-2 flex items-center gap-2">
                         {/* @ts-ignore */}
-                        <Landmark className="w-5 h-5 text-amber-600" /> Withdraw Funds
+                        <Landmark className="w-5 h-5 text-orange" /> Withdraw Funds
                     </h2>
                     <p className="text-sm text-gray-500 mb-6 font-medium">Transfer your earnings directly to your registered bank account.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1.5 ml-1">Amount to Withdraw</label>
+                            <label className="block text-[10px] font-bold text-orange uppercase tracking-widest mb-1.5 ml-1">Amount to Withdraw</label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
                                 <input
@@ -58,7 +58,7 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="Enter Amount"
-                                    className={`w-full pl-8 pr-4 py-3 bg-gray-50 border ${parseFloat(amount) > availableBalance ? 'border-red-500 ring-4 ring-red-500/10' : 'border-gray-200 focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500'} rounded-2xl outline-none transition-all font-bold text-gray-800`}
+                                    className={`w-full pl-8 pr-4 py-3 bg-gray-50 border ${parseFloat(amount) > availableBalance ? 'border-red-500 ring-4 ring-red-500/10' : 'border-gray-200 focus:ring-4 focus:ring-orange/10 focus:border-orange'} rounded-2xl outline-none transition-all font-bold text-gray-800`}
                                 />
                             </div>
                             <div className="mt-2 ml-1 flex flex-col gap-1">
@@ -77,12 +77,12 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                         </div>
 
                         <div>
-                            <label className="block text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-1.5 ml-1">Select Bank Account</label>
+                            <label className="block text-[10px] font-bold text-orange uppercase tracking-widest mb-1.5 ml-1">Select Bank Account</label>
                             {bankAccounts.length > 0 ? (
                                 <select
                                     value={selectedBankId}
                                     onChange={(e) => setSelectedBankId(e.target.value)}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-bold text-gray-800 appearance-none cursor-pointer"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange/10 focus:border-orange outline-none transition-all font-bold text-gray-800 appearance-none cursor-pointer"
                                 >
                                     {bankAccounts.map(bank => (
                                         <option key={bank.id} value={bank.id}>
@@ -104,7 +104,7 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                     onClick={handleWithdraw}
                     disabled={!amount || bankAccounts.length === 0 || parseFloat(amount) > availableBalance}
                     variant="primary"
-                    className="w-full lg:w-48 font-bold py-4 px-6 rounded-2xl shadow-lg shadow-amber-200 active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full lg:w-48 font-bold py-4 px-6 rounded-2xl shadow-lg shadow-orange/20 active:scale-95 flex items-center justify-center gap-2"
                 >
                     Withdraw Now <ArrowRight className="w-4 h-4" />
                 </Button>

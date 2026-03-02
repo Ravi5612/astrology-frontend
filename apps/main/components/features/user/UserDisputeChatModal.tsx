@@ -7,21 +7,7 @@ import { getNotificationSocket, getSupportSocket } from "@packages/ui/src/utils/
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, uploadClientDocument, getDisputeById } from "@/libs/api-profile";
 
-// Define message types locally since we can't import from admin
-interface Message {
-    id: number;
-    disputeId: number;
-    senderType: "user" | "admin";
-    senderId: number;
-    senderName: string;
-    message?: string;
-    attachmentUrl?: string;
-    attachmentType?: "image" | "document" | "pdf";
-    isRead: boolean;
-    createdAt: string;
-    isSystemNote?: boolean;
-    is_system_note?: boolean;
-}
+import { DisputeMessage as Message } from "@/lib/types";
 
 interface UserDisputeChatModalProps {
     disputeId: number; // Just ID needed

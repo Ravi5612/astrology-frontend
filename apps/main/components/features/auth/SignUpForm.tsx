@@ -101,149 +101,163 @@ const SignUpForm: React.FC = () => {
     };
 
     return (
-        <div className="form-data shadow-sm p-4 rounded-xl bg-white">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h6 className="mb-0">
-                    Welcome to <br />
-                    <span style={{ color: "var(--primary-color)" }}>
+        <div className="w-full max-w-[500px] mx-auto bg-white rounded-3xl shadow-[0_10px_50px_rgba(0,0,0,0.06)] border border-gray-100 p-6 md:p-10 mt-0 mb-16">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-gray-50">
+                <div>
+                    <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
+                        Welcome to
+                    </h6>
+                    <span className="text-xl font-black text-orange block">
                         Astrology Bharat
                     </span>
-                </h6>
-                <h6 className="mb-0">
-                    Already Account? <br />
-                    <Link href="/sign-in" className="sign-up fw-bold">
+                </div>
+                <div className="text-left sm:text-right">
+                    <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
+                        Already Account?
+                    </h6>
+                    <Link href="/sign-in" className="text-base font-bold text-[#4A1D1F] hover:text-orange transition-all">
                         Sign In
                     </Link>
-                </h6>
+                </div>
             </div>
 
-            <div className="sign-in-heading mb-4">
-                <h2 style={{ color: "var(--primary-color)" }}>Sign Up</h2>
+            <div className="mb-6">
+                <h2 className="text-3xl font-black text-[#301118]">Sign Up</h2>
+                <p className="text-gray-400 text-sm mt-1 font-medium">Create your cosmic account today</p>
             </div>
 
-            <div className="social-links d-flex gap-3 mb-4">
-                <div
-                    className="social-button d-flex align-items-center gap-2 border px-3 py-2 rounded pointer"
+            <div className="mb-6">
+                <button
+                    type="button"
+                    className="flex items-center justify-center gap-3 w-full border-2 border-gray-100 rounded-2xl py-3 px-6 hover:bg-gray-50 hover:border-gray-200 transition-all cursor-pointer shadow-sm group"
                     onClick={handleGoogleLogin}
-                    style={{ cursor: "pointer" }}
                 >
                     <Image
                         src="/images/google-color-svgrepo-com.svg"
                         alt="Google"
-                        height={22}
-                        width={22}
+                        height={20}
+                        width={20}
+                        className="group-hover:scale-110 transition-transform"
                     />
-                    <small>Sign in with Google</small>
-                </div>
+                    <span className="font-bold text-gray-600 text-sm">Continue with Google</span>
+                </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                <div className="row g-3">
-                    <div className="col-md-12">
-                        <label htmlFor="fullName" className="form-label fw-semibold">
+            <div className="relative mb-6 text-center">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-50"></div>
+                </div>
+                <span className="relative px-3 text-[10px] font-black text-gray-300 bg-white uppercase tracking-[0.2em]">OR REGISTER WITH DETAILS</span>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                    <div>
+                        <label htmlFor="fullName" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
                             Full Name *
                         </label>
                         <input
                             type="text"
                             id="fullName"
                             name="fullName"
-                            className="form-control"
+                            className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
                             placeholder="Enter Your Full Name"
                             value={formData.fullName}
                             onChange={handleInputChange}
                             required
                         />
                     </div>
-                    <div className="col-12">
-                        <label htmlFor="email" className="form-label fw-semibold">
+                    <div>
+                        <label htmlFor="email" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
                             Email Address *
                         </label>
                         <input
                             type="email"
                             id="email"
                             name="email"
-                            className="form-control"
+                            className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
                             placeholder="Enter Email Address"
                             value={formData.email}
                             onChange={handleInputChange}
                             required
                         />
                     </div>
-                    <div className="col-12">
-                        <label htmlFor="phoneNumber" className="form-label fw-semibold">
+                    <div>
+                        <label htmlFor="phoneNumber" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
                             Phone Number *
                         </label>
                         <input
                             type="tel"
                             id="phoneNumber"
                             name="phoneNumber"
-                            className="form-control"
-                            placeholder="Enter 10-digit Phone Number"
+                            className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
+                            placeholder="10-digit Phone Number"
                             value={formData.phoneNumber}
                             onChange={handleInputChange}
                             required
                             maxLength={10}
                         />
                     </div>
-                    <div className="col-12">
-                        <label htmlFor="password" title="Password" className="form-label fw-semibold">
+                    <div>
+                        <label htmlFor="password" title="Password" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
                             Password *
                         </label>
-                        <div className="position-relative">
+                        <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id="password"
                                 name="password"
-                                className="form-control"
-                                placeholder="Enter Password"
-                                style={{ paddingRight: "40px" }}
+                                className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
+                                placeholder="••••••••"
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
                             />
                             <button
                                 type="button"
-                                className="position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent pe-3 text-muted"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 border-0 bg-transparent text-gray-300 hover:text-orange transition-colors"
                                 onClick={() => setShowPassword(!showPassword)}
-                                style={{ zIndex: 10 }}
                             >
-                                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} text-base`}></i>
                             </button>
                         </div>
                     </div>
-                    <div className="col-12">
-                        <label htmlFor="confirmPassword" title="Confirm Password" className="form-label fw-semibold">
+                    <div>
+                        <label htmlFor="confirmPassword" title="Confirm Password" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
                             Confirm Password *
                         </label>
-                        <div className="position-relative">
+                        <div className="relative">
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 id="confirmPassword"
                                 name="confirmPassword"
-                                className="form-control"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
                                 placeholder="Re-enter Password"
-                                style={{ paddingRight: "40px" }}
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
                                 required
                             />
                             <button
                                 type="button"
-                                className="position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent pe-3 text-muted"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 border-0 bg-transparent text-gray-300 hover:text-orange transition-colors"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                style={{ zIndex: 10 }}
                             >
-                                <i className={`fa-solid ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                                <i className={`fa-solid ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"} text-base`}></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 <button
                     type="submit"
-                    className="btn w-100 mt-4 py-2 fw-semibold bg-primary hover:bg-primary-hover text-white border-0 transition-all font-bold"
+                    className="w-full py-3.5 rounded-2xl bg-orange text-white text-base font-black shadow-[0_8px_20px_rgba(255,107,0,0.2)] hover:shadow-[0_12px_25px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none mt-2"
                     disabled={isLoading}
                 >
-                    {isLoading ? "Signing Up..." : "Sign Up"}
+                    {isLoading ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Creating Account...
+                        </span>
+                    ) : "Sign Up Account"}
                 </button>
             </form>
         </div>

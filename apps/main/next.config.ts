@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   /* config options here */
   transpilePackages: ["@repo/ui", "@repo/routes", "swiper"],
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",
@@ -19,6 +18,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com", // Google OAuth profile pictures
       },
     ],
   },
@@ -44,9 +47,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+
   devIndicators: false,
 };
 

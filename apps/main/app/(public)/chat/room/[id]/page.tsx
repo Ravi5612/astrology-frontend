@@ -11,25 +11,12 @@ import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { toast } from "react-toastify";
 import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
 
+import { ChatMessage, ChatSession, Astrologer } from "@/lib/types";
+
 const Image = NextImage as any;
 const {
     ChevronLeft, Paperclip, Send, Clock, Star, Phone, MoreVertical, Wallet, X, Home, User: UserIcon, Sun, Moon, AlertTriangle, AlertCircle, FileText
 } = LucideIcons as any;
-
-interface Message {
-    id: number;
-    senderId: number;
-    senderType: "user" | "expert" | "admin";
-    content: string;
-    type?: string;
-    attachmentUrl?: string;
-    attachmentType?: "image" | "document";
-    attachment_url?: string;
-    attachment_type?: string;
-    imageUrl?: string;
-    mediaUrl?: string;
-    createdAt?: string;
-}
 
 // Waiting Countdown Component for User Side
 function WaitingCountdown({ expiresAt, onExpire }: { expiresAt: string; onExpire: () => void }) {
@@ -86,9 +73,9 @@ function ChatRoomContent() {
     const [timeLeft, setTimeLeft] = useState(0); // Initialize at 0
     const [elapsedTime, setElapsedTime] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [sessionStatus, setSessionStatus] = useState<'pending' | 'active' | 'completed'>('pending');
-    const [expertData, setExpertData] = useState<any>(null);
+    const [expertData, setExpertData] = useState<Astrologer | null>(null);
     const [expiresAt, setExpiresAt] = useState<string | null>(null);
     const [isFree, setIsFree] = useState<boolean>(false);
     const [freeMinutes, setFreeMinutes] = useState<number>(0);
@@ -100,9 +87,10 @@ function ChatRoomContent() {
     const [reviewRating, setReviewRating] = useState<number>(0);
     const [reviewComment, setReviewComment] = useState<string>("");
     const [reviewSubmitted, setReviewSubmitted] = useState<boolean>(false);
+    const [reviewCommentSubmitted, setReviewCommentSubmitted] = useState<boolean>(false); // Added for clarity
     const [reviewLoading, setReviewLoading] = useState<boolean>(false);
 
-    const [sessionSummary, setSessionSummary] = useState<any>(null);
+    const [sessionSummary, setSessionSummary] = useState<ChatSession | null>(null);
     const [inputValue, setInputValue] = useState("");
     const [typingStatus, setTypingStatus] = useState<{ senderName: string; isTyping: boolean } | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -208,7 +196,7 @@ function ChatRoomContent() {
             chatSocket.on('connect', onConnect);
         }
 
-        chatSocket.on('new_message', (msg: Message) => {
+        chatSocket.on('new_message', (msg: ChatMessage) => {
             setMessages((prev) => [...prev, msg]);
         });
 
@@ -522,13 +510,18 @@ function ChatRoomContent() {
                             </div>
 
                             {/* ... (rest of messages mapping identical) ... */}
-                            {messages.map((msg: Message) => {
+                            {messages.map((msg: ChatMessage) => {
                                 // Debugging attachment issues
                                 console.log("Rendering Msg:", msg);
+                                const mSenderType = msg.senderType || (msg as any).sender_type;
+                                const isAdmin = mSenderType === "admin";
+                                const isExpert = mSenderType === "expert";
+                                const isUser = mSenderType === "user";
+
                                 return (
-                                    <div key={msg.id} className={`flex gap-3 md:gap-4 ${msg.senderType === "user" ? "flex-row-reverse" : "flex-row"} items-start`}>
+                                    <div key={msg.id} className={`flex gap-3 md:gap-4 ${isUser ? "flex-row-reverse" : "flex-row"} items-start`}>
                                         <div className="flex-shrink-0 mt-1">
-                                            <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 ${msg.senderType === "user" ? "border-white/10" : "border-[#fd6410]/30"} overflow-hidden shadow-lg flex items-center justify-center bg-[#fd6410]`}>
+                                            <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 ${isUser ? "border-white/10" : "border-[#fd6410]/30"} overflow-hidden shadow-lg flex items-center justify-center bg-[#fd6410]`}>
                                                 {msg.senderType === "user" && clientUser?.avatar ? (
                                                     <Image
                                                         src={clientUser.avatar}
@@ -547,19 +540,19 @@ function ChatRoomContent() {
                                                     />
                                                 ) : (
                                                     <span className="text-white font-bold text-xs">
-                                                        {msg.senderType === "user" ? (clientUser?.name?.charAt(0) || 'U') : (expertData.name?.charAt(0) || 'E')}
+                                                        {isUser ? (clientUser?.name?.charAt(0) || 'U') : (expertData.name?.charAt(0) || 'E')}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className={`flex flex-col ${msg.senderType === "user" ? "items-end" : msg.senderType === "admin" ? "items-center w-full" : "items-start"} max-w-[85%] md:max-w-[70%] ${msg.senderType === "admin" ? "mx-auto" : ""}`}>
+                                        <div className={`flex flex-col ${isUser ? "items-end" : isAdmin ? "items-center w-full" : "items-start"} max-w-[85%] md:max-w-[70%] ${isAdmin ? "mx-auto" : ""}`}>
                                             <span className="text-[10px] uppercase font-bold tracking-widest opacity-30 mb-1 px-2">
-                                                {msg.senderType === "user" ? "You" : msg.senderType === "admin" ? "System Message" : expertData.name}
+                                                {isUser ? "You" : isAdmin ? "System Message" : expertData.name}
                                             </span>
-                                            <div className={`w-full ${msg.senderType === "user"
+                                            <div className={`w-full ${isUser
                                                 ? "bg-gradient-to-br from-[#fff9f2] to-[#fff3e6] text-[#2A0A0A] rounded-2xl rounded-br-none px-5 py-3 md:px-6 md:py-4"
-                                                : msg.senderType === "admin"
+                                                : isAdmin
                                                     ? "bg-red-50 text-red-600 border-2 border-red-100 rounded-2xl px-5 py-3 md:px-6 md:py-4 text-center font-bold"
                                                     : "bg-white text-[#2A0A0A] rounded-2xl rounded-bl-none px-5 py-3 md:px-6 md:py-4"
                                                 } shadow-xl relative transition-all hover:scale-[1.01]`}>
@@ -601,7 +594,7 @@ function ChatRoomContent() {
                                                     </div>
                                                 )}
                                                 <p className="text-[14px] md:text-base leading-relaxed">{msg.content}</p>
-                                                <div className={`mt-1 flex ${msg.senderType === "user" ? "justify-end" : msg.senderType === "admin" ? "justify-center" : "justify-start"} text-black font-medium text-[10px] opacity-40`}>
+                                                <div className={`mt-1 flex ${isUser ? "justify-end" : isAdmin ? "justify-center" : "justify-start"} text-black font-medium text-[10px] opacity-40`}>
                                                     {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
                                             </div>

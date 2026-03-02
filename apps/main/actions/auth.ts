@@ -4,25 +4,19 @@ import { cookies } from "next/headers";
 import safeFetch from "@packages/safe-fetch/safeFetch";
 import { API_CONFIG } from "@/lib/api-config";
 
+import {
+  LoginFormData,
+  RegisterFormData,
+  AuthResponse,
+  AuthActionResponse
+} from "@/lib/types";
+
 // ─────────────────────────────────────────────────────────
 // LOGIN — Calls backend via safeFetch (Server-Side Only)
 // Credentials NEVER appear in the browser Network tab.
 // ─────────────────────────────────────────────────────────
-export async function loginAction(formData: {
-  email: string;
-  password: string;
-}) {
-  const [data, error] = await safeFetch<{
-    accessToken?: string;
-    refreshToken?: string;
-    user?: {
-      id: number;
-      name: string;
-      email: string;
-      roles?: string[];
-      avatar?: string;
-    };
-  }>(API_CONFIG.AUTH.LOGIN.url, {
+export async function loginAction(formData: LoginFormData): Promise<AuthActionResponse> {
+  const [data, error] = await safeFetch<AuthResponse>(API_CONFIG.AUTH.LOGIN.url, {
     method: API_CONFIG.AUTH.LOGIN.method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -66,7 +60,7 @@ export async function loginAction(formData: {
 // ─────────────────────────────────────────────────────────
 // LOGOUT — Clears HttpOnly cookies server-side
 // ─────────────────────────────────────────────────────────
-export async function logoutAction() {
+export async function logoutAction(): Promise<AuthActionResponse> {
   const cookieStore = await cookies();
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
@@ -76,13 +70,8 @@ export async function logoutAction() {
 // ─────────────────────────────────────────────────────────
 // REGISTER — Calls backend via safeFetch (Server-Side Only)
 // ─────────────────────────────────────────────────────────
-export async function registerAction(registerData: {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-}) {
-  const [data, error] = await safeFetch<{ message?: string }>(
+export async function registerAction(registerData: RegisterFormData): Promise<AuthActionResponse> {
+  const [data, error] = await safeFetch<AuthResponse>(
     API_CONFIG.AUTH.REGISTER.url,
     {
       method: API_CONFIG.AUTH.REGISTER.method,

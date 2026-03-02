@@ -24,11 +24,7 @@ const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: s
 const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
 const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
-type Result = {
-  patchup: number; // 40–90
-  breakup: number; // 5–60
-  advice: string;
-};
+import { BreakupPatchupResult } from "@/lib/types";
 
 const premiumCardStyles = `
   .glass-card {
@@ -81,7 +77,7 @@ const BreakupPatchupCalculator: React.FC = () => {
   const [partnerAge, setPartnerAge] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<Result | null>(null);
+  const [result, setResult] = useState<BreakupPatchupResult | null>(null);
 
   const resultsRef = useRef<HTMLDivElement | null>(null);
 

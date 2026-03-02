@@ -54,7 +54,7 @@ export default function ServicesPage() {
             Services & Pricing
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1">
-            Manage astrology services and pricing
+            Manage astrology sessfbfrvices and pricing
           </p>
         </div>
 

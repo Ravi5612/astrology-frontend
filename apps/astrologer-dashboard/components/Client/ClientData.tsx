@@ -39,7 +39,14 @@ export default function ClientsPage() {
           expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID")
         ]);
 
-        const sessions = sessionsRes.status === 'fulfilled' ? sessionsRes.value.data : [];
+        const getSessionsData = (res: any) => {
+          if (res.status !== 'fulfilled') return [];
+          if (Array.isArray(res.value.data)) return res.value.data;
+          if (Array.isArray(res.value)) return res.value; // In case the interceptor already returns data
+          return [];
+        };
+
+        const sessions = getSessionsData(sessionsRes);
         const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : [];
 
         // Map API response to Client interface
@@ -88,7 +95,10 @@ export default function ClientsPage() {
             phone: session.user?.phone || "Hidden", // Phone might not be exposed
             email: session.user?.email || "Hidden",
             lastConsultation: {
-              date: new Date(session.createdAt).toISOString().split('T')[0],
+              date: (() => {
+                const d = new Date(session.createdAt);
+                return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
+              })(),
               duration: `${duration} min`,
               type: "chat"
             },
@@ -126,8 +136,9 @@ export default function ClientsPage() {
     setLoadingChat(true);
 
     try {
-      const response = await apiClient.get(`/chat/history/${session.id}`);
-      setChatMessages(response.data);
+      const response = await apiClient.get<any>(`/chat/history/${session.id}`);
+      const messages = Array.isArray(response) ? response : (response?.data || []);
+      setChatMessages(messages);
     } catch (error) {
       console.error("Failed to load chat history:", error);
       toast.error("Failed to load chat history");
@@ -370,7 +381,7 @@ export default function ClientsPage() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#fd6410]"></div>
                   <p className="text-gray-400 text-sm font-medium">Loading conversation...</p>
                 </div>
-              ) : chatMessages.length === 0 ? (
+              ) : (chatMessages?.length || 0) === 0 ? (
                 <div className="text-center py-20 text-gray-400">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MessageSquare size={32} className="opacity-40" />

@@ -6,24 +6,7 @@ import { getApiUrl } from "@/utils/api-config";
 
 const API_BASE_URL = getApiUrl();
 
-interface ExpertData {
-  id: number;
-  user: {
-    name: string;
-    avatar?: string;
-  };
-  specialization: string;
-  experience_in_years: number;
-  languages: string[];
-  price: number;
-  rating: number;
-  video?: string;
-  bio?: string;
-  detailed_experience?: any[];
-  gallery?: string[];
-  videos?: string[];
-  total_likes?: number; // ADDED
-}
+import { ExpertProfile, Astrologer } from "@/lib/types";
 
 export default async function Page({
   params,

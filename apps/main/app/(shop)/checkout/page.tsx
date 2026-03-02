@@ -7,6 +7,7 @@ import apiClient, { getClientProfile, applyCoupon } from "@/libs/api-profile";
 import { toast } from "react-toastify";
 import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
+import { Product, AddressDto } from "@/lib/types";
 
 const CheckoutContent = () => {
   const router = useRouter();
@@ -16,7 +17,7 @@ const CheckoutContent = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
-  const [directProduct, setDirectProduct] = useState<any>(null);
+  const [directProduct, setDirectProduct] = useState<Product | null>(null);
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [couponCode, setCouponCode] = useState("");
@@ -129,7 +130,7 @@ const CheckoutContent = () => {
   };
 
   // Shipping Address State
-  const [address, setAddress] = useState({
+  const [address, setAddress] = useState<AddressDto>({
     line1: "",
     line2: "",
     city: "",

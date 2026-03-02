@@ -14,27 +14,12 @@ const Image = NextImage as any;
 const NextLink = Link as any;
 const XIcon = X as any;
 
-interface AstrologerData {
-  id: string | number;
-  name: string;
-  image: string;
-  expertise: string;
-  experience: number;
-  language: string;
-  price: number;
-  video: string;
-  ratings: number;
-  bio: string;
-  detailed_experience: any[];
-  gallery: string[];
-  videos: string[];
-  total_likes?: number; // ADDED
-}
+import { Astrologer } from "@/lib/types";
 
 export default function AstrologerDetailsClient({
   astrologer,
 }: {
-  astrologer: AstrologerData;
+  astrologer: Astrologer;
 }) {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -50,7 +35,7 @@ export default function AstrologerDetailsClient({
       const fetchReviews = async () => {
         setLoadingReviews(true);
         try {
-          const res = await getExpertReviews(astrologer.id);
+          const res = await getExpertReviews(astrologer.id!);
           setReviews(res.data);
           setTotalReviews(res.total);
         } catch (error) {
@@ -111,7 +96,7 @@ export default function AstrologerDetailsClient({
                     </div>
                   </div>
                   <button
-                    onClick={() => setSelectedVideo(astrologer.video)}
+                    onClick={() => setSelectedVideo(astrologer.video || null)}
                     className="absolute bottom-1 right-1 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                   >
                     <i className="fa-solid fa-play text-[12px]"></i>

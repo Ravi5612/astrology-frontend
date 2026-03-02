@@ -1,12 +1,15 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
 
-interface Message {
+import { ChatMessage } from "@/lib/types";
+
+// Adapt local Message to ChatMessage
+type Message = {
     id: number;
     text: string;
-    sender: "user" | "astrologer";
+    sender: "user" | "astrologer" | "expert";
     time: string;
-}
+} & Record<string, any>;
 
 const ChatPage = () => {
     const astrologerName = "Astrologer";
@@ -42,7 +45,7 @@ const ChatPage = () => {
             const responseMessage: Message = {
                 id: Date.now() + 1,
                 text: "Let me check your charts. Please give me a moment.",
-                sender: "astrologer",
+                sender: "expert",
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages((prev) => [...prev, responseMessage]);

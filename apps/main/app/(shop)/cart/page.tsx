@@ -2,7 +2,6 @@
 import React from "react";
 import { getProductImageUrl } from "@/utils/image-utils";
 import ProductCarousel from "@/components/features/shop/ProductCarousel";
-import { Button, Form } from "react-bootstrap";
 import { useCartStore } from "@/store/useCartStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -113,36 +112,27 @@ const CartPage: React.FC = () => {
                       </div>
 
                       {/* Quantity Controls */}
-                      <div className="d-flex align-items-center">
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          className="rounded-circle"
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm"
                           onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, -1)}
                           disabled={isLoading}
                         >
-                          <i className="fas fa-minus"></i>
-                        </Button>
-                        <Form.Control
+                          <i className="fas fa-minus" />
+                        </button>
+                        <input
                           type="text"
                           value={item.quantity}
                           readOnly
-                          className="mx-2 text-center border-0 fw-semibold"
-                          style={{
-                            width: "45px",
-                            background: "#f1f3f5",
-                            borderRadius: "8px",
-                          }}
+                          className="w-[45px] text-center font-semibold border-0 bg-[#f1f3f5] rounded-lg py-1"
                         />
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          className="rounded-circle"
+                        <button
+                          className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm"
                           onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, 1)}
                           disabled={isLoading}
                         >
-                          <i className="fas fa-plus"></i>
-                        </Button>
+                          <i className="fas fa-plus" />
+                        </button>
                       </div>
 
                       {/* Price */}
@@ -151,15 +141,13 @@ const CartPage: React.FC = () => {
                       </div>
 
                       {/* Remove */}
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="rounded-circle"
+                      <button
+                        className="w-8 h-8 flex items-center justify-center rounded-full border border-red-300 text-red-500 hover:bg-red-50 transition text-sm"
                         onClick={() => handleRemoveItem(item.productId || item.product?.id || 0)}
                         disabled={isLoading}
                       >
-                        <i className="fas fa-trash"></i>
-                      </Button>
+                        <i className="fas fa-trash" />
+                      </button>
                     </div>
                   );
                 })}
@@ -191,15 +179,14 @@ const CartPage: React.FC = () => {
                     </span>
                   </li>
                 </ul>
-                <Button
-                  variant="warning"
-                  className="w-100 text-white fw-semibold py-2"
+                <button
+                  className="w-full text-white font-semibold py-2 rounded-lg hover:opacity-90 transition"
                   style={{ background: "#d9a03d", border: "none" }}
                   onClick={() => router.push("/checkout?type=order")}
                 >
                   Proceed to Checkout{" "}
-                  <i className="fas fa-arrow-right ms-2"></i>
-                </Button>
+                  <i className="fas fa-arrow-right ml-2" />
+                </button>
               </div>
             </div>
           </div>

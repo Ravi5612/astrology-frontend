@@ -10,7 +10,7 @@ import apiClient from "@/libs/api-profile";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, User, Loader2, Star, X } = LucideIcons as any;
 
-type CallStatus = 'ringing' | 'connecting' | 'connected' | 'ended';
+import { CallStatus, CallSession } from "@/lib/types";
 
 const SOCKET_URL = getApiUrl().replace('/api/v1', '');
 
@@ -23,7 +23,7 @@ export default function CallRoomPage() {
     const [isMuted, setIsMuted] = useState(false);
     const [isCameraOff, setIsCameraOff] = useState(false);
     const [callDuration, setCallDuration] = useState(0);
-    const [sessionData, setSessionData] = useState<any>(null);
+    const [sessionData, setSessionData] = useState<CallSession | null>(null);
     const [callType, setCallType] = useState<'audio' | 'video'>('audio');
 
     // ─── Review / Rating ──────────────────────────────────────────────────────
@@ -445,8 +445,8 @@ export default function CallRoomPage() {
                                 >
                                     <Star
                                         className={`w-10 h-10 transition-colors ${star <= reviewRating
-                                                ? 'fill-yellow-400 text-yellow-400'
-                                                : 'text-white/20 fill-transparent'
+                                            ? 'fill-yellow-400 text-yellow-400'
+                                            : 'text-white/20 fill-transparent'
                                             }`}
                                     />
                                 </button>

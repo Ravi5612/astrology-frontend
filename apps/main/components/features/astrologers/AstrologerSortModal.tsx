@@ -1,12 +1,7 @@
 "use client";
 import React from "react";
 
-interface AstrologerSortModalProps {
-    modalId: string;
-    sortBy: string;
-    setSortBy: (sort: string) => void;
-    applySort: () => void;
-}
+import { AstrologerSortModalProps } from "@/lib/types";
 
 const AstrologerSortModal: React.FC<AstrologerSortModalProps> = ({
     modalId,

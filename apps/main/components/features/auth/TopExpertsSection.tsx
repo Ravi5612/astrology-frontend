@@ -39,60 +39,54 @@ const TopExpertsSection: React.FC = () => {
     }, []);
 
     return (
-        <div className="popular-astrology m-hidden pt-3">
-            <h3 className="text-purple mb-3 text-left">Top Rated Experts</h3>
-            <div className="row g-3">
+        <div className="mt-8 hidden md:block">
+            <h3 className="text-2xl font-black text-[#301118] mb-6 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-orange/10 flex items-center justify-center">
+                    <i className="fa-solid fa-crown text-orange text-sm"></i>
+                </span>
+                Top Rated Experts
+            </h3>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {expertsLoading ? (
-                    <div className="col-12 text-center py-4">
-                        <div className="spinner-border text-primary" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </div>
+                    <div className="col-span-full flex justify-center py-12">
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange"></div>
                     </div>
                 ) : topExperts.length > 0 ? (
                     topExperts.map((expert, idx) => (
-                        <div className="col-lg-4 col-sm-6 col-md-4 col-6" key={expert.id || idx}>
-                            <div className="horoscopes-items text-center">
-                                <div className="position-relative d-inline-block">
+                        <div className="group" key={expert.id || idx}>
+                            <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center hover:border-orange/20 hover:shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300">
+                                <div className="relative inline-block mb-3">
                                     <Image
                                         src={expert.user?.avatar || "/images/dummy-astrologer.jpg"}
                                         alt={expert.user?.name || "Expert"}
                                         height={80}
                                         width={80}
-                                        className="rounded-circle object-cover"
-                                        style={{ border: "2px solid var(--primary-color, black)", padding: "2px" }}
+                                        className="rounded-full object-cover border-2 border-orange/20 p-1 group-hover:scale-105 transition-transform duration-300"
                                     />
                                     {expert.is_online && (
-                                        <span className="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle" style={{ width: "12px", height: "12px" }}></span>
+                                        <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm"></span>
                                     )}
                                 </div>
-                                <h6 className="fw-bold mt-2 mb-1 text-truncate" style={{ fontSize: '14px' }}>
+                                <h6 className="font-bold text-[#301118] leading-tight mb-1 truncate px-1">
                                     {expert.user?.name || 'Expert'}
                                 </h6>
-                                <div className="d-flex align-items-center justify-content-center gap-1 mb-1">
-                                    <i className="fa-solid fa-star text-warning" style={{ fontSize: '12px' }}></i>
-                                    <small className="fw-bold">{expert.rating || '5.0'}</small>
+                                <div className="flex items-center justify-center gap-1 mb-1 bg-orange/5 rounded-full py-0.5 px-2 w-fit mx-auto">
+                                    <i className="fa-solid fa-star text-orange text-[10px]"></i>
+                                    <span className="text-xs font-black text-orange">{expert.rating || '5.0'}</span>
                                 </div>
-                                <small
-                                    className="text-muted d-block text-truncate"
-                                    style={{ fontSize: "11px" }}
-                                >
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate block opacity-70">
                                     {expert.specialization || "Astrology"}
-                                </small>
+                                </span>
                             </div>
                         </div>
                     ))
                 ) : (
                     [1, 2, 3].map((_, idx) => (
-                        <div className="col-lg-4 col-sm-6 col-md-4 col-6" key={idx}>
-                            <div className="horoscopes-items text-center opacity-50">
-                                <Image
-                                    src="/images/dummy-astrologer.jpg"
-                                    alt="placeholder"
-                                    height={80}
-                                    width={80}
-                                />
-                                <h6 className="fw-bold mt-2">Expert</h6>
-                                <small className="text-muted">No Expert Found</small>
+                        <div className="opacity-50" key={idx}>
+                            <div className="bg-white rounded-3xl border-2 border-gray-50 p-4 text-center">
+                                <div className="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-3 animate-pulse"></div>
+                                <div className="h-4 bg-gray-50 rounded w-2/3 mx-auto mb-2 animate-pulse"></div>
+                                <div className="h-3 bg-gray-50 rounded w-1/2 mx-auto animate-pulse"></div>
                             </div>
                         </div>
                     ))

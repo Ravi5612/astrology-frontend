@@ -2,15 +2,7 @@ import React from "react";
 import ProductGrid from "@/components/features/shop/ProductGrid";
 import { getBasePath } from "@/utils/api-config";
 
-interface Product {
-  id?: string;
-  _id?: string;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  imageUrl: string;
-}
+import { Product } from "@/lib/types";
 
 async function getProducts(): Promise<Product[]> {
   // Use getBasePath() to avoid double /api/v1 (NEXT_PUBLIC_API_URL already contains it)

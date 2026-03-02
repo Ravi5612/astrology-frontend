@@ -42,17 +42,15 @@ export default function ExpertiseAvailability({
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
-                    <Briefcase className="w-5 h-5 mr-2 text-yellow-600" /> Expertise & Pricing
+                    <Briefcase className="w-5 h-5 mr-2 text-orange" /> Expertise & Pricing
                 </h2>
-                {!isEditing && (
-                    <button
-                        onClick={onEdit}
-                        className="flex items-center space-x-1 text-sm text-yellow-600 hover:text-yellow-700 font-medium"
-                    >
-                        <Edit3 className="w-4 h-4" />
-                        <span>Edit</span>
-                    </button>
-                )}
+                <button
+                    onClick={onEdit}
+                    className="flex items-center space-x-1 text-sm text-orange hover:text-orange/80 font-medium"
+                >
+                    <Edit3 className="w-4 h-4" />
+                    <span>Edit</span>
+                </button>
             </div>
 
             {isEditing ? (
@@ -65,7 +63,7 @@ export default function ExpertiseAvailability({
                             value={tempProfile.specialization}
                             onChange={onChange}
                             placeholder="e.g. Vedic Astrology, Numerology"
-                            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                         />
                         <p className="text-[10px] text-gray-400 mt-1">Separate with commas for multiple.</p>
                     </div>
@@ -81,7 +79,7 @@ export default function ExpertiseAvailability({
                                     value={tempProfile.chat_price}
                                     onChange={onChange}
                                     min="0"
-                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                                 />
                             </div>
                         </div>
@@ -95,7 +93,7 @@ export default function ExpertiseAvailability({
                                     value={tempProfile.call_price}
                                     onChange={onChange}
                                     min="0"
-                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                                 />
                             </div>
                         </div>
@@ -109,7 +107,7 @@ export default function ExpertiseAvailability({
                                     value={tempProfile.video_call_price}
                                     onChange={onChange}
                                     min="0"
-                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                                 />
                             </div>
                         </div>
@@ -123,7 +121,7 @@ export default function ExpertiseAvailability({
                                     value={tempProfile.price}
                                     onChange={onChange}
                                     min="0"
-                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                    className="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                                 />
                             </div>
                         </div>
@@ -147,7 +145,7 @@ export default function ExpertiseAvailability({
                                 value={newLang}
                                 onChange={(e) => setNewLang(e.target.value)}
                                 placeholder="Add language..."
-                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none text-sm text-black"
                                 onKeyPress={(e) => e.key === 'Enter' && addLanguage()}
                             />
                             <button
@@ -170,7 +168,7 @@ export default function ExpertiseAvailability({
                         </button>
                         <button
                             onClick={onSave}
-                            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-all shadow-md text-sm font-medium"
+                            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/90 transition-all shadow-md text-sm font-medium"
                         >
                             <Save className="w-4 h-4" />
                             <span>Save Changes</span>

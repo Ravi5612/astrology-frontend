@@ -2,11 +2,7 @@ import React, { Suspense } from "react";
 import AstrologerList from "./AstrologerList";
 import { getExperts } from "@/libs/api-experts";
 
-interface AstrologerListWrapperProps {
-    searchParams: Record<string, string | string[] | undefined>;
-    layout?: 'slider' | 'grid';
-    title?: string;
-}
+import { AstrologerListWrapperProps } from "@/lib/types";
 
 async function AstrologerListServer({ searchParams, layout, title }: AstrologerListWrapperProps) {
     // Filter searchParams to only include allowed expert query parameters

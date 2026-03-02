@@ -192,59 +192,76 @@ const OurAstrologer = () => {
     };
 
     return (
-        <section className="astrologer-list">
-            <div className="container">
-                <h2 className="title-line mt-4">
-                    <span>Find Your Astrologer</span>
-                </h2>
+        <section
+            className="py-[50px] relative overflow-hidden"
+            style={{
+                backgroundColor: '#301118',
+                backgroundImage: 'url(/images/bg-dark.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundAttachment: 'fixed',
+                backgroundRepeat: 'no-repeat'
+            }}
+        >
+            <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
+                <div className="relative mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                        Find Your Astrologer
+                    </h2>
+                    <div className="w-48 h-1 bg-orange"></div>
+                </div>
 
-                <div className="row align mb-4">
-                    <div className="col-sm-5">
-                        <div className="search-box">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center mb-10 text-white">
+                    {/* Search Box */}
+                    <div className="lg:col-span-5 text-black">
+                        <div className="flex w-full shadow-lg">
                             <input
                                 type="text"
-                                className="bg-white"
+                                className="w-full px-6 py-3 border-0 rounded-l-full outline-none text-base bg-white text-black"
                                 placeholder="Search Astrologer by Name..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <button type="button" className="bg-primary hover:bg-primary-hover text-white transition-all">Search</button>
+                            <button type="button" className="px-8 py-3 bg-orange text-white rounded-r-full font-bold text-base hover:opacity-90 transition-all">Search</button>
                         </div>
                     </div>
-                    <div className="col-sm-3 text-end">
+
+                    {/* Filter & Sort Buttons */}
+                    <div className="lg:col-span-3 flex justify-center lg:justify-end gap-6">
                         <button
                             type="button"
-                            className="filter-btn border-0 bg-transparent"
+                            className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all"
                             data-bs-toggle="modal"
                             data-bs-target="#filterModal"
                         >
-                            <i className="fa-solid fa-filter"></i> Filter
+                            <i className="fa-solid fa-filter text-orange"></i> Filter
                         </button>
                         <button
                             type="button"
-                            className="filter-btn sort-btn border-0 bg-transparent"
+                            className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all"
                             data-bs-toggle="modal"
                             data-bs-target="#sortModal"
                         >
-                            <i className="fa-solid fa-sort"></i> Sort
+                            <i className="fa-solid fa-sort text-orange"></i> Sort
                         </button>
                     </div>
-                    <div className="col-sm-4 d-flex align-items-center">
+
+                    {/* Specialization Slider */}
+                    <div className="lg:col-span-4 flex items-center gap-2">
                         <button
                             onClick={() => scroll("left")}
-                            className="d-flex align-items-center justify-content-center text-primary rounded-full mr-2 hover:bg-primary/10 transition shrink-0"
-                            style={{ width: "30px", height: "30px", border: "none", background: "transparent" }}
+                            className="text-orange hover:scale-110 transition-transform"
                         >
-                            <i className="fa-solid fa-chevron-left"></i>
+                            <i className="fa-solid fa-chevron-left text-xl"></i>
                         </button>
                         <div
-                            className="flex gap-2.5 overflow-x-auto overflow-y-hidden whitespace-nowrap pb-2.5 [&::-webkit-scrollbar]:hidden w-full px-1"
+                            className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden whitespace-nowrap py-2 w-full px-2"
                             id="list-slider"
                             ref={scrollContainerRef}
                         >
                             <div
                                 onClick={() => setSelectedSpecialization("")}
-                                className={`px-[15px] py-2 rounded-[20px] text-sm font-medium border border-primary cursor-pointer transition duration-300 ${selectedSpecialization === "" ? "bg-primary text-white" : "bg-white text-[#1e0b0f] hover:bg-primary hover:text-white"}`}
+                                className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === "" ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
                             >
                                 All
                             </div>
@@ -252,7 +269,7 @@ const OurAstrologer = () => {
                                 <div
                                     key={spec}
                                     onClick={() => setSelectedSpecialization(spec)}
-                                    className={`px-[15px] py-2 rounded-[20px] text-sm font-medium border border-primary cursor-pointer transition duration-300 ${selectedSpecialization === spec ? "bg-primary text-white" : "bg-white text-[#1e0b0f] hover:bg-primary hover:text-white"}`}
+                                    className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === spec ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
                                 >
                                     {spec}
                                 </div>
@@ -260,10 +277,9 @@ const OurAstrologer = () => {
                         </div>
                         <button
                             onClick={() => scroll("right")}
-                            className="d-flex align-items-center justify-content-center text-primary rounded-full ml-2 hover:bg-primary/10 transition shrink-0"
-                            style={{ width: "30px", height: "30px", border: "none", background: "transparent" }}
+                            className="text-orange hover:scale-110 transition-transform"
                         >
-                            <i className="fa-solid fa-chevron-right"></i>
+                            <i className="fa-solid fa-chevron-right text-xl"></i>
                         </button>
                     </div>
                 </div>
@@ -389,7 +405,7 @@ const OurAstrologer = () => {
                     </div>
                 </div>
 
-                <div className="astro-grid">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mt-4">
                     {loading && astrologers.length === 0 ? (
                         Array.from({ length: 8 }).map((_, i) => (
                             <SkeletonCard key={i} />
@@ -419,8 +435,8 @@ const OurAstrologer = () => {
                 )}
 
                 {hasMore && !loading && (
-                    <div className="view-all mt-4 mb-4">
-                        <button onClick={handleLoadMore} className="btn bg-white border border-primary text-primary px-5 py-2.5 rounded-full font-bold hover:bg-primary hover:text-white transition duration-300 shadow-sm m-auto block">
+                    <div className="flex justify-center mt-8 mb-8">
+                        <button onClick={handleLoadMore} className="bg-white border border-orange text-orange px-8 py-2.5 rounded-full font-bold hover:bg-orange hover:text-white transition-all duration-300 shadow-md">
                             Load More Experts
                         </button>
                     </div>

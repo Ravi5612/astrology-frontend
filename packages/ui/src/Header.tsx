@@ -25,11 +25,19 @@ const SwiperNavButtons = () => {
   const swiper = useSwiper();
   return (
     <>
-      <div className="swiper-nav-prev  " style={{ marginLeft: "-10px" }} onClick={() => swiper.slidePrev()}>
-        <i className="fa-solid fa-chevron-left"></i>
+      <div
+        className="absolute top-1/2 -translate-y-1/2 left-[10px] w-8 h-8 bg-white border border-primary rounded-full flex items-center justify-center text-primary cursor-pointer z-[100] transition-all duration-300 shadow-md hover:bg-[#301118] hover:border-[#301118] hover:text-white hover:scale-110 pointer-events-auto"
+        style={{ marginLeft: '-10px' }}
+        onClick={() => swiper.slidePrev()}
+      >
+        <i className="fa-solid fa-chevron-left text-xs" />
       </div>
-      <div className="swiper-nav-next " style={{ marginRight: "-10px" }} onClick={() => swiper.slideNext()}>
-        <i className="fa-solid fa-chevron-right"></i>
+      <div
+        className="absolute top-1/2 -translate-y-1/2 right-[10px] w-8 h-8 bg-white border border-primary rounded-full flex items-center justify-center text-primary cursor-pointer z-[100] transition-all duration-300 shadow-md hover:bg-[#301118] hover:border-[#301118] hover:text-white hover:scale-110 pointer-events-auto"
+        style={{ marginRight: '-10px' }}
+        onClick={() => swiper.slideNext()}
+      >
+        <i className="fa-solid fa-chevron-right text-xs" />
       </div>
     </>
   );
@@ -305,36 +313,37 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   return (
     <>
-      <header className="top-head bg-brown text-white shadow-sm relative z-[1001]" style={{ height: 'auto', minHeight: '52px' }}>
-        <div className="container" style={{ overflow: 'visible' }}>
-          <div className="row align-items-center">
+      <header
+        className="bg-[#301118] text-white shadow-sm relative z-[1001] overflow-visible"
+        style={{ minHeight: '52px', padding: '10px 1rem', scrollbarWidth: 'none' }}
+      >
+        <div className="max-w-[1320px] mx-auto px-8 lg:px-16" style={{ overflow: 'visible' }}>
+          <div className="flex items-center w-full">
             {/* Left section: Welcome Text */}
-            <div className="col-lg-8 col-md-6 d-none d-md-block">
-              <p className="top-text mb-0 text-white">
+            <div className="flex-1 hidden md:block">
+              <p className="m-0 text-white text-base font-medium">
                 Connect with Verified Astrology Experts for Online Predictions.
               </p>
             </div>
 
             {/* Right section: Balance + Icons */}
-            <div className="col-lg-4 col-md-6 col-12">
-              <div className="d-flex justify-content-end align-items-center gap-4 gap-md-5">
+            <div className="ml-auto">
+              <div className="flex justify-end items-center gap-4 md:gap-5">
                 {isAuthenticated && (
                   <div
                     onMouseEnter={() => setShowFullBalance(true)}
                     onMouseLeave={() => setShowFullBalance(false)}
-                    className="d-flex align-items-center gap-1 gap-md-2 px-2 px-md-3 py-1.5 rounded-xl transition-all hover:scale-105 active:scale-95 cursor-help whitespace-nowrap bg-orange hover:opacity-90 shadow-lg"
+                    className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 rounded-xl transition-all hover:scale-105 active:scale-95 cursor-help whitespace-nowrap bg-orange hover:opacity-90 shadow-lg relative overflow-hidden"
                     style={{
                       minWidth: '75px',
                       justifyContent: 'center',
-                      position: 'relative',
-                      overflow: 'hidden',
                       border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}
                   >
                     {/* Subtle gloss effect */}
-                    <div className="position-absolute top-0 start-0 w-100 h-50 bg-white/10" style={{ pointerEvents: 'none' }}></div>
+                    <div className="absolute top-0 left-0 w-full h-1/2 bg-white/10" style={{ pointerEvents: 'none' }} />
 
-                    <i className="fa-solid fa-coins text-white text-xs" style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))' }}></i>
+                    <i className="fa-solid fa-coins text-white text-xs" style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))' }} />
                     <span className="text-white font-black text-sm tracking-tight" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
                       ₹{showFullBalance
                         ? currentBalance?.toLocaleString()
@@ -345,16 +354,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   </div>
                 )}
 
-                <div className="d-flex gap-3 gap-md-4 align-items-center">
+                <div className="flex gap-3 md:gap-4 items-center">
                   {isAuthenticated ? (
-                    <div className="d-flex gap-4 align-items-center justify-content-end">
+                    <div className="flex gap-4 items-center justify-end">
 
                       {/* Cart Icon */}
-                      <Link href={PATHS.CART} className="cart-top position-relative d-inline-flex">
-                        <i className="fa-solid fa-cart-shopping text-white text-xl"></i>
+                      <Link href={PATHS.CART} className="relative top-[3px] text-white hover:text-white inline-flex">
+                        <i className="fa-solid fa-cart-shopping text-white text-xl" />
                         {cartCount > 0 && (
                           <span
-                            className="position-absolute badge rounded-pill bg-danger"
+                            className="absolute inline-flex items-center justify-center rounded-full bg-red-500 text-white"
                             style={{
                               top: '-6px',
                               right: '-10px',
@@ -362,9 +371,6 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               padding: '2px 5px',
                               minWidth: '15px',
                               height: '15px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
                               border: '1px solid #331a1a'
                             }}
                           >
@@ -374,15 +380,15 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                       </Link>
 
                       {/* Notification Bell */}
-                      <div className="notification-dropdown-container position-relative">
+                      <div className="notification-dropdown-container relative">
                         <div
-                          className="cursor-pointer position-relative d-inline-flex"
+                          className="cursor-pointer relative inline-flex"
                           onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
                         >
-                          <i className="fa-solid fa-bell text-white text-xl"></i>
+                          <i className="fa-solid fa-bell text-white text-xl" />
                           {unreadCount > 0 && (
                             <span
-                              className="position-absolute badge rounded-pill bg-danger"
+                              className="absolute inline-flex items-center justify-center rounded-full bg-red-500 text-white"
                               style={{
                                 top: '-6px',
                                 right: '-10px',
@@ -390,9 +396,6 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 padding: '2px 5px',
                                 minWidth: '15px',
                                 height: '15px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
                                 border: '1px solid #331a1a'
                               }}
                             >
@@ -403,7 +406,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
                         {showNotificationDropdown && (
                           <div
-                            className="position-absolute bg-white shadow-lg rounded-3 overflow-hidden"
+                            className="absolute bg-white shadow-lg rounded-2xl overflow-hidden"
                             style={{
                               top: "140%",
                               right: "0",
@@ -412,13 +415,12 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               border: "1px solid #eee"
                             }}
                           >
-                            <div className="px-3 py-3 border-bottom bg-light d-flex justify-content-between align-items-center">
-                              <p className="mb-0 fw-bold text-dark fs-5">Notifications</p>
+                            <div className="px-3 py-3 border-b bg-gray-50 flex justify-between items-center">
+                              <p className="mb-0 font-bold text-gray-900 text-lg">Notifications</p>
                               {notifications.length > 0 && (
                                 <button
                                   onClick={() => setNotifications([])}
-                                  className="btn btn-link p-0 text-decoration-none text-muted"
-                                  style={{ fontSize: '13px' }}
+                                  className="text-gray-500 text-sm hover:text-gray-700 transition"
                                 >
                                   Clear All
                                 </button>
@@ -426,33 +428,33 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             </div>
                             <div className="overflow-auto" style={{ maxHeight: '400px' }}>
                               {notifications.length === 0 ? (
-                                <div className="px-3 py-5 text-center">
-                                  <i className="fa-solid fa-bell-slash text-muted mb-3 d-block fa-3x"></i>
-                                  <p className="mb-0 text-muted fs-6">No new notifications</p>
+                                <div className="px-3 py-10 text-center">
+                                  <i className="fa-solid fa-bell-slash text-gray-400 mb-3 block text-4xl" />
+                                  <p className="mb-0 text-gray-500 text-sm">No new notifications</p>
                                 </div>
                               ) : (
                                 notifications.map((notif: any, idx: number) => (
                                   <div
                                     key={notif.id || idx}
-                                    className={`px-3 py-3 border-bottom hover-bg-light transition-all cursor-pointer ${notif.isRead ? 'opacity-75' : 'bg-blue-50/30'}`}
+                                    className={`px-3 py-3 border-b cursor-pointer transition-all ${notif.isRead ? 'opacity-75' : 'bg-blue-50/30'}`}
                                     onClick={() => !notif.isRead && markAsRead(notif.id)}
                                   >
-                                    <div className="d-flex justify-content-between align-items-start mb-1">
-                                      <p className="mb-0 text-dark fw-bold fs-6">{notif.title || 'Notification'}</p>
-                                      {!notif.isRead && <span className="p-1 bg-blue-500 rounded-circle"></span>}
+                                    <div className="flex justify-between items-start mb-1">
+                                      <p className="mb-0 text-gray-900 font-bold text-sm">{notif.title || 'Notification'}</p>
+                                      {!notif.isRead && <span className="w-2 h-2 bg-blue-500 rounded-full inline-block" />}
                                     </div>
-                                    <p className="mb-0 text-muted" style={{ fontSize: '13px', lineHeight: '1.5' }}>{notif.message}</p>
-                                    <p className="mb-0 mt-2 text-orange-500 fw-medium" style={{ fontSize: '11px' }}>
+                                    <p className="mb-0 text-gray-500" style={{ fontSize: '13px', lineHeight: '1.5' }}>{notif.message}</p>
+                                    <p className="mb-0 mt-2 text-orange-500 font-medium" style={{ fontSize: '11px' }}>
                                       {notif.createdAt ? new Date(notif.createdAt).toLocaleString() : 'Just now'}
                                     </p>
                                   </div>
                                 ))
                               )}
                             </div>
-                            <div className="px-3 py-3 border-top text-center bg-light">
+                            <div className="px-3 py-3 border-t text-center bg-gray-50">
                               <Link
                                 href={`${PATHS.PROFILE}?tab=notifications`}
-                                className="text-decoration-none text-orange-500 fw-bold fs-6"
+                                className="no-underline text-orange-500 font-bold text-sm hover:text-orange-600"
                                 onClick={() => setShowNotificationDropdown(false)}
                               >
                                 View All
@@ -463,8 +465,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                       </div>
 
                       {/* User Profile & Dropdown */}
-                      <div className="profile-dropdown-container position-relative">
-                        <div className="d-flex align-items-center gap-2">
+                      <div className="profile-dropdown-container relative">
+                        <div className="flex items-center gap-2">
                           <div
                             className="cursor-pointer"
                             onClick={() => setShowImageModal(true)}
@@ -489,19 +491,19 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               alt="Profile"
                               width={35}
                               height={35}
-                              className="object-cover w-100 h-100 rounded-circle"
+                              className="object-cover w-full h-full rounded-full"
                             />
                           </div>
                           <i
                             className="fa-solid fa-ellipsis-vertical text-white cursor-pointer p-1"
                             style={{ fontSize: '18px' }}
                             onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                          ></i>
+                          />
                         </div>
 
                         {showProfileDropdown && (
                           <div
-                            className="position-absolute bg-white shadow-2xl rounded-4 overflow-hidden border-0"
+                            className="absolute bg-white shadow-2xl rounded-2xl overflow-hidden"
                             style={{
                               top: "140%",
                               right: "0",
@@ -512,16 +514,11 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               border: "1px solid rgba(242, 94, 10, 0.1)"
                             }}
                           >
-                            {/* User Header Section - Tailwind Orange */}
-                            <div
-                              className="p-3 mb-1 bg-orange"
-                              style={{
-                                color: "white"
-                              }}
-                            >
-                              <div className="d-flex align-items-center gap-3">
+                            {/* User Header Section */}
+                            <div className="p-3 mb-1 bg-orange" style={{ color: "white" }}>
+                              <div className="flex items-center gap-3">
                                 <div
-                                  className="rounded-circle overflow-hidden border-2 border-white shadow-sm"
+                                  className="rounded-full overflow-hidden border-2 border-white shadow-sm"
                                   style={{ width: "50px", height: "50px", backgroundColor: "white" }}
                                 >
                                   <NextImage
@@ -529,16 +526,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                     alt="User"
                                     width={50}
                                     height={50}
-                                    className="object-cover w-100 h-100"
+                                    className="object-cover w-full h-full"
                                   />
                                 </div>
                                 <div className="overflow-hidden">
-                                  <p className="mb-0 fw-bold text-truncate" style={{ fontSize: '16px', letterSpacing: '0.2px' }}>
+                                  <p className="mb-0 font-bold truncate" style={{ fontSize: '16px', letterSpacing: '0.2px' }}>
                                     {clientUser?.name || 'User Name'}
                                   </p>
-                                  <div className="d-flex align-items-center gap-1 opacity-90">
-                                    <i className="fa-solid fa-envelope" style={{ fontSize: '10px' }}></i>
-                                    <p className="mb-0 text-truncate" style={{ fontSize: '11px' }}>
+                                  <div className="flex items-center gap-1 opacity-90">
+                                    <i className="fa-solid fa-envelope" style={{ fontSize: '10px' }} />
+                                    <p className="mb-0 truncate" style={{ fontSize: '11px' }}>
                                       {clientUser?.email || clientUser?.phone || 'Verified Profile'}
                                     </p>
                                   </div>
@@ -550,42 +547,42 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             <div className="p-2">
                               <Link
                                 href={PATHS.PROFILE}
-                                className="d-flex align-items-center gap-3 px-3 py-2 text-decoration-none text-dark rounded-3 hover-bhagwa-light transition-all mb-1"
+                                className="flex items-center gap-3 px-3 py-2 no-underline text-gray-800 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all mb-1"
                                 onClick={() => setShowProfileDropdown(false)}
                                 style={{ fontSize: '14px' }}
                               >
-                                <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm bg-orange bg-opacity-10 text-orange" style={{ width: "34px", height: "34px" }}>
-                                  <i className="fa-solid fa-user-circle"></i>
+                                <div className="rounded-full flex items-center justify-center shadow-sm bg-orange/10 text-orange" style={{ width: "34px", height: "34px" }}>
+                                  <i className="fa-solid fa-user-circle" />
                                 </div>
-                                <span className="fw-medium">My Profile</span>
+                                <span className="font-medium">My Profile</span>
                               </Link>
 
                               <Link
                                 href={`${PATHS.PROFILE}?tab=wallet`}
-                                className="d-flex align-items-center gap-3 px-3 py-2 text-decoration-none text-dark rounded-3 hover-bhagwa-light transition-all mb-1"
+                                className="flex items-center gap-3 px-3 py-2 no-underline text-gray-800 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all mb-1"
                                 onClick={() => setShowProfileDropdown(false)}
                                 style={{ fontSize: '14px' }}
                               >
-                                <div className="rounded-circle d-flex align-items-center justify-content-center shadow-sm bg-orange bg-opacity-10 text-orange" style={{ width: "34px", height: "34px" }}>
-                                  <i className="fa-solid fa-wallet"></i>
+                                <div className="rounded-full flex items-center justify-center shadow-sm bg-orange/10 text-orange" style={{ width: "34px", height: "34px" }}>
+                                  <i className="fa-solid fa-wallet" />
                                 </div>
-                                <span className="fw-medium">My Wallet</span>
+                                <span className="font-medium">My Wallet</span>
                               </Link>
 
-                              <div className="my-2 border-bottom opacity-50 mx-2"></div>
+                              <div className="my-2 border-b opacity-50 mx-2" />
 
                               <button
                                 onClick={() => {
                                   setShowProfileDropdown(false);
                                   handleLogout();
                                 }}
-                                className="w-100 d-flex align-items-center gap-3 px-3 py-2 border-0 bg-transparent text-danger rounded-3 hover-bg-red-50 transition-all"
+                                className="w-full flex items-center gap-3 px-3 py-2 border-0 bg-transparent text-red-600 rounded-xl hover:bg-red-50 transition-all"
                                 style={{ fontSize: '14px' }}
                               >
-                                <div className="bg-red-100 text-red-600 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style={{ width: "34px", height: "34px" }}>
-                                  <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                                <div className="bg-red-100 text-red-600 rounded-full flex items-center justify-center shadow-sm" style={{ width: "34px", height: "34px" }}>
+                                  <i className="fa-solid fa-arrow-right-from-bracket" />
                                 </div>
-                                <span className="fw-bold">Logout Session</span>
+                                <span className="font-bold">Logout Session</span>
                               </button>
                             </div>
 
@@ -594,15 +591,13 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 from { opacity: 0; transform: translateY(10px); }
                                 to { opacity: 1; transform: translateY(0); }
                               }
-                              .hover-bhagwa-light:hover { background-color: rgba(242, 94, 10, 0.05); color: #f25e0a !important; }
-                              .hover-bg-red-50:hover { background-color: #fff5f5; }
                             `}</style>
                           </div>
                         )}
                       </div>
                     </div>
                   ) : (
-                    <div className="d-flex gap-3">
+                    <div className="flex gap-3">
                       <Link
                         href={PATHS.SIGN_IN}
                         className="bg-orange text-white rounded-[5px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
@@ -625,45 +620,56 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
         </div>
       </header>
 
-      <header className="main-head">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-10 col-md-7">
-              <nav className="navbar navbar-expand-lg navbar-light">
-                <Link className="navbar-brand" href="/">
+      <header
+        className="sticky top-0 z-50 bg-white border-b border-[#FF6B002e] shadow-[0_8px_11px_#0000000d]"
+        style={{ backdropFilter: 'saturate(160%) blur(8px)' }}
+      >
+        <div className="max-w-[1320px] mx-auto px-8 lg:px-16 py-3">
+          <div className="flex items-center">
+            {/* Logo + Nav — takes most of the space */}
+            <div className="flex-1">
+              <nav className="flex items-center">
+                {/* Logo */}
+                <Link className="flex-shrink-0 mr-4" href="/">
                   <NextImage
                     src="/images/web-logo.png"
                     alt="logo"
                     width={180}
                     height={60}
-                    className="logo object-contain"
+                    className="w-[180px] object-contain"
                   />
                 </Link>
+
+                {/* Hamburger — mobile only */}
                 <button
-                  className="navbar-toggler ms-auto"
+                  className="ml-auto lg:hidden flex flex-col gap-1.5 p-2 rounded-md hover:bg-gray-100 transition"
                   type="button"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  aria-controls="navbarSupportedContent"
-                  aria-expanded={isMenuOpen}
                   aria-label="Toggle navigation"
                 >
-                  <span className="navbar-toggler-icon"></span>
+                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? 'opacity-0' : ''}`} />
+                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
                 </button>
+
+                {/* Nav links */}
                 <div
-                  className={`flex-grow-1 ${isMenuOpen ? "d-block position-absolute bg-white w-100 start-0 shadow-sm border-top no-scrollbar" : "d-none d-lg-flex align-items-center justify-content-center"}`}
-                  id="navbarSupportedContent"
-                  style={isMenuOpen ? { top: '100%', zIndex: 1000, maxHeight: '80vh', overflowY: 'auto' } : { zIndex: 1000 }}
+                  className={`lg:flex lg:items-center lg:justify-center lg:flex-1 ${isMenuOpen
+                    ? 'block absolute left-0 right-0 bg-white w-full shadow-sm border-t z-[1000] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+                    : 'hidden'
+                    }`}
+                  style={isMenuOpen ? { top: '100%', maxHeight: '80vh', overflowY: 'auto' } : {}}
                 >
                   <ul
-                    className={`navbar-nav mx-auto top-menu-main d-flex align-items-center gap-2 gap-xl-4 ${isMenuOpen
-                      ? "flex-column align-items-start w-100 py-2 px-3 gap-0"
-                      : "flex-row"
+                    className={`flex items-center gap-2 xl:gap-4 ${isMenuOpen
+                      ? 'flex-col items-start w-full py-2 px-3 gap-0'
+                      : 'flex-row mx-auto'
                       }`}
                   >
                     {/* Home */}
-                    <li className={`nav-item ${isMenuOpen ? "w-100 border-bottom" : ""}`}>
+                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
                       <Link
-                        className="nav-link"
+                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
                         href="/"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -672,9 +678,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </li>
 
                     {/* Daily Horoscope */}
-                    <li className={`nav-item ${isMenuOpen ? "w-100 border-bottom" : ""}`}>
+                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
                       <Link
-                        className="nav-link"
+                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
                         href={PATHS.HOROSCOPE}
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -682,50 +688,46 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                       </Link>
                     </li>
 
-                    {/* Astrology Consult — Bootstrap dropdown on desktop, accordion on mobile */}
-                    <li className={`nav-item dropdown ${isMenuOpen ? "w-100 border-bottom" : ""}`}>
+                    {/* Astrology Consult dropdown */}
+                    <li className={`relative group ${isMenuOpen ? 'w-full border-b' : ''}`}>
                       {isMenuOpen ? (
                         /* Mobile accordion toggle */
                         <>
                           <button
-                            className="nav-link w-100 text-start bg-transparent border-0 d-flex justify-content-between align-items-center"
-                            style={{ fontWeight: 500 }}
+                            className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium w-full text-left bg-transparent border-0 flex justify-between items-center"
                             onClick={() => setShowMobileSubMenu(!showMobileSubMenu)}
                           >
                             Astrology Consult
                             <i
-                              className={`fa-solid fa-chevron-${showMobileSubMenu ? "up" : "down"} text-muted`}
-                              style={{ fontSize: "12px" }}
+                              className={`fa-solid fa-chevron-${showMobileSubMenu ? 'up' : 'down'} text-gray-400`}
+                              style={{ fontSize: '12px' }}
                             />
                           </button>
                           {showMobileSubMenu && (
-                            <ul className="list-unstyled ps-3 pb-2" style={{ borderLeft: "3px solid var(--primary-color, #e67e22)" }}>
+                            <ul className="list-none pl-3 pb-2" style={{ borderLeft: '3px solid var(--primary-color, #e67e22)' }}>
                               {[
-                                { label: "Horoscope", href: PATHS.HOROSCOPE },
-                                { label: "Love Calculator", href: PATHS.LOVE_CALCULATOR },
-                                { label: "Dahej Calculator", href: PATHS.DAHEJ_CALCULATOR },
-                                { label: "Flames Calculator", href: PATHS.FLAMES_CALCULATOR },
-                                { label: "Love Compatibility Calculator", href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
-                                { label: "Marriage Age Calculator", href: PATHS.MARRIAGE_AGE_CALCULATOR },
-                                { label: "Soulmate Name Initials Calculator", href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
-                                { label: "Lucky Number & Colour Calculator", href: PATHS.LUCKY_NUMBER_CALCULATOR },
-                                { label: "Life Path Calculator", href: PATHS.LIFE_PATH_CALCULATOR },
-                                { label: "Name Numerology Calculator", href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
-                                { label: "Zodiac Sign Compatibility Calculator", href: PATHS.ZODIAC_SIGN_CALCULATOR },
-                                { label: "Nakshatra Finder", href: PATHS.NAKSHATRA_FINDER },
-                                { label: "Loyal Partner Calculator", href: PATHS.LOYAL_PARTNER_CALCULATOR },
-                                { label: "Breakup Patchup Calculator", href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
-                                { label: "Online Puja", href: PATHS.ONLINE_PUJA },
+                                { label: 'Horoscope', href: PATHS.HOROSCOPE },
+                                { label: 'Love Calculator', href: PATHS.LOVE_CALCULATOR },
+                                { label: 'Dahej Calculator', href: PATHS.DAHEJ_CALCULATOR },
+                                { label: 'Flames Calculator', href: PATHS.FLAMES_CALCULATOR },
+                                { label: 'Love Compatibility Calculator', href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
+                                { label: 'Marriage Age Calculator', href: PATHS.MARRIAGE_AGE_CALCULATOR },
+                                { label: 'Soulmate Name Initials Calculator', href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
+                                { label: 'Lucky Number & Colour Calculator', href: PATHS.LUCKY_NUMBER_CALCULATOR },
+                                { label: 'Life Path Calculator', href: PATHS.LIFE_PATH_CALCULATOR },
+                                { label: 'Name Numerology Calculator', href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
+                                { label: 'Zodiac Sign Compatibility Calculator', href: PATHS.ZODIAC_SIGN_CALCULATOR },
+                                { label: 'Nakshatra Finder', href: PATHS.NAKSHATRA_FINDER },
+                                { label: 'Loyal Partner Calculator', href: PATHS.LOYAL_PARTNER_CALCULATOR },
+                                { label: 'Breakup Patchup Calculator', href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
+                                { label: 'Online Puja', href: PATHS.ONLINE_PUJA },
                               ].map((item) => (
                                 <li key={item.href} className="py-1">
                                   <Link
                                     href={item.href}
-                                    className="text-decoration-none text-dark"
-                                    style={{ fontSize: "14px" }}
-                                    onClick={() => {
-                                      setIsMenuOpen(false);
-                                      setShowMobileSubMenu(false);
-                                    }}
+                                    className="no-underline text-gray-800 hover:text-orange-600"
+                                    style={{ fontSize: '14px' }}
+                                    onClick={() => { setIsMenuOpen(false); setShowMobileSubMenu(false); }}
                                   >
                                     {item.label}
                                   </Link>
@@ -735,46 +737,54 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                           )}
                         </>
                       ) : (
-                        /* Desktop Bootstrap dropdown */
+                        /* Desktop hover dropdown — no Bootstrap JS needed */
                         <>
                           <a
-                            className="nav-link dropdown-toggle"
+                            className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium flex items-center gap-1 cursor-pointer hover:text-orange-600 transition-colors"
                             href="#"
-                            id="navbarDropdown"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
                           >
                             Astrology Consult
+                            <i className="fa-solid fa-chevron-down text-xs opacity-60" />
                           </a>
+                          {/* Dropdown — visible on group hover */}
                           <ul
-                            className="dropdown-menu"
-                            aria-labelledby="navbarDropdown"
+                            className="absolute top-full left-0 bg-brown shadow-xl rounded-xl border border-brown py-2 z-[1001] min-w-[220px] list-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-[5px] [&::-webkit-scrollbar-track]:bg-brown [&::-webkit-scrollbar-thumb]:bg-orange [&::-webkit-scrollbar-thumb]:rounded-full"
                           >
-                            <li><Link className="dropdown-item" href={PATHS.HOROSCOPE}>Horoscope</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.LOVE_CALCULATOR}>Love Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.DAHEJ_CALCULATOR}>Dahej Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.FLAMES_CALCULATOR}>Flames Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.LOVE_COMPATIBILITY_CALCULATOR}>Love Compatibility Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.MARRIAGE_AGE_CALCULATOR}>Marriage Age Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.SOULMATE_NAME_INITALS_CALCULATOR}>Soulmate Name Initials Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.LUCKY_NUMBER_CALCULATOR}>Lucky Number & Colour Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.LIFE_PATH_CALCULATOR}>Life Path Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.NAME_NUMEROLOGY_CALCULATOR}>Name Numerology Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.ZODIAC_SIGN_CALCULATOR}>Zodiac Sign Compatibility Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.NAKSHATRA_FINDER}>Nakshatra Finder</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.LOYAL_PARTNER_CALCULATOR}>Loyal Partner Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.BREAKUP_PATCHUP_CALCULATOR}>Breakup Patchup Calculator</Link></li>
-                            <li><Link className="dropdown-item" href={PATHS.ONLINE_PUJA}>Online Puja</Link></li>
+                            {[
+                              { label: 'Horoscope', href: PATHS.HOROSCOPE },
+                              { label: 'Love Calculator', href: PATHS.LOVE_CALCULATOR },
+                              { label: 'Dahej Calculator', href: PATHS.DAHEJ_CALCULATOR },
+                              { label: 'Flames Calculator', href: PATHS.FLAMES_CALCULATOR },
+                              { label: 'Love Compatibility Calculator', href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
+                              { label: 'Marriage Age Calculator', href: PATHS.MARRIAGE_AGE_CALCULATOR },
+                              { label: 'Soulmate Name Initials Calculator', href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
+                              { label: 'Lucky Number & Colour Calculator', href: PATHS.LUCKY_NUMBER_CALCULATOR },
+                              { label: 'Life Path Calculator', href: PATHS.LIFE_PATH_CALCULATOR },
+                              { label: 'Name Numerology Calculator', href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
+                              { label: 'Zodiac Sign Compatibility Calculator', href: PATHS.ZODIAC_SIGN_CALCULATOR },
+                              { label: 'Nakshatra Finder', href: PATHS.NAKSHATRA_FINDER },
+                              { label: 'Loyal Partner Calculator', href: PATHS.LOYAL_PARTNER_CALCULATOR },
+                              { label: 'Breakup Patchup Calculator', href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
+                              { label: 'Online Puja', href: PATHS.ONLINE_PUJA },
+                            ].map((item) => (
+                              <li key={item.href}>
+                                <Link
+                                  href={item.href}
+                                  className="block px-4 py-2 text-sm text-white/80 no-underline hover:bg-orange hover:text-white transition-colors border-b border-white/10 last:border-0"
+                                >
+                                  {item.label}
+                                </Link>
+                              </li>
+                            ))}
                           </ul>
                         </>
                       )}
                     </li>
 
                     {/* Famous Places */}
-                    <li className={`nav-item ${isMenuOpen ? "w-100" : ""}`}>
+                    <li className={isMenuOpen ? 'w-full' : ''}>
                       <Link
-                        className="nav-link"
+                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
                         href={PATHS.FAMOUS_PLACES}
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -785,7 +795,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                 </div>
               </nav>
             </div>
-            <div className="col-lg-2 col-md-5 mobile-none">
+
+            {/* Ask Astrologer CTA */}
+            <div className="flex-shrink-0 hidden md:block">
               <Link
                 href="/our-astrologers"
                 className="btn-ask-expert bg-orange text-white transition-all hover:scale-105 active:scale-95"
@@ -819,8 +831,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
       {
         isClient && (
-          <header className="services-list-card bg-orange">
-            <div className="container position-relative">
+          <header className="bg-orange shadow-[0_4px_15px_rgba(0,0,0,0.1)]">
+            <div className="max-w-[1320px] mx-auto relative px-8 lg:px-16">
               <Swiper
                 modules={[Navigation, Autoplay]}
                 spaceBetween={25}
@@ -832,23 +844,17 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   disableOnInteraction: false,
                 }}
                 breakpoints={{
-                  640: {
-                    slidesPerView: 3,
-                  },
-                  768: {
-                    slidesPerView: 4,
-                  },
-                  1024: {
-                    slidesPerView: 5,
-                  },
+                  640: { slidesPerView: 3 },
+                  768: { slidesPerView: 4 },
+                  1024: { slidesPerView: 5 },
                 }}
-                className="services-swiper"
+                className="w-full relative px-8"
               >
                 <SwiperNavButtons />
 
                 {SERVICES_DATA.map((service) => (
                   <SwiperSlide key={service.id}>
-                    <div className="flx-icon-item swiperSliders">
+                    <div className="flex justify-center w-full p-[5px] w-[80%]">
                       <a
                         href={service.href}
                         onClick={(e) => {
@@ -857,17 +863,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             router.push(service.href);
                           }
                         }}
-                        className="flx-icon text-decoration-none text-dark"
-                        style={{ cursor: "pointer" }}
+                        className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] transition-all duration-300 hover:bg-[#4a1923] hover:border-white hover:-translate-y-0.5 hover:shadow-lg no-underline cursor-pointer"
                       >
                         <NextImage
                           src={`/${service.icon}`}
-                          className="icon-top-flx"
+                          className="w-[30px] mr-1 flex-shrink-0"
                           alt={service.label}
                           width={40}
                           height={40}
                         />
-                        <span>{service.label}</span>
+                        <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">{service.label}</span>
                       </a>
                     </div>
                   </SwiperSlide>

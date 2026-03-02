@@ -55,15 +55,17 @@ export default function AppointmentsPage() {
         })
       ]);
 
-      let allSessions: any[] = [];
+      const getSessionsData = (res: any) => {
+        if (res.status !== 'fulfilled') return [];
+        if (Array.isArray(res.value?.data)) return res.value.data;
+        if (Array.isArray(res.value)) return res.value;
+        return [];
+      };
 
-      if (pendingRes.status === 'fulfilled') {
-        allSessions = [...allSessions, ...(pendingRes.value as any).data];
-      }
+      const pendingSessions = getSessionsData(pendingRes);
+      const completedSessions = getSessionsData(completedRes);
 
-      if (completedRes.status === 'fulfilled') {
-        allSessions = [...allSessions, ...(completedRes.value as any).data];
-      }
+      let allSessions: any[] = [...pendingSessions, ...completedSessions];
 
       const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : [];
 

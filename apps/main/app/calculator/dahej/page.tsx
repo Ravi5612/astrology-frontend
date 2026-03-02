@@ -21,13 +21,14 @@ import {
     GiDiamonds,
 } from "react-icons/gi";
 
-import { ResultData } from "./types";
+import { ResultData, JewelrySet } from "@/lib/types";
 import {
     premiumStyles,
     cars,
     jewelrySets,
     landProperties,
 } from "./constants";
+import { JewelrySet } from "@/lib/types";
 import {
     normalizeName,
     hashSeed,

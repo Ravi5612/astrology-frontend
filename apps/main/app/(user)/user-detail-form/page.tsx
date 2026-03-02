@@ -3,13 +3,7 @@
 import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-interface UserDetails {
-  name: string;
-  gender: string;
-  dateOfBirth: string;
-  timeOfBirth: string;
-  birthLocation: string;
-}
+import { UserDetails } from "@/lib/types";
 
 const UserDetailFormContent = () => {
   const router = useRouter();
@@ -35,7 +29,7 @@ const UserDetailFormContent = () => {
   const totalAmount = Number(rate) * Number(duration);
 
   const [errors, setErrors] = useState<
-    Partial<UserDetails & { bookingDate: string; bookingTime: string }>
+    Partial<Record<keyof UserDetails | "bookingDate" | "bookingTime", string>>
   >({});
 
   const handleChange = (
@@ -49,9 +43,7 @@ const UserDetailFormContent = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<
-      UserDetails & { bookingDate: string; bookingTime: string }
-    > = {};
+    const newErrors: Partial<Record<keyof UserDetails | "bookingDate" | "bookingTime", string>> = {};
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";

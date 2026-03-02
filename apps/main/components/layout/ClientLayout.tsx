@@ -38,10 +38,7 @@ export default function ClientLayout({
           cartCount={cartCount}
         />
       )}
-      <main>{children}</main>
-      <script>
-        {`console.log("[ClientLayoutDebug] Render conditions - isAdmin:", ${isAdminRoute}, "isChatRoom:", ${isChatRoom});`}
-      </script>
+      <main suppressHydrationWarning>{children}</main>
       {!isAdminRoute && !isChatRoom && <FloatingChatButton />}
       {!isAdminRoute && !isChatRoom && <Footer />}
     </>

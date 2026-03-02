@@ -5,37 +5,12 @@ const Link = NextLink as any;
 
 import React, { useState, useRef } from "react";
 import { Button } from "@repo/ui";
-import { Modal } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useWishlistStore } from "@/store/useWishlistStore"; // Changed import
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { toast } from "react-toastify";
-
-interface Astrologer {
-  id?: number | string;
-  userId?: number | string;
-  image: string;
-  name: string;
-  expertise: string;
-  experience: number;
-  language: string;
-  price: number;
-  chat_price?: number;
-  call_price?: number;
-  video_call_price?: number;
-  report_price?: number;
-  horoscope_price?: number;
-  video?: string;
-  ratings?: number;
-  is_available?: boolean;
-  total_likes?: number;
-  custom_services?: { id: string; name: string; price: number; unit: string }[];
-}
-
-interface AstrologerCardProps {
-  astrologerData: Astrologer;
-  cardClassName?: string;
-}
+import { useWishlist } from "@/hooks/useWishlist";
+import { Astrologer, AstrologerCardProps } from "@/lib/types";
 
 const AstrologerCard: React.FC<AstrologerCardProps> = ({
   astrologerData,
@@ -64,9 +39,10 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
 
   const [show, setShow] = useState(false);
   const [serviceIndex, setServiceIndex] = useState(0);
-  // Changed hook usage
+  // Hooks
   const { isExpertInWishlist, toggleExpertWishlist } = useWishlistStore();
   const { isClientAuthenticated } = useAuthStore();
+  const { toggleLike } = useWishlist();
   const router = useRouter();
 
   // Local state for optimistic updates
@@ -80,13 +56,11 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
   const getYoutubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2] && match[2].length === 11) ? match[2] : null;
+    return match && match[2] && match[2].length === 11 ? match[2] : null;
   };
 
   const videoId = video ? getYoutubeId(video) : null;
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : video;
-
-  const [isProcessing, setIsProcessing] = useState(false);
 
   // For wishlist, we use userId (user table ID)
   const wishlistTargetId = userId ? Number(userId) : Number(id);
@@ -99,8 +73,6 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    if (isProcessing) return;
-
     if (!isClientAuthenticated) {
       toast.error("Please login first to use wishlist", {
         onClick: () => router.push("/sign-in"),
@@ -110,24 +82,12 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
       return;
     }
 
-    try {
-      setIsProcessing(true);
-      // Optimistic Update
-      const prevIsLiked = isLiked;
-      const newIsLiked = !prevIsLiked;
+    // Optimistic Update for the count locally
+    const newIsLiked = !isLiked;
+    setCurrentLikes((prev) => (newIsLiked ? prev + 1 : Math.max(0, prev - 1)));
 
-      setCurrentLikes((prev) => (newIsLiked ? prev + 1 : Math.max(0, prev - 1)));
-
-      // Updated to pass isClientAuthenticated
-      await toggleExpertWishlist(wishlistTargetId, isClientAuthenticated);
-    } catch (error) {
-      // Revert on failure
-      const revertedIsLiked = !isLiked;
-      setCurrentLikes((prev) => (revertedIsLiked ? prev + 1 : Math.max(0, prev - 1)));
-      console.error("Failed to toggle wishlist", error);
-    } finally {
-      setIsProcessing(false);
-    }
+    // TanStack Query handles the rest (optimistic UI for heart icon and data sync)
+    toggleLike({ id: wishlistTargetId, type: "expert", isLiked });
   };
 
   const handleChatClick = (e: React.MouseEvent) => {
@@ -161,9 +121,9 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
   const remainingCount = allServices.length - 3;
 
   return (
-    <div className="grid-item">
-      <div className={`astro-card ${cardClassName}`}>
-        <Link href={createDetailsUrl()}>
+    <div className="w-full">
+      <div className={`bg-white rounded-xl shadow-sm border border-[#daa23e] p-3 text-center transition-transform duration-300 hover:-translate-y-1.5 ${cardClassName}`}>
+        <Link href={createDetailsUrl()} className="no-underline hover:no-underline block">
           {/* IMAGE SECTION */}
           <div className="relative flex justify-center pt-8">
             {/* ❤️ LIKE & COUNT — TOP LEFT (OUTSIDE IMAGE) */}
@@ -210,7 +170,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
               <img
                 src={image}
                 alt={name}
-                className="astro-profile-img"
+                className="w-[120px] h-[120px] object-cover rounded-full mb-2 border border-[#daa23e]"
               />
 
               {/* ▶ PLAY VIDEO */}
@@ -246,18 +206,18 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
 
           {/* RATING */}
           <div
-            className="rating-star d-flex justify-content-center align-items-center text-center"
-            style={{ gap: 6, fontSize: "1.05rem", padding: "12px 16px 0" }}
+            className="flex justify-center items-center text-center gap-1.5 pt-3"
+            style={{ fontSize: "1.05rem" }}
           >
             {Array.from({ length: 5 }).map((_, i) => {
               const starIndex = i + 1;
               if (ratings >= starIndex)
-                return <i key={i} className="fa-solid fa-star color-secondary" />;
+                return <i key={i} className="fa-solid fa-star text-[#daa23e]" />;
               if (ratings >= starIndex - 0.5)
                 return (
                   <i
                     key={i}
-                    className="fa-solid fa-star-half-stroke color-secondary"
+                    className="fa-solid fa-star-half-stroke text-[#daa23e]"
                   />
                 );
               return (
@@ -268,7 +228,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
                 />
               );
             })}
-            <span className="text-muted small ms-2">
+            <span className="text-gray-500 text-sm ml-2">
               {ratings.toFixed(1)} / 5
             </span>
           </div>
@@ -323,7 +283,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
               ).map((service, index) => (
                 <span
                   key={index}
-                  className="whitespace-nowrap inline-block bg-primary text-white text-[12px] px-2 py-0.5 rounded-full flex-shrink-0 animate-fadeIn"
+                  className="whitespace-nowrap inline-block bg-orange text-white text-[12px] px-2 py-0.5 rounded-full flex-shrink-0"
                 >
                   {service}
                 </span>
@@ -334,7 +294,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
           {/* Experience */}
           <div className="px-4 my-2 text-[16px] text-[#1a1a1a]">
             <strong>Exp:</strong>
-            <span className="ml-2 font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded">
+            <span className="ml-2 font-semibold bg-orange/10 text-orange px-2 py-0.5 rounded">
               {experience} Years
             </span>
           </div>
@@ -349,88 +309,109 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
         </Link>
 
         {/* ACTION BUTTONS WITH PRICES POINTER */}
-        <div className="px-4 pb-4 space-y-2">
+        <div className="px-3 pb-4 space-y-2.5">
           <div className="flex gap-2">
-            <Button
-              variant="primary"
+            {/* Chat Button */}
+            <button
               onClick={handleChatClick}
-              className="flex-1 flex-col py-1.5 leading-tight !rounded-full text-[13px] !bg-orange hover:!opacity-90"
+              className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
             >
-              <div className="flex items-center gap-1.5">
-                <i className="fa-regular fa-comment-dots" /> Chat
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <i className="fa-regular fa-comment-dots text-sm" />
+                <span className="text-[14px] font-bold">Chat</span>
               </div>
-              <span className="text-[11px] opacity-90 font-medium whitespace-nowrap">
+              <span className="text-[12px] font-semibold opacity-95">
                 {chat_price && chat_price > 0 ? `₹${chat_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
               </span>
-            </Button>
+            </button>
 
-            <Button
-              variant="primary"
+            {/* Call Button */}
+            <button
               onClick={handleCallClick}
-              className="flex-1 flex-col py-1.5 leading-tight !rounded-full text-[13px] !bg-orange hover:!opacity-90"
+              className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
             >
-              <div className="flex items-center gap-1.5">
-                <i className="fa-solid fa-phone-volume" /> Call
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <i className="fa-solid fa-phone-volume text-sm" />
+                <span className="text-[14px] font-bold">Call</span>
               </div>
-              <span className="text-[11px] opacity-90 font-medium whitespace-nowrap">
+              <span className="text-[12px] font-semibold opacity-95">
                 {call_price && call_price > 0 ? `₹${call_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
               </span>
-            </Button>
+            </button>
           </div>
 
-          <Button
-            variant="primary"
+          {/* Video Call Button */}
+          <button
             onClick={handleVideoCallClick}
-            className="w-full flex-col py-1.5 leading-tight !rounded-full text-[13px] !bg-orange hover:!opacity-90"
+            className="w-full flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
           >
-            <div className="flex items-center gap-1.5">
-              <i className="fa-solid fa-video" /> Video Call
+            <div className="flex items-center gap-2 mb-0.5">
+              <i className="fa-solid fa-video text-sm" />
+              <span className="text-[14px] font-bold">Video Call</span>
             </div>
-            <span className="text-[11px] opacity-90 font-medium">
+            <span className="text-[12px] font-semibold opacity-95">
               {video_call_price && video_call_price > 0 ? `₹${video_call_price}/min` : (price > 0 ? `₹${price * 2}/min` : "Free")}
             </span>
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* VIDEO MODAL */}
-      <Modal show={show} onHide={() => setShow(false)} centered size="xl">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Meet Astrologer {name} Introduction Video
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {video ? (
-            videoId ? (
-              <iframe
-                width="100%"
-                height="500"
-                src={embedUrl}
-                title={`Astrologer ${name} Video`}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <video
-                src={video}
-                width="100%"
-                height="500"
-                controls
-                className="bg-black"
-              />
-            )
-          ) : (
-            <div className="h-[500px] flex items-center justify-center bg-gray-100 rounded">
-              <div className="text-center">
-                <i className="fa-solid fa-video-slash text-5xl text-gray-400 mb-3" />
-                <p className="text-gray-500">No introduction video available yet.</p>
-              </div>
+      {/* VIDEO MODAL — custom Tailwind, no Bootstrap */}
+      {show && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={() => setShow(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b">
+              <h5 className="font-bold text-gray-900 text-lg m-0">
+                Meet Astrologer {name} Introduction Video
+              </h5>
+              <button
+                onClick={() => setShow(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition text-gray-600 text-lg font-bold"
+              >
+                ✕
+              </button>
             </div>
-          )}
-        </Modal.Body>
-      </Modal>
+            {/* Body */}
+            <div className="p-4">
+              {video ? (
+                videoId ? (
+                  <iframe
+                    width="100%"
+                    height="500"
+                    src={embedUrl}
+                    title={`Astrologer ${name} Video`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={video}
+                    width="100%"
+                    height="500"
+                    controls
+                    className="bg-black"
+                  />
+                )
+              ) : (
+                <div className="h-[500px] flex items-center justify-center bg-gray-100 rounded">
+                  <div className="text-center">
+                    <i className="fa-solid fa-video-slash text-5xl text-gray-400 mb-3" />
+                    <p className="text-gray-500">No introduction video available yet.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

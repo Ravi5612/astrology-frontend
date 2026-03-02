@@ -8,23 +8,13 @@ import { useCartStore } from "@/store/useCartStore"; // Changed import
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
 
 import { getProductImageUrl } from "@/utils/image-utils";
+import { Product } from "@/lib/types";
 
 const Image = NextImage as any;
-// ... (omitted) ...
-
-
-export interface Product {
-    id?: string;
-    _id?: string;
-    imageUrl?: string;
-    name: string;
-    description: string;
-    originalPrice?: number | string;
-    price: number | string;
-    percentageOff?: number | string;
-}
 
 interface ProductCardProps {
     product: Product;
@@ -38,18 +28,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
     const price = Number(product.price) || 0;
     const percentageOff = Number(product.percentageOff) || 0;
 
+    // Hooks
+    const { isInWishlist } = useWishlistStore();
     const { isClientAuthenticated } = useAuthStore();
-    // Using Store
-    const { addToCart } = useCartStore();
-    const [isCartLoading, setIsCartLoading] = React.useState(false);
+    const { toggleLike } = useWishlist();
+    const { addToCart: addToCartOpt, isAdding } = useCart();
     const [isBuyLoading, setIsBuyLoading] = React.useState(false);
     const router = useRouter();
 
-    // Changed usage to store
-    const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
-    const isLiked = product.id ? isInWishlist(Number(product.id || product._id)) : false;
+    const productId = Number(product.id || product._id);
+    const isLiked = productId ? isInWishlist(productId) : false;
 
-    const handleLike = async (e: React.MouseEvent) => {
+    const handleLike = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -62,12 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
             return;
         }
 
-        if (isLiked) {
-            await removeFromWishlist(Number(product.id || product._id));
-        } else {
-            // Updated to pass isClientAuthenticated
-            await addToWishlist(Number(product.id || product._id), isClientAuthenticated);
-        }
+        toggleLike({ id: productId, type: "product", isLiked });
     };
 
     const handleAddToCart = async (e: React.MouseEvent) => {
@@ -83,13 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
             return;
         }
 
-        try {
-            setIsCartLoading(true);
-            // Pass isClientAuthenticated to store action
-            await addToCart(Number(product.id || product._id), 1, isClientAuthenticated);
-        } finally {
-            setIsCartLoading(false);
-        }
+        addToCartOpt({ productId: Number(product.id || product._id), quantity: 1 });
     };
 
     return (
@@ -159,7 +138,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                         variant="outline"
                         size="md"
                         onClick={handleAddToCart}
-                        loading={isCartLoading}
                         className="flex-1 !rounded-full border-orange text-orange hover:bg-orange/5 h-10 text-[13px] px-3 font-semibold"
                     >
                         Add to Cart

@@ -5,82 +5,129 @@ import Featured4Cards from "@/components/ui/common/Featured4Cards";
 
 const HeroSection = () => {
   return (
-    <section className="banner-part light-back">
-      <div className="overlay-hero">
-        <div className="container">
-          <div className="contant-hero !overflow-visible">
-            <div className="row align column-reverse !overflow-visible">
-              <div className="col-lg-7 col-md-12">
-                <div className="hero-card shine">
-                  <div className="card-z">
-                    <span className="aib-trust-badge">
-                      India’s Trusted Astrology Platform
+    <section
+      className="py-0 overflow-x-hidden"
+      style={{
+        backgroundImage: "url('/images/white-background.png')",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="py-10">
+        <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
+          {/* contant-hero */}
+          <div
+            className="bg-[#f7f3ec] rounded-[20px] p-5 md:p-6 overflow-visible"
+            style={{ border: "solid 1px rgba(242,107,0,0.17)" }}
+          >
+            {/* row: flex col-reverse on mobile, row on lg */}
+            <div className="flex flex-col-reverse lg:flex-row items-center gap-6 overflow-visible">
+
+              {/* Left col — col-lg-7 */}
+              <div className="w-full lg:w-[58%]">
+                {/* hero-card */}
+                <div className="flex flex-col justify-center min-h-[400px]">
+                  {/* card-z */}
+                  <div className="relative z-[9]">
+
+                    {/* aib-trust-badge */}
+                    <span className="inline-block px-[14px] py-[6px] bg-[#fde6d3] text-[#c45a13] text-sm font-semibold rounded-[20px] mb-4">
+                      India&apos;s Trusted Astrology Platform
                     </span>
-                    <h1>Connect with Verified Astrologers Online</h1>
-                    <h4 className="card-title ">
+
+                    {/* banner-part h1 */}
+                    <h1 className="text-[40px] md:text-[50px] font-bold tracking-[1px] text-[#2b1b1b] leading-tight mb-4">
+                      Connect with Verified Astrologers Online
+                    </h1>
+
+                    {/* card-title */}
+                    <h4 className="text-[22px] text-orange font-semibold mt-[15px] mb-[10px]">
                       Instant Chat, Call, or Video Consultations
                     </h4>
-                    <p>
+
+                    {/* banner-part p */}
+                    <p className="text-[16px] text-[#1a1a1a] mb-[18px]">
                       At Astrology in Bharat, find trusted astrologers for love,
                       career, health, or life guidance. Connect anytime via
                       chat, audio, or video and get personalized solutions with
                       full privacy.
                     </p>
-                    <ul className="list-check">
-                      <li>
-                        {" "}
-                        <i className="fa-solid fa-check"></i> Verified &amp;
-                        Experienced Astrologers
-                      </li>
-                      <li>
-                        {" "}
-                        <i className="fa-solid fa-check"></i> Instant Chat, Call
-                        &amp; Video Support
-                      </li>
-                      <li>
-                        {" "}
-                        <i className="fa-solid fa-check"></i> 100% Privacy &amp;
-                        Confidentiality{" "}
-                      </li>
-                      <li>
-                        {" "}
-                        <i className="fa-solid fa-check"></i> Accurate
-                        Predictions &amp; Remedies
-                      </li>
-                      <li>
-                        {" "}
-                        <i className="fa-solid fa-check"></i> Trusted by
-                        Thousands Across India
-                      </li>
+
+                    {/* list-check */}
+                    <ul className="list-none p-0 m-0">
+                      {[
+                        "Verified & Experienced Astrologers",
+                        "Instant Chat, Call & Video Support",
+                        "100% Privacy & Confidentiality",
+                        "Accurate Predictions & Remedies",
+                        "Trusted by Thousands Across India",
+                      ].map((point) => (
+                        <li
+                          key={point}
+                          className="flex items-center gap-2 text-[16px] text-[#1e1e1e] py-[7px]"
+                        >
+                          <i
+                            className="fa-solid fa-check text-white text-xs flex items-center justify-center rounded-full flex-shrink-0"
+                            style={{
+                              width: "25px",
+                              height: "25px",
+                              background: "#ff6e20",
+                              border: "2px solid #FF6B00",
+                              padding: "2px",
+                            }}
+                          />
+                          {point}
+                        </li>
+                      ))}
                     </ul>
+
+                    {/* wfc — width: fit-content, padding: 15px 23px, letter-spacing: 1px */}
                     <Link
                       href="/our-astrologers"
-                      className="bg-orange text-white wfc mt-4 mb-4 inline-block no-underline rounded-full font-bold transition-all hover:opacity-90 active:scale-95"
+                      className="mt-4 mb-4 inline-block no-underline bg-orange text-white font-bold rounded-full hover:opacity-90 active:scale-95 transition-all"
+                      style={{
+                        width: "fit-content",
+                        padding: "15px 23px",
+                        letterSpacing: "1px",
+                      }}
                     >
                       Start Consultation
                     </Link>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-5 col-md-12 !overflow-visible">
-                <div className="right-illus relative h-[400px] !overflow-visible">
-                  <Image
-                    src="/images/Astrologer-h.png"
-                    alt="Astrologer background"
-                    fill
-                    unoptimized
-                    className="Astrologer-img-h fa-spin object-contain -translate-y-20 translate-x-6 scale-[1.0]"
-                  />
+
+              {/* Right col — col-lg-5 */}
+              <div className="w-full lg:w-[42%] overflow-visible">
+                {/* right-illus */}
+                <div className="relative h-[400px] overflow-visible">
+                  {/* Astrologer-img-h wrapper — positioned div for width/left, spin on the image */}
+                  <div
+                    className="absolute"
+                    style={{ width: "90%", left: "10%", top: "-160px", bottom: 0, zIndex: 5 }}
+                  >
+                    <Image
+                      src="/images/Astrologer-h.png"
+                      alt="Astrologer background"
+                      fill
+                      unoptimized
+                      className="animate-[spin_30s_linear_infinite] object-contain scale-[1.0]"
+                      style={{ transformOrigin: "center center" }}
+                    />
+                  </div>
+                  {/* Astrologer-img → z-index 6 */}
                   <Image
                     src="/images/Astrologer.png"
                     alt="Astrologer"
                     fill
                     unoptimized
                     priority
-                    className="Astrologer-img object-contain scale-[1.4] origin-bottom translate-y-16 -translate-x-2 pointer-events-none"
+                    className="object-contain scale-[1.4] origin-bottom translate-y-16 -translate-x-2 pointer-events-none"
+                    style={{ zIndex: 6 }}
                   />
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -92,5 +139,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
-

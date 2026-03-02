@@ -1,5 +1,4 @@
-import React from "react";
-import { JewelrySet } from "./types";
+import { JewelrySet } from "@/lib/types";
 import {
     GiRing,
     GiDiamonds,
@@ -70,52 +69,52 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Classic Gold Set",
         items: ["3 Gold Rings", "2 Gold Chains", "1 Gold Watch"],
-        icon: <GiRing className="text-[#d4af37]" size = { 20} />
+        icon: <GiRing className="text-[#d4af37]" />
     },
     {
         name: "Platinum Elegance",
         items: ["2 Platinum Rings", "2 Gold Chains", "1 Gold Bracelet"],
-        icon: <GiDiamonds className="text-gray-300" size = { 20} />
+        icon: <GiDiamonds className="text-gray-300" />
     },
     {
         name: "Diamond Royalty",
         items: ["2 Gold Chains", "2 Diamond Rings", "1 Gold Ring", "1 Gold Kada"],
-        icon: <GiDiamonds className="text-blue-300" size = { 20} />
+        icon: <GiDiamonds className="text-blue-300" />
     },
     {
         name: "Traditional Set",
         items: ["1 Heavy Gold Necklace", "2 Gold Bangles", "3 Gold Rings", "Gold Earrings"],
-        icon: <GiNecklace className="text-[#d4af37]" size = { 20} />
+        icon: <GiNecklace className="text-[#d4af37]" />
     },
     {
         name: "Modern Collection",
         items: ["1 Platinum Watch", "2 Diamond Studs", "Gold Chain with Pendant", "2 Gold Rings"],
-        icon: <GiWristwatch className="text-gray-300" size = { 20} />
+        icon: <GiWristwatch className="text-gray-300" />
     },
     {
         name: "Royal Heritage",
         items: ["Gold Crown", "2 Diamond Necklaces", "4 Gold Bangles", "3 Gold Rings"],
-        icon: <GiGoldBar className="text-[#d4af37]" size = { 20} />
+        icon: <GiGoldBar className="text-[#d4af37]" />
     },
     {
         name: "Minimalist Set",
         items: ["1 Gold Chain", "1 Gold Ring", "Gold Bracelet", "Simple Earrings"],
-        icon: <GiRing className="text-[#d4af37]" size = { 20} />
+        icon: <GiRing className="text-[#d4af37]" />
     },
     {
         name: "Festive Collection",
         items: ["Heavy Gold Necklace", "2 Gold Armlets", "3 Gold Rings", "Nose Ring", "Anklet"],
-        icon: <GiNecklace className="text-[#d4af37]" size = { 20} />
+        icon: <GiNecklace className="text-[#d4af37]" />
     },
     {
         name: "Business Executive",
         items: ["Rolex Watch", "2 Platinum Rings", "Gold Chain", "Cufflinks"],
-        icon: <GiWristwatch className="text-gray-600" size = { 20} />
+        icon: <GiWristwatch className="text-gray-600" />
     },
     {
         name: "Wedding Set",
         items: ["Mangalsutra", "2 Gold Chains", "4 Gold Bangles", "3 Rings", "Gold Earrings"],
-        icon: <GiDiamonds className="text-[#d4af37]" size = { 20} />
+        icon: <GiDiamonds className="text-[#d4af37]" />
     }
 ];
 

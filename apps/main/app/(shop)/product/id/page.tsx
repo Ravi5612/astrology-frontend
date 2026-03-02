@@ -4,7 +4,6 @@ import { Swiper as Sw, SwiperSlide as Ss } from "swiper/react";
 const Swiper = Sw as any;
 const SwiperSlide = Ss as any;
 import { Navigation, Thumbs, FreeMode, Autoplay } from "swiper/modules";
-import { Accordion } from "react-bootstrap";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
@@ -13,6 +12,7 @@ import { purpose } from "@/components/features/services/homePagaData";
 
 const Page = () => {
   const [isSticky, setIsSticky] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const product = {
     title: "Crystal Healing Bracelet",
@@ -356,16 +356,22 @@ const Page = () => {
             <h3 className="fw-bold mb-4" style={{ color: "#732882" }}>
               Frequently Asked Questions
             </h3>
-            <Accordion defaultActiveKey="0" flush>
+            <div className="border rounded-lg overflow-hidden">
               {product.faqs.map((f, i) => (
-                <Accordion.Item eventKey={String(i)} key={i}>
-                  <Accordion.Header>
+                <div key={i} className="border-b last:border-b-0">
+                  <button
+                    className="w-full flex justify-between items-center px-4 py-3 text-left font-medium hover:bg-gray-50 transition"
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  >
                     <span style={{ color: "#732882" }}>{f.q}</span>
-                  </Accordion.Header>
-                  <Accordion.Body>{f.a}</Accordion.Body>
-                </Accordion.Item>
+                    <i className={`fas fa-chevron-${openFaq === i ? 'up' : 'down'} text-sm text-gray-400`} />
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-4 py-3 text-gray-600 bg-gray-50 text-sm">{f.a}</div>
+                  )}
+                </div>
               ))}
-            </Accordion>
+            </div>
           </section>
 
           <hr className="my-5" />

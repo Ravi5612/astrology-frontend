@@ -150,7 +150,7 @@ export default function PersonalInfo({
                                         name="gender"
                                         value={tempProfile.gender!}
                                         onChange={onChange}
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                     >
                                         <option value={Gender.MALE}>Male</option>
                                         <option value={Gender.FEMALE}>Female</option>
@@ -164,7 +164,7 @@ export default function PersonalInfo({
                                         name="date_of_birth"
                                         value={tempProfile.date_of_birth ? tempProfile.date_of_birth.split('T')[0] : ""}
                                         onChange={onChange}
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                     />
                                 </div>
                                 {/* Mobile Number Field */}
@@ -176,7 +176,7 @@ export default function PersonalInfo({
                                         value={tempProfile.phoneNumber || ""}
                                         onChange={onChange}
                                         placeholder="e.g. +91 9876543210"
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                     />
                                 </div>
 
@@ -189,7 +189,7 @@ export default function PersonalInfo({
                                         value={tempProfile.languages ? tempProfile.languages.join(',') : ""}
                                         onChange={onLanguageChange}
                                         placeholder="e.g. Hindi, English, Punjabi"
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                     />
                                 </div>
 
@@ -205,7 +205,7 @@ export default function PersonalInfo({
                                         value={tempProfile.experience_in_years || 0}
                                         onChange={onChange}
                                         placeholder="e.g. 5"
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                     />
                                 </div>
 
@@ -226,7 +226,7 @@ export default function PersonalInfo({
                                                 }
                                             }}
                                             placeholder="Add specialization (e.g. Vedic, Tarot)"
-                                            className="flex-1 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                            className="flex-1 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                         />
                                         <Button
                                             type="button"
@@ -268,13 +268,13 @@ export default function PersonalInfo({
                                     onClick={() => setShowAddress(!showAddress)}
                                     className="flex items-center justify-between w-full mb-3 focus:outline-none group"
                                 >
-                                    <h4 className="text-sm font-semibold text-gray-700 group-hover:text-yellow-600 transition-colors">Address</h4>
+                                    <h4 className="text-sm font-semibold text-gray-700 group-hover:text-orange transition-colors">Address</h4>
                                     {showAddress ? (
                                         /* @ts-ignore */
-                                        <ChevronUp className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
+                                        <ChevronUp className="w-5 h-5 text-gray-500 group-hover:text-orange transition-colors" />
                                     ) : (
                                         /* @ts-ignore */
-                                        <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
+                                        <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-orange transition-colors" />
                                     )}
                                 </button>
 
@@ -288,7 +288,7 @@ export default function PersonalInfo({
                                                 value={tempProfile.houseNo || ""}
                                                 onChange={onChange}
                                                 placeholder="Enter house/office number"
-                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                             />
                                         </div>
                                         <div>
@@ -299,7 +299,7 @@ export default function PersonalInfo({
                                                 value={tempProfile.district || ""}
                                                 onChange={onChange}
                                                 placeholder="Enter district"
-                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                             />
                                         </div>
                                         <div>
@@ -310,7 +310,7 @@ export default function PersonalInfo({
                                                 value={tempProfile.state || ""}
                                                 onChange={onChange}
                                                 placeholder="Enter state"
-                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                             />
                                         </div>
                                         <div>
@@ -321,7 +321,7 @@ export default function PersonalInfo({
                                                 value={tempProfile.country || ""}
                                                 onChange={onChange}
                                                 placeholder="Enter country"
-                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                             />
                                         </div>
                                         <div>
@@ -332,7 +332,7 @@ export default function PersonalInfo({
                                                 value={tempProfile.pincode || ""}
                                                 onChange={onChange}
                                                 placeholder="Enter pincode"
-                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
+                                                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"
                                             />
                                         </div>
                                     </div>
@@ -346,7 +346,7 @@ export default function PersonalInfo({
                                     value={tempProfile.bio}
                                     onChange={onChange}
                                     placeholder="Tell us about yourself..."
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm min-h-[120px] text-black"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm min-h-[120px] text-black"
                                 />
                             </div>
 
@@ -397,7 +397,7 @@ export default function PersonalInfo({
                                     <p className="text-gray-500">Specializations</p>
                                     <div className="flex flex-wrap gap-2 mt-1">
                                         {specs.length > 0 ? specs.map((spec, i) => (
-                                            <span key={i} className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                            <span key={i} className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                 {spec}
                                             </span>
                                         )) : <p className="font-medium text-black">Not added</p>}
@@ -411,13 +411,13 @@ export default function PersonalInfo({
                                     onClick={() => setShowAddress(!showAddress)}
                                     className="flex items-center justify-between w-full mb-3 focus:outline-none group"
                                 >
-                                    <h4 className="text-sm font-semibold text-gray-700 group-hover:text-yellow-600 transition-colors">Address</h4>
+                                    <h4 className="text-sm font-semibold text-gray-700 group-hover:text-orange transition-colors">Address</h4>
                                     {showAddress ? (
                                         /* @ts-ignore */
-                                        <ChevronUp className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
+                                        <ChevronUp className="w-5 h-5 text-gray-500 group-hover:text-orange transition-colors" />
                                     ) : (
                                         /* @ts-ignore */
-                                        <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
+                                        <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-orange transition-colors" />
                                     )}
                                 </button>
 
