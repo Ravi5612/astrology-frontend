@@ -1,7 +1,7 @@
 import React from "react";
 import { Edit3, Save, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
 import { Profile, Gender } from "./types";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 import { Avatar } from "@repo/ui";
 
 interface PersonalInfoProps {
@@ -245,14 +245,15 @@ export default function PersonalInfo({
                                                 className="flex items-center gap-1 bg-orange-50 text-orange-800 px-3 py-1 rounded-full text-xs font-medium border border-orange-100"
                                             >
                                                 <span>{spec}</span>
-                                                <button
+                                                <Button
                                                     type="button"
                                                     onClick={() => handleRemoveSpec(spec)}
-                                                    className="hover:text-red-500 focus:outline-none"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="p-1 h-auto text-orange-800 hover:text-red-500"
                                                 >
-                                                    {/* @ts-ignore */}
                                                     <X className="w-3 h-3" />
-                                                </button>
+                                                </Button>
                                             </div>
                                         ))}
                                         {tempSpecs.length === 0 && (
@@ -264,9 +265,10 @@ export default function PersonalInfo({
 
                             {/* Address Section */}
                             <div className="border-t border-gray-200 pt-4">
-                                <button
+                                <Button
                                     onClick={() => setShowAddress(!showAddress)}
-                                    className="flex items-center justify-between w-full mb-3 focus:outline-none group"
+                                    variant="ghost"
+                                    className="flex items-center justify-between w-full mb-3 group p-0 hover:bg-transparent"
                                 >
                                     <h4 className="text-sm font-semibold text-gray-700 group-hover:text-yellow-600 transition-colors">Address</h4>
                                     {showAddress ? (
@@ -276,7 +278,7 @@ export default function PersonalInfo({
                                         /* @ts-ignore */
                                         <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
                                     )}
-                                </button>
+                                </Button>
 
                                 {showAddress && (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -407,9 +409,10 @@ export default function PersonalInfo({
 
                             {/* Address Section in View Mode */}
                             <div className="border-t border-gray-200 pt-4 mt-4">
-                                <button
+                                <Button
                                     onClick={() => setShowAddress(!showAddress)}
-                                    className="flex items-center justify-between w-full mb-3 focus:outline-none group"
+                                    variant="ghost"
+                                    className="flex items-center justify-between w-full mb-3 group p-0 hover:bg-transparent"
                                 >
                                     <h4 className="text-sm font-semibold text-gray-700 group-hover:text-yellow-600 transition-colors">Address</h4>
                                     {showAddress ? (
@@ -419,7 +422,7 @@ export default function PersonalInfo({
                                         /* @ts-ignore */
                                         <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" />
                                     )}
-                                </button>
+                                </Button>
 
                                 {showAddress && (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm animate-in fade-in slide-in-from-top-2 duration-300">

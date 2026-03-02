@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, List, LayoutGrid } from "lucide-react";
+import Button from "../ui/Button";
 
 interface AppointmentFiltersProps {
     view: "list" | "calendar";
@@ -28,7 +29,7 @@ export default function AppointmentFilters({
                 Appointment Filters
             </h2>
 
-            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4 bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-6 bg-linear-to-br from-white to-gray-50/50">
                 {/* Search Input */}
                 <div className="flex-1 min-w-[220px] relative">
                     <input
@@ -49,54 +50,42 @@ export default function AppointmentFilters({
                 <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     {/* Status Filters */}
                     <div className="flex gap-2 mr-2">
-                        <button
+                        <Button
                             onClick={() => onStatusChange('all')}
-                            className={cn(
-                                "px-3 py-1.5 text-xs font-semibold rounded-full transition-all border",
-                                activeStatus === 'all'
-                                    ? "bg-gray-800 text-white border-gray-800"
-                                    : "bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100"
-                            )}
+                            variant={activeStatus === 'all' ? "primary" : "secondary"}
+                            size="sm"
+                            className="rounded-full"
                         >
                             All
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => onStatusChange('today')}
-                            className={cn(
-                                "px-3 py-1.5 text-xs font-semibold rounded-full transition-all border",
-                                activeStatus === 'today'
-                                    ? "bg-blue-600 text-white border-blue-600"
-                                    : "bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100"
-                            )}
+                            variant={activeStatus === 'today' ? "primary" : "secondary"}
+                            size="sm"
+                            className={cn("rounded-full", activeStatus === 'today' ? "bg-blue-600 hover:bg-blue-700" : "text-blue-600")}
                         >
                             Today
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => onStatusChange('completed')}
-                            className={cn(
-                                "px-3 py-1.5 text-xs font-semibold rounded-full transition-all border",
-                                activeStatus === 'completed'
-                                    ? "bg-green-600 text-white border-green-600"
-                                    : "bg-green-50 text-green-600 border-green-100 hover:bg-green-100"
-                            )}
+                            variant={activeStatus === 'completed' ? "primary" : "secondary"}
+                            size="sm"
+                            className={cn("rounded-full", activeStatus === 'completed' ? "bg-green-600 hover:bg-green-700" : "text-green-600")}
                         >
                             Completed
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => onStatusChange('expired')}
-                            className={cn(
-                                "px-3 py-1.5 text-xs font-semibold rounded-full transition-all border",
-                                activeStatus === 'expired'
-                                    ? "bg-red-600 text-white border-red-600"
-                                    : "bg-red-100 text-red-600 border-red-200 hover:bg-red-200"
-                            )}
+                            variant={activeStatus === 'expired' ? "primary" : "secondary"}
+                            size="sm"
+                            className={cn("rounded-full", activeStatus === 'expired' ? "bg-red-600 hover:bg-red-700" : "text-red-600")}
                         >
                             Expired
-                        </button>
+                        </Button>
                     </div>
 
                     <select
-                        className="px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 transition-all"
+                        className="px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-black"
                         aria-label="Sort appointments"
                         defaultValue="earliest"
                     >
@@ -107,36 +96,26 @@ export default function AppointmentFilters({
 
                 {/* View toggles */}
                 <div className="flex gap-2">
-                    <button
+                    <Button
                         onClick={() => setView("list")}
-                        className={cn(
-                            "p-2.5 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center",
-                            view === "list"
-                                ? "bg-yellow-600 text-white shadow-md ring-1 ring-yellow-600"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        )}
+                        variant={view === "list" ? "primary" : "secondary"}
+                        size="md"
+                        className="p-2.5 rounded-lg"
                         aria-label="Switch to list view"
                     >
-                        {/* @ts-ignore */}
                         <List className="w-5 h-5" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => setView("calendar")}
-                        className={cn(
-                            "p-2.5 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center",
-                            view === "calendar"
-                                ? "bg-yellow-600 text-white shadow-md ring-1 ring-yellow-600"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        )}
+                        variant={view === "calendar" ? "primary" : "secondary"}
+                        size="md"
+                        className="p-2.5 rounded-lg"
                         aria-label="Switch to calendar view"
                     >
-                        {/* @ts-ignore */}
                         <LayoutGrid className="w-5 h-5" />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </section>
     );
 }
-
-

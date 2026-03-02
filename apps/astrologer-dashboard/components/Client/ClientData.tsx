@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import * as LucideIcons from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getExpertReviews } from "@/lib/reviews";
+import Button from "../ui/Button";
 
 const { X, MessageSquare, Clock, IndianRupee, Calendar, Star } = LucideIcons as any;
 
@@ -208,7 +209,7 @@ export default function ClientsPage() {
                 {/* Left Side: Info */}
                 <div className="flex gap-4 md:gap-6 w-full md:w-auto">
                   {/* Avatar */}
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-orange-100 overflow-hidden shadow-sm relative">
                       {/* You might want to use session.user.avatar here if available */}
                       <img
@@ -304,15 +305,16 @@ export default function ClientsPage() {
                 </div>
 
                 {/* Right Side: Action Button */}
-                <div className="w-full md:w-auto flex-shrink-0">
+                <div className="w-full md:w-auto shrink-0">
                   {session?.status === 'completed' ? (
-                    <button
+                    <Button
                       onClick={() => handleViewChat(client)}
-                      className="w-full md:w-auto bg-[#fd6410] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20 active:scale-95"
+                      variant="primary"
+                      className="w-full md:w-auto px-6 py-3 shadow-lg shadow-orange-500/20 active:scale-95"
                     >
                       <MessageSquare size={18} className="fill-white/20" />
                       View Chat
-                    </button>
+                    </Button>
                   ) : (
                     <div className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-400 flex items-center gap-2 italic">
                       <MessageSquare size={14} className="opacity-40" />
@@ -355,12 +357,15 @@ export default function ClientsPage() {
                   </div>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => setShowChatModal(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-90"
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 p-2 rounded-full"
+                aria-label="Close modal"
               >
                 <X size={24} />
-              </button>
+              </Button>
             </div>
 
             {/* Messages Area */}

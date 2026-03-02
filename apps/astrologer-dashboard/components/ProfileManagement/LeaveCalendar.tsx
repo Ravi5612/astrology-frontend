@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Calendar as CalendarIcon, Plus, X } from "lucide-react";
 import { LeaveDate } from "./types";
+import Button from "../ui/Button";
 
 interface LeaveCalendarProps {
     leaveDates: LeaveDate[];
@@ -54,12 +55,13 @@ export default function LeaveCalendar({
                         placeholder="Reason for leave..."
                         className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
-                    <button
+                    <Button
                         onClick={handleAdd}
-                        className="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                        variant="primary"
+                        className="p-2"
                     >
                         <Plus className="w-5 h-5" />
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -81,8 +83,8 @@ export default function LeaveCalendar({
                                 <div
                                     key={leave.id}
                                     className={`flex items-center justify-between p-3 rounded-lg border ${isPast
-                                            ? "bg-gray-50 border-gray-200 opacity-60"
-                                            : "bg-red-50 border-red-200"
+                                        ? "bg-gray-50 border-gray-200 opacity-60"
+                                        : "bg-red-50 border-red-200"
                                         }`}
                                 >
                                     <div className="flex-1">
@@ -104,12 +106,14 @@ export default function LeaveCalendar({
                                             {leave.reason}
                                         </p>
                                     </div>
-                                    <button
+                                    <Button
                                         onClick={() => onDelete(leave.id)}
-                                        className="flex-shrink-0 text-red-500 hover:text-red-700 ml-2"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="shrink-0 text-red-500 hover:text-red-700 ml-2"
                                     >
                                         <X className="w-4 h-4" />
-                                    </button>
+                                    </Button>
                                 </div>
                             );
                         })

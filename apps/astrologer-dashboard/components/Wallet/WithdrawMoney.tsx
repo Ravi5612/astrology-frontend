@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Landmark, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { BankAccount } from "./types";
 import { toast } from "react-toastify";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface WithdrawMoneyProps {
     availableBalance: number;
@@ -104,9 +104,11 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                     onClick={handleWithdraw}
                     disabled={!amount || bankAccounts.length === 0 || parseFloat(amount) > availableBalance}
                     variant="primary"
-                    className="w-full lg:w-48 font-bold py-4 px-6 rounded-2xl shadow-lg shadow-amber-200 active:scale-95 flex items-center justify-center gap-2"
+                    size="lg"
+                    rightIcon={<ArrowRight className="w-4 h-4" />}
+                    className="w-full lg:w-48 font-bold shadow-lg shadow-amber-200"
                 >
-                    Withdraw Now <ArrowRight className="w-4 h-4" />
+                    Withdraw Now
                 </Button>
                 <div className="flex items-center justify-center gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 py-2 px-3 rounded-xl border border-emerald-100">
                     {/* @ts-ignore */}

@@ -1,6 +1,7 @@
 import React from "react";
 import { User, Clock, Edit3, Save, Plus, X, DollarSign, Briefcase } from "lucide-react";
 import { Profile } from "./types";
+import Button from "../ui/Button";
 
 interface ExpertiseAvailabilityProps {
     profile: Profile;
@@ -45,13 +46,15 @@ export default function ExpertiseAvailability({
                     <Briefcase className="w-5 h-5 mr-2 text-yellow-600" /> Expertise & Pricing
                 </h2>
                 {!isEditing && (
-                    <button
+                    <Button
                         onClick={onEdit}
-                        className="flex items-center space-x-1 text-sm text-yellow-600 hover:text-yellow-700 font-medium"
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-1"
                     >
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -135,9 +138,14 @@ export default function ExpertiseAvailability({
                             {tempProfile.languages.map((lang, i) => (
                                 <span key={i} className="flex items-center bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-sm border border-gray-200">
                                     {lang}
-                                    <button onClick={() => removeLanguage(lang)} className="ml-1.5 hover:text-red-500 transition-colors">
+                                    <Button
+                                        onClick={() => removeLanguage(lang)}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="ml-1.5 p-1 h-auto hover:text-red-500 transition-colors"
+                                    >
                                         <X className="w-3 h-3" />
-                                    </button>
+                                    </Button>
                                 </span>
                             ))}
                         </div>
@@ -150,31 +158,32 @@ export default function ExpertiseAvailability({
                                 className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm text-black"
                                 onKeyPress={(e) => e.key === 'Enter' && addLanguage()}
                             />
-                            <button
+                            <Button
                                 type="button"
                                 onClick={addLanguage}
-                                className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors border border-gray-300"
+                                variant="secondary"
+                                className="p-2 h-auto"
                             >
                                 <Plus className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
 
                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
-                        <button
+                        <Button
                             onClick={onCancel}
-                            className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                            variant="secondary"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={onSave}
-                            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-all shadow-md text-sm font-medium"
+                            variant="primary"
+                            leftIcon={<Save className="w-4 h-4" />}
                         >
-                            <Save className="w-4 h-4" />
-                            <span>Save Changes</span>
-                        </button>
+                            Save Changes
+                        </Button>
                     </div>
                 </div>
             ) : (

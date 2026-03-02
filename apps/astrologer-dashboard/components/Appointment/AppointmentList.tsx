@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { Appointment } from "./types";
+import Button from "../ui/Button";
 
 const Clock = LucideClock as any;
 const Video = LucideVideo as any;
@@ -86,7 +87,7 @@ export default function AppointmentList({
                         {/* Left Section: Client Info & Details */}
                         <div className="flex items-start lg:items-center gap-5 flex-1 min-w-0">
                             {/* Avatar */}
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-2xl ring-2 ring-yellow-500 overflow-hidden shadow-sm">
+                            <div className="shrink-0 w-12 h-12 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-2xl ring-2 ring-yellow-500 overflow-hidden shadow-sm">
                                 {appt.avatar ? (
                                     <img
                                         src={appt.avatar || "/images/dummy-astrologer.jpg"}
@@ -146,7 +147,7 @@ export default function AppointmentList({
                         </div>
 
                         {/* Right Section: Actions */}
-                        <div className="flex-shrink-0 flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 lg:mt-0">
+                        <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 lg:mt-0">
                             {appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
                                 <>
                                     <a
@@ -163,15 +164,23 @@ export default function AppointmentList({
                                             </>
                                         )}
                                     </a>
-                                    <button
+                                    <Button
                                         onClick={() => onReschedule(appt)}
-                                        className="px-5 py-3 text-sm bg-gray-200 text-gray-800 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-gray-300 shadow-sm transition-all w-full sm:w-auto"
+                                        variant="secondary"
+                                        size="md"
+                                        leftIcon={<RefreshCw className="w-5 h-5" />}
+                                        className="w-full sm:w-auto"
                                     >
-                                        <RefreshCw className="w-5 h-5" /> Reschedule
-                                    </button>
-                                    <button className="px-5 py-3 text-sm bg-red-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-red-700 shadow-sm transition-all w-full sm:w-auto">
-                                        <XCircle className="w-5 h-5" /> Cancel
-                                    </button>
+                                        Reschedule
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        size="md"
+                                        leftIcon={<XCircle className="w-5 h-5" />}
+                                        className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full sm:w-auto"
+                                    >
+                                        Cancel
+                                    </Button>
                                 </>
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
@@ -283,15 +292,23 @@ export default function AppointmentList({
                                             </>
                                         )}
                                     </a>
-                                    <button
+                                    <Button
                                         onClick={() => onReschedule(appt)}
-                                        className="w-full px-3 py-2.5 bg-yellow-500 text-white rounded-xl flex items-center justify-center gap-2 hover:bg-yellow-600 shadow-sm transition-all"
+                                        variant="secondary"
+                                        size="md"
+                                        leftIcon={<RefreshCw className="w-4 h-4" />}
+                                        className="w-full"
                                     >
-                                        <RefreshCw className="w-4 h-4" /> Reschedule
-                                    </button>
-                                    <button className="w-full px-3 py-2.5 bg-red-500 text-white rounded-xl flex items-center justify-center gap-2 hover:bg-red-600 shadow-sm transition-all">
-                                        <XCircle className="w-4 h-4" /> Cancel
-                                    </button>
+                                        Reschedule
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        size="md"
+                                        leftIcon={<XCircle className="w-4 h-4" />}
+                                        className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full"
+                                    >
+                                        Cancel
+                                    </Button>
                                 </>
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
@@ -322,6 +339,3 @@ export default function AppointmentList({
         </section>
     );
 }
-
-
-

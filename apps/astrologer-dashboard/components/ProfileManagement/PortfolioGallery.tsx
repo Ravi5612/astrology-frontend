@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Image as ImageIcon, Video, Trash2, Plus, Upload, Link as LinkIcon, X, Play, Save, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface PortfolioGalleryProps {
     images: string[];
@@ -194,12 +194,14 @@ export default function PortfolioGallery({
                                     {images.map((img, i) => (
                                         <div key={i} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
                                             <Image src={img} alt={`Gallery ${i}`} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
-                                            <button
+                                            <Button
                                                 onClick={() => onRemoveImage(i)}
+                                                variant="secondary"
+                                                size="sm"
                                                 className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm"
                                             >
                                                 <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            </Button>
                                         </div>
                                     ))}
                                 </div>
@@ -278,12 +280,14 @@ export default function PortfolioGallery({
                                             </div>
                                             <span className="text-sm text-gray-600 truncate flex-1" title={vid}>{vid}</span>
                                         </div>
-                                        <button
+                                        <Button
                                             onClick={() => onRemoveVideo(i)}
+                                            variant="ghost"
+                                            size="sm"
                                             className="text-gray-400 hover:text-red-500 transition-colors p-1"
                                         >
                                             <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        </Button>
                                     </li>
                                 ))}
                             </ul>
@@ -396,13 +400,15 @@ export default function PortfolioGallery({
                                                         Change
                                                     </Button>
                                                     {onRemoveIntro && (
-                                                        <button
+                                                        <Button
                                                             onClick={onRemoveIntro}
+                                                            variant="ghost"
+                                                            size="sm"
                                                             className="text-gray-400 hover:text-red-500 transition-colors p-1"
                                                             title="Remove Introduction Video"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                        </Button>
                                                     )}
                                                 </div>
                                             </div>

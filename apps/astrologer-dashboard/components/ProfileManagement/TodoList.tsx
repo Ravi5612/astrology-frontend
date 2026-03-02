@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ListTodo, Plus, CheckCircle2, Circle, Trash2 } from "lucide-react";
 import { Todo } from "./types";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface TodoListProps {
     todos: Todo[];
@@ -71,16 +71,18 @@ export default function TodoList({
                                 : "bg-orange-50 border-orange-200"
                                 }`}
                         >
-                            <button
+                            <Button
                                 onClick={() => onToggle(todo.id)}
-                                className="flex-shrink-0"
+                                variant="ghost"
+                                size="sm"
+                                className="shrink-0 p-1 h-auto hover:bg-transparent"
                             >
                                 {todo.completed ? (
                                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                                 ) : (
                                     <Circle className="w-5 h-5 text-gray-400 hover:text-orange-600" />
                                 )}
-                            </button>
+                            </Button>
                             <span
                                 className={`flex-1 text-sm ${todo.completed
                                     ? "line-through text-gray-500"
@@ -93,7 +95,7 @@ export default function TodoList({
                                 onClick={() => onDelete(todo.id)}
                                 variant="ghost"
                                 size="sm"
-                                className="flex-shrink-0 text-red-500 hover:text-red-700 p-1"
+                                className="shrink-0 text-red-500 hover:text-red-700 p-1"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </Button>

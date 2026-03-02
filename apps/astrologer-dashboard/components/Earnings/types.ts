@@ -55,3 +55,8 @@ export interface EarningsDashboardData {
 }
 
 
+export interface PayoutItem {
+    date: string;
+    amount: string | number;
+    status: 'Processed' | 'Pending' | 'Rejected' | string;
+}

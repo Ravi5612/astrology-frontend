@@ -2,6 +2,8 @@ import React from "react";
 import * as LucideIcons from "lucide-react";
 import { Client, SortConfig, SortKey } from "./types";
 
+import Button from "../ui/Button";
+
 const { Phone, Mail, Star, ArrowDown, ArrowUp, MessageSquare } = LucideIcons as any;
 
 interface ClientTableProps {
@@ -29,7 +31,7 @@ export default function ClientTable({
     return (
         <div className="overflow-x-auto bg-white rounded-xl shadow-lg hidden md:block">
             <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 text-black">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Client
@@ -135,13 +137,15 @@ export default function ClientTable({
                                 </p>
                             </td>
                             <td className="px-6 py-4">
-                                <button
+                                <Button
                                     onClick={() => onViewChat(client)}
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors text-xs font-semibold"
+                                    variant="secondary"
+                                    size="sm"
+                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded-lg text-xs font-semibold"
                                 >
-                                    <MessageSquare size={14} />
+                                    <MessageSquare size={14} className="mr-2" />
                                     View Chat
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}

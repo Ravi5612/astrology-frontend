@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ChevronDown, Plus, Video, Phone } from "lucide-react";
+import Button from "../ui/Button";
 
 export const ManageConsultaions: React.FC = () => {
     const services = [
@@ -29,15 +30,22 @@ export const ManageConsultaions: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 w-full sm:w-auto">Manage Consultations</h3>
-                <div className="flex flex-wrap items-center gap-3">
-                    <button className="flex items-center justify-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm flex-1 sm:flex-none">
-                        <span>All Services</span>
-                        <ChevronDown className="w-4 h-4" />
-                    </button>
-                    <button className="flex items-center justify-center space-x-2 px-3 py-2.5 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm shadow-sm flex-1 sm:flex-none whitespace-nowrap">
-                        <Plus className="w-4 h-4 shrink-0" />
-                        <span>Add Service</span>
-                    </button>
+                <div className="flex items-center space-x-3">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        rightIcon={<ChevronDown className="w-4 h-4" />}
+                    >
+                        All Services
+                    </Button>
+                    <Button
+                        variant="primary"
+                        size="sm"
+                        leftIcon={<Plus className="w-4 h-4 shrink-0" />}
+                        className="shadow-sm"
+                    >
+                        Add Service
+                    </Button>
                 </div>
             </div>
 
@@ -77,9 +85,13 @@ export const ManageConsultaions: React.FC = () => {
                                     {service.status}
                                 </span>
 
-                                <button className="text-sm text-yellow-600 hover:underline font-medium">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-yellow-600 hover:underline font-medium hover:bg-transparent"
+                                >
                                     Edit
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -88,5 +100,3 @@ export const ManageConsultaions: React.FC = () => {
         </div>
     );
 };
-
-

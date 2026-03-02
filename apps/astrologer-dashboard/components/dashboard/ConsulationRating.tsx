@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { Star, Loader2 } from "lucide-react";
+import Button from "../ui/Button";
 
 interface RatingDistribution {
     stars: number;
@@ -45,12 +44,14 @@ export const ConsultationRatings: React.FC<ConsultationRatingsProps> = ({
                     Consultation Ratings
                 </h3>
                 {onViewAllClick && (
-                    <button
+                    <Button
                         onClick={onViewAllClick}
-                        className="text-sm text-yellow-600 font-medium hover:underline"
+                        variant="ghost"
+                        size="sm"
+                        className="text-yellow-600 font-medium hover:underline hover:bg-transparent"
                     >
                         View All
-                    </button>
+                    </Button>
                 )}
             </div>
 

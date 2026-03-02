@@ -2,6 +2,8 @@ import React from "react";
 import * as LucideIcons from "lucide-react";
 import { Client } from "./types";
 
+import Button from "../ui/Button";
+
 const { Phone, Mail, MessageSquare, Video, Star } = LucideIcons as any;
 
 interface ClientMobileListProps {
@@ -20,7 +22,7 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-lg overflow-hidden flex-shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
                                 {client.avatar ? (
                                     <img
                                         src={client.avatar || "/images/dummy-astrologer.jpg"}
@@ -53,15 +55,15 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
 
                     {/* Contact & Consultation */}
                     <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-black">
                             <Phone size={16} className="text-gray-500" />
                             {client.phone}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-black">
                             <Mail size={16} className="text-gray-500" />
                             {client.email}
                         </div>
-                        <div className="flex items-center gap-2 col-span-2">
+                        <div className="flex items-center gap-2 col-span-2 text-black">
                             <p className="text-gray-600 font-medium">Last Consultation:</p>
                             <span className="flex items-center gap-1">
                                 {client.lastConsultation.date}
@@ -86,13 +88,15 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                         <div className="text-sm font-semibold text-yellow-700">
                             Payment: ₹{client.payment.toLocaleString()}
                         </div>
-                        <button
+                        <Button
                             onClick={() => onViewChat(client)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors text-xs font-bold"
+                            variant="secondary"
+                            size="sm"
+                            className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 font-bold"
                         >
-                            <MessageSquare size={12} />
+                            <MessageSquare size={12} className="mr-1.5" />
                             Chat History
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Notes */}
