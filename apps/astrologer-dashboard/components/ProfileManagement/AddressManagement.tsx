@@ -57,27 +57,17 @@ export default function AddressManagement({
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
                     <MapPin className="w-5 h-5 mr-2 text-orange" /> Professional Addresses
                 </h2>
-<<<<<<< HEAD
-                <button
-                    onClick={onEdit}
-                    className="flex items-center space-x-1 text-sm text-orange hover:text-orange/80 font-medium"
-                >
-                    <Edit3 className="w-4 h-4" />
-                    <span>Edit</span>
-                </button>
-=======
                 {!isEditing && (
                     <Button
                         onClick={onEdit}
                         variant="ghost"
                         size="sm"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 text-orange hover:text-orange/80"
                     >
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
                     </Button>
                 )}
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
             </div>
 
             {isEditing ? (
@@ -181,12 +171,9 @@ export default function AddressManagement({
                         </Button>
                         <Button
                             onClick={onSave}
-<<<<<<< HEAD
-                            className="flex items-center space-x-2 bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/90 shadow-md text-sm font-medium"
-=======
                             variant="primary"
                             leftIcon={<Save className="w-4 h-4" />}
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
+                            className="bg-orange hover:bg-orange/90"
                         >
                             Save Changes
                         </Button>
@@ -197,11 +184,7 @@ export default function AddressManagement({
                     {profile.addresses.length > 0 ? (
                         profile.addresses.map((addr, idx) => (
                             <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-<<<<<<< HEAD
-                                <MapPin className="w-4 h-4 text-orange mt-1 flex-shrink-0" />
-=======
-                                <MapPin className="w-4 h-4 text-yellow-600 mt-1 shrink-0" />
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
+                                <MapPin className="w-4 h-4 text-orange mt-1 shrink-0" />
                                 <div>
                                     <span className="font-bold text-orange uppercase text-[9px] tracking-widest">{addr.tag}</span>
                                     <p className="text-sm font-medium text-gray-800">{addr.line1}</p>

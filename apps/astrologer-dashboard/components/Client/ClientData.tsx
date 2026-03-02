@@ -40,7 +40,6 @@ export default function ClientsPage() {
           expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID")
         ]);
 
-<<<<<<< HEAD
         const getSessionsData = (res: any) => {
           if (res.status !== 'fulfilled') return [];
           if (Array.isArray(res.value.data)) return res.value.data;
@@ -49,11 +48,7 @@ export default function ClientsPage() {
         };
 
         const sessions = getSessionsData(sessionsRes);
-        const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : [];
-=======
-        const sessions = sessionsRes.status === 'fulfilled' ? ((sessionsRes.value as any).data || (Array.isArray(sessionsRes.value) ? sessionsRes.value : [])) : [];
-        const reviews = (reviewsRes.status === 'fulfilled' ? ((reviewsRes.value as any).data || (Array.isArray(reviewsRes.value) ? reviewsRes.value : [])) : []);
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
+        const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : ((reviewsRes.status === 'fulfilled' && (reviewsRes.value as any)) ? (reviewsRes.value as any) : []);
 
         // Map API response to Client interface
         const mappedClients: Client[] = sessions.map((session: any) => {
@@ -101,14 +96,10 @@ export default function ClientsPage() {
             phone: session.user?.phone || session.user?.phone_number || "Hidden",
             email: session.user?.email || "Hidden",
             lastConsultation: {
-<<<<<<< HEAD
               date: (() => {
-                const d = new Date(session.createdAt);
+                const d = new Date(session.created_at || session.createdAt);
                 return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
               })(),
-=======
-              date: new Date(session.created_at || session.createdAt).toISOString().split('T')[0],
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
               duration: `${duration} min`,
               type: "chat"
             },
@@ -146,14 +137,9 @@ export default function ClientsPage() {
     setLoadingChat(true);
 
     try {
-<<<<<<< HEAD
       const response = await apiClient.get<any>(`/chat/history/${session.id}`);
       const messages = Array.isArray(response) ? response : (response?.data || []);
       setChatMessages(messages);
-=======
-      const response: any = await apiClient.get(`/chat/history/${session.id}`);
-      setChatMessages(response?.data || response || []);
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
     } catch (error) {
       console.error("Failed to load chat history:", error);
       toast.error("Failed to load chat history");

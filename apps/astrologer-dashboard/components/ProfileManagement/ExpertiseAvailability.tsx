@@ -45,27 +45,17 @@ export default function ExpertiseAvailability({
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
                     <Briefcase className="w-5 h-5 mr-2 text-orange" /> Expertise & Pricing
                 </h2>
-<<<<<<< HEAD
-                <button
-                    onClick={onEdit}
-                    className="flex items-center space-x-1 text-sm text-orange hover:text-orange/80 font-medium"
-                >
-                    <Edit3 className="w-4 h-4" />
-                    <span>Edit</span>
-                </button>
-=======
                 {!isEditing && (
                     <Button
                         onClick={onEdit}
                         variant="ghost"
                         size="sm"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 text-orange hover:text-orange/80"
                     >
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
                     </Button>
                 )}
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
             </div>
 
             {isEditing ? (
@@ -189,12 +179,9 @@ export default function ExpertiseAvailability({
                         </Button>
                         <Button
                             onClick={onSave}
-<<<<<<< HEAD
-                            className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/90 transition-all shadow-md text-sm font-medium"
-=======
                             variant="primary"
                             leftIcon={<Save className="w-4 h-4" />}
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
+                            className="bg-orange hover:bg-orange/90"
                         >
                             Save Changes
                         </Button>

@@ -104,13 +104,9 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                     onClick={handleWithdraw}
                     disabled={!amount || bankAccounts.length === 0 || parseFloat(amount) > availableBalance}
                     variant="primary"
-<<<<<<< HEAD
-                    className="w-full lg:w-48 font-bold py-4 px-6 rounded-2xl shadow-lg shadow-orange/20 active:scale-95 flex items-center justify-center gap-2"
-=======
                     size="lg"
                     rightIcon={<ArrowRight className="w-4 h-4" />}
-                    className="w-full lg:w-48 font-bold shadow-lg shadow-amber-200"
->>>>>>> a2634915422408a96358098e73d10ff38ce89526
+                    className="w-full lg:w-48 font-bold py-4 px-6 rounded-2xl shadow-lg shadow-orange/20 active:scale-95 flex items-center justify-center gap-2"
                 >
                     Withdraw Now
                 </Button>
