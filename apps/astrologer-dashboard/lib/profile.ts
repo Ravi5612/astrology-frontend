@@ -19,7 +19,7 @@ export const uploadDocument = async (file: File) => {
     formData.append('file', file);
 
     const response: any = await apiClient.upload('/expert/upload-file', formData);
-    return response;
+    return response?.data ?? response;
 };
 
 // Segmented Updates
@@ -59,12 +59,12 @@ export const getBankAccounts = async () => {
 
 export const addBankAccount = async (data: any) => {
     const response = await apiClient.post<any>('/expert/bank-accounts', data);
-    return response;
+    return response?.data ?? response;
 };
 
 export const updateBankAccount = async (id: string, data: any) => {
     const response = await apiClient.patch<any>(`/expert/bank-accounts/${id}`, data);
-    return response;
+    return response?.data ?? response;
 };
 
 export const deleteBankAccount = async (id: string) => {
@@ -85,12 +85,12 @@ export const getTodos = async (): Promise<Todo[]> => {
 
 export const createTodo = async (text: string): Promise<Todo> => {
     const response = await apiClient.post<any>('/expert/todos', { text });
-    return response;
+    return response?.data ?? response;
 };
 
 export const updateTodo = async (id: number, updates: Partial<Todo>): Promise<Todo> => {
     const response = await apiClient.patch<any>(`/expert/todos/${id}`, updates);
-    return response;
+    return response?.data ?? response;
 };
 
 export const deleteTodoApi = async (id: number) => {

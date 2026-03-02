@@ -2,7 +2,8 @@ export interface Todo {
     id: number;
     text: string;
     completed: boolean;
-    createdAt: Date;
+    created_at?: Date | string;
+    createdAt?: Date | string;
 }
 
 export interface LeaveDate {
