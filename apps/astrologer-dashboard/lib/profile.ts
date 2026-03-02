@@ -2,8 +2,8 @@ import apiClient from "./apiClient";
 import { Profile, Todo } from "../components/ProfileManagement/types";
 
 export const getProfile = async () => {
-    const response = await apiClient.get<any>('/expert');
-    return response;
+    const response: any = await apiClient.get('/expert');
+    return response?.data ?? response;
 };
 
 export const updateProfile = async (data: Partial<Profile>) => {
@@ -53,8 +53,8 @@ export const updateExperience = async (experience: any[]) => {
 
 // Bank Account APIs
 export const getBankAccounts = async () => {
-    const response = await apiClient.get<any>('/expert/bank-accounts');
-    return response;
+    const response: any = await apiClient.get('/expert/bank-accounts');
+    return response?.data ?? response;
 };
 
 export const addBankAccount = async (data: any) => {
@@ -79,8 +79,8 @@ export const setPrimaryBankAccount = async (id: string) => {
 
 // Todo APIs
 export const getTodos = async (): Promise<Todo[]> => {
-    const response = await apiClient.get<any>('/expert/todos');
-    return response;
+    const response: any = await apiClient.get('/expert/todos');
+    return response?.data ?? response;
 };
 
 export const createTodo = async (text: string): Promise<Todo> => {

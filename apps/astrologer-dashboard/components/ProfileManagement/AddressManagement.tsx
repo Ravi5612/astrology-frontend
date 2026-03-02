@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MapPin, Plus, X, Edit3, Save, Trash2 } from "lucide-react";
 import { Profile, Address } from "./types";
+import Button from "../ui/Button";
 
 interface AddressManagementProps {
     profile: Profile;
@@ -56,6 +57,7 @@ export default function AddressManagement({
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
                     <MapPin className="w-5 h-5 mr-2 text-orange" /> Professional Addresses
                 </h2>
+<<<<<<< HEAD
                 <button
                     onClick={onEdit}
                     className="flex items-center space-x-1 text-sm text-orange hover:text-orange/80 font-medium"
@@ -63,6 +65,19 @@ export default function AddressManagement({
                     <Edit3 className="w-4 h-4" />
                     <span>Edit</span>
                 </button>
+=======
+                {!isEditing && (
+                    <Button
+                        onClick={onEdit}
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-1"
+                    >
+                        <Edit3 className="w-4 h-4" />
+                        <span>Edit</span>
+                    </Button>
+                )}
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
             </div>
 
             {isEditing ? (
@@ -76,9 +91,14 @@ export default function AddressManagement({
                                     <p className="text-gray-800 font-medium">{addr.line1}</p>
                                     <p className="text-gray-500 text-xs">{addr.city}, {addr.state}, {addr.country} {addr.zipCode}</p>
                                 </div>
-                                <button onClick={() => removeAddress(idx)} className="text-red-400 hover:text-red-500 p-2">
+                                <Button
+                                    onClick={() => removeAddress(idx)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-400 hover:text-red-500 p-2"
+                                >
                                     <Trash2 className="w-4 h-4" />
-                                </button>
+                                </Button>
                             </div>
                         ))}
                     </div>
@@ -141,29 +161,35 @@ export default function AddressManagement({
                                 </select>
                             </div>
                         </div>
-                        <button
+                        <Button
                             type="button"
                             onClick={addAddress}
-                            className="w-full py-2 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors flex items-center justify-center"
+                            variant="primary"
+                            fullWidth
+                            leftIcon={<Plus className="w-4 h-4" />}
                         >
-                            <Plus className="w-4 h-4 mr-2" /> Add to List
-                        </button>
+                            Add to List
+                        </Button>
                     </div>
 
                     <div className="flex space-x-2 justify-end pt-2">
-                        <button
+                        <Button
                             onClick={onCancel}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                            variant="secondary"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={onSave}
+<<<<<<< HEAD
                             className="flex items-center space-x-2 bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/90 shadow-md text-sm font-medium"
+=======
+                            variant="primary"
+                            leftIcon={<Save className="w-4 h-4" />}
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
                         >
-                            <Save className="w-4 h-4" />
-                            <span>Save Changes</span>
-                        </button>
+                            Save Changes
+                        </Button>
                     </div>
                 </div>
             ) : (
@@ -171,7 +197,11 @@ export default function AddressManagement({
                     {profile.addresses.length > 0 ? (
                         profile.addresses.map((addr, idx) => (
                             <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+<<<<<<< HEAD
                                 <MapPin className="w-4 h-4 text-orange mt-1 flex-shrink-0" />
+=======
+                                <MapPin className="w-4 h-4 text-yellow-600 mt-1 shrink-0" />
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
                                 <div>
                                     <span className="font-bold text-orange uppercase text-[9px] tracking-widest">{addr.tag}</span>
                                     <p className="text-sm font-medium text-gray-800">{addr.line1}</p>

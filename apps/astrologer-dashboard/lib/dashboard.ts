@@ -35,9 +35,10 @@ export const getRecentSessions = async (): Promise<any[]> => {
         let allSessions: any[] = [];
 
         const extractData = (res: any) => {
-            if (Array.isArray(res.data)) return res.data;
-            if (res.data?.data && Array.isArray(res.data.data)) return res.data.data;
-            if (res.data?.items && Array.isArray(res.data.items)) return res.data.items;
+            if (Array.isArray(res)) return res;
+            if (Array.isArray(res?.data)) return res.data;
+            if (res?.data?.data && Array.isArray(res.data.data)) return res.data.data;
+            if (res?.data?.items && Array.isArray(res.data.items)) return res.data.items;
             return [];
         };
 

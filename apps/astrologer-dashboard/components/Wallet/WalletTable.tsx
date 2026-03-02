@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, XCircle, Landmark } from "lucide-react";
 import { WalletTransaction } from "./types";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface WalletTableProps {
     transactions: WalletTransaction[];
@@ -103,7 +103,9 @@ export default function WalletTable({ transactions }: WalletTableProps) {
             <div className="p-4 bg-gray-50/50 border-t border-gray-50 text-center">
                 <Button
                     variant="ghost"
-                    className="text-amber-600 text-xs font-black uppercase tracking-widest hover:text-amber-700 hover:bg-transparent w-full"
+                    size="sm"
+                    fullWidth
+                    className="text-amber-600 font-black uppercase tracking-widest hover:bg-transparent"
                 >
                     Load More Transactions
                 </Button>

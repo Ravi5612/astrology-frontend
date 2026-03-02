@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Shield, CheckCircle2, FileText, Upload, Trash2, File as FileIcon, Award, ChevronRight, ChevronDown, ChevronUp, CreditCard, UserSquare2, X } from "lucide-react";
 import { DocumentItem } from "./types";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface VerificationAndDocumentsProps {
     kycCompleted: boolean;
@@ -461,7 +461,7 @@ export default function VerificationAndDocuments({
                             onClick={() => certificateInputRef.current?.click()}
                             variant="outline"
                             fullWidth
-                            className="flex items-center justify-center gap-2 bg-orange-50 text-orange-700 border-orange-300 hover:bg-orange-100 hover:border-orange-400"
+                            className="flex items-center justify-center gap-2"
                         >
                             <Upload className="w-4 h-4" />
                             <span>Upload New Certificate</span>

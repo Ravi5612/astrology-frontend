@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import * as LucideIcons from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getExpertReviews } from "@/lib/reviews";
+import Button from "../ui/Button";
 
 const { X, MessageSquare, Clock, IndianRupee, Calendar, Star } = LucideIcons as any;
 
@@ -39,6 +40,7 @@ export default function ClientsPage() {
           expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID")
         ]);
 
+<<<<<<< HEAD
         const getSessionsData = (res: any) => {
           if (res.status !== 'fulfilled') return [];
           if (Array.isArray(res.value.data)) return res.value.data;
@@ -48,11 +50,15 @@ export default function ClientsPage() {
 
         const sessions = getSessionsData(sessionsRes);
         const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : [];
+=======
+        const sessions = sessionsRes.status === 'fulfilled' ? ((sessionsRes.value as any).data || (Array.isArray(sessionsRes.value) ? sessionsRes.value : [])) : [];
+        const reviews = (reviewsRes.status === 'fulfilled' ? ((reviewsRes.value as any).data || (Array.isArray(reviewsRes.value) ? reviewsRes.value : [])) : []);
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
 
         // Map API response to Client interface
         const mappedClients: Client[] = sessions.map((session: any) => {
           // Fallback duration calculation
-          let duration = session.durationMins || session.duration || 0;
+          let duration = session.duration_mins || session.durationMins || session.duration || 0;
 
           // If duration is very large (e.g. > 1000), it might be in seconds or ms
           if (duration > 500) {
@@ -60,12 +66,12 @@ export default function ClientsPage() {
           }
 
           if (duration === 0 && (session.status === 'completed' || session.status === 'expired')) {
-            const start = session.activatedAt ? new Date(session.activatedAt).getTime() :
-              (session.startTime ? new Date(session.startTime).getTime() :
-                (session.createdAt ? new Date(session.createdAt).getTime() : 0));
-            const end = session.endedAt ? new Date(session.endedAt).getTime() :
-              (session.endTime ? new Date(session.endTime).getTime() :
-                (session.updatedAt ? new Date(session.updatedAt).getTime() : 0));
+            const start = (session.activated_at || session.activatedAt) ? new Date(session.activated_at || session.activatedAt).getTime() :
+              (session.start_time || session.startTime ? new Date(session.start_time || session.startTime).getTime() :
+                (session.created_at || session.createdAt ? new Date(session.created_at || session.createdAt).getTime() : 0));
+            const end = (session.ended_at || session.endedAt) ? new Date(session.ended_at || session.endedAt).getTime() :
+              (session.end_time || session.endTime ? new Date(session.end_time || session.endTime).getTime() :
+                (session.updated_at || session.updatedAt ? new Date(session.updated_at || session.updatedAt).getTime() : 0));
 
             if (start > 0 && end > 0) {
               const diffMs = end - start;
@@ -79,7 +85,7 @@ export default function ClientsPage() {
           // Try to find review from separate reviews API if not in session
           let sessionReview = session.review;
           if (!sessionReview || !sessionReview.comment) {
-            const matchingReview = reviews.find((r: any) => r.sessionId === session.id);
+            const matchingReview = reviews.find((r: any) => (r.session_id || r.sessionId) === session.id);
             if (matchingReview) {
               sessionReview = {
                 rating: matchingReview.rating,
@@ -91,24 +97,28 @@ export default function ClientsPage() {
           return {
             id: session.id, // using session ID as unique key
             name: session.user?.name || "Client",
-            avatar: session.user?.profile_picture || session.user?.avatar,
-            phone: session.user?.phone || "Hidden", // Phone might not be exposed
+            avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+            phone: session.user?.phone || session.user?.phone_number || "Hidden",
             email: session.user?.email || "Hidden",
             lastConsultation: {
+<<<<<<< HEAD
               date: (() => {
                 const d = new Date(session.createdAt);
                 return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
               })(),
+=======
+              date: new Date(session.created_at || session.createdAt).toISOString().split('T')[0],
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
               duration: `${duration} min`,
               type: "chat"
             },
             rating: sessionReview?.rating || 0,
             review: sessionReview?.comment || "No review yet",
-            payment: session.totalCost || session.amount || 0,
+            payment: session.total_cost || session.totalCost || session.amount || 0,
             rawSession: {
               ...session,
               durationMins: duration,
-              totalCost: session.totalCost || session.amount || 0
+              totalCost: session.total_cost || session.totalCost || session.amount || 0
             }
           };
         });
@@ -136,9 +146,14 @@ export default function ClientsPage() {
     setLoadingChat(true);
 
     try {
+<<<<<<< HEAD
       const response = await apiClient.get<any>(`/chat/history/${session.id}`);
       const messages = Array.isArray(response) ? response : (response?.data || []);
       setChatMessages(messages);
+=======
+      const response: any = await apiClient.get(`/chat/history/${session.id}`);
+      setChatMessages(response?.data || response || []);
+>>>>>>> a2634915422408a96358098e73d10ff38ce89526
     } catch (error) {
       console.error("Failed to load chat history:", error);
       toast.error("Failed to load chat history");
@@ -219,7 +234,7 @@ export default function ClientsPage() {
                 {/* Left Side: Info */}
                 <div className="flex gap-4 md:gap-6 w-full md:w-auto">
                   {/* Avatar */}
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-orange-100 overflow-hidden shadow-sm relative">
                       {/* You might want to use session.user.avatar here if available */}
                       <img
@@ -239,7 +254,7 @@ export default function ClientsPage() {
                       <h3 className="text-lg font-bold text-gray-900 leading-tight">{client.name}</h3>
                       <p className="text-sm text-gray-500 flex items-center gap-2 mt-1 font-medium">
                         <Calendar size={14} className="text-gray-400" />
-                        {new Date(session?.createdAt || Date.now()).toLocaleDateString('en-IN', {
+                        {new Date(session?.created_at || session?.createdAt || Date.now()).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
                           year: 'numeric',
@@ -252,18 +267,18 @@ export default function ClientsPage() {
                     {/* Badges Row */}
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       {/* Status Badge */}
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold capitalize ${session?.terminatedBy === 'admin' ? 'bg-red-100 text-red-700' :
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold capitalize ${session?.terminated_by === 'admin' || session?.terminatedBy === 'admin' ? 'bg-red-100 text-red-700' :
                         session?.status === 'completed' ? 'bg-green-100 text-green-700' :
                           session?.status === 'active' ? 'bg-blue-100 text-blue-700' :
                             'bg-gray-100 text-gray-600'
                         }`}>
                         {/* Circle Icon */}
-                        <div className={`w-1.5 h-1.5 rounded-full ${session?.terminatedBy === 'admin' ? 'bg-red-500' :
+                        <div className={`w-1.5 h-1.5 rounded-full ${session?.terminated_by === 'admin' || session?.terminatedBy === 'admin' ? 'bg-red-500' :
                           session?.status === 'completed' ? 'bg-green-500' :
                             session?.status === 'active' ? 'bg-blue-500' :
                               'bg-gray-500'
                           }`}></div>
-                        {session?.terminatedBy === 'admin' ? 'Terminated by Admin' : (session?.status || 'Completed')}
+                        {(session?.terminated_by === 'admin' || session?.terminatedBy === 'admin') ? 'Terminated by Admin' : (session?.status || 'Completed')}
                       </span>
 
                       {/* Duration Badge */}
@@ -315,15 +330,16 @@ export default function ClientsPage() {
                 </div>
 
                 {/* Right Side: Action Button */}
-                <div className="w-full md:w-auto flex-shrink-0">
+                <div className="w-full md:w-auto shrink-0">
                   {session?.status === 'completed' ? (
-                    <button
+                    <Button
                       onClick={() => handleViewChat(client)}
-                      className="w-full md:w-auto bg-[#fd6410] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20 active:scale-95"
+                      variant="primary"
+                      className="w-full md:w-auto px-6 py-3 shadow-lg shadow-orange-500/20 active:scale-95"
                     >
                       <MessageSquare size={18} className="fill-white/20" />
                       View Chat
-                    </button>
+                    </Button>
                   ) : (
                     <div className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-400 flex items-center gap-2 italic">
                       <MessageSquare size={14} className="opacity-40" />
@@ -357,21 +373,24 @@ export default function ClientsPage() {
                   <div className="flex items-center gap-3 text-sm text-white/80 mt-0.5 font-medium">
                     <span className="flex items-center gap-1.5">
                       <Calendar size={14} />
-                      {new Date(selectedSession.createdAt).toLocaleDateString()}
+                      {new Date(selectedSession.created_at || selectedSession.createdAt).toLocaleDateString()}
                     </span>
                     <span className="w-1 h-1 bg-white/50 rounded-full"></span>
                     <span className="capitalize">
-                      {selectedSession.terminatedBy === 'admin' ? 'Terminated by Admin' : selectedSession.status}
+                      {(selectedSession.terminated_by === 'admin' || selectedSession.terminatedBy === 'admin') ? 'Terminated by Admin' : selectedSession.status}
                     </span>
                   </div>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => setShowChatModal(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-90"
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 p-2 rounded-full"
+                aria-label="Close modal"
               >
                 <X size={24} />
-              </button>
+              </Button>
             </div>
 
             {/* Messages Area */}
@@ -401,7 +420,7 @@ export default function ClientsPage() {
                           <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                         </div>
                         <span className="text-[10px] mt-1.5 px-1 text-gray-400 font-medium">
-                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(msg.created_at || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                     </div>
@@ -425,7 +444,7 @@ export default function ClientsPage() {
                   <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Total Earnings</span>
                   <span className="font-bold text-gray-800 flex items-center gap-1.5 mt-0.5">
                     <IndianRupee size={14} className="text-green-600" />
-                    ₹{selectedSession.totalCost || 0}
+                    ₹{selectedSession.total_cost || selectedSession.totalCost || 0}
                   </span>
                 </div>
               </div>

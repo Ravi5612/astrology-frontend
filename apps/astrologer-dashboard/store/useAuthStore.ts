@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     ...payload.user,
                     ...payload,
                     profileId: payload.id,
-                    userId: payload.userId || payload.user?.id,
+                    userId: payload.user_id || payload.userId || payload.user?.id,
                     // Normalize snake_case to camelCase for frontend compatibility
                     kycStatus: payload.kyc_status || payload.kycStatus || payload.status,
                     rejectionReason: payload.rejection_reason || payload.rejectionReason,
@@ -77,7 +77,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     ...payload.user,
                     ...payload,
                     profileId: payload.id,
-                    userId: payload.userId || payload.user?.id,
+                    userId: payload.user_id || payload.userId || payload.user?.id,
                     // Normalize snake_case to camelCase for frontend compatibility
                     kycStatus: payload.kyc_status || payload.kycStatus || payload.status,
                     rejectionReason: payload.rejection_reason || payload.rejectionReason,

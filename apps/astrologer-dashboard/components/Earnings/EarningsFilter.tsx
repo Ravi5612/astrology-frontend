@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../ui/Button";
 
 interface EarningsFilterProps {
     timeRange: string;
@@ -21,16 +22,15 @@ export default function EarningsFilter({
     return (
         <div className="flex gap-3 mb-4 flex-wrap">
             {ranges.map((range) => (
-                <button
+                <Button
                     key={range.key}
                     onClick={() => setTimeRange(range.key)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${timeRange === range.key
-                            ? "bg-yellow-600 text-white"
-                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
+                    variant={timeRange === range.key ? "primary" : "secondary"}
+                    size="md"
+                    className="rounded-lg"
                 >
                     {range.label}
-                </button>
+                </Button>
             ))}
         </div>
     );

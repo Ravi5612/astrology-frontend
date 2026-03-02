@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/utils/cn";
 import { PayoutItem } from "./types";
+import Button from "../ui/Button";
 
 interface WithdrawalHistoryProps {
     payoutHistory: PayoutItem[];
@@ -56,13 +57,15 @@ export default function WithdrawalHistory({
 
             {/* Request Withdrawal Button */}
             <div className="mt-10 flex justify-end">
-                <button
-                    className="px-8 py-3 bg-yellow-600 text-white font-semibold rounded-2xl shadow-lg hover:bg-yellow-700 focus:outline-none focus:ring-4  focus:ring-opacity-50 transform transition-all duration-300 "
+                <Button
+                    variant="primary"
+                    size="lg"
+                    className="shadow-lg transform transition-all duration-300 active:scale-95"
                     type="button"
                     aria-label="Request Withdrawal"
                 >
                     Request Withdrawal
-                </button>
+                </Button>
             </div>
         </div>
     );

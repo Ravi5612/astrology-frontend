@@ -11,18 +11,18 @@ export interface Notification {
 }
 
 export const getNotifications = async () => {
-    const response = await apiClient.get('/notifications');
-    return response.data;
+    const response: any = await apiClient.get('/notifications');
+    return response?.data ?? response;
 };
 
 export const markAsRead = async (id: string) => {
-    const response = await apiClient.patch(`/notifications/${id}/read`);
-    return response.data;
+    const response: any = await apiClient.patch(`/notifications/${id}/read`);
+    return response?.data ?? response;
 };
 
 export const deleteNotification = async (id: string) => {
-    const response = await apiClient.delete(`/notifications/${id}`);
-    return response.data;
+    const response: any = await apiClient.delete(`/notifications/${id}`);
+    return response?.data ?? response;
 };
 
 

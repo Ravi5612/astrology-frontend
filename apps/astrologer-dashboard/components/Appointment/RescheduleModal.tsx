@@ -3,6 +3,7 @@ import { XCircle } from "lucide-react";
 import Calendar from "react-calendar";
 import { format } from "date-fns";
 import { Appointment } from "./types";
+import Button from "../ui/Button";
 
 interface RescheduleModalProps {
     isOpen: boolean;
@@ -26,10 +27,6 @@ export default function RescheduleModal({
 
     if (!isOpen || !appointment) return null;
 
-    // Utility function for classnames
-    const cn = (...classes: (string | undefined | null | boolean)[]) =>
-        classes.filter(Boolean).join(" ");
-
     const handleConfirm = () => {
         onConfirm(appointment, selectedDate, selectedTime);
     };
@@ -41,13 +38,15 @@ export default function RescheduleModal({
                     <h3 className="text-2xl font-bold text-gray-900">
                         Reschedule Appointment
                     </h3>
-                    <button
+                    <Button
                         onClick={onClose}
+                        variant="ghost"
+                        size="sm"
                         aria-label="Close modal"
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 p-0 hover:bg-transparent"
                     >
                         <XCircle className="w-6 h-6" />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -89,7 +88,7 @@ export default function RescheduleModal({
                             className="w-full"
                         />
                         <select
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 text-black"
                             value={selectedTime}
                             onChange={(e) => setSelectedTime(e.target.value)}
                         >
@@ -106,28 +105,21 @@ export default function RescheduleModal({
                 </div>
 
                 <div className="p-6 bg-gray-50 flex justify-end gap-3">
-                    <button
+                    <Button
                         onClick={onClose}
-                        className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        variant="secondary"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleConfirm}
                         disabled={!selectedDate || !selectedTime}
-                        className={cn(
-                            "px-6 py-2 rounded-lg text-white transition-colors duration-200",
-                            !selectedDate || !selectedTime
-                                ? "bg-yellow-600 cursor-not-allowed"
-                                : "bg-yellow-600 hover:bg-yellow-700"
-                        )}
+                        variant="primary"
                     >
                         Confirm Reschedule
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
     );
 }
-
-

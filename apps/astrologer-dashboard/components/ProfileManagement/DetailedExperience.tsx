@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Briefcase, Plus, Trash2, Calendar, Building } from "lucide-react";
 import { ExperienceItem } from "./types";
+import Button from "../ui/Button";
 
 interface DetailedExperienceProps {
     experiences: ExperienceItem[];
@@ -53,7 +54,7 @@ export default function DetailedExperience({ experiences, onAdd, onRemove }: Det
 
     return (
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-red-500"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-orange-400 via-orange-500 to-red-500"></div>
             <div className="flex items-center justify-between mb-6">
                 <h2 className="flex items-center text-lg sm:text-xl font-bold text-gray-800">
                     <span className="bg-orange-100 p-2 rounded-lg mr-3">
@@ -63,19 +64,17 @@ export default function DetailedExperience({ experiences, onAdd, onRemove }: Det
                     Professional Experience
                 </h2>
                 {!isAdding && (
-                    <button
+                    <Button
                         onClick={() => setIsAdding(true)}
-                        className="group flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                        leftIcon={<Plus className="w-4 h-4" />}
                     >
-                        {/* @ts-ignore */}
-                        <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                         Add New
-                    </button>
+                    </Button>
                 )}
             </div>
 
             {isAdding && (
-                <div className="mb-8 p-6 bg-gradient-to-br from-orange-50 to-white rounded-2xl border border-orange-100 shadow-inner animate-in fade-in slide-in-from-top-4">
+                <div className="mb-8 p-6 bg-linear-to-br from-orange-50 to-white rounded-2xl border border-orange-100 shadow-inner animate-in fade-in slide-in-from-top-4">
                     <h3 className="text-sm font-bold text-orange-800 uppercase tracking-wide mb-4">Add New Experience</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                         <div>
@@ -118,18 +117,18 @@ export default function DetailedExperience({ experiences, onAdd, onRemove }: Det
                         </div>
                     </div>
                     <div className="flex justify-end gap-3">
-                        <button
+                        <Button
                             onClick={() => setIsAdding(false)}
-                            className="px-5 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                            variant="secondary"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handleAdd}
-                            className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-black hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                            variant="primary"
                         >
                             Save Experience
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -156,14 +155,16 @@ export default function DetailedExperience({ experiences, onAdd, onRemove }: Det
                                 )}
                             </div>
                         </div>
-                        <button
+                        <Button
                             onClick={() => onRemove(exp.id)}
-                            className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-4 right-4 p-2 opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50"
                             title="Delete"
                         >
                             {/* @ts-ignore */}
                             <Trash2 className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
                 ))}
 
@@ -175,12 +176,14 @@ export default function DetailedExperience({ experiences, onAdd, onRemove }: Det
                         </div>
                         <h4 className="text-gray-900 font-semibold mb-1">No Experience Added</h4>
                         <p className="text-sm text-gray-500 max-w-xs mx-auto mb-4">Add your professional journey to build trust with your clients.</p>
-                        <button
+                        <Button
                             onClick={() => setIsAdding(true)}
-                            className="text-orange-600 font-semibold text-sm hover:text-orange-700 hover:underline"
+                            variant="ghost"
+                            size="sm"
+                            className="mt-2"
                         >
                             + Add First Role
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>

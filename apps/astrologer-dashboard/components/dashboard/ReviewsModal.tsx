@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X, Star, User, Loader2 } from "lucide-react";
 import { getExpertReviews, Review } from "@/lib/reviews";
+import Button from "../ui/Button";
 
 interface ReviewsModalProps {
     isOpen: boolean;
@@ -46,12 +47,14 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                         <h3 className="text-xl font-bold text-gray-900">All Client Reviews</h3>
                         <p className="text-sm text-gray-500">{total} Reviews Total</p>
                     </div>
-                    <button
+                    <Button
                         onClick={onClose}
+                        variant="ghost"
+                        size="sm"
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     >
                         <X className="w-6 h-6 text-gray-400" />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Content */}
@@ -102,23 +105,27 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                 {/* Footer / Pagination */}
                 {total > 10 && (
                     <div className="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
-                        <button
+                        <Button
                             disabled={page === 1 || loading}
                             onClick={() => setPage(p => p - 1)}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
                         >
                             Previous
-                        </button>
+                        </Button>
                         <span className="text-sm text-gray-500 font-medium">
                             Page {page} of {Math.ceil(total / 10)}
                         </span>
-                        <button
+                        <Button
                             disabled={page >= Math.ceil(total / 10) || loading}
                             onClick={() => setPage(p => p + 1)}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
                         >
                             Next
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>

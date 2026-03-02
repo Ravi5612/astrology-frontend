@@ -8,7 +8,7 @@ import {
     deleteBankAccount,
     setPrimaryBankAccount
 } from "@/lib/profile";
-import { Button } from "@repo/ui";
+import Button from "../ui/Button";
 
 interface BankAccount {
     id: string;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Transaction } from "./types";
 import { ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle } from "lucide-react";
+import Button from "../ui/Button";
 
 interface EarningsTableProps {
     transactions: Transaction[];
@@ -40,9 +41,13 @@ export default function EarningsTable({ transactions }: EarningsTableProps) {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-                <button className="text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-amber-600 font-semibold transition-colors"
+                >
                     View All
-                </button>
+                </Button>
             </div>
 
             <div className="overflow-x-auto">
@@ -88,5 +93,3 @@ export default function EarningsTable({ transactions }: EarningsTableProps) {
         </div>
     );
 }
-
-
