@@ -636,6 +636,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     alt="logo"
                     width={180}
                     height={60}
+                    loading="eager"
+                    priority
+                    style={{ height: 'auto' }}
                     className="w-[180px] object-contain"
                   />
                 </Link>
@@ -831,7 +834,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   alt="chat"
                   width={20}
                   height={20}
-                  style={{ filter: "brightness(0) invert(1)" }}
+                  style={{ width: 'auto', filter: "brightness(0) invert(1)" }}
                 />
                 Ask Astrologer
               </Link>

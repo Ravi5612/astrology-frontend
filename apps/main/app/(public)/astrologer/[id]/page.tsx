@@ -50,6 +50,7 @@ export default async function Page({
       gallery: data.gallery || [],
       videos: data.videos || [],
       total_likes: data.total_likes || data.totalLikes || 0,
+      is_available: data.isAvailable ?? data.is_available ?? false,
     };
 
     return <AstrologerDetailsClient astrologer={astrologer} />;

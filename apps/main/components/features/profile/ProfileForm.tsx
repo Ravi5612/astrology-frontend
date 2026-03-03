@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@repo/ui";
+import PhoneVerifyModal from './PhoneVerifyModal';
 
 interface ProfileFormProps {
     profileData: any;
@@ -25,6 +26,7 @@ interface ProfileFormProps {
     handleInputChange: (key: any, value: any) => void;
     handleAddressChange: (index: number, key: any, value: string) => void;
     handleSaveSection: (section: 'personal' | 'address' | 'astro' | 'settings') => void;
+    refreshProfile?: () => Promise<void>;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
@@ -35,8 +37,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     savingSections,
     handleInputChange,
     handleAddressChange,
-    handleSaveSection
+    handleSaveSection,
+    refreshProfile,
 }) => {
+    const [copied, setCopied] = useState(false);
+    const [showPhoneVerify, setShowPhoneVerify] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(clientUser.uid);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
         <>
             {/* Personal Details Card */}
@@ -84,18 +96,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
 
                         <div className="col-md-12">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">Full Name</label>
-                            {editingSections.personal ? (
-                                <input
-                                    type="text"
-                                    className="form-control fw-bold"
-                                    value={profileData.full_name || ""}
-                                    onChange={(e) => handleInputChange('full_name', e.target.value)}
-                                    placeholder="Enter your full name"
-                                />
-                            ) : (
-                                <p className="fw-bold mb-0 text-xl">{profileData.full_name || "Not set"}</p>
-                            )}
+                            <label className="text-muted small fw-bold text-uppercase mb-1">User ID</label>
+                            <div className="d-flex align-items-center gap-2">
+                                <span
+                                    className="fw-bold mb-0 px-3 py-1 rounded-full text-sm"
+                                    style={{ backgroundColor: "rgba(255,107,0,0.1)", color: "#FF6B00", letterSpacing: "0.05em", fontFamily: "monospace" }}
+                                >
+                                    {clientUser?.uid || "Not assigned"}
+                                </span>
+                                {clientUser?.uid && (
+                                    <button
+                                        type="button"
+                                        title={copied ? "Copied!" : "Copy ID"}
+                                        className={`btn btn-sm px-2 py-1 ${copied ? 'btn-success' : 'btn-outline-secondary'}`}
+                                        style={{ fontSize: "11px", transition: "all 0.2s" }}
+                                        onClick={handleCopy}
+                                    >
+                                        <i className={`fa-${copied ? 'solid fa-check' : 'regular fa-copy'}`}></i>
+                                        {copied && <span className="ms-1" style={{ fontSize: "10px" }}>Copied!</span>}
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         <div className="col-md-6">
@@ -116,7 +137,26 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                             <p className="fw-bold mb-0">{clientUser?.email || "Not set"}</p>
                         </div>
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">PHONE NUMBER</label>
+                            <div className="d-flex align-items-center gap-2 mb-1">
+                                <label className="text-muted small fw-bold text-uppercase mb-0">PHONE NUMBER</label>
+                                {profileData.phone && (
+                                    profileData.phone_verified_at ? (
+                                        <span
+                                            className="badge px-2 py-1 d-inline-flex align-items-center gap-1"
+                                            style={{ backgroundColor: "rgba(25,135,84,0.1)", color: "#198754", fontSize: "10px" }}
+                                        >
+                                            <i className="fa-solid fa-circle-check"></i> VERIFIED
+                                        </span>
+                                    ) : (
+                                        <span
+                                            className="badge px-2 py-1 d-inline-flex align-items-center gap-1"
+                                            style={{ backgroundColor: "rgba(220,53,69,0.1)", color: "#dc3545", fontSize: "10px" }}
+                                        >
+                                            <i className="fa-solid fa-circle-xmark"></i> UNVERIFIED
+                                        </span>
+                                    )
+                                )}
+                            </div>
                             {editingSections.personal ? (
                                 <input
                                     type="text"
@@ -125,9 +165,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                     onChange={(e) => handleInputChange('phone', e.target.value)}
                                 />
                             ) : (
-                                <div className="d-flex align-items-center">
-                                    <p className="fw-bold mb-0 me-2">{profileData.phone || "Not set"}</p>
-                                    {profileData.phone && <span className="badge bg-success bg-opacity-10 text-success px-2 py-1" style={{ fontSize: "10px" }}>VERIFIED</span>}
+                                <div className="d-flex align-items-center gap-2">
+                                    <p className="fw-bold mb-0">{profileData.phone || "Not set"}</p>
+                                    {profileData.phone && !profileData.phone_verified_at && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPhoneVerify(true)}
+                                            className="btn btn-sm px-3 py-1 lh-1 text-white fw-bold"
+                                            style={{ fontSize: "11px", backgroundColor: "#fd6410", borderColor: "#fd6410" }}
+                                        >
+                                            Verify Now
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -416,6 +465,17 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     </div>
                 </div>
             </div>
+
+            {/* Phone Verification Modal */}
+            <PhoneVerifyModal
+                isOpen={showPhoneVerify}
+                onClose={() => setShowPhoneVerify(false)}
+                phone={profileData.phone || ""}
+                onSuccess={() => {
+                    setShowPhoneVerify(false);
+                    if (refreshProfile) refreshProfile();
+                }}
+            />
         </>
     );
 };

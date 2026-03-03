@@ -664,7 +664,7 @@ export const useProfileLogic = () => {
         activeTab, setActiveTab,
 
         // Handlers
-        handleImageChange, handleInputChange, handleAddressChange, handleSaveSection, loadOrdersAndDisputes
+        handleImageChange, handleInputChange, handleAddressChange, handleSaveSection, loadOrdersAndDisputes, loadProfile
     };
 };
 

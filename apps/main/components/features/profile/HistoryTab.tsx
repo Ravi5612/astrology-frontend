@@ -114,7 +114,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                                                 <div className="d-flex gap-3 text-muted small">
                                                     <span>
                                                         <i className={`fa-solid ${session.chatType === 'video' ? 'fa-video' : session.chatType === 'audio' ? 'fa-phone' : 'fa-message'} me-1`}></i>
-                                                        {session.duration || session.chatDuration || session.chat_duration || '0'} mins
+                                                        {(session.durationMins || session.duration_mins || session.duration || session.chatDuration || session.chat_duration || '0')} mins
                                                     </span>
                                                     <span><i className="fa-solid fa-star text-warning me-1"></i> {session.expert?.rating || 'N/A'} Rating</span>
                                                 </div>

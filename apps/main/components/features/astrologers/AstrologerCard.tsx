@@ -240,55 +240,22 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             {name}
           </div>
 
-          {/* Expertise Tag */}
-          <div className="px-4 mt-1 relative group h-7">
-            {/* Show arrows only if more than 2 services */}
-            {allServices.length > 2 && (
-              <>
-                {/* Left Scroll Arrow */}
-                {serviceIndex > 0 && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setServiceIndex((prev) => Math.max(0, prev - 1));
-                    }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-orange rounded-full w-5 h-5 flex items-center justify-center shadow-sm cursor-pointer hover:opacity-80 text-white border-0"
-                  >
-                    <i className="fa-solid fa-chevron-left text-[10px]" />
-                  </button>
-                )}
-
-                {/* Right Scroll Arrow */}
-                {serviceIndex + 2 < allServices.length && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setServiceIndex((prev) => Math.min(allServices.length - 2, prev + 1));
-                    }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-orange rounded-full w-5 h-5 flex items-center justify-center shadow-sm cursor-pointer hover:opacity-80 text-white border-0"
-                  >
-                    <i className="fa-solid fa-chevron-right text-[10px]" />
-                  </button>
-                )}
-              </>
+          {/* Expertise Tags — fixed, no overflow */}
+          <div className="px-3 mt-1 mb-1 flex flex-wrap justify-center gap-1" style={{ minHeight: '28px' }}>
+            {allServices.slice(0, 3).map((service, index) => (
+              <span
+                key={index}
+                className="inline-block bg-orange text-white text-[11px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[110px]"
+                title={service}
+              >
+                {service}
+              </span>
+            ))}
+            {allServices.length > 3 && (
+              <span className="inline-block bg-orange/20 text-orange text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                +{allServices.length - 3}
+              </span>
             )}
-
-            {/* Services Container */}
-            <div className={`flex gap-1 justify-center ${allServices.length > 2 ? 'px-6' : ''}`}>
-              {(allServices.length > 2
-                ? allServices.slice(serviceIndex, serviceIndex + 2)
-                : allServices
-              ).map((service, index) => (
-                <span
-                  key={index}
-                  className="whitespace-nowrap inline-block bg-orange text-white text-[12px] px-2 py-0.5 rounded-full flex-shrink-0"
-                >
-                  {service}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Experience */}
@@ -314,13 +281,13 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             {/* Chat Button */}
             <button
               onClick={handleChatClick}
-              className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-regular fa-comment-dots text-sm" />
                 <span className="text-[14px] font-bold">Chat</span>
               </div>
-              <span className="text-[12px] font-semibold opacity-95">
+              <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
                 {chat_price && chat_price > 0 ? `₹${chat_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
               </span>
             </button>
@@ -328,13 +295,13 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             {/* Call Button */}
             <button
               onClick={handleCallClick}
-              className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-solid fa-phone-volume text-sm" />
                 <span className="text-[14px] font-bold">Call</span>
               </div>
-              <span className="text-[12px] font-semibold opacity-95">
+              <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
                 {call_price && call_price > 0 ? `₹${call_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
               </span>
             </button>
@@ -343,13 +310,11 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
           {/* Video Call Button */}
           <button
             onClick={handleVideoCallClick}
-            className="w-full flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
           >
-            <div className="flex items-center gap-2 mb-0.5">
-              <i className="fa-solid fa-video text-sm" />
-              <span className="text-[14px] font-bold">Video Call</span>
-            </div>
-            <span className="text-[12px] font-semibold opacity-95">
+            <i className="fa-solid fa-video text-sm flex-shrink-0" />
+            <span className="text-[14px] font-bold flex-shrink-0">Video Call</span>
+            <span className="text-[11px] font-semibold opacity-95 truncate">
               {video_call_price && video_call_price > 0 ? `₹${video_call_price}/min` : (price > 0 ? `₹${price * 2}/min` : "Free")}
             </span>
           </button>

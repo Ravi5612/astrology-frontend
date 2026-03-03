@@ -24,6 +24,7 @@ export interface ExpertProfile {
     rating: number;
     ratings?: number;
     is_available: boolean;
+    is_online?: boolean;
     video?: string;
     chat_price?: number;
     call_price?: number;
@@ -56,6 +57,7 @@ export interface Astrologer {
     ratings?: number;
     modalId?: string;
     is_available?: boolean;
+    is_online?: boolean;
     total_likes?: number;
     bio?: string;
     detailed_experience?: any[];

@@ -75,17 +75,17 @@ export default function AstrologerDetailsClient({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column: Profile Card */}
           <div className="w-full lg:w-[320px] xl:w-[360px] max-w-sm mx-auto lg:mx-0 shrink-0">
-            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[32px] overflow-hidden shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] hover:border-primary/30 hover:-translate-y-1 group">
+            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[32px] overflow-hidden shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] hover:border-orange/30 hover:-translate-y-1 group">
               <div className="relative pt-6 pb-2 flex flex-col items-center">
                 {/* Top Rated Badge */}
-                <div className="absolute top-4 right-6 bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1 border border-primary/20">
+                <div className="absolute top-4 right-6 bg-orange/10 text-orange px-3 py-1 rounded-full flex items-center gap-1 border border-orange/20">
                   <i className="fa-solid fa-certificate text-[12px]"></i>
                   <span className="text-[10px] font-bold uppercase tracking-wider">Top Rated</span>
                 </div>
 
                 {/* Profile Image & Play Button */}
                 <div className="relative">
-                  <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-primary via-primary/40 to-transparent">
+                  <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-orange via-orange/40 to-transparent">
                     <div className="w-full h-full rounded-full overflow-hidden border-4 border-white relative shadow-inner">
                       <Image
                         src={astrologer.image}
@@ -97,7 +97,7 @@ export default function AstrologerDetailsClient({
                   </div>
                   <button
                     onClick={() => setSelectedVideo(astrologer.video || null)}
-                    className="absolute bottom-1 right-1 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                    className="absolute bottom-1 right-1 bg-orange text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                   >
                     <i className="fa-solid fa-play text-[12px]"></i>
                   </button>
@@ -121,7 +121,7 @@ export default function AstrologerDetailsClient({
                   <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Rating</p>
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-sm font-semibold text-[#1A2B47]">{astrologer.ratings}</span>
-                    <i className="fa-solid fa-star text-primary text-[12px]"></i>
+                    <i className="fa-solid fa-star text-orange text-[12px]"></i>
                   </div>
                 </div>
                 <div className="h-8 w-px bg-slate-200"></div>
@@ -170,7 +170,7 @@ export default function AstrologerDetailsClient({
                   </button>
                   <button
                     onClick={handleChatClick}
-                    className="flex items-center justify-center gap-1.5 bg-primary/10 text-primary border border-primary/20 py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-primary/20 shadow-sm text-xs"
+                    className="flex items-center justify-center gap-1.5 bg-orange/10 text-orange border border-orange/20 py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-orange/20 shadow-sm text-xs"
                   >
                     <i className="fa-solid fa-video text-[12px]"></i>
                     Video Call
@@ -178,7 +178,7 @@ export default function AstrologerDetailsClient({
                 </div>
                 <button
                   onClick={handleChatClick}
-                  className="w-full mt-3 flex items-center justify-center gap-1.5 bg-primary text-white border border-primary py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-primary-hover shadow-sm text-xs"
+                  className="w-full mt-3 flex items-center justify-center gap-1.5 bg-orange text-white border border-orange py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-orange-hover shadow-sm text-xs"
                 >
                   <i className="fa-solid fa-comments text-[14px]"></i>
                   Chat Now
@@ -189,12 +189,14 @@ export default function AstrologerDetailsClient({
 
           {/* Right Column: About Content */}
           <div className="w-full flex-1">
-            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[24px] border border-primary/30 p-6 lg:p-8 h-full shadow-sm transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] hover:border-primary hover:-translate-y-1">
-              <div className="flex items-center justify-between border-b border-primary/10 pb-4 mb-6">
+            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[24px] border border-orange/30 p-6 lg:p-8 h-full shadow-sm transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] hover:border-orange hover:-translate-y-1">
+              <div className="flex items-center justify-between border-b border-orange/10 pb-4 mb-6">
                 <h4 className="text-xl font-bold text-gray-900">Profile Details</h4>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                  <span className="text-green-600 text-xs font-semibold uppercase tracking-wide">Online</span>
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${astrologer.is_available ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                  <span className={`text-xs font-semibold uppercase tracking-wide ${astrologer.is_available ? 'text-green-600' : 'text-gray-500'}`}>
+                    {astrologer.is_available ? 'Online' : 'Offline'}
+                  </span>
                 </div>
               </div>
 
@@ -202,35 +204,35 @@ export default function AstrologerDetailsClient({
               <div className="flex gap-6 border-b border-gray-100 mb-6">
                 <button
                   onClick={() => setActiveTab('about')}
-                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'about' ? 'text-gray-900 border-b-2 border-primary' : 'text-gray-500 hover:text-primary'
+                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'about' ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'
                     }`}
                 >
                   About
                 </button>
                 <button
                   onClick={() => setActiveTab('experience')}
-                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'experience' ? 'text-gray-900 border-b-2 border-primary' : 'text-gray-500 hover:text-primary'
+                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'experience' ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'
                     }`}
                 >
                   Experience
                 </button>
                 <button
                   onClick={() => setActiveTab('reviews')}
-                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'reviews' ? 'text-gray-900 border-b-2 border-primary' : 'text-gray-500 hover:text-primary'
+                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'reviews' ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'
                     }`}
                 >
                   Reviews
                 </button>
                 <button
                   onClick={() => setActiveTab('gallery')}
-                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'gallery' ? 'text-gray-900 border-b-2 border-primary' : 'text-gray-500 hover:text-primary'
+                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'gallery' ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'
                     }`}
                 >
                   Gallery
                 </button>
                 <button
                   onClick={() => setActiveTab('videos')}
-                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'videos' ? 'text-gray-900 border-b-2 border-primary' : 'text-gray-500 hover:text-primary'
+                  className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === 'videos' ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'
                     }`}
                 >
                   Videos
@@ -246,7 +248,7 @@ export default function AstrologerDetailsClient({
                     ) : (
                       <p>
                         <span className="font-bold text-gray-900">Acharya {astrologer.name}</span> is a distinguished expert with profound knowledge in
-                        <span className="font-semibold text-primary"> {astrologer.expertise}</span>.
+                        <span className="font-semibold text-orange"> {astrologer.expertise}</span>.
                         With over {astrologer.experience} years of dedicated practice, they have guided countless individuals towards clarity and success.
                       </p>
                     )}
@@ -259,7 +261,7 @@ export default function AstrologerDetailsClient({
                       astrologer.detailed_experience.map((exp, index) => (
                         <div key={index} className="bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-sm">
                           <div className="flex gap-3">
-                            <div className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                            <div className="mt-1.5 w-2 h-2 rounded-full bg-orange shrink-0"></div>
                             <div>
                               <h5 className="text-sm font-bold text-gray-900">{exp.title || exp.role || "Astrologer"}</h5>
                               <p className="text-xs text-gray-500 font-medium">
@@ -282,7 +284,7 @@ export default function AstrologerDetailsClient({
                   <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300 max-h-[400px] overflow-y-auto pr-1">
                     {loadingReviews ? (
                       <div className="flex flex-col items-center justify-center py-10 space-y-3">
-                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-orange border-t-transparent rounded-full animate-spin"></div>
                         <p className="text-sm text-gray-500 font-medium">Loading authentic reviews...</p>
                       </div>
                     ) : reviews.length > 0 ? (
@@ -305,11 +307,11 @@ export default function AstrologerDetailsClient({
                                 </p>
                               </div>
                             </div>
-                            <div className="flex text-primary text-[10px] bg-primary/5 px-2 py-1 rounded-full gap-0.5">
+                            <div className="flex text-orange text-[10px] bg-orange/5 px-2 py-1 rounded-full gap-0.5">
                               {renderStars(review.rating)}
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 leading-relaxed italic border-l-2 border-primary/20 pl-3 py-1">
+                          <p className="text-sm text-gray-600 leading-relaxed italic border-l-2 border-orange/20 pl-3 py-1">
                             "{review.comment}"
                           </p>
                         </div>
@@ -323,7 +325,7 @@ export default function AstrologerDetailsClient({
 
                     {totalReviews > reviews.length && (
                       <div className="text-center pt-2">
-                        <button className="text-xs font-bold text-primary hover:underline">
+                        <button className="text-xs font-bold text-orange hover:underline">
                           View All {totalReviews} Reviews
                         </button>
                       </div>
@@ -369,7 +371,7 @@ export default function AstrologerDetailsClient({
 
                           {/* Hover Overlay + Play Icon */}
                           <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white shadow-xl scale-75 group-hover:scale-100 transition-transform duration-300">
+                            <div className="w-14 h-14 rounded-full bg-orange flex items-center justify-center text-white shadow-xl scale-75 group-hover:scale-100 transition-transform duration-300">
                               <i className="fa-solid fa-play text-lg ml-1"></i>
                             </div>
                           </div>
@@ -386,16 +388,16 @@ export default function AstrologerDetailsClient({
               </div>
 
               <div className="flex flex-wrap gap-3 mb-5">
-                <button className="flex-1 min-w-[140px] px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-semibold text-sm shadow-primary/20 shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                <button className="flex-1 min-w-[140px] px-6 py-3 bg-orange text-white rounded-xl hover:bg-orange-hover transition-colors font-semibold text-sm shadow-orange/20 shadow-lg active:scale-95 flex items-center justify-center gap-2">
                   <i className="fa-regular fa-bell"></i>
                   Notify Me
                 </button>
-                <button className="flex-1 min-w-[140px] px-6 py-3 border border-primary text-primary rounded-xl hover:bg-primary/5 transition-colors font-semibold text-sm flex items-center justify-center gap-2 active:scale-95">
+                <button className="flex-1 min-w-[140px] px-6 py-3 border border-orange text-orange rounded-xl hover:bg-orange/5 transition-colors font-semibold text-sm flex items-center justify-center gap-2 active:scale-95">
                   <i className="fa-regular fa-envelope"></i>
                   Message
                 </button>
               </div>
-              <p className="text-[11px] text-primary flex items-center gap-2 py-2.5 px-4 bg-primary/5 rounded-xl border border-primary/20">
+              <p className="text-[11px] text-orange flex items-center gap-2 py-2.5 px-4 bg-orange/5 rounded-xl border border-orange/20">
                 <i className="fa-solid fa-circle-info"></i>
                 Get an email alert instantly when the astrologer comes online.
               </p>
@@ -419,7 +421,7 @@ export default function AstrologerDetailsClient({
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     placeholder="Enter Your Name"
                     required
                   />
@@ -430,7 +432,7 @@ export default function AstrologerDetailsClient({
                   </label>
                   <input
                     type="email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     placeholder="Email"
                     required
                   />
@@ -441,7 +443,7 @@ export default function AstrologerDetailsClient({
                   </label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     placeholder="Mobile"
                     required
                   />
@@ -450,13 +452,13 @@ export default function AstrologerDetailsClient({
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Date Of Birth <span className="text-red-500">*</span>
                   </label>
-                  <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" required />
+                  <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all" required />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Birth Time <span className="text-red-500">*</span>
                   </label>
-                  <input type="time" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" required />
+                  <input type="time" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all" required />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -464,7 +466,7 @@ export default function AstrologerDetailsClient({
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     placeholder="Birth Place"
                     required
                   />
@@ -473,7 +475,7 @@ export default function AstrologerDetailsClient({
               <div className="text-right mt-6">
                 <button
                   type="submit"
-                  className="px-8 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-semibold shadow-md active:scale-95 transform duration-150"
+                  className="px-8 py-2.5 bg-orange text-white rounded-lg hover:bg-orange-hover transition-colors font-semibold shadow-md active:scale-95 transform duration-150"
                 >
                   Submit
                 </button>

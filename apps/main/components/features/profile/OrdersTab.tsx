@@ -1,9 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { PATHS } from "@repo/routes";
-import { getBasePath } from "@/utils/api-config";
+import { getProductImageUrl } from "@/utils/image-utils";
 
 const NextLink = Link as any;
+
+const FALLBACK_IMG = "/images/image-not-found.png";
 
 interface OrdersTabProps {
     orders: any[];
@@ -28,6 +30,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
     userPhone,
     userName
 }) => {
+
     return (
         <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
             <div className="card-header bg-white border-0 pt-4 px-4 pb-0">
@@ -50,7 +53,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                             <i className="fa-solid fa-box-open fa-3x text-light"></i>
                         </div>
                         <h6 className="fw-bold">No Orders Found</h6>
-                        <p className="text-muted small">You haven't placed any orders yet.</p>
+                        <p className="text-muted small">You haven&apos;t placed any orders yet.</p>
                         <NextLink href={PATHS.BUY_PRODUCTS} className="btn-orange-gradient px-4 py-2 mt-2 rounded-pill text-white text-decoration-none d-inline-block">
                             Shop Now
                         </NextLink>
@@ -103,25 +106,24 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                                     <div className="p-4 border-t border-gray-100 bg-white animate-in fade-in slide-in-from-top-2 duration-200">
                                         {(order.items || order.OrderItems || []).map((item: any, itemIdx: number) => {
                                             const product = item.product || item.Product;
+                                            // Robust image check: try product first, then item itself
+                                            const productImg = getProductImageUrl(product) !== FALLBACK_IMG
+                                                ? getProductImageUrl(product)
+                                                : getProductImageUrl(item);
 
-                                            const formatImageUrl = (url: string) => {
-                                                if (!url) return "/images/no-image.png";
-                                                if (url.startsWith("http")) return url;
-                                                const cleanApiUrl = getBasePath();
-                                                if (url.startsWith("/uploads/")) return `${cleanApiUrl}${url}`;
-                                                if (url.startsWith("/")) return url;
-                                                return `${cleanApiUrl}/uploads/${url}`;
-                                            };
-
-                                            const productImg = formatImageUrl(product?.imageUrl || product?.image || (product?.images && product.images[0]));
+                                            console.log(`[OrdersTab] Item ${itemIdx} Image URL:`, productImg, "Product:", product);
 
                                             return (
-                                                <div key={itemIdx} className="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom last-border-none">
-                                                    <div className="rounded-3 border overflow-hidden" style={{ width: "60px", height: "60px", flexShrink: 0 }}>
+                                                <div key={item.id || itemIdx} className="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom last-border-none">
+                                                    <div className="rounded-3 border overflow-hidden" style={{ width: "60px", height: "60px", flexShrink: 0, backgroundColor: "#f8f9fa" }}>
                                                         <img
                                                             src={productImg}
-                                                            className="w-100 h-100 object-cover"
                                                             alt={product?.name || "Product"}
+                                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                            onError={(e) => {
+                                                                console.warn("Image load failed, using fallback:", productImg);
+                                                                e.currentTarget.src = FALLBACK_IMG;
+                                                            }}
                                                         />
                                                     </div>
                                                     <div className="flex-grow-1">
@@ -229,5 +231,3 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
 };
 
 export default OrdersTab;
-
-

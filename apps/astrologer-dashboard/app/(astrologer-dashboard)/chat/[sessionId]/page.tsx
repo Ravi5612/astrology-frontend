@@ -10,7 +10,7 @@ import * as LucideIcons from "lucide-react";
 
 const {
     ChevronLeft, Paperclip, Send, Clock, User, Phone,
-    MoreVertical, Power, MessageSquare, AlertCircle, X
+    MoreVertical, Power, MessageSquare, AlertCircle, X, MapPin
 } = LucideIcons as any;
 
 interface Message {
@@ -409,38 +409,92 @@ function ExpertChatRoomContent() {
                                             <AlertCircle className="w-3 h-3" /> System Intervention
                                         </div>
                                     )}
-                                    {/* Attachment Display */}
-                                    {(msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl) && (
-                                        <div className="mb-2">
-                                            {(
-                                                msg.attachmentType?.toLowerCase() === "image" ||
-                                                msg.attachment_type?.toLowerCase() === "image" ||
-                                                (msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl)?.match(/\.(jpg|jpeg|png|gif|webp)$|images/i)
-                                            ) ? (
-                                                <a href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl} target="_blank" rel="noreferrer">
-                                                    <img
-                                                        src={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
-                                                        className="rounded-lg max-h-60 w-auto object-contain shadow-sm hover:opacity-90 transition border border-white/10"
-                                                        alt="Attachment"
-                                                        onError={(e) => {
-                                                            (e.target as any).style.display = 'none';
-                                                        }}
-                                                    />
-                                                </a>
-                                            ) : (
-                                                <a
-                                                    href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="flex items-center gap-2 bg-black/10 p-2 rounded-lg border border-white/5 hover:bg-black/20 transition"
-                                                >
-                                                    <Paperclip className="w-4 h-4" />
-                                                    <span className="text-[10px] font-bold">Document</span>
-                                                </a>
-                                            )}
+                                    {msg.content.startsWith('[INTRO_CARD]') ? (
+                                        <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-1 rounded-2xl shadow-xl border-2 border-white/50 w-full">
+                                            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/20">
+                                                <div className="flex items-center gap-3 mb-4 border-b border-black/5 pb-3">
+                                                    <div className="w-10 h-10 bg-black/10 rounded-full flex items-center justify-center">
+                                                        <User className="w-5 h-5 text-black" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-black font-black text-xs uppercase tracking-widest">Birth Details</h3>
+                                                        <p className="text-black opacity-60 text-[10px] uppercase font-bold tracking-tighter">Shared Profile Info</p>
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    {(() => {
+                                                        try {
+                                                            const data = JSON.parse(msg.content.replace('[INTRO_CARD]', ''));
+                                                            return (
+                                                                <>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Name</span>
+                                                                        <p className="text-sm font-black text-black">{data.name || "N/A"}</p>
+                                                                    </div>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Gender</span>
+                                                                        <p className="text-sm font-black text-black capitalize">{data.gender || "N/A"}</p>
+                                                                    </div>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Date of Birth</span>
+                                                                        <p className="text-sm font-black text-black">{data.dob || "N/A"}</p>
+                                                                    </div>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Time of Birth</span>
+                                                                        <p className="text-sm font-black text-black">{data.tob || "N/A"}</p>
+                                                                    </div>
+                                                                    <div className="col-span-2 space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Place of Birth</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <MapPin className="w-3 h-3 text-black/40" />
+                                                                            <p className="text-sm font-black text-black">{data.pob || "N/A"}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </>
+                                                            );
+                                                        } catch (e) {
+                                                            return <p className="text-red-500">Invalid Card Data</p>;
+                                                        }
+                                                    })()}
+                                                </div>
+                                            </div>
                                         </div>
+                                    ) : (
+                                        <>
+                                            {/* Attachment Display */}
+                                            {(msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl) && (
+                                                <div className="mb-2">
+                                                    {(
+                                                        msg.attachmentType?.toLowerCase() === "image" ||
+                                                        msg.attachment_type?.toLowerCase() === "image" ||
+                                                        (msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl)?.match(/\.(jpg|jpeg|png|gif|webp)$|images/i)
+                                                    ) ? (
+                                                        <a href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl} target="_blank" rel="noreferrer">
+                                                            <img
+                                                                src={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
+                                                                className="rounded-lg max-h-60 w-auto object-contain shadow-sm hover:opacity-90 transition border border-white/10"
+                                                                alt="Attachment"
+                                                                onError={(e) => {
+                                                                    (e.target as any).style.display = 'none';
+                                                                }}
+                                                            />
+                                                        </a>
+                                                    ) : (
+                                                        <a
+                                                            href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="flex items-center gap-2 bg-black/10 p-2 rounded-lg border border-white/5 hover:bg-black/20 transition"
+                                                        >
+                                                            <Paperclip className="w-4 h-4" />
+                                                            <span className="text-[10px] font-bold">Document</span>
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            )}
+                                            <p className={`text-sm leading-relaxed ${isAdmin ? "font-black" : ""}`}>{msg.content}</p>
+                                        </>
                                     )}
-                                    <p className={`text-sm leading-relaxed ${isAdmin ? "font-black" : ""}`}>{msg.content}</p>
                                     <p className={`text-[9px] mt-1 opacity-60 font-bold ${isExpert ? "text-white" : isAdmin ? "text-red-400" : "text-gray-400"}`}>
                                         {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
                                     </p>

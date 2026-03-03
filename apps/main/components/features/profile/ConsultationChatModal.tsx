@@ -13,51 +13,119 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
     onClose,
     selectedSession,
     chatMessages,
-    userAvatar
+    userAvatar,
 }) => {
     if (!isOpen || !selectedSession) return null;
 
+    const renderMessageContent = (msg: any) => {
+        const content = msg.content || "";
+        if (content.startsWith("[INTRO_CARD]")) {
+            try {
+                const data = JSON.parse(content.replace("[INTRO_CARD]", ""));
+                return (
+                    <div className="my-2 p-3 rounded-4 shadow-sm border-0 position-relative overflow-hidden"
+                        style={{
+                            background: "linear-gradient(135deg, #fff9c4 0%, #fff176 100%)",
+                            border: "1px solid #fdd835",
+                            maxWidth: "100%",
+                            minWidth: "260px"
+                        }}>
+                        <div className="position-absolute top-0 end-0 p-2 opacity-10">
+                            <i className="fa-solid fa-dharmachakra fa-3x"></i>
+                        </div>
+                        <h6 className="fw-bold mb-3 text-dark d-flex align-items-center gap-2 border-bottom border-dark border-opacity-10 pb-2">
+                            <i className="fa-solid fa-id-card text-warning"></i>
+                            Birth Details Shared
+                        </h6>
+                        <div className="row g-3">
+                            <div className="col-6">
+                                <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Name</label>
+                                <p className="mb-0 fw-bold text-dark small">{data.name}</p>
+                            </div>
+                            <div className="col-6">
+                                <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Gender</label>
+                                <p className="mb-0 fw-bold text-dark small capitalize">{data.gender || 'N/A'}</p>
+                            </div>
+                            <div className="col-6">
+                                <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Date of Birth</label>
+                                <p className="mb-0 fw-bold text-dark small">{data.dob}</p>
+                            </div>
+                            <div className="col-6">
+                                <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Time</label>
+                                <p className="mb-0 fw-bold text-dark small">{data.tob || 'N/A'}</p>
+                            </div>
+                            <div className="col-12 mt-2">
+                                <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Place of Birth</label>
+                                <p className="mb-0 fw-bold text-dark small"><i className="fa-solid fa-location-dot me-1 text-danger opacity-50"></i> {data.pob || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            } catch (e) {
+                return content;
+            }
+        }
+        return content;
+    };
+
+    const expertAvatar = selectedSession.expert?.user?.profile_picture ||
+        selectedSession.expert?.user?.avatar ||
+        selectedSession.expert?.avatar ||
+        selectedSession.expert?.image ||
+        "/images/dummy-astrologer.jpg";
+
     return (
         <div
-            className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+            className="position-fixed d-flex align-items-center justify-content-center"
             style={{
-                backgroundColor: "rgba(0,0,0,0.7)",
-                zIndex: 9999,
-                backdropFilter: "blur(8px)"
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0,0,0,0.75)",
+                zIndex: 99999,
+                backdropFilter: "blur(10px)",
+                padding: "20px"
             }}
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-4 shadow-lg overflow-hidden"
-                style={{ maxWidth: "800px", width: "90%", maxHeight: "90vh" }}
+                className="bg-white rounded-4 shadow-2xl overflow-hidden border-0 animate-in zoom-in-95 duration-300"
+                style={{
+                    maxWidth: "600px",
+                    width: "100%",
+                    maxHeight: "85vh",
+                    position: "relative",
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+                }}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
-                <div className="d-flex justify-content-between align-items-center p-4 border-bottom" style={{ backgroundColor: "var(--primary)" }}>
+                <div className="d-flex justify-content-between align-items-center p-4 border-bottom" style={{ backgroundColor: "#FF6B00" }}>
                     <div className="d-flex align-items-center gap-3">
                         <div
                             className="rounded-circle overflow-hidden"
                             style={{ width: "48px", height: "48px", border: "3px solid white" }}
                         >
                             <img
-                                src={selectedSession.expert?.user?.avatar || "/images/dummy-astrologer.jpg"}
-                                alt={selectedSession.expert?.user?.name || "Expert"}
+                                src={expertAvatar}
+                                alt={selectedSession.expert?.user?.name || selectedSession.expert?.name || "Expert"}
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
                         </div>
                         <div>
                             <h5 className="fw-bold mb-0 text-white">
-                                {selectedSession.expert?.user?.name || "Expert Consultation"}
+                                {selectedSession.expert?.user?.name || selectedSession.expert?.name || "Expert Consultation"}
                             </h5>
                             <p className="small mb-0 text-white opacity-75">
                                 <i className="fa-regular fa-calendar me-1"></i>
-                                {new Date(selectedSession.createdAt).toLocaleDateString('en-IN', {
+                                {(selectedSession.createdAt || selectedSession.created_at) ? new Date(selectedSession.createdAt || selectedSession.created_at).toLocaleDateString('en-IN', {
                                     day: 'numeric',
                                     month: 'short',
                                     year: 'numeric',
                                     hour: '2-digit',
                                     minute: '2-digit'
-                                })}
+                                }) : 'N/A'}
                             </p>
                         </div>
                     </div>
@@ -79,54 +147,89 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                         </div>
                     ) : (
                         <div className="d-flex flex-column gap-3">
-                            {chatMessages.map((msg: any, index: number) => (
-                                <div
-                                    key={msg.id || index}
-                                    className={`d-flex gap-3 ${msg.senderType === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-                                >
-                                    <div
-                                        className="rounded-circle overflow-hidden flex-shrink-0"
-                                        style={{
-                                            width: "40px",
-                                            height: "40px",
-                                            border: `2px solid ${msg.senderType === 'user' ? 'var(--primary)' : '#e0e0e0'}`
-                                        }}
-                                    >
-                                        <img
-                                            src={msg.senderType === 'user'
-                                                ? (userAvatar || "https://avatar.iran.liara.run/public/boy?username=User")
-                                                : (selectedSession.expert?.user?.avatar || "/images/dummy-astrologer.jpg")
-                                            }
-                                            alt={msg.senderType}
-                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                        />
-                                    </div>
-                                    <div className={`flex-grow-1 ${msg.senderType === 'user' ? 'text-end' : 'text-start'}`} style={{ maxWidth: "70%" }}>
-                                        <div
-                                            className={`p-3 rounded-3 ${msg.senderType === 'user'
-                                                ? 'bg-primary bg-opacity-10 text-dark'
-                                                : 'bg-light text-dark'
-                                                }`}
-                                            style={{
-                                                borderRadius: msg.senderType === 'user' ? "20px 20px 5px 20px" : "20px 20px 20px 5px"
-                                            }}
-                                        >
-                                            <p className="mb-1" style={{ fontSize: "14px", lineHeight: "1.5" }}>
+                            {chatMessages.map((msg: any, index: number) => {
+                                const sType = (msg.senderType || msg.sender_type || "").toLowerCase();
+                                const content = msg.content || "";
+
+                                // Simple logic: rely on senderType
+                                const isUser = sType === 'user' || sType === 'customer' || sType === 'client';
+                                const isAdmin = sType === 'admin' || sType === 'system';
+
+                                if (isAdmin) {
+                                    const isEnded = content.toLowerCase().includes('end') || content.toLowerCase().includes('finish') || content.toLowerCase().includes('close');
+                                    return (
+                                        <div key={msg.id || index} className="text-center my-2">
+                                            <span
+                                                className={`px-3 py-1 rounded-pill font-bold shadow-sm ${isEnded ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-light text-muted'}`}
+                                                style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                                            >
                                                 {msg.content}
-                                            </p>
-                                            <small className="text-muted" style={{ fontSize: "11px" }}>
-                                                {msg.createdAt
-                                                    ? new Date(msg.createdAt).toLocaleTimeString('en-IN', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })
-                                                    : ''
-                                                }
-                                            </small>
+                                            </span>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <div
+                                        key={msg.id || index}
+                                        className={`d-flex gap-3 ${content.startsWith("[INTRO_CARD]") ? 'justify-content-center' : (isUser ? 'flex-row-reverse' : 'flex-row')}`}
+                                    >
+                                        {!content.startsWith("[INTRO_CARD]") && (
+                                            <div
+                                                className="rounded-circle overflow-hidden flex-shrink-0 shadow-sm"
+                                                style={{
+                                                    width: "40px",
+                                                    height: "40px",
+                                                    border: `2px solid ${isUser ? '#FF6B00' : '#e0e0e0'}`
+                                                }}
+                                            >
+                                                <img
+                                                    src={isUser
+                                                        ? (userAvatar || "https://avatar.iran.liara.run/public/boy?username=User")
+                                                        : expertAvatar
+                                                    }
+                                                    alt={sType}
+                                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = isUser
+                                                            ? "https://avatar.iran.liara.run/public/boy?username=User"
+                                                            : "/images/dummy-astrologer.jpg";
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        <div className={`flex-grow-0 ${content.startsWith("[INTRO_CARD]") ? 'd-flex justify-content-center' : (isUser ? 'd-flex justify-content-end' : 'd-flex justify-content-start')}`} style={{ maxWidth: content.startsWith("[INTRO_CARD]") ? "100%" : "85%" }}>
+                                            <div
+                                                className={content.startsWith("[INTRO_CARD]") ? "" : `p-3 rounded-4 shadow-sm d-inline-block ${isUser
+                                                    ? 'bg-orange bg-opacity-10 text-dark border-0'
+                                                    : 'bg-white text-dark border border-light'
+                                                    }`}
+                                                style={content.startsWith("[INTRO_CARD]") ? {} : {
+                                                    borderRadius: isUser ? "20px 20px 5px 20px" : "20px 20px 20px 5px",
+                                                    textAlign: 'left'
+                                                }}
+                                            >
+                                                <div className="mb-1" style={{ fontSize: "14px", lineHeight: "1.6" }}>
+                                                    {renderMessageContent(msg)}
+                                                </div>
+                                                {!content.startsWith("[INTRO_CARD]") && (
+                                                    <div className={`mt-2 ${isUser ? 'text-end' : 'text-start'}`}>
+                                                        <small className="text-muted opacity-50" style={{ fontSize: "10px", fontWeight: 'bold' }}>
+                                                            {msg.createdAt || msg.created_at
+                                                                ? new Date(msg.createdAt || msg.created_at).toLocaleTimeString('en-IN', {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })
+                                                                : ''
+                                                            }
+                                                        </small>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -137,12 +240,12 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                         <div className="d-flex gap-2 flex-wrap">
                             <span className="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2">
                                 <i className="fa-solid fa-clock me-1"></i>
-                                Duration: {selectedSession.durationMins || 0} mins
+                                Duration: {selectedSession.durationMins || selectedSession.duration_mins || selectedSession.duration || 0} mins
                             </span>
-                            {selectedSession.totalCost > 0 && (
+                            {(selectedSession.totalCost > 0 || selectedSession.total_cost > 0) && (
                                 <span className="badge bg-dark bg-opacity-10 text-dark px-3 py-2">
                                     <i className="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    Cost: ₹{selectedSession.totalCost}
+                                    Cost: ₹{selectedSession.totalCost || selectedSession.total_cost}
                                 </span>
                             )}
                         </div>

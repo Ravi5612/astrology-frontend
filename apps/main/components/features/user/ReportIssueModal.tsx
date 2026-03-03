@@ -86,8 +86,8 @@ export default function ReportIssueModal({
 
             console.log("Sending dispute payload:", payload);
             const response = await apiClient.post("/support/disputes", payload);
-            console.log("Dispute creation response:", response.data);
-            const resBody = response.data;
+            const resBody = response.data as any;
+            console.log("Dispute creation response:", resBody);
             let newDispute = resBody?.data || resBody?.dispute || resBody;
 
             // Ensure newDispute is an object with an id property
@@ -98,6 +98,31 @@ export default function ReportIssueModal({
             }
 
             toast.success("Issue reported successfully!");
+
+            // If Submit & Chat was clicked, send an automated summary message to the chat
+            if (isChat && newDispute?.id) {
+                try {
+                    const orderId = itemDetails.orderId || itemDetails.id;
+                    const amount = itemDetails.totalAmount || itemDetails.total_amount || itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0;
+                    const date = (itemDetails.createdAt || itemDetails.created_at)
+                        ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+                        : "N/A";
+
+                    const summaryMessage = `📋 ISSUE SUMMARY 📋\n\n` +
+                        `Issue Category: ${category}\n` +
+                        `${type === "order" ? "Order ID" : "Session ID"}: #${orderId}\n` +
+                        `Amount: ₹${amount}\n` +
+                        `Date: ${date}\n\n` +
+                        `Description: ${issue.trim()}`;
+
+                    await apiClient.post(`/support/disputes/${newDispute.id}/messages`, {
+                        message: summaryMessage
+                    });
+                } catch (msgError) {
+                    console.error("Error sending automated message:", msgError);
+                }
+            }
+
             if (onSuccess) onSuccess(isChat ? newDispute : undefined);
             onClose();
             setIssue("");
@@ -170,7 +195,7 @@ export default function ReportIssueModal({
                                     <div>
                                         <span className="text-gray-600">Amount:</span>
                                         <p className="font-bold text-gray-800">
-                                            ₹{itemDetails.totalAmount || 0}
+                                            ₹{itemDetails.totalAmount || itemDetails.total_amount || itemDetails.amount || 0}
                                         </p>
                                     </div>
                                     <div>
@@ -182,7 +207,9 @@ export default function ReportIssueModal({
                                     <div>
                                         <span className="text-gray-600">Date:</span>
                                         <p className="font-bold text-gray-800">
-                                            {new Date(itemDetails.createdAt).toLocaleDateString("en-IN")}
+                                            {(itemDetails.createdAt || itemDetails.created_at)
+                                                ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+                                                : "N/A"}
                                         </p>
                                     </div>
                                 </>
@@ -195,19 +222,21 @@ export default function ReportIssueModal({
                                     <div>
                                         <span className="text-gray-600">Expert:</span>
                                         <p className="font-bold text-gray-800">
-                                            {itemDetails.expert?.user?.name || "N/A"}
+                                            {itemDetails.expert?.user?.name || itemDetails.expertName || "N/A"}
                                         </p>
                                     </div>
                                     <div>
                                         <span className="text-gray-600">Amount:</span>
                                         <p className="font-bold text-gray-800">
-                                            ₹{itemDetails.totalCost || 0}
+                                            ₹{itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0}
                                         </p>
                                     </div>
                                     <div>
                                         <span className="text-gray-600">Date:</span>
                                         <p className="font-bold text-gray-800">
-                                            {new Date(itemDetails.createdAt).toLocaleDateString("en-IN")}
+                                            {(itemDetails.createdAt || itemDetails.created_at)
+                                                ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+                                                : "N/A"}
                                         </p>
                                     </div>
                                 </>
@@ -258,24 +287,6 @@ export default function ReportIssueModal({
                             className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all font-sans"
                         >
                             Cancel
-                        </button>
-
-                        <button
-                            onClick={() => handleSubmit(false)}
-                            disabled={loading || !category || !issue.trim()}
-                            className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all font-sans"
-                        >
-                            {loading && !submittingWithChat ? (
-                                <>
-                                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                                    Submitting...
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fa-solid fa-paper-plane mr-2"></i>
-                                    Submit
-                                </>
-                            )}
                         </button>
 
                         <button

@@ -25,7 +25,7 @@ const ProfileContent: React.FC = () => {
     savingSections,
     successMessage, errorMessage,
     imagePreview, handleImageChange,
-    handleInputChange, handleAddressChange, handleSaveSection, loadOrdersAndDisputes,
+    handleInputChange, handleAddressChange, handleSaveSection, loadOrdersAndDisputes, loadProfile,
 
     // Wallet
     rechargeAmount, setRechargeAmount,
@@ -143,6 +143,7 @@ const ProfileContent: React.FC = () => {
                 handleInputChange={handleInputChange}
                 handleAddressChange={handleAddressChange}
                 handleSaveSection={handleSaveSection}
+                refreshProfile={loadProfile}
               />
             )}
 
@@ -260,7 +261,7 @@ const ProfileContent: React.FC = () => {
           onClose={() => setShowChatModal(false)}
           selectedSession={selectedSession}
           chatMessages={chatMessages}
-          userAvatar={profileData?.profile_picture}
+          userAvatar={profileData?.profile_picture || imagePreview}
         />
 
         {/* Report Issue Modal */}

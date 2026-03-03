@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
-import apiClient from "@/libs/api-profile";
+import apiClient, { getClientProfile } from "@/libs/api-profile";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 
@@ -26,6 +26,14 @@ export default function ConsultationPrep() {
     const [actionLoading, setActionLoading] = useState(false);
     const [askSomeoneElse, setAskSomeoneElse] = useState(true);
     const [showSecurityModal, setShowSecurityModal] = useState(false);
+    const [clientProfile, setClientProfile] = useState<any>(null);
+    const [someoneElseData, setSomeoneElseData] = useState({
+        name: "",
+        gender: "",
+        dob: "",
+        tob: "",
+        pob: ""
+    });
     const { isClientAuthenticated } = useAuthStore();
 
     useEffect(() => {
@@ -47,7 +55,7 @@ export default function ConsultationPrep() {
                         video_call_price: data.video_call_price,
                         language: data.languages?.join(", ") || "",
                         ratings: data.rating || 5,
-                        is_available: data.is_available || false,
+                        is_available: data.isAvailable ?? data.is_available ?? false,
                     });
                 } else {
                     setAstrologer(null);
@@ -60,7 +68,19 @@ export default function ConsultationPrep() {
             }
         };
         if (id) fetchAstro();
-    }, [id]);
+
+        const fetchProfile = async () => {
+            if (isClientAuthenticated) {
+                try {
+                    const profile = await getClientProfile();
+                    setClientProfile(profile);
+                } catch (err) {
+                    console.error("Failed to fetch client profile:", err);
+                }
+            }
+        };
+        fetchProfile();
+    }, [id, isClientAuthenticated]);
 
     const handleStartConsultation = async () => {
         if (!isClientAuthenticated) {
@@ -86,6 +106,28 @@ export default function ConsultationPrep() {
                     timestamp: Date.now()
                 }));
 
+                // If consulting for self, prepare the intro card
+                if (askSomeoneElse) {
+                    if (clientProfile) {
+                        const introData = {
+                            name: clientProfile.full_name || clientProfile.user?.name || "User",
+                            dob: clientProfile.date_of_birth || "",
+                            tob: clientProfile.time_of_birth || "",
+                            pob: clientProfile.place_of_birth || "",
+                            gender: clientProfile.gender || ""
+                        };
+                        localStorage.setItem('pendingIntroCard', JSON.stringify(introData));
+                    }
+                } else {
+                    // Consulting for someone else
+                    if (!someoneElseData.name || !someoneElseData.dob) {
+                        toast.error("Please fill Name and DOB for the consultation");
+                        setActionLoading(false);
+                        return;
+                    }
+                    localStorage.setItem('pendingIntroCard', JSON.stringify(someoneElseData));
+                }
+
                 toast.success("Connecting to expert...");
                 router.push(`/chat/room/${id}?sessionId=${response.id}`);
             }
@@ -100,7 +142,7 @@ export default function ConsultationPrep() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange"></div>
         </div>
     );
 
@@ -115,7 +157,7 @@ export default function ConsultationPrep() {
             </p>
             <button
                 onClick={() => router.push("/")}
-                className="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary-hover transition-all"
+                className="px-8 py-3 bg-orange text-white rounded-full font-bold shadow-lg hover:bg-orange-hover transition-all"
             >
                 Go to Home
             </button>
@@ -144,9 +186,9 @@ export default function ConsultationPrep() {
             <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 flex items-center justify-between">
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center gap-2 group text-gray-400 hover:text-primary transition-colors"
+                    className="flex items-center gap-2 group text-gray-400 hover:text-orange transition-colors"
                 >
-                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-orange/10 transition-colors">
                         <ChevronLeft className="w-5 h-5" />
                     </div>
                     <span className="font-bold text-xs uppercase tracking-widest">Back</span>
@@ -164,12 +206,12 @@ export default function ConsultationPrep() {
                     {/* Left: Interactive Onboarding Card */}
                     <div className="lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-left duration-1000">
                         <div className="space-y-4">
-                            <span className="px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-primary/20 inline-block">
+                            <span className="px-4 py-1.5 bg-orange/10 text-orange text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-orange/20 inline-block">
                                 Preparing Connection
                             </span>
                             <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
                                 Talk to <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange to-orange">
                                     {astrologer?.name}
                                 </span>
                             </h1>
@@ -181,8 +223,8 @@ export default function ConsultationPrep() {
                         {/* Feature Grid */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-6 rounded-[2.5rem] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:translate-y-[-5px] transition-all duration-500 group">
-                                <div className="w-12 h-12 rounded-2xl bg-orange/5 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
-                                    <MessageSquare className="w-6 h-6 text-primary group-hover:text-white" />
+                                <div className="w-12 h-12 rounded-2xl bg-orange/5 flex items-center justify-center mb-4 group-hover:bg-orange transition-colors">
+                                    <MessageSquare className="w-6 h-6 text-orange group-hover:text-white" />
                                 </div>
                                 <h3 className="font-bold text-gray-900 mb-1">Live Chat</h3>
                                 <p className="text-xs text-gray-400 leading-relaxed font-medium">Real-time answers from verified experts.</p>
@@ -198,9 +240,9 @@ export default function ConsultationPrep() {
 
                         {/* Consultation Checklist */}
                         <div className="p-8 rounded-[3rem] bg-[#1a1a1a] text-white overflow-hidden relative group">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary opacity-10 blur-[80px] -mr-32 -mt-32"></div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-orange opacity-10 blur-[80px] -mr-32 -mt-32"></div>
                             <h3 className="text-lg font-bold mb-6 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                                <div className="w-10 h-10 rounded-xl bg-orange flex items-center justify-center">
                                     <User className="w-5 h-5 text-white" />
                                 </div>
                                 Session Checklist
@@ -280,17 +322,81 @@ export default function ConsultationPrep() {
 
                                 <div className="p-8 space-y-6">
                                     {/* Option to toggle who is asking */}
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                        <div className="flex flex-col">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Consulting for</span>
-                                            <span className="text-sm font-bold text-gray-900">{askSomeoneElse ? "Myself" : "Someone Else"}</span>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Consulting for</span>
+                                                <span className="text-sm font-bold text-gray-900">{askSomeoneElse ? "Myself" : "Someone Else"}</span>
+                                            </div>
+                                            <button
+                                                onClick={() => setAskSomeoneElse(!askSomeoneElse)}
+                                                className="px-4 py-2 text-[10px] font-black text-orange uppercase tracking-widest hover:bg-orange/5 rounded-xl transition-colors"
+                                            >
+                                                Change
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => setAskSomeoneElse(!askSomeoneElse)}
-                                            className="px-4 py-2 text-[10px] font-black text-orange uppercase tracking-widest hover:bg-orange/5 rounded-xl transition-colors"
-                                        >
-                                            Change
-                                        </button>
+
+                                        {/* Someone Else Form - Premium Glassmorphic UI */}
+                                        {!askSomeoneElse && (
+                                            <div className="p-6 rounded-[2rem] bg-orange/5 border border-orange/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                                                <div className="grid grid-cols-1 gap-4">
+                                                    <div>
+                                                        <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">Full Name</label>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Enter Name"
+                                                            value={someoneElseData.name}
+                                                            onChange={(e) => setSomeoneElseData({ ...someoneElseData, name: e.target.value })}
+                                                            className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">Gender</label>
+                                                            <select
+                                                                value={someoneElseData.gender}
+                                                                onChange={(e) => setSomeoneElseData({ ...someoneElseData, gender: e.target.value })}
+                                                                className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm appearance-none"
+                                                            >
+                                                                <option value="">Select</option>
+                                                                <option value="male">Male</option>
+                                                                <option value="female">Female</option>
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">Birth Date</label>
+                                                            <input
+                                                                type="date"
+                                                                value={someoneElseData.dob}
+                                                                onChange={(e) => setSomeoneElseData({ ...someoneElseData, dob: e.target.value })}
+                                                                className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">Birth Time</label>
+                                                            <input
+                                                                type="time"
+                                                                value={someoneElseData.tob}
+                                                                onChange={(e) => setSomeoneElseData({ ...someoneElseData, tob: e.target.value })}
+                                                                className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">Birth Place</label>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="City, Country"
+                                                                value={someoneElseData.pob}
+                                                                onChange={(e) => setSomeoneElseData({ ...someoneElseData, pob: e.target.value })}
+                                                                className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Big CTA with Hover Effects */}

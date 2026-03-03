@@ -12,8 +12,10 @@ export interface WishlistItem {
         price: number;
         imageUrl?: string;
         image?: string;
+        image_url?: string;
         description?: string;
         sale_price?: number;
+        original_price?: number;
     };
     expert?: {
         id: number;

@@ -261,6 +261,44 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                             );
                         }
 
+                        // CASE 1.5: Automated Issue Summary (rendered as yellow card)
+                        if (msg.message?.includes("📋 ISSUE SUMMARY 📋")) {
+                            const isMe = msg.senderType === "user" || !msg.senderType; // Automated is usually user
+                            return (
+                                <div key={`summary-${idx}`} className={`flex flex-col !w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
+                                    <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[95%]`}>
+                                        <div className="flex-shrink-0">
+                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm">
+                                                <img
+                                                    src={isMe
+                                                        ? "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128"
+                                                        : "https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff&size=128"
+                                                    }
+                                                    alt={isMe ? "You" : "Admin"}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex flex-col items-start gap-2 shadow-sm w-full">
+                                                <div className="flex items-center gap-2 text-yellow-700 font-bold text-xs uppercase tracking-wider border-b border-yellow-200 pb-2 w-full">
+                                                    <FileTextIcon className="w-4 h-4" />
+                                                    Issue Report Details
+                                                </div>
+                                                <div className="text-[11px] text-yellow-800 font-medium whitespace-pre-wrap leading-relaxed w-full">
+                                                    {msg.message}
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] text-gray-400 mt-1 px-1">
+                                                {(msg as any).createdAt || (msg as any).created_at ? new Date((msg as any).createdAt || (msg as any).created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+
                         // CASE 2: Normal Message
                         const isMe = msg.senderType === "user";
                         const msgKey = msg.id ? `msg-${msg.id}-${idx}` : `idx-${idx}`;

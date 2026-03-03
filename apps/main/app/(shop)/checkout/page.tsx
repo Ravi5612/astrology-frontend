@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { Product, AddressDto } from "@/lib/types";
+import * as LucideIcons from "lucide-react";
 
 const CheckoutContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { cartItems, cartTotal } = useCartStore(); // Changed usage
-  const { clientUser } = useAuthStore(); // Changed usage
+  const { clientUser, clientBalance, refreshBalance } = useAuthStore(); // Changed usage
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -31,6 +32,7 @@ const CheckoutContent = () => {
   const date = searchParams.get("date") || "";
   const time = searchParams.get("time") || "";
   const duration = searchParams.get("duration") || "15";
+  const expertId = searchParams.get("expertId");
 
   // 1. Initial Logic: Capture Buy Now info from URL or SessionStorage
   useEffect(() => {
@@ -184,6 +186,62 @@ const CheckoutContent = () => {
     }
 
     setIsProcessing(true);
+
+    if (paymentMethod === "wallet") {
+      if (clientBalance < total) {
+        toast.error("Insufficient wallet balance. Please recharge or select another method.");
+        setIsProcessing(false);
+        return;
+      }
+
+      try {
+        let payload: any;
+        let endpoint: string;
+
+        if (isOrder) {
+          payload = {
+            shipping_address: address,
+            product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
+            quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
+            coupon_code: appliedCoupon?.code || undefined,
+            payment_method: "wallet",
+          };
+          endpoint = "/order";
+        } else {
+          payload = {
+            astrologer_name: astrologerName,
+            expert_id: expertId ? parseInt(expertId) : undefined,
+            amount: total,
+            coupon_code: appliedCoupon?.code || undefined,
+            type: "consultation",
+          };
+          endpoint = "/consultation/book-with-wallet";
+        }
+
+        console.log(`🚀 Sending Wallet Payment to ${endpoint}:`, payload);
+        const res = await apiClient.post<any>(endpoint, payload);
+        const data = (res as any)?.data ?? res;
+
+        if (data) {
+          toast.success(isOrder ? "Order placed successfully using wallet!" : "Consultation booked successfully!");
+          refreshBalance();
+
+          if (isOrder) {
+            router.push("/profile?tab=orders");
+          } else {
+            const params = new URLSearchParams({ name: astrologerName });
+            router.push(`/chat?${params.toString()}`);
+          }
+        }
+      } catch (error: any) {
+        console.error("Wallet Payment Error:", error);
+        toast.error(error.response?.data?.message || "Wallet payment failed. Please try again.");
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
     try {
       // 1. Load Razorpay Script
       const isLoaded = await loadRazorpay();
@@ -566,6 +624,38 @@ const CheckoutContent = () => {
                   </h5>
 
                   <div className="payment-options d-flex flex-column gap-3">
+                    {/* Wallet */}
+                    <label
+                      className={`payment-option p-3 rounded border d-flex align-items-center cursor-pointer ${paymentMethod === "wallet" ? "border-primary bg-light" : ""} ${clientBalance < total ? "opacity-50 grayscale" : ""}`}
+                      style={{
+                        borderColor: paymentMethod === "wallet" ? "#732882" : "#dee2e6",
+                        cursor: clientBalance < total ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="payment"
+                        className="form-check-input me-3"
+                        checked={paymentMethod === "wallet"}
+                        onChange={() => setPaymentMethod("wallet")}
+                        disabled={clientBalance < total}
+                        style={{ accentColor: "#732882" }}
+                      />
+                      <div className="d-flex align-items-center grow">
+                        <span className="me-2">
+                          <i className="fa-solid fa-wallet text-orange-500"></i>
+                        </span>
+                        <div className="flex flex-col">
+                          <span className="fw-semibold">Wallet Payment</span>
+                          <small className={clientBalance < total ? "text-danger" : "text-success"}>
+                            Available Balance: ₹{clientBalance?.toLocaleString() || '0'}
+                            {clientBalance < total && " (Insufficient)"}
+                          </small>
+                        </div>
+                      </div>
+                      <LucideIcons.Wallet className="w-6 h-6 text-gray-400" />
+                    </label>
+
                     {/* UPI */}
                     <label
                       className={`payment-option p-3 rounded border d-flex align-items-center cursor-pointer ${paymentMethod === "upi" ? "border-primary bg-light" : ""}`}

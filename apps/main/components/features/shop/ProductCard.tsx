@@ -98,6 +98,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                         src={imageUrl}
                         alt={product.name}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 33vw"
                         className="object-cover transform group-hover:scale-105 transition-transform duration-500 mix-blend-normal"
                     />
                 </div>

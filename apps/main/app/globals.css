@@ -3,14 +3,14 @@
 
 :root {
   /* Brand Colors */
-  --primary: #cc147f;
+  --primary: #FF6B00;
   --primary-hover: #E65100;
   --secondary: #4A1D1F;
   --accent-gold: #D4AF37;
   --bg-light: #FFF9F4;
 
   /* Bootstrap Overrides */
-  --bs-primary: var(--primary) !important;
+  --bs-primary: #FF6B00 !important;
   --bs-primary-rgb: 255, 107, 0 !important;
   --bs-link-color: var(--primary) !important;
   --bs-link-hover-color: var(--primary-hover) !important;

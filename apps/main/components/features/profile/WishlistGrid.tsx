@@ -53,11 +53,11 @@ const WishlistGrid: React.FC = () => {
                                 <ProductCard
                                     product={{
                                         id: String(item.product?.id || item.productId),
-                                        imageUrl: item.product?.imageUrl || item.product?.image || "",
+                                        imageUrl: item.product?.imageUrl || item.product?.image || (item.product as any)?.image_url || "",
                                         name: item.product?.name || "Product",
                                         description: item.product?.description || "",
                                         price: item.product?.price || 0,
-                                        originalPrice: item.product?.sale_price,
+                                        originalPrice: item.product?.sale_price || (item.product as any)?.original_price,
                                     } as any}
                                 />
                             </div>
