@@ -60,6 +60,8 @@ import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import safeFetch from "@packages/safe-fetch/safeFetch";
 import { toast } from "react-toastify";
+import { useLanguageStore } from "@/store/languageStore";
+import { loveCalculatorTranslations } from "@/lib/translations/calculators/love-calculator";
 
 // Premium Section Animations & Styles
 const premiumStyles = `
@@ -92,6 +94,9 @@ const premiumStyles = `
 `;
 
 const LoveCalculatorPage = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = loveCalculatorTranslations[lang as keyof typeof loveCalculatorTranslations] || loveCalculatorTranslations.en;
+
   const [activeMode, setActiveMode] = useState<"simple" | "advanced">("simple");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -156,7 +161,7 @@ const LoveCalculatorPage = () => {
   const calculateSimpleLove = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!simpleData.p1Name || !simpleData.p2Name) {
-      toast.error("Please enter both names");
+      toast.error(t.form.errors.bothNames);
       return;
     }
     setLoading(true);
@@ -172,15 +177,14 @@ const LoveCalculatorPage = () => {
       });
 
       if (err || !data) {
-        toast.error(err?.message || "Failed to calculate love score.");
+        toast.error(err?.message || t.form.errors.failedScore);
       } else if (data.success) {
         setResult({ type: "simple", ...data.data });
-        toast.success("Love score calculated!");
+        toast.success(t.results.success.score);
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 300);
-      } else {
-        toast.error(data.message || "Failed to calculate love score.");
+        toast.error(data.message || t.form.errors.failedScore);
       }
     } finally {
       setLoading(false);
@@ -191,7 +195,7 @@ const LoveCalculatorPage = () => {
     e.preventDefault();
     const { boy, girl } = advancedData;
     if (!boy.date || !boy.time || !boy.lat || !girl.date || !girl.time || !girl.lat) {
-      toast.error("Please fill in all birth details");
+      toast.error(t.form.errors.birthDetails);
       return;
     }
 
@@ -216,15 +220,14 @@ const LoveCalculatorPage = () => {
       });
 
       if (err || !data) {
-        toast.error(err?.message || "Something went wrong. Please try again.");
+        toast.error(err?.message || t.form.errors.generic);
       } else if (data.success) {
         setResult({ type: "advanced", data: data.data });
-        toast.success("Advanced Guna Milan report generated!");
+        toast.success(t.results.success.guna);
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 300);
-      } else {
-        toast.error(data.message || "Failed to calculate match");
+        toast.error(data.message || t.form.errors.failedMatch);
       }
     } finally {
       setLoading(false);
@@ -254,16 +257,27 @@ const LoveCalculatorPage = () => {
           </div>
         </div>
 
+        {/* Language Switcher — top right inside hero overlay */}
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+
         <div className="container relative z-10 px-6">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
             <span className="inline-block bg-[#fd6410] text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[4px] mb-8 animate-fade-in">
-              Cosmic Compatibility
+              {t.hero.badge}
             </span>
             <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-none overflow-visible py-2">
-              Love <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">Calculator</span>
+              {t.hero.titleMain} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">{t.hero.titleAccent}</span>
             </h1>
             <p className="text-xl md:text-2xl text-orange-100/60 leading-relaxed font-light italic mb-12">
-              Discover how your stars align and explore the ultimate connection between you and your partner with ancient Vedic wisdom.
+              {t.hero.paragraph}
             </p>
 
             {/* Mode Switcher */}
@@ -301,7 +315,7 @@ const LoveCalculatorPage = () => {
                 ))}
               </div>
               <p className="text-sm font-bold text-orange-100/40">
-                <span className="text-white">10M+</span> Cosmic connections calculated
+                <span className="text-white">10M+</span> {t.hero.connectionsCount.replace("{count}", "")}
               </p>
             </div>
           </div>
@@ -320,9 +334,9 @@ const LoveCalculatorPage = () => {
             <div className="text-center mb-10">
               <h2 className="text-xl md:text-3xl font-black text-burgundy mb-2 tracking-tight">
                 {activeMode === "simple" ? (
-                  <>Find Love <span className="text-red-500 underline decoration-red-100 decoration-2 underline-offset-4">(Percentage)%</span> Between</>
+                  <>{t.form.simpleTitle.split("{percentage}")[0]} <span className="text-red-500 underline decoration-red-100 decoration-2 underline-offset-4">{t.form.percentage}</span> {t.form.simpleTitle.split("{percentage}")[1]}</>
                 ) : (
-                  "Enter Birth Details"
+                  t.form.advancedTitle
                 )}
               </h2>
               <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto mt-2"></div>
@@ -336,14 +350,14 @@ const LoveCalculatorPage = () => {
                     {/* Person 1 */}
                     <div className="flex-1 w-full space-y-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">Your Name</label>
+                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">{t.form.yourName}</label>
                         <div className="relative">
                           <input
                             type="text"
                             required
                             style={{ borderRadius: '9999px' }}
                             className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                            placeholder="Type your name..."
+                            placeholder={t.form.yourNamePlaceholder}
                             value={simpleData.p1Name}
                             onChange={(e) => handleSimpleInputChange("p1Name", e.target.value)}
                           />
@@ -357,7 +371,7 @@ const LoveCalculatorPage = () => {
                           style={{ borderRadius: '9999px' }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p1Gender === "male" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
-                          Male
+                          {t.form.male}
                         </button>
                         <button
                           type="button"
@@ -365,7 +379,7 @@ const LoveCalculatorPage = () => {
                           style={{ borderRadius: '9999px' }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p1Gender === "female" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
-                          Female
+                          {t.form.female}
                         </button>
                       </div>
                     </div>
@@ -390,14 +404,14 @@ const LoveCalculatorPage = () => {
                     {/* Person 2 */}
                     <div className="flex-1 w-full space-y-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">Partner's Name</label>
+                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">{t.form.partnerName}</label>
                         <div className="relative">
                           <input
                             type="text"
                             required
                             style={{ borderRadius: '9999px' }}
                             className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                            placeholder="Type their name..."
+                            placeholder={t.form.partnerNamePlaceholder}
                             value={simpleData.p2Name}
                             onChange={(e) => handleSimpleInputChange("p2Name", e.target.value)}
                           />
@@ -411,7 +425,7 @@ const LoveCalculatorPage = () => {
                           style={{ borderRadius: '9999px' }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p2Gender === "male" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
-                          Male
+                          {t.form.male}
                         </button>
                         <button
                           type="button"
@@ -419,7 +433,7 @@ const LoveCalculatorPage = () => {
                           style={{ borderRadius: '9999px' }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p2Gender === "female" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
-                          Female
+                          {t.form.female}
                         </button>
                       </div>
                     </div>
@@ -438,7 +452,7 @@ const LoveCalculatorPage = () => {
                       ) : (
                         <FaHeart className="group-hover:scale-125 transition-transform" />
                       )}
-                      {loading ? "Calculating..." : "Calculate Love %"}
+                      {loading ? t.form.calculating : t.form.calculateLove}
                     </button>
                   </div>
                 </div>
@@ -461,8 +475,8 @@ const LoveCalculatorPage = () => {
                         <FaMars size={28} />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black text-burgundy mb-1">Boy's Info</h3>
-                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">Prospective Groom</p>
+                        <h3 className="text-2xl font-black text-burgundy mb-1">{t.form.boyInfo}</h3>
+                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">{t.form.boySub}</p>
                       </div>
                     </div>
 
@@ -472,7 +486,7 @@ const LoveCalculatorPage = () => {
                           type="text"
                           required
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white focus:border-blue-500 outline-none transition-all"
-                          placeholder="Full Name"
+                          placeholder={t.form.fullName}
                           value={advancedData.boy.name}
                           onChange={(e) => handleAdvancedInputChange("boy", "name", e.target.value)}
                         />
@@ -495,7 +509,7 @@ const LoveCalculatorPage = () => {
                       </div>
                       <div className="relative">
                         <LocationAutocomplete
-                          placeholder="Birth Place"
+                          placeholder={t.form.birthPlace}
                           onSelect={(loc) => handleLocationSelect("boy", loc)}
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white outline-none"
                         />
@@ -513,8 +527,8 @@ const LoveCalculatorPage = () => {
                         <FaVenus size={28} />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black text-burgundy mb-1">Girl's Info</h3>
-                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">Prospective Bride</p>
+                        <h3 className="text-2xl font-black text-burgundy mb-1">{t.form.girlInfo}</h3>
+                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">{t.form.girlSub}</p>
                       </div>
                     </div>
 
@@ -524,7 +538,7 @@ const LoveCalculatorPage = () => {
                           type="text"
                           required
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white focus:border-pink-500 outline-none transition-all"
-                          placeholder="Full Name"
+                          placeholder={t.form.fullName}
                           value={advancedData.girl.name}
                           onChange={(e) => handleAdvancedInputChange("girl", "name", e.target.value)}
                         />
@@ -547,7 +561,7 @@ const LoveCalculatorPage = () => {
                       </div>
                       <div className="relative">
                         <LocationAutocomplete
-                          placeholder="Birth Place"
+                          placeholder={t.form.birthPlace}
                           onSelect={(loc) => handleLocationSelect("girl", loc)}
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white outline-none"
                         />
@@ -568,7 +582,7 @@ const LoveCalculatorPage = () => {
                       ) : (
                         <GiSparkles className="group-hover:rotate-45 transition-transform" />
                       )}
-                      {loading ? "Analyzing Charts..." : "Generate Guna Report"}
+                      {loading ? t.form.analyzing : t.form.generateReport}
                     </span>
                   </button>
                 </div>
@@ -593,10 +607,10 @@ const LoveCalculatorPage = () => {
                     <div className="relative z-10">
                       <div className="text-center mb-16">
                         <span className="inline-block bg-[#fd6410]/10 text-[#fd6410] px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                          Match Results
+                          {t.results.badge}
                         </span>
                         <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                          Your <span className="text-[#fd6410]">Love Score</span>
+                          {t.results.title.split("{score}")[0]} <span className="text-[#fd6410]">{t.results.title.split("{score}")[1]}</span>
                         </h2>
                         <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#fd6410] to-transparent mx-auto mb-16"></div>
                       </div>
@@ -611,7 +625,7 @@ const LoveCalculatorPage = () => {
                                 {result.score}<span className="text-4xl text-[#fd6410]">%</span>
                               </span>
                               <span className="text-[12px] font-black uppercase tracking-[4px] text-[#fd6410] mt-4 block">
-                                Cosmic Bond
+                                {t.results.cosmicBond}
                               </span>
                             </div>
                             <FaHeart className="absolute -top-4 -right-4 text-pink-500 text-5xl animate-bounce shadow-xl" />
@@ -634,10 +648,10 @@ const LoveCalculatorPage = () => {
                     <div className="relative z-10">
                       <div className="text-center mb-16">
                         <span className="inline-block bg-burgundy text-[#d4af37] px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-[4px] mb-8 shadow-xl">
-                          Vedic Compatibility Report
+                          {t.results.vedicBadge}
                         </span>
                         <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                          Guna Milan <span className="text-[#fd6410]">Score</span>
+                          {t.results.gunaTitle.split("{score}")[0]} <span className="text-[#fd6410]">{t.results.gunaTitle.split("{score}")[1]}</span>
                         </h2>
                       </div>
 
@@ -660,12 +674,12 @@ const LoveCalculatorPage = () => {
                             </svg>
                             <div className="absolute flex flex-col items-center">
                               <span className="text-6xl md:text-8xl font-black text-burgundy">{result.data.guna_milan.total_points}</span>
-                              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Out of 36</span>
+                              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t.results.outOf36}</span>
                             </div>
                           </div>
                           <div>
                             <div className={`inline-flex items-center gap-2 px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-widest ${result.data.guna_milan.total_points >= 18 ? "bg-green-500 text-white shadow-lg shadow-green-100" : "bg-burgundy text-white shadow-lg shadow-orange-100"}`}>
-                              {result.data.guna_milan.total_points >= 18 ? "Good Compatibility" : "Moderate Match"}
+                              {result.data.guna_milan.total_points >= 18 ? t.results.goodComp : t.results.moderateMatch}
                             </div>
                           </div>
                         </div>
@@ -675,8 +689,8 @@ const LoveCalculatorPage = () => {
                             <GiLotus size={200} />
                           </div>
                           <div className="relative z-10">
-                            <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-6 block">Expert Vedic Analysis</span>
-                            <h3 className="text-3xl font-black mb-8 leading-tight">Match <span className="text-[#fd6410]">Summary</span></h3>
+                            <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-6 block">{t.results.expertAnalysis}</span>
+                            <h3 className="text-3xl font-black mb-8 leading-tight">{t.results.matchSummary.split("{summary}")[0]} <span className="text-[#fd6410]">{t.results.matchSummary.split("{summary}")[1]}</span></h3>
                             <p className="text-xl font-light italic text-orange-100/80 leading-relaxed mb-10 border-l-2 border-[#fd6410]/30 pl-8">
                               "{renderContent(result.data.message)}"
                             </p>
@@ -684,7 +698,7 @@ const LoveCalculatorPage = () => {
                               <div className="w-12 h-12 rounded-full bg-[#fd6410] flex items-center justify-center text-white shadow-xl">
                                 <FaSpinner className="animate-pulse" />
                               </div>
-                              <p className="text-sm font-bold text-orange-50/60 m-0">Report processed via deep Vedic algorithms</p>
+                              <p className="text-sm font-bold text-orange-50/60 m-0">{t.results.processedBy}</p>
                             </div>
                           </div>
                         </div>
@@ -693,20 +707,20 @@ const LoveCalculatorPage = () => {
                       {/* Ashta Koot Breakdown Table (Premium Styling) */}
                       <div className="bg-[#fff9f6] rounded-[3rem] p-8 md:p-12 border border-orange-100">
                         <div className="flex items-center justify-between mb-12">
-                          <h4 className="text-xl font-black text-burgundy tracking-tight">Ashta Koot Breakdown</h4>
+                          <h4 className="text-xl font-black text-burgundy tracking-tight">{t.results.breakdownTitle}</h4>
                           <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-50">
-                            <span className="text-xs font-bold text-gray-400">Match Accuracy: </span>
-                            <span className="text-xs font-black text-[#fd6410]">100% Verified</span>
+                            <span className="text-xs font-bold text-gray-400">{t.results.accuracy.split(':')[0]}: </span>
+                            <span className="text-xs font-black text-[#fd6410]">{t.results.accuracy.split(':')[1]}</span>
                           </div>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full text-left border-collapse">
                             <thead>
                               <tr className="border-b-2 border-burgundy/5">
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">Component</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">Significance</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">Score</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40 text-right">Interpretation</th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.component}</th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.significance}</th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.score}</th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40 text-right">{t.results.table.interpretation}</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -767,34 +781,34 @@ const LoveCalculatorPage = () => {
         <div className="container relative z-10 px-6">
           <div className="text-center mb-20 max-w-4xl mx-auto">
             <span className="inline-block bg-[#fd6410] text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[4px] mb-8">
-              Cosmic Insights
+              {t.educational.badge}
             </span>
             <h2 className="text-3xl md:text-5xl font-black mb-8 tracking-tight">
-              Decoding Your <span className="text-[#fd6410]">Compatibility</span>
+              {t.educational.title.split("{comp}")[0]} <span className="text-[#fd6410]">{t.educational.title.split("{comp}")[1]}</span>
             </h2>
             <p className="text-lg text-orange-100/60 font-light italic leading-relaxed">
-              Explore the layers of cosmic energy that define your relationship stability and future together.
+              {t.educational.desc}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-10">
             {[
               {
-                title: "Guna Milan",
+                title: t.educational.cards[0].title,
                 icon: <FaBullseye size={32} />,
-                desc: "The foundation of Vedic compatibility based on ancient texts like Bhrigu Samhita.",
+                desc: t.educational.cards[0].desc,
                 accent: "orange"
               },
               {
-                title: "Venus Harmony",
+                title: t.educational.cards[1].title,
                 icon: <FaStar size={32} />,
-                desc: "Position of Venus in both charts determines the level of romantic resonance.",
+                desc: t.educational.cards[1].desc,
                 accent: "gold"
               },
               {
-                title: "Elemental Link",
+                title: t.educational.cards[2].title,
                 icon: <FaBalanceScale size={32} />,
-                desc: "How your basic elements (Fire, Water, Air, Earth) interact and balance each other.",
+                desc: t.educational.cards[2].desc,
                 accent: "burgundy"
               },
             ].map((item, i) => (
@@ -819,13 +833,13 @@ const LoveCalculatorPage = () => {
         <div className="container px-6">
           <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
             <div className="max-w-2xl">
-              <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-4 block">Recommended for you</span>
+              <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-4 block">{t.moreServices.badge}</span>
               <h2 className="text-3xl md:text-5xl font-black text-burgundy tracking-tight">
-                Unlock Deeper <span className="text-[#fd6410]">Star Guidance</span>
+                {t.moreServices.title.split("{guidance}")[0]} <span className="text-[#fd6410]">{t.moreServices.title.split("{guidance}")[1]}</span>
               </h2>
             </div>
             <a href="#" className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-burgundy hover:text-[#fd6410] transition-colors group">
-              View All Services
+              {t.moreServices.viewAll}
               <div className="bg-white p-3 rounded-full shadow-md group-hover:translate-x-2 transition-transform">
                 <FaChevronRight size={14} />
               </div>
@@ -871,12 +885,12 @@ const LoveCalculatorPage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Shared Components */}
-      <WhyChooseUs />
+      < WhyChooseUs />
       <CTA />
-    </div>
+    </div >
   );
 };
 

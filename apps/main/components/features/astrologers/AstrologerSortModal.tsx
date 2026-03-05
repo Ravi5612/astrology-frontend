@@ -2,6 +2,8 @@
 import React from "react";
 
 import { AstrologerSortModalProps } from "@/lib/types";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const AstrologerSortModal: React.FC<AstrologerSortModalProps> = ({
     modalId,
@@ -9,12 +11,15 @@ const AstrologerSortModal: React.FC<AstrologerSortModalProps> = ({
     setSortBy,
     applySort,
 }) => {
+    const { lang } = useLanguageStore();
+    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
     const options = [
-        { value: "newest", label: "Newest First", icon: "fa-sun" },
-        { value: "rating", label: "Rating: High to Low", icon: "fa-star" },
-        { value: "price_asc", label: "Price: Low to High", icon: "fa-arrow-up-1-9" },
-        { value: "price_desc", label: "Price: High to Low", icon: "fa-arrow-down-9-1" },
-        { value: "experience", label: "Experience: High to Low", icon: "fa-briefcase" },
+        { value: "newest", label: t.astrologerSection.sortOptions.none, icon: "fa-sun" },
+        { value: "rating", label: t.astrologerSection.sortOptions.rating, icon: "fa-star" },
+        { value: "price_asc", label: t.astrologerSection.sortOptions.priceAsc, icon: "fa-arrow-up-1-9" },
+        { value: "price_desc", label: t.astrologerSection.sortOptions.priceDesc, icon: "fa-arrow-down-9-1" },
+        { value: "experience", label: t.astrologerSection.sortOptions.experience, icon: "fa-briefcase" },
     ];
     // comment
 
@@ -30,7 +35,7 @@ const AstrologerSortModal: React.FC<AstrologerSortModalProps> = ({
                 <div className="modal-content text-dark border-0 shadow-lg rounded-3">
                     <div className="modal-header bg-linear-to-r from-orange-50 to-white border-0 py-3 px-4">
                         <h5 className="modal-title font-bold text-lg">
-                            <i className="fa-solid fa-sort mr-2 text-primary"></i>Sort By
+                            <i className="fa-solid fa-sort mr-2 text-primary"></i>{t.astrologerSection.sortByTitle}
                         </h5>
                         <button
                             type="button"
@@ -75,7 +80,7 @@ const AstrologerSortModal: React.FC<AstrologerSortModalProps> = ({
                             data-bs-dismiss="modal"
                             onClick={applySort}
                         >
-                            Apply Sort
+                            {t.astrologerSection.applyBtns.applySort}
                         </button>
                     </div>
                 </div>

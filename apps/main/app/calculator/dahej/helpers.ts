@@ -13,12 +13,12 @@ export const hashSeed = (str: string) => {
     return Math.abs(hash);
 };
 
-export const formatIndianCurrency = (amount: number) => {
+export const formatIndianCurrency = (amount: number, labels?: { lakh: string; cr: string }) => {
     if (amount >= 10000000) {
-        return (amount / 10000000).toFixed(2) + ' Cr';
+        return (amount / 10000000).toFixed(2) + (labels ? ` ${labels.cr}` : ' Cr');
     }
     if (amount >= 100000) {
-        return (amount / 100000).toFixed(2) + ' Lakh';
+        return (amount / 100000).toFixed(2) + (labels ? ` ${labels.lakh}` : ' Lakh');
     }
     return amount.toLocaleString('en-IN');
 };
@@ -48,15 +48,15 @@ export const calculateAge = (dob: string) => {
     return age;
 };
 
-export const getMessageByDahej = (dahej: number) => {
+export const getMessageByDahej = (dahej: number): "modest" | "comfortable" | "excellent" | "royal" => {
     if (dahej < 1000000) {
-        return "Modest beginnings! Focus on love and partnership over material wealth.";
+        return "modest";
     }
     if (dahej >= 1000000 && dahej < 5000000) {
-        return "Comfortable match! This union has good financial stability and growth potential.";
+        return "comfortable";
     }
     if (dahej >= 5000000 && dahej < 15000000) {
-        return "Excellent prospects! A life of comfort and mutual respect awaits.";
+        return "excellent";
     }
-    return "Royal match! This partnership is destined for prosperity and abundance.";
+    return "royal";
 };

@@ -2,8 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import { PATHS, URLS } from "@repo/routes";
+import { useLanguageStore } from "../../../apps/main/store/languageStore";
+import { footerTranslations } from "../../../apps/main/lib/translations/footer";
 
 const Footer: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = footerTranslations[lang as keyof typeof footerTranslations] || footerTranslations.en;
+
   return (
     <>
       <footer className="bg-[#1d1212] pt-[70px] pb-[30px] border-t border-[#d1ab8b1c]">
@@ -18,9 +23,7 @@ const Footer: React.FC = () => {
                 className="mb-4 w-full max-w-[260px] object-contain"
               />
               <p className="text-[14px] leading-[1.7] text-[#dfdfdf] mb-6">
-                Astrology in Bharat is India’s trusted astrology platform
-                offering accurate guidance through verified astrologers using
-                authentic Indian astrology systems.
+                {t.aboutText}
               </p>
 
               <ul className="flex items-center gap-3">
@@ -47,15 +50,15 @@ const Footer: React.FC = () => {
             <div className="lg:col-span-8 flex flex-wrap justify-between gap-10 md:gap-8">
               {/* Free Calculator */}
               <div className="flex-1 min-w-[160px]">
-                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">Free Calculator</h4>
+                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.freeCalculator}</h4>
                 <ul className="flex flex-col gap-2.5">
                   {[
-                    { label: "Marriage Age", href: PATHS.MARRIAGE_AGE_CALCULATOR },
-                    { label: "Dahej Calculator", href: PATHS.DAHEJ_CALCULATOR },
-                    { label: "Love Compatibility", href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
-                    { label: "Lucky Number", href: PATHS.LUCKY_NUMBER_CALCULATOR },
-                    { label: "Life Path", href: PATHS.LIFE_PATH_CALCULATOR },
-                    { label: "Nakshatra Finder", href: PATHS.NAKSHATRA_FINDER },
+                    { label: t.marriageAge, href: PATHS.MARRIAGE_AGE_CALCULATOR },
+                    { label: t.dahejCalculator, href: PATHS.DAHEJ_CALCULATOR },
+                    { label: t.loveCompatibility, href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
+                    { label: t.luckyNumber, href: PATHS.LUCKY_NUMBER_CALCULATOR },
+                    { label: t.lifePath, href: PATHS.LIFE_PATH_CALCULATOR },
+                    { label: t.nakshatraFinder, href: PATHS.NAKSHATRA_FINDER },
                   ].map((link, idx) => (
                     <li key={idx}>
                       <Link href={link.href} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">
@@ -68,40 +71,40 @@ const Footer: React.FC = () => {
 
               {/* Astrology Services */}
               <div className="flex-1 min-w-[160px]">
-                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">Astrology Services</h4>
+                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.astrologyServices}</h4>
                 <ul className="flex flex-col gap-2.5">
-                  <li><Link href={PATHS.ONLINE_PUJA} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Online Puja</Link></li>
-                  <li><a href="/our-astrologers" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Talk to Astrologer</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Video Consultation</a></li>
-                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Kundli Matching</Link></li>
-                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Kundli Prediction</Link></li>
-                  <li><a href="/calculator/name-numerology" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Numerology Report</a></li>
+                  <li><Link href={PATHS.ONLINE_PUJA} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.onlinePuja}</Link></li>
+                  <li><a href="/our-astrologers" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.talkToAstrologer}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.videoConsultation}</a></li>
+                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.kundliMatching}</Link></li>
+                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.kundliPrediction}</Link></li>
+                  <li><a href="/calculator/name-numerology" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.numerologyReport}</a></li>
                 </ul>
               </div>
 
               {/* Important Links */}
               <div className="flex-1 min-w-[160px]">
-                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">Important Links</h4>
+                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.importantLinks}</h4>
                 <ul className="flex flex-col gap-2.5">
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Astrologer Login</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Astrologer Registration</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Shubh Muhurat 2026</a></li>
-                  <li><Link href={PATHS.BUY_PRODUCTS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Shop Our Products</Link></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">About Us</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Contact Us</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.astrologerLogin}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.astrologerRegistration}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.shubhMuhurat}</a></li>
+                  <li><Link href={PATHS.BUY_PRODUCTS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.shopProducts}</Link></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.aboutUs}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.contactUs}</a></li>
                 </ul>
               </div>
 
               {/* Helpful Info */}
               <div className="flex-1 min-w-[160px]">
-                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">Helpful Info</h4>
+                <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.helpfulInfo}</h4>
                 <ul className="flex flex-col gap-2.5">
-                  <li><Link href={PATHS.REFUND_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Refund Policy</Link></li>
-                  <li><Link href={PATHS.PRIVACY_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Privacy Policy</Link></li>
-                  <li><Link href={PATHS.TERMS_AND_CONDITIONS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Terms & Conditions</Link></li>
-                  <li><Link href={PATHS.COPYRIGHT} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Copyright Notice</Link></li>
-                  <li><Link href={PATHS.HELP} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Help & Support</Link></li>
-                  <li><Link href={PATHS.SESSION_HISTORY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">Seassion</Link></li>
+                  <li><Link href={PATHS.REFUND_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.refundPolicy}</Link></li>
+                  <li><Link href={PATHS.PRIVACY_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.privacyPolicy}</Link></li>
+                  <li><Link href={PATHS.TERMS_AND_CONDITIONS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.termsConditions}</Link></li>
+                  <li><Link href={PATHS.COPYRIGHT} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.copyrightNotice}</Link></li>
+                  <li><Link href={PATHS.HELP} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.helpSupport}</Link></li>
+                  <li><Link href={PATHS.SESSION_HISTORY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.sessionHistory}</Link></li>
                 </ul>
               </div>
             </div>
@@ -109,8 +112,7 @@ const Footer: React.FC = () => {
 
           <div className="mt-[40px] pt-[25px] border-t border-white/10 text-center">
             <p className="text-[13px] text-[#aaa] font-medium m-0">
-              © 2026 Astrology in Bharat (Powered by Astrology in Bharat
-              Services). All Rights Reserved.
+              {t.copyright}
             </p>
           </div>
         </div>

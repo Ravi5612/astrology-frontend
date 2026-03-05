@@ -7,10 +7,15 @@ const Link = NextLink as any;
 import React, { useState, useCallback, FormEvent, Suspense } from "react";
 import { toast } from "react-toastify";
 import { getApiUrl } from "@/utils/api-config";
+import { useLanguageStore } from "@/store/languageStore";
+import { authTranslations } from "@/lib/translations/auth";
 
 const API_ENDPOINT = `${getApiUrl()}/auth/forgot/password`;
 
 const ForgotPasswordContent: React.FC = () => {
+    const { lang } = useLanguageStore();
+    const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
+
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSent, setIsSent] = useState<boolean>(false);
@@ -19,7 +24,7 @@ const ForgotPasswordContent: React.FC = () => {
         e.preventDefault();
 
         if (!email) {
-            toast.error("Email is required.");
+            toast.error(t.forgotPassword.errors.required);
             return;
         }
 
@@ -36,11 +41,13 @@ const ForgotPasswordContent: React.FC = () => {
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                toast.error(data?.message || "Failed to send reset link. Please try again.");
+                toast.error(data?.message || t.forgotPassword.errors.failed);
             } else {
-                toast.success(data?.message || "Password reset link sent! Please check your email.");
+                toast.success(data?.message || t.forgotPassword.success);
                 setIsSent(true);
             }
+        } catch {
+            toast.error(t.forgotPassword.errors.unexpected);
         } finally {
             setIsLoading(false);
         }
@@ -53,9 +60,17 @@ const ForgotPasswordContent: React.FC = () => {
                     <div className="w-full max-w-[480px]">
                         <div className="bg-white rounded-3xl shadow-[0_10px_50px_rgba(0,0,0,0.06)] border border-gray-100 p-6 md:p-10 mb-16">
                             <div className="text-center mb-8">
-                                <h2 className="text-3xl font-black text-black mb-3">Forgot Password</h2>
-                                <p className="text-gray-400 text-sm font-medium leading-relaxed">
-                                    Enter your registered email address and we'll send you a link to reset your password.
+                                <h2
+                                    className="text-3xl font-black text-black mb-3"
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                >
+                                    {t.forgotPassword.title}
+                                </h2>
+                                <p
+                                    className="text-gray-400 text-sm font-medium leading-relaxed"
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                >
+                                    {t.forgotPassword.subtitle}
                                 </p>
                             </div>
 
@@ -63,13 +78,13 @@ const ForgotPasswordContent: React.FC = () => {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
                                         <label htmlFor="email" className="block text-[11px] font-black text-black mb-2 uppercase tracking-wider">
-                                            Email Address *
+                                            {t.forgotPassword.emailLabel}
                                         </label>
                                         <input
                                             type="email"
                                             id="email"
                                             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-50 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-200 text-black font-semibold text-sm"
-                                            placeholder="Enter your email"
+                                            placeholder={t.forgotPassword.emailPlaceholder}
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
@@ -84,15 +99,15 @@ const ForgotPasswordContent: React.FC = () => {
                                         {isLoading ? (
                                             <span className="flex items-center justify-center gap-2">
                                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                                Sending...
+                                                {t.forgotPassword.sending}
                                             </span>
-                                        ) : "Send Reset Link"}
+                                        ) : t.forgotPassword.submit}
                                     </button>
 
                                     <div className="flex justify-center pt-2">
                                         <Link href="/sign-in" className="text-xs font-black text-gray-400 hover:text-orange transition-all flex items-center gap-2 uppercase tracking-widest">
                                             <i className="fa-solid fa-arrow-left text-[10px]"></i>
-                                            Back to Sign In
+                                            {t.forgotPassword.backToSignIn}
                                         </Link>
                                     </div>
                                 </form>
@@ -101,22 +116,30 @@ const ForgotPasswordContent: React.FC = () => {
                                     <div className="mb-6 inline-flex items-center justify-center w-20 h-20 bg-green-50 rounded-full">
                                         <i className="fa-solid fa-circle-check text-green-500 text-4xl"></i>
                                     </div>
-                                    <h3 className="text-2xl font-black text-black mb-2">Check Your Email</h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed mb-8">
-                                        We have sent a password reset link to <strong className="text-black font-black">{email}</strong>. Please check your inbox and click the link to continue. antisocially.
+                                    <h3
+                                        className="text-2xl font-black text-black mb-2"
+                                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                    >
+                                        {t.forgotPassword.checkEmail}
+                                    </h3>
+                                    <p
+                                        className="text-gray-500 text-sm leading-relaxed mb-8"
+                                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                    >
+                                        {t.forgotPassword.sentMessage.replace("{email}", "")} <strong className="text-black font-black">{email}</strong>. {t.forgotPassword.sentMessage.split("{email}")[1]}
                                     </p>
                                     <div className="space-y-4">
                                         <button
                                             className="w-full py-3.5 rounded-2xl border-2 border-gray-100 text-gray-400 text-sm font-black hover:bg-gray-50 hover:border-gray-200 transition-all uppercase tracking-widest"
                                             onClick={() => setIsSent(false)}
                                         >
-                                            Resend Email
+                                            {t.forgotPassword.resend}
                                         </button>
                                         <Link
                                             href="/sign-in"
                                             className="block w-full py-4 rounded-2xl bg-[#301118] text-white text-sm font-black shadow-[0_8px_20px_rgba(48,17,24,0.15)] hover:shadow-[0_12px_25px_rgba(48,17,24,0.25)] hover:-translate-y-0.5 transition-all uppercase tracking-[0.15em]"
                                         >
-                                            Back to Sign In
+                                            {t.forgotPassword.backToSignIn}
                                         </Link>
                                     </div>
                                 </div>

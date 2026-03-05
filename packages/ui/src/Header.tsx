@@ -16,6 +16,10 @@ import {
 } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
+// i18n
+import { useLanguageStore } from "../../../apps/main/store/languageStore";
+import { headerTranslations } from "../../../apps/main/lib/translations/header";
+
 const Swiper = SwiperComponent as any;
 const SwiperSlide = SwiperSlideComponent as any;
 import { getNotificationSocket, connectNotificationSocket } from "./utils/socket";
@@ -44,59 +48,45 @@ const SwiperNavButtons = () => {
 };
 
 // Swiper styles are imported in the root layout.tsx to avoid resolution issues in the shared package.
-const SERVICES_DATA = [
+const SERVICES_DATA_KEYS = [
   {
     id: 1,
-    label: "Matchmaking",
+    key: "serviceMatchmaking",
     icon: "images/top-icon1.png",
     href: PATHS.KUNDALI_MATCHING,
     isInternal: true,
   },
   {
     id: 2,
-    label: "Guna Milan",
+    key: "serviceGunaMilan",
     icon: "images/top-icon2.png",
     href: PATHS.KUNDALI_MATCHING,
     isInternal: true,
   },
   {
     id: 3,
-    label: "Online Puja",
+    key: "serviceOnlinePuja",
     icon: "images/top-icon3.png",
     href: PATHS.ONLINE_PUJA,
     isInternal: true,
   },
   {
     id: 4,
-    label: "Love Match",
+    key: "serviceLoveMatch",
     icon: "images/top-icon4.png",
     href: PATHS.KUNDALI_MATCHING,
     isInternal: true,
   },
-  /* {
-    id: 5,
-    label: "Match Check",
-    icon: "images/top-icon5.png",
-    href: PATHS.KUNDALI_MATCHING,
-    isInternal: true,
-  },
-  {
-    id: 6,
-    label: "Vedic Match",
-    icon: "images/top-icon6.png",
-    href: PATHS.KUNDALI_MATCHING,
-    isInternal: true,
-  }, */
   {
     id: 7,
-    label: "Match Analysis",
+    key: "serviceMatchAnalysis",
     icon: "images/top-icon6.png",
     href: PATHS.KUNDALI_MATCHING,
     isInternal: true,
   },
   {
     id: 8,
-    label: "Live Darshan",
+    key: "serviceLiveDarshan",
     icon: "images/top-icon3.png",
     href: PATHS.LIVE_DARSHAN,
     isInternal: true,
@@ -138,6 +128,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   const { cartCount: contextCartCount } = useCart();
   const cartCount = propCartCount ?? contextCartCount;
+
+  // Language management
+  const { lang, setLang } = useLanguageStore();
+  const t = headerTranslations[lang as keyof typeof headerTranslations] || headerTranslations.en;
 
 
 
@@ -322,13 +316,44 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             {/* Left section: Welcome Text */}
             <div className="flex-1 hidden md:block">
               <p className="m-0 text-white text-base font-medium">
-                Connect with Verified Astrology Experts for Online Predictions.
+                {t.welcomeText}
               </p>
             </div>
 
             {/* Right section: Balance + Icons */}
             <div className="ml-auto">
               <div className="flex justify-end items-center gap-4 md:gap-5">
+
+                {/* Language Switcher Dropdown */}
+                <div className="language-dropdown-container relative">
+                  <button
+                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                    className="flex items-center gap-1.5 focus:outline-none bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-all border border-white/20 select-none"
+                  >
+                    <i className="fa-solid fa-globe text-sm" />
+                    <span className="text-sm font-semibold">{lang === 'hi' ? 'हिंदी' : 'EN'}</span>
+                    <i className={`fa-solid fa-chevron-down text-[10px] transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {showLanguageDropdown && (
+                    <div className="absolute top-[120%] right-0 bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] overflow-hidden w-[120px] text-gray-800 z-[1002] border border-gray-100 flex flex-col">
+                      <button
+                        onClick={() => { setLang('en'); setShowLanguageDropdown(false); }}
+                        className={`px-4 py-2.5 text-left text-sm transition-colors hover:bg-orange-50 hover:text-orange ${lang === 'en' ? 'font-bold bg-orange-50/50 text-orange' : 'font-medium'}`}
+                      >
+                        English
+                      </button>
+                      <hr className="m-0 border-gray-100" />
+                      <button
+                        onClick={() => { setLang('hi'); setShowLanguageDropdown(false); }}
+                        className={`px-4 py-2.5 text-left text-sm transition-colors hover:bg-orange-50 hover:text-orange ${lang === 'hi' ? 'font-bold bg-orange-50/50 text-orange' : 'font-medium'}`}
+                      >
+                        हिंदी
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 {isAuthenticated && (
                   <div
                     onMouseEnter={() => setShowFullBalance(true)}
@@ -355,6 +380,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                 )}
 
                 <div className="flex gap-3 md:gap-4 items-center">
+
                   {isAuthenticated ? (
                     <div className="flex gap-4 items-center justify-end">
 
@@ -554,7 +580,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 <div className="rounded-full flex items-center justify-center shadow-sm bg-orange/10 text-orange" style={{ width: "34px", height: "34px" }}>
                                   <i className="fa-solid fa-user-circle" />
                                 </div>
-                                <span className="font-medium">My Profile</span>
+                                <span className="font-medium">{t.myProfile}</span>
                               </Link>
 
                               <Link
@@ -566,7 +592,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 <div className="rounded-full flex items-center justify-center shadow-sm bg-orange/10 text-orange" style={{ width: "34px", height: "34px" }}>
                                   <i className="fa-solid fa-wallet" />
                                 </div>
-                                <span className="font-medium">My Wallet</span>
+                                <span className="font-medium">{t.myWallet}</span>
                               </Link>
 
                               <div className="my-2 border-b opacity-50 mx-2" />
@@ -582,7 +608,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 <div className="bg-red-100 text-red-600 rounded-full flex items-center justify-center shadow-sm" style={{ width: "34px", height: "34px" }}>
                                   <i className="fa-solid fa-arrow-right-from-bracket" />
                                 </div>
-                                <span className="font-bold">Logout Session</span>
+                                <span className="font-bold">{t.logout}</span>
                               </button>
                             </div>
 
@@ -602,14 +628,14 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         href={PATHS.SIGN_IN}
                         className="bg-orange text-white rounded-[5px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
                       >
-                        Sign In
+                        {t.signIn}
                       </Link>
 
                       <Link
                         href={PATHS.REGISTER}
                         className="bg-orange text-white rounded-[5px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
                       >
-                        Register
+                        {t.register}
                       </Link>
                     </div>
                   )}
@@ -676,7 +702,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         href="/"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Home
+                        {t.navHome}
                       </Link>
                     </li>
 
@@ -687,7 +713,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         href={PATHS.HOROSCOPE}
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Daily Horoscope
+                        {t.navDailyHoroscope}
                       </Link>
                     </li>
 
@@ -700,7 +726,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium w-full text-left bg-transparent border-0 flex justify-between items-center"
                             onClick={() => setShowMobileSubMenu(!showMobileSubMenu)}
                           >
-                            Astrology Consult
+                            {t.navAstrologyConsult}
                             <i
                               className={`fa-solid fa-chevron-${showMobileSubMenu ? 'up' : 'down'} text-gray-400`}
                               style={{ fontSize: '12px' }}
@@ -709,21 +735,21 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                           {showMobileSubMenu && (
                             <ul className="list-none pl-3 pb-2" style={{ borderLeft: '3px solid var(--primary-color, #e67e22)' }}>
                               {[
-                                { label: 'Horoscope', href: PATHS.HOROSCOPE },
-                                { label: 'Love Calculator', href: PATHS.LOVE_CALCULATOR },
-                                { label: 'Dahej Calculator', href: PATHS.DAHEJ_CALCULATOR },
-                                { label: 'Flames Calculator', href: PATHS.FLAMES_CALCULATOR },
-                                { label: 'Love Compatibility Calculator', href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
-                                { label: 'Marriage Age Calculator', href: PATHS.MARRIAGE_AGE_CALCULATOR },
-                                { label: 'Soulmate Name Initials Calculator', href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
-                                { label: 'Lucky Number & Colour Calculator', href: PATHS.LUCKY_NUMBER_CALCULATOR },
-                                { label: 'Life Path Calculator', href: PATHS.LIFE_PATH_CALCULATOR },
-                                { label: 'Name Numerology Calculator', href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
-                                { label: 'Zodiac Sign Compatibility Calculator', href: PATHS.ZODIAC_SIGN_CALCULATOR },
-                                { label: 'Nakshatra Finder', href: PATHS.NAKSHATRA_FINDER },
-                                { label: 'Loyal Partner Calculator', href: PATHS.LOYAL_PARTNER_CALCULATOR },
-                                { label: 'Breakup Patchup Calculator', href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
-                                { label: 'Online Puja', href: PATHS.ONLINE_PUJA },
+                                { label: t.dropHoroscope, href: PATHS.HOROSCOPE },
+                                { label: t.dropLoveCalc, href: PATHS.LOVE_CALCULATOR },
+                                { label: t.dropDahejCalc, href: PATHS.DAHEJ_CALCULATOR },
+                                { label: t.dropFlamesCalc, href: PATHS.FLAMES_CALCULATOR },
+                                { label: t.dropLoveCompat, href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
+                                { label: t.dropMarriageAge, href: PATHS.MARRIAGE_AGE_CALCULATOR },
+                                { label: t.dropSoulmateInitials, href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
+                                { label: t.dropLuckyNumber, href: PATHS.LUCKY_NUMBER_CALCULATOR },
+                                { label: t.dropLifePath, href: PATHS.LIFE_PATH_CALCULATOR },
+                                { label: t.dropNameNumerology, href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
+                                { label: t.dropZodiacCompat, href: PATHS.ZODIAC_SIGN_CALCULATOR },
+                                { label: t.dropNakshatra, href: PATHS.NAKSHATRA_FINDER },
+                                { label: t.dropLoyalPartner, href: PATHS.LOYAL_PARTNER_CALCULATOR },
+                                { label: t.dropBreakup, href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
+                                { label: t.dropOnlinePuja, href: PATHS.ONLINE_PUJA },
                               ].map((item) => (
                                 <li key={item.href} className="py-1">
                                   <Link
@@ -746,7 +772,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium flex items-center gap-1 cursor-pointer hover:text-orange-600 transition-colors"
                             href="#"
                           >
-                            Astrology Consult
+                            {t.navAstrologyConsult}
                             <i className="fa-solid fa-chevron-down text-xs opacity-60" />
                           </a>
                           {/* Dropdown — visible on group hover */}
@@ -754,21 +780,21 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             className="absolute top-full left-0 bg-brown shadow-xl rounded-xl border border-brown py-2 z-[1001] min-w-[220px] list-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-[5px] [&::-webkit-scrollbar-track]:bg-brown [&::-webkit-scrollbar-thumb]:bg-orange [&::-webkit-scrollbar-thumb]:rounded-full"
                           >
                             {[
-                              { label: 'Horoscope', href: PATHS.HOROSCOPE },
-                              { label: 'Love Calculator', href: PATHS.LOVE_CALCULATOR },
-                              { label: 'Dahej Calculator', href: PATHS.DAHEJ_CALCULATOR },
-                              { label: 'Flames Calculator', href: PATHS.FLAMES_CALCULATOR },
-                              { label: 'Love Compatibility Calculator', href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
-                              { label: 'Marriage Age Calculator', href: PATHS.MARRIAGE_AGE_CALCULATOR },
-                              { label: 'Soulmate Name Initials Calculator', href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
-                              { label: 'Lucky Number & Colour Calculator', href: PATHS.LUCKY_NUMBER_CALCULATOR },
-                              { label: 'Life Path Calculator', href: PATHS.LIFE_PATH_CALCULATOR },
-                              { label: 'Name Numerology Calculator', href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
-                              { label: 'Zodiac Sign Compatibility Calculator', href: PATHS.ZODIAC_SIGN_CALCULATOR },
-                              { label: 'Nakshatra Finder', href: PATHS.NAKSHATRA_FINDER },
-                              { label: 'Loyal Partner Calculator', href: PATHS.LOYAL_PARTNER_CALCULATOR },
-                              { label: 'Breakup Patchup Calculator', href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
-                              { label: 'Online Puja', href: PATHS.ONLINE_PUJA },
+                              { label: t.dropHoroscope, href: PATHS.HOROSCOPE },
+                              { label: t.dropLoveCalc, href: PATHS.LOVE_CALCULATOR },
+                              { label: t.dropDahejCalc, href: PATHS.DAHEJ_CALCULATOR },
+                              { label: t.dropFlamesCalc, href: PATHS.FLAMES_CALCULATOR },
+                              { label: t.dropLoveCompat, href: PATHS.LOVE_COMPATIBILITY_CALCULATOR },
+                              { label: t.dropMarriageAge, href: PATHS.MARRIAGE_AGE_CALCULATOR },
+                              { label: t.dropSoulmateInitials, href: PATHS.SOULMATE_NAME_INITALS_CALCULATOR },
+                              { label: t.dropLuckyNumber, href: PATHS.LUCKY_NUMBER_CALCULATOR },
+                              { label: t.dropLifePath, href: PATHS.LIFE_PATH_CALCULATOR },
+                              { label: t.dropNameNumerology, href: PATHS.NAME_NUMEROLOGY_CALCULATOR },
+                              { label: t.dropZodiacCompat, href: PATHS.ZODIAC_SIGN_CALCULATOR },
+                              { label: t.dropNakshatra, href: PATHS.NAKSHATRA_FINDER },
+                              { label: t.dropLoyalPartner, href: PATHS.LOYAL_PARTNER_CALCULATOR },
+                              { label: t.dropBreakup, href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
+                              { label: t.dropOnlinePuja, href: PATHS.ONLINE_PUJA },
                             ].map((item) => (
                               <li key={item.href}>
                                 <Link
@@ -791,7 +817,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         href={PATHS.FAMOUS_PLACES}
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Famous Places
+                        {t.navFamousPlaces}
                       </Link>
                     </li>
 
@@ -802,7 +828,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         href={PATHS.LIVE_DARSHAN}
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Live Darshan
+                        {t.navLiveDarshan}
                       </Link>
                     </li>
                   </ul>
@@ -836,7 +862,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   height={20}
                   style={{ width: 'auto', filter: "brightness(0) invert(1)" }}
                 />
-                Ask Astrologer
+                {t.askAstrologer}
               </Link>
             </div>
           </div>
@@ -852,7 +878,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                 spaceBetween={25}
                 slidesPerView={2}
                 grabCursor={true}
-                loop={SERVICES_DATA.length > 5}
+                loop={SERVICES_DATA_KEYS.length > 5}
                 autoplay={{
                   delay: 3000,
                   disableOnInteraction: false,
@@ -866,7 +892,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
               >
                 <SwiperNavButtons />
 
-                {SERVICES_DATA.map((service) => (
+                {SERVICES_DATA_KEYS.map((service) => (
                   <SwiperSlide key={service.id}>
                     <div className="flex justify-center w-full p-[5px] w-[80%]">
                       <a
@@ -882,11 +908,13 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         <NextImage
                           src={`/${service.icon}`}
                           className="w-[30px] mr-1 flex-shrink-0"
-                          alt={service.label}
+                          alt={(t as any)[service.key] || service.key}
                           width={40}
                           height={40}
                         />
-                        <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">{service.label}</span>
+                        <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">
+                          {(t as any)[service.key] || service.key}
+                        </span>
                       </a>
                     </div>
                   </SwiperSlide>

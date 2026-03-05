@@ -2,6 +2,9 @@ import React from "react";
 import NextImage from "next/image";
 const Image = NextImage as any;
 
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
+
 interface ConsultationCardProps {
   item: {
     id: number;
@@ -11,13 +14,17 @@ interface ConsultationCardProps {
 }
 
 const ConsultationCard: React.FC<ConsultationCardProps> = ({ item }) => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+  const displayTitle = (t.consultant.items as any)[item.title] || item.title;
+
   return (
     <div className="mb-5 text-center group">
       <div className="w-[85%] mx-auto mb-[10px] aspect-square overflow-hidden rounded-full border-2 border-orange transition-transform duration-300 group-hover:scale-105">
-        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+        <img src={item.image} alt={displayTitle} className="w-full h-full object-cover" />
       </div>
       <h4 className="text-xl font-medium text-[#1e0b0f] transition-colors duration-300 group-hover:text-orange">
-        {item.title}
+        {displayTitle}
       </h4>
     </div>
   );

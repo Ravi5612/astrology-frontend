@@ -6,6 +6,8 @@ import NextLink from "next/link";
 import { toast } from "react-toastify";
 import { registerAction } from "@/actions/auth";
 import { API_CONFIG } from "@/lib/api-config";
+import { useLanguageStore } from "@/store/languageStore";
+import { authTranslations } from "@/lib/translations/auth";
 
 const Image = NextImage as any;
 const Link = NextLink as any;
@@ -23,6 +25,9 @@ const SignUpForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { lang } = useLanguageStore();
+    const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
+
 
     const handleInputChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,20 +42,20 @@ const SignUpForm: React.FC = () => {
 
     const validateForm = () => {
         if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword || !formData.phoneNumber) {
-            toast.error("All fields marked * are required.");
+            toast.error(t.signUp.errors.allFields);
             return false;
         }
         if (formData.password.length < 6) {
-            toast.error("Password must be at least 6 characters long.");
+            toast.error(t.signUp.errors.passLength);
             return false;
         }
         if (formData.password !== formData.confirmPassword) {
-            toast.error("Passwords do not match.");
+            toast.error(t.signUp.errors.passMatch);
             return false;
         }
         const phoneRegex = /^[0-9]{10}$/;
         if (!phoneRegex.test(formData.phoneNumber)) {
-            toast.error("Please enter a valid 10-digit phone number.");
+            toast.error(t.signUp.errors.phoneInvalid);
             return false;
         }
         return true;
@@ -72,7 +77,7 @@ const SignUpForm: React.FC = () => {
         }
 
         setIsLoading(true);
-        toast.info("Registering your account...");
+        toast.info(t.signUp.registering);
 
         const payload = {
             name: formData.fullName,
@@ -90,11 +95,11 @@ const SignUpForm: React.FC = () => {
             if (result.error) {
                 toast.error(result.error);
             } else if (result.success) {
-                toast.success(result.message || "Registration successful! Please verify your email.");
+                toast.success(result.message || t.signUp.success);
                 setFormData({ fullName: "", email: "", password: "", confirmPassword: "", phoneNumber: "" });
             }
         } catch {
-            toast.error("An unexpected error occurred. Please try again.");
+            toast.error(t.signUp.errors.unexpected);
         } finally {
             setIsLoading(false);
         }
@@ -105,25 +110,25 @@ const SignUpForm: React.FC = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-gray-50">
                 <div>
                     <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
-                        Welcome to
+                        {t.signUp.welcome}
                     </h6>
                     <span className="text-xl font-black text-orange block">
-                        Astrology Bharat
+                        {t.signIn.brandName}
                     </span>
                 </div>
                 <div className="text-left sm:text-right">
                     <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
-                        Already Account?
+                        {t.signUp.alreadyAccount}
                     </h6>
                     <Link href="/sign-in" className="text-base font-bold text-[#4A1D1F] hover:text-orange transition-all">
-                        Sign In
+                        {t.signUp.signIn}
                     </Link>
                 </div>
             </div>
 
             <div className="mb-6">
-                <h2 className="text-3xl font-black text-[#301118]">Sign Up</h2>
-                <p className="text-gray-400 text-sm mt-1 font-medium">Create your cosmic account today</p>
+                <h2 className="text-3xl font-black text-[#301118]">{t.signUp.title}</h2>
+                <p className="text-gray-400 text-sm mt-1 font-medium">{t.signUp.subtitle}</p>
             </div>
 
             <div className="mb-6">
@@ -139,7 +144,7 @@ const SignUpForm: React.FC = () => {
                         width={20}
                         className="group-hover:scale-110 transition-transform"
                     />
-                    <span className="font-bold text-gray-600 text-sm">Continue with Google</span>
+                    <span className="font-bold text-gray-600 text-sm">{t.signUp.google}</span>
                 </button>
             </div>
 
@@ -147,21 +152,21 @@ const SignUpForm: React.FC = () => {
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-50"></div>
                 </div>
-                <span className="relative px-3 text-[10px] font-black text-gray-300 bg-white uppercase tracking-[0.2em]">OR REGISTER WITH DETAILS</span>
+                <span className="relative px-3 text-[10px] font-black text-gray-300 bg-white uppercase tracking-[0.2em]">{t.signUp.orDetails}</span>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label htmlFor="fullName" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-                            Full Name *
+                            {t.signUp.fullNameLabel}
                         </label>
                         <input
                             type="text"
                             id="fullName"
                             name="fullName"
                             className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-                            placeholder="Enter Your Full Name"
+                            placeholder={t.signUp.fullNamePlaceholder}
                             value={formData.fullName}
                             onChange={handleInputChange}
                             required
@@ -169,14 +174,14 @@ const SignUpForm: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="email" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-                            Email Address *
+                            {t.signUp.emailLabel}
                         </label>
                         <input
                             type="email"
                             id="email"
                             name="email"
                             className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-                            placeholder="Enter Email Address"
+                            placeholder={t.signUp.emailPlaceholder}
                             value={formData.email}
                             onChange={handleInputChange}
                             required
@@ -184,14 +189,14 @@ const SignUpForm: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="phoneNumber" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-                            Phone Number *
+                            {t.signUp.phoneLabel}
                         </label>
                         <input
                             type="tel"
                             id="phoneNumber"
                             name="phoneNumber"
                             className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-                            placeholder="10-digit Phone Number"
+                            placeholder={t.signUp.phonePlaceholder}
                             value={formData.phoneNumber}
                             onChange={handleInputChange}
                             required
@@ -200,7 +205,7 @@ const SignUpForm: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="password" title="Password" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-                            Password *
+                            {t.signUp.passwordLabel}
                         </label>
                         <div className="relative">
                             <input
@@ -208,7 +213,7 @@ const SignUpForm: React.FC = () => {
                                 id="password"
                                 name="password"
                                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-                                placeholder="••••••••"
+                                placeholder={t.signUp.passwordPlaceholder}
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
@@ -224,7 +229,7 @@ const SignUpForm: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="confirmPassword" title="Confirm Password" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-                            Confirm Password *
+                            {t.signUp.confirmPasswordLabel}
                         </label>
                         <div className="relative">
                             <input
@@ -232,7 +237,7 @@ const SignUpForm: React.FC = () => {
                                 id="confirmPassword"
                                 name="confirmPassword"
                                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-                                placeholder="Re-enter Password"
+                                placeholder={t.signUp.confirmPasswordPlaceholder}
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
                                 required
@@ -255,9 +260,9 @@ const SignUpForm: React.FC = () => {
                     {isLoading ? (
                         <span className="flex items-center justify-center gap-2">
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            Creating Account...
+                            {t.signUp.creating}
                         </span>
-                    ) : "Sign Up Account"}
+                    ) : t.signUp.submit}
                 </button>
             </form>
         </div>

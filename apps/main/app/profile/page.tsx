@@ -16,8 +16,14 @@ import ConsultationChatModal from "@/components/features/profile/ConsultationCha
 import UserDisputeChatModal from "@/components/features/user/UserDisputeChatModal";
 import DisputesTab from "@/components/features/profile/DisputesTab";
 import { useProfileLogic } from "@/components/features/profile/useProfileLogic";
+import { useLanguageStore } from "@/store/languageStore";
+import { profileTranslations } from "@/lib/translations/profile";
 
 const ProfileContent: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const {
     clientUser, clientLoading, clientBalance,
     profileData, loading,
@@ -69,9 +75,9 @@ const ProfileContent: React.FC = () => {
       <div className="min-vh-100 d-flex justify-content-center align-items-center">
         <div className="text-center">
           <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">{t.loading.spinner}</span>
           </div>
-          <p className="mt-3">Loading profile...</p>
+          <p className="mt-3" style={fontStyle}>{t.loading.title}</p>
         </div>
       </div>
     );
@@ -94,12 +100,12 @@ const ProfileContent: React.FC = () => {
           <div className="col-12">
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb mb-2">
-                <li className="breadcrumb-item"><a href="/" className="text-muted text-decoration-none">Home</a></li>
-                <li className="breadcrumb-item active" aria-current="page" style={{ color: "#fd6410" }}>Profile</li>
+                <li className="breadcrumb-item"><a href="/" className="text-muted text-decoration-none" style={fontStyle}>{t.breadcrumb.home}</a></li>
+                <li className="breadcrumb-item active" aria-current="page" style={{ color: "#fd6410", ...fontStyle }}>{t.breadcrumb.profile}</li>
               </ol>
             </nav>
-            <h1 className="h3 fw-bold mb-1">User Account</h1>
-            <p className="text-muted">Manage your cosmic identity and preferences</p>
+            <h1 className="h3 fw-bold mb-1" style={fontStyle}>{t.header.title}</h1>
+            <p className="text-muted" style={fontStyle}>{t.header.subtitle}</p>
           </div>
         </div>
       </div>
@@ -150,11 +156,11 @@ const ProfileContent: React.FC = () => {
             {activeTab === "wishlist" && (
               <div className="card border-0 shadow-sm rounded-4 mb-4">
                 <div className="card-header bg-white border-0 pt-4 px-4 mb-3">
-                  <h5 className="fw-bold mb-0">
+                  <h5 className="fw-bold mb-0" style={fontStyle}>
                     <span className="me-2 p-2 rounded-circle" style={{ backgroundColor: "#ffebee", color: "#e53935" }}>
                       <i className="fa-solid fa-heart"></i>
                     </span>
-                    My Wishlist
+                    {t.wishlist.title}
                   </h5>
                 </div>
                 <div className="card-body p-4 pt-0">

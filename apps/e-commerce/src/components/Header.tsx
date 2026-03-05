@@ -55,11 +55,10 @@ const Header = () => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-semibold transition-colors hover:text-primary-orange ${
-                    pathname === link.href
-                      ? "text-primary-orange"
-                      : "text-gray-700"
-                  }`}
+                  className={`text-sm font-semibold transition-colors hover:text-primary-orange ${pathname === link.href
+                    ? "text-primary-orange"
+                    : "text-gray-700"
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -164,8 +163,8 @@ const Header = () => {
                     alt={item}
                     className="w-5 h-5 object-contain"
                     onError={(e) =>
-                      ((e.target as HTMLImageElement).src =
-                        "/images/web-logo.png")
+                    ((e.target as HTMLImageElement).src =
+                      "/images/web-logo.png")
                     }
                   />
                 </div>

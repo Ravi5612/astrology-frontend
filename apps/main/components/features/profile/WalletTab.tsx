@@ -1,5 +1,7 @@
 import React from "react";
 import { Button } from "@repo/ui";
+import { useLanguageStore } from "@/store/languageStore";
+import { profileTranslations } from "@/lib/translations/profile";
 
 interface WalletTabProps {
     walletBalance: number;
@@ -30,6 +32,10 @@ const WalletTab: React.FC<WalletTabProps> = ({
     walletPurpose,
     setWalletPurpose
 }) => {
+    const { lang } = useLanguageStore();
+    const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).wallet;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
     return (
         <div className="card border-0 shadow-lg rounded-4 mb-4 overflow-hidden relative">
             {/* Wallet Card Header with Gradient */}
@@ -44,9 +50,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
                                 <i className="fa-solid fa-wallet text-orange text-xl"></i>
                             </div>
-                            <h5 className="font-bold text-white text-xl tracking-wide">My Wallet</h5>
+                            <h5 className="font-bold text-white text-xl tracking-wide" style={fontStyle}>{t.title}</h5>
                         </div>
-                        <p className="text-gray-400 text-sm">Manage your balance & transactions</p>
+                        <p className="text-gray-400 text-sm" style={fontStyle}>{t.subtitle}</p>
                     </div>
 
                     <div className="flex gap-2 bg-white/10 p-1.5 !rounded-full backdrop-blur-sm">
@@ -55,18 +61,20 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             size="sm"
                             onClick={() => setWalletView('recharge')}
                             className={walletView === 'recharge' ? "shadow-orange/30 bg-orange hover:bg-orange" : "text-gray-300 hover:text-white"}
+                            style={fontStyle}
                         >
                             <i className="fa-solid fa-plus-circle"></i>
-                            Add Money
+                            {t.addMoney}
                         </Button>
                         <Button
                             variant={walletView === 'history' ? 'outline' : 'ghost'}
                             size="sm"
                             onClick={() => setWalletView('history')}
                             className={walletView === 'history' ? "bg-white text-gray-900 border-none" : "text-gray-300 hover:text-white"}
+                            style={fontStyle}
                         >
                             <i className="fa-solid fa-list-ul"></i>
-                            History
+                            {t.history}
                         </Button>
                     </div>
                 </div>
@@ -74,9 +82,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                 {/* Balance Card floating */}
                 <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 relative overflow-hidden group hover:bg-white/15 transition-all duration-500">
                     <div className="relative z-10">
-                        <p className="text-white/80 text-xs font-bold uppercase mb-2 tracking-wider">
+                        <p className="text-white/80 text-xs font-bold uppercase mb-2 tracking-wider" style={fontStyle}>
                             <i className="fa-solid fa-circle-info mr-2"></i>
-                            Available Balance
+                            {t.availableBalance}
                         </p>
                         <div className="flex items-center justify-center mb-1">
                             <span className="text-white text-3xl mr-2">₹</span>
@@ -84,8 +92,8 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                 {walletBalance?.toLocaleString() || '0'}
                             </h1>
                         </div>
-                        <p className="text-white/70 text-sm">
-                            Last updated: Just now
+                        <p className="text-white/70 text-sm" style={fontStyle}>
+                            {t.lastUpdated}
                         </p>
                     </div>
 
@@ -105,10 +113,10 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                 <div className="flex items-center justify-center w-8 h-8 bg-orange/10 rounded-lg mr-3">
                                     <i className="fa-solid fa-money-bill-transfer text-orange"></i>
                                 </div>
-                                <h6 className="font-bold text-gray-800 text-lg">Add Money to Wallet</h6>
+                                <h6 className="font-bold text-gray-800 text-lg" style={fontStyle}>{t.addMoneyTitle}</h6>
                             </div>
-                            <p className="text-gray-600 text-sm">
-                                Select a package or enter custom amount. Minimum recharge: ₹100
+                            <p className="text-gray-600 text-sm" style={fontStyle}>
+                                {t.addMoneySubtitle}
                             </p>
                         </div>
 
@@ -118,9 +126,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                 <div>
                                     <div className="flex items-center mb-2">
                                         <i className="fa-solid fa-pencil text-gray-400 mr-2"></i>
-                                        <label className="font-bold text-gray-700">Enter Custom Amount</label>
+                                        <label className="font-bold text-gray-700" style={fontStyle}>{t.customAmount}</label>
                                     </div>
-                                    <p className="text-gray-500 text-sm">Enter any amount between ₹100 - ₹50,000</p>
+                                    <p className="text-gray-500 text-sm" style={fontStyle}>{t.customAmountHint}</p>
                                 </div>
                                 <div>
                                     <div className="relative">
@@ -147,7 +155,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                 <div className="flex items-center justify-center w-8 h-8 bg-amber-100 rounded-lg mr-3">
                                     <i className="fa-solid fa-bolt text-amber-500"></i>
                                 </div>
-                                <h6 className="font-bold text-gray-800 text-lg">Quick Recharge Options</h6>
+                                <h6 className="font-bold text-gray-800 text-lg" style={fontStyle}>{t.quickRecharge}</h6>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -201,8 +209,8 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                             <i className="fa-solid fa-bolt text-white text-xl"></i>
                                         </div>
                                         <div className="text-left">
-                                            <div className="text-white text-lg font-bold">Recharge ₹{rechargeAmount.toLocaleString()}</div>
-                                            <div className="text-white/80 text-sm font-normal">Click to proceed to payment</div>
+                                            <div className="text-white text-lg font-bold" style={fontStyle}>{t.rechargeBtn} ₹{rechargeAmount.toLocaleString()}</div>
+                                            <div className="text-white/80 text-sm font-normal" style={fontStyle}>{t.rechargeHint}</div>
                                         </div>
                                     </div>
                                     <i className="fa-solid fa-arrow-right text-xl text-white/50"></i>
@@ -215,8 +223,8 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center">
                                 <i className="fa-solid fa-exclamation-triangle text-amber-500 mr-3 text-xl"></i>
                                 <div>
-                                    <p className="font-bold text-amber-700">Minimum recharge amount is ₹100</p>
-                                    <p className="text-amber-600 text-sm mt-1">Please enter ₹100 or more to proceed</p>
+                                    <p className="font-bold text-amber-700" style={fontStyle}>{t.minAmountWarning}</p>
+                                    <p className="text-amber-600 text-sm mt-1" style={fontStyle}>{t.minAmountHint}</p>
                                 </div>
                             </div>
                         )}
@@ -224,9 +232,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                 ) : (
                     <div className="mt-0 pt-0">
                         <div className="flex items-center justify-between mb-6">
-                            <h6 className="font-bold text-gray-800 text-lg flex items-center">
+                            <h6 className="font-bold text-gray-800 text-lg flex items-center" style={fontStyle}>
                                 <i className="fa-solid fa-clock-rotate-left mr-3 text-orange bg-orange/10 p-2 rounded-lg"></i>
-                                Transaction History
+                                {t.transactionHistory}
                             </h6>
                             <div className="flex gap-2">
                                 <Button
@@ -234,30 +242,32 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                     size="sm"
                                     onClick={() => setWalletPurpose(undefined)}
                                     className="px-4"
+                                    style={fontStyle}
                                 >
-                                    All
+                                    {t.all}
                                 </Button>
                                 <Button
                                     variant={walletPurpose === 'recharge' ? 'primary' : 'secondary'}
                                     size="sm"
                                     onClick={() => setWalletPurpose('recharge')}
                                     className="px-4"
+                                    style={fontStyle}
                                 >
-                                    Recharges
+                                    {t.recharges}
                                 </Button>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                        <div className="bg-white rounded-2xl border border-[#e5e5e5] overflow-hidden shadow-sm">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
-                                    <thead className="bg-gray-50/80 text-gray-700 text-xs uppercase tracking-wider font-bold border-b border-gray-100">
+                                    <thead className="bg-gray-50/80 text-gray-700 text-xs uppercase tracking-wider font-bold border-b border-[#e5e5e5]">
                                         <tr>
-                                            <th className="px-6 py-4">Date</th>
-                                            <th className="px-6 py-4">Description</th>
-                                            <th className="px-6 py-4 text-center">Type</th>
-                                            <th className="px-6 py-4 text-right">Amount</th>
-                                            <th className="px-6 py-4 text-right">Status</th>
+                                            <th className="px-6 py-4" style={fontStyle}>{t.tableDate}</th>
+                                            <th className="px-6 py-4" style={fontStyle}>{t.tableDescription}</th>
+                                            <th className="px-6 py-4 text-center" style={fontStyle}>{t.tableType}</th>
+                                            <th className="px-6 py-4 text-right" style={fontStyle}>{t.tableAmount}</th>
+                                            <th className="px-6 py-4 text-right" style={fontStyle}>{t.tableStatus}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-sm">
@@ -266,14 +276,14 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                                 <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                                                     <div className="flex flex-col items-center justify-center">
                                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange mb-3"></div>
-                                                        <p>Loading transactions...</p>
+                                                        <p style={fontStyle}>{t.loadingTransactions}</p>
                                                     </div>
                                                 </td>
                                             </tr>
                                         ) : !Array.isArray(transactions) || transactions.length === 0 ? (
                                             <tr>
                                                 <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
-                                                    <p>No transactions found.</p>
+                                                    <p style={fontStyle}>{t.noTransactions}</p>
                                                 </td>
                                             </tr>
                                         ) : (
@@ -287,7 +297,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                                 };
 
                                                 return (
-                                                    <tr key={tx.id || idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                                    <tr key={tx.id || idx} className="border-b border-[#e5e5e5] hover:bg-gray-50/50 transition-colors">
                                                         <td className="px-6 py-4 text-gray-600">
                                                             {(tx.createdAt || tx.created_at)
                                                                 ? new Date(tx.createdAt || tx.created_at).toLocaleDateString('en-IN')
@@ -297,11 +307,11 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                                             {tx.description || tx.reason || tx.purpose || 'Wallet Transaction'}
                                                         </td>
                                                         <td className="px-6 py-4 text-center">
-                                                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${tx.type?.toLowerCase() === 'debit' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                                                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${tx.type?.toLowerCase() === 'debit' ? 'bg-orange/10 text-orange' : 'bg-green-50 text-green-600'}`}>
                                                                 {tx.type || 'credit'}
                                                             </span>
                                                         </td>
-                                                        <td className={`px-6 py-4 text-right font-bold ${tx.type?.toLowerCase() === 'debit' ? 'text-red-500' : 'text-green-500'}`}>
+                                                        <td className={`px-6 py-4 text-right font-bold ${tx.type?.toLowerCase() === 'debit' ? 'text-orange' : 'text-green-500'}`}>
                                                             ₹{renderAmount(tx.amount)}
                                                         </td>
                                                         <td className="px-6 py-4 text-right">

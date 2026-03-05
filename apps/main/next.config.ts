@@ -38,6 +38,21 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/buy-products",
+        destination: "/product",
+        permanent: true,
+      },
+      {
+        source: "/buy-products/:path*",
+        destination: "/product/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async rewrites() {
     const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "").replace(/\/api\/v1\/?$/i, "");
     return [

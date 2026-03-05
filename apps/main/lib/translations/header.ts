@@ -1,0 +1,97 @@
+export const headerTranslations = {
+    en: {
+        welcomeText: "Connect with Verified Astrology Experts for Online Predictions.",
+        notifications: "Notifications",
+        clearAll: "Clear All",
+        noNotifications: "No new notifications",
+        viewAll: "View All",
+        myProfile: "My Profile",
+        myWallet: "My Wallet",
+        logout: "Logout Session",
+        signIn: "Sign In",
+        register: "Register",
+
+        // Navigation Links
+        navHome: "Home",
+        navDailyHoroscope: "Daily Horoscope",
+        navAstrologyConsult: "Astrology Consult",
+        navFamousPlaces: "Famous Places",
+        navLiveDarshan: "Live Darshan",
+
+        // Dropdown items
+        dropHoroscope: "Horoscope",
+        dropLoveCalc: "Love Calculator",
+        dropDahejCalc: "Dahej Calculator",
+        dropFlamesCalc: "Flames Calculator",
+        dropLoveCompat: "Love Compatibility Calculator",
+        dropMarriageAge: "Marriage Age Calculator",
+        dropSoulmateInitials: "Soulmate Name Initials Calculator",
+        dropLuckyNumber: "Lucky Number & Colour Calculator",
+        dropLifePath: "Life Path Calculator",
+        dropNameNumerology: "Name Numerology Calculator",
+        dropZodiacCompat: "Zodiac Sign Compatibility Calculator",
+        dropNakshatra: "Nakshatra Finder",
+        dropLoyalPartner: "Loyal Partner Calculator",
+        dropBreakup: "Breakup Patchup Calculator",
+        dropOnlinePuja: "Online Puja",
+
+
+        // Buttons
+        askAstrologer: "Ask Astrologer",
+
+        // Services Carousel
+        serviceMatchmaking: "Matchmaking",
+        serviceGunaMilan: "Guna Milan",
+        serviceOnlinePuja: "Online Puja",
+        serviceLoveMatch: "Love Match",
+        serviceMatchAnalysis: "Match Analysis",
+        serviceLiveDarshan: "Live Darshan",
+    },
+    hi: {
+        welcomeText: "ऑनलाइन भविष्यवाणियों के लिए सत्यापित ज्योतिष विशेषज्ञों से जुड़ें।",
+        notifications: "सूचनाएं",
+        clearAll: "सभी साफ़ करें",
+        noNotifications: "कोई नई सूचना नहीं",
+        viewAll: "सभी देखें",
+        myProfile: "मेरी प्रोफ़ाइल",
+        myWallet: "मेरा वॉलेट",
+        logout: "लॉगआउट करें",
+        signIn: "साइन इन",
+        register: "रजिस्टर करें",
+
+        // Navigation Links
+        navHome: "होम",
+        navDailyHoroscope: "दैनिक राशिफल",
+        navAstrologyConsult: "ज्योतिष परामर्श",
+        navFamousPlaces: "प्रसिद्ध स्थान",
+        navLiveDarshan: "लाइव दर्शन",
+
+        // Dropdown items
+        dropHoroscope: "राशिफल",
+        dropLoveCalc: "लव कैलकुलेटर",
+        dropDahejCalc: "दहेज कैलकुलेटर",
+        dropFlamesCalc: "फ्लेम्स कैलकुलेटर",
+        dropLoveCompat: "प्रेम अनुकूलता कैलकुलेटर",
+        dropMarriageAge: "विवाह आयु कैलकुलेटर",
+        dropSoulmateInitials: "सोलमेट नाम कैलकुलेटर",
+        dropLuckyNumber: "भाग्यशाली अंक और रंग",
+        dropLifePath: "जीवन पथ कैलकुलेटर",
+        dropNameNumerology: "नाम अंकशास्त्र",
+        dropZodiacCompat: "राशि अनुकूलता कैलकुलेटर",
+        dropNakshatra: "नक्षत्र खोजक",
+        dropLoyalPartner: "वफादार साथी कैलकुलेटर",
+        dropBreakup: "ब्रेकअप पैचअप कैलकुलेटर",
+        dropOnlinePuja: "ऑनलाइन पूजा",
+
+        // Buttons
+        askAstrologer: "ज्योतिषी से पूछें",
+
+        // Services Carousel
+        serviceMatchmaking: "कुंडली मिलान",
+        serviceGunaMilan: "गुण मिलान",
+        serviceOnlinePuja: "ऑनलाइन पूजा",
+        serviceLoveMatch: "लव मैच",
+        serviceMatchAnalysis: "मिलान विश्लेषण",
+        serviceLiveDarshan: "लाइव दर्शन",
+    }
+} as const;

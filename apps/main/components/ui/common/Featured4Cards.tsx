@@ -1,39 +1,46 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
-const cards = [
-  {
-    href: "/our-astrologers",
-    icon: "/images/icon1.png",
-    alt: "Live Chat",
-    title: "Live Chat Support",
-    desc: "Get instant answers from expert astrologers through live chat sessions.",
-  },
-  {
-    href: "/our-astrologers",
-    icon: "/images/icon2.png",
-    alt: "Speak",
-    title: "Speak with Astrologer",
-    desc: "Connect via phone call for personal guidance on your life questions.",
-  },
-  {
-    href: "/buy-products",
-    icon: "/images/icon3.png",
-    alt: "Store",
-    title: "Astrology Product Store",
-    desc: "Shop gemstones, yantras, and spiritual items recommended by experts.",
-  },
-  {
-    href: "/online-puja",
-    icon: "/images/icon4.png",
-    alt: "Pooja",
-    title: "Book A Pooja",
-    desc: "Book religious ceremonies & rituals performed by experienced priests.",
-  },
-];
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const Featured4Cards = () => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
+  const cards = [
+    {
+      href: "/our-astrologers",
+      icon: "/images/icon1.png",
+      alt: "Live Chat",
+      title: t.featuredCards.liveChat.title,
+      desc: t.featuredCards.liveChat.desc,
+    },
+    {
+      href: "/our-astrologers",
+      icon: "/images/icon2.png",
+      alt: "Speak",
+      title: t.featuredCards.speak.title,
+      desc: t.featuredCards.speak.desc,
+    },
+    {
+      href: "/buy-products",
+      icon: "/images/icon3.png",
+      alt: "Store",
+      title: t.featuredCards.store.title,
+      desc: t.featuredCards.store.desc,
+    },
+    {
+      href: "/online-puja",
+      icon: "/images/icon4.png",
+      alt: "Pooja",
+      title: t.featuredCards.pooja.title,
+      desc: t.featuredCards.pooja.desc,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 mt-2">
       {

@@ -11,11 +11,15 @@ import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { toast } from "react-toastify";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Astrologer, AstrologerCardProps } from "@/lib/types";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const AstrologerCard: React.FC<AstrologerCardProps> = ({
   astrologerData,
   cardClassName = "",
 }) => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
   const {
     id,
     userId,
@@ -162,7 +166,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
                 className={`fa-solid fa-circle ${is_available ? "text-green-500" : "text-gray-400"
                   }`}
               />
-              {is_available ? "Online" : "Offline"}
+              {is_available ? t.astrologerCard.online : t.astrologerCard.offline}
             </div>
 
             {/* PROFILE IMAGE */}
@@ -260,15 +264,15 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
 
           {/* Experience */}
           <div className="px-4 my-2 text-[16px] text-[#1a1a1a]">
-            <strong>Exp:</strong>
+            <strong>{t.astrologerCard.exp}</strong>
             <span className="ml-2 font-semibold bg-orange/10 text-orange px-2 py-0.5 rounded">
-              {experience} Years
+              {experience} {t.astrologerCard.years}
             </span>
           </div>
 
           {/* Language */}
           <div className="px-4 my-2 text-[16px] text-[#1a1a1a]">
-            <strong>Lang:</strong>
+            <strong>{t.astrologerCard.lang}</strong>
             <span className="ml-2 font-semibold bg-gray-100 px-2 py-0.5 rounded">
               {language}
             </span>
@@ -285,10 +289,10 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-regular fa-comment-dots text-sm" />
-                <span className="text-[14px] font-bold">Chat</span>
+                <span className="text-[14px] font-bold">{t.astrologerCard.chat}</span>
               </div>
               <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
-                {chat_price && chat_price > 0 ? `₹${chat_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
+                {chat_price && chat_price > 0 ? `₹${chat_price}${t.astrologerCard.perMin}` : (price > 0 ? `₹${price}${t.astrologerCard.perMin}` : t.astrologerCard.free)}
               </span>
             </button>
 
@@ -299,10 +303,10 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-solid fa-phone-volume text-sm" />
-                <span className="text-[14px] font-bold">Call</span>
+                <span className="text-[14px] font-bold">{t.astrologerCard.call}</span>
               </div>
               <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
-                {call_price && call_price > 0 ? `₹${call_price}/min` : (price > 0 ? `₹${price}/min` : "Free")}
+                {call_price && call_price > 0 ? `₹${call_price}${t.astrologerCard.perMin}` : (price > 0 ? `₹${price}${t.astrologerCard.perMin}` : t.astrologerCard.free)}
               </span>
             </button>
           </div>
@@ -313,9 +317,9 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
           >
             <i className="fa-solid fa-video text-sm flex-shrink-0" />
-            <span className="text-[14px] font-bold flex-shrink-0">Video Call</span>
+            <span className="text-[14px] font-bold flex-shrink-0">{t.astrologerCard.videoCall}</span>
             <span className="text-[11px] font-semibold opacity-95 truncate">
-              {video_call_price && video_call_price > 0 ? `₹${video_call_price}/min` : (price > 0 ? `₹${price * 2}/min` : "Free")}
+              {video_call_price && video_call_price > 0 ? `₹${video_call_price}${t.astrologerCard.perMin}` : (price > 0 ? `₹${price * 2}${t.astrologerCard.perMin}` : t.astrologerCard.free)}
             </span>
           </button>
         </div>
@@ -334,7 +338,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b">
               <h5 className="font-bold text-gray-900 text-lg m-0">
-                Meet Astrologer {name} Introduction Video
+                {t.astrologerCard.videoModalTitle.replace('{name}', name)}
               </h5>
               <button
                 onClick={() => setShow(false)}
@@ -369,7 +373,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
                 <div className="h-[500px] flex items-center justify-center bg-gray-100 rounded">
                   <div className="text-center">
                     <i className="fa-solid fa-video-slash text-5xl text-gray-400 mb-3" />
-                    <p className="text-gray-500">No introduction video available yet.</p>
+                    <p className="text-gray-500">{t.astrologerCard.noVideo}</p>
                   </div>
                 </div>
               )}

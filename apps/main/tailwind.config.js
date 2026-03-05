@@ -11,81 +11,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // orange: "#1a0e05ff",
         orange: "#FF6B00",
         brown: "#301118",
         white: "#FFFFFF",
-        /*
-        bhagwa: {
-          DEFAULT: "var(--color-bhagwa)",
-          hover: "var(--color-bhagwa-hover)",
-          light: "var(--color-bhagwa-light)",
-          dark: "var(--color-bhagwa-dark)",
-        },
-        brown_old: {
-          DEFAULT: "var(--color-maroon)",
-          hover: "var(--color-maroon-hover)",
-          light: "var(--color-maroon-light)",
-          dark: "var(--color-maroon-dark)",
-        },
-        black: {
-          DEFAULT: "var(--color-black)",
-          soft: "var(--color-black-soft)",
-          muted: "var(--color-black-muted)",
-        },
-        white_old: {
-          DEFAULT: "var(--color-white)",
-          cream: "var(--color-cream)",
-          off: "#F5E6E6",
-        },
-        brand: {
-          orange: "var(--color-bhagwa)",
-          maroon: "var(--color-maroon)",
-          gold: "var(--color-gold)",
-          cream: "var(--color-cream)",
-        },
         primary: {
-          DEFAULT: "var(--color-primary)",
-          hover: "var(--color-primary-hover)",
-          light: "var(--color-primary-light)",
-          dark: "var(--color-primary-dark)",
+          DEFAULT: "var(--primary)",
+          hover: "var(--primary-hover)",
         },
         secondary: {
-          DEFAULT: "var(--color-secondary)",
-          hover: "var(--color-secondary-hover)",
-          light: "var(--color-secondary-light)",
-          dark: "var(--color-secondary-dark)",
+          DEFAULT: "var(--secondary)",
         },
         accent: {
-          gold: "var(--color-gold)",
-          "gold-light": "var(--color-gold-light)",
-          "gold-dark": "var(--color-gold-dark)",
+          gold: "var(--accent-gold)",
         },
-        background: {
-          light: "var(--color-background-light)",
-          dark: "var(--color-background-dark)",
-          alt: "#F8F0E8",
+        danger: {
+          DEFAULT: "#dc3545",
+          dark: "#c82333",
         },
-        surface: {
-          light: "var(--color-white)",
-          dark: "#1A1111",
-          muted: "#F5E6E6",
-        },
-        text: {
-          primary: "var(--color-text-primary)",
-          secondary: "var(--color-text-secondary)",
-          muted: "var(--color-text-muted)",
-          dark: {
-            primary: "#F5E6E6",
-            secondary: "#B3A5A5",
-            muted: "#8C7E7E",
-          }
-        },
-        border: {
-          light: "var(--color-border-light)",
-          dark: "var(--color-border-dark)",
-        }
-        */
+        "bg-light": "var(--bg-light)",
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "sans-serif"],

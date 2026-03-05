@@ -2,6 +2,8 @@
 import React from "react";
 
 import { AstrologerFilterModalProps } from "@/lib/types";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
     modalId,
@@ -10,6 +12,9 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
     applyFilters,
     resetFilters,
 }) => {
+    const { lang } = useLanguageStore();
+    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
     return (
         <div
             className="modal fade"
@@ -21,7 +26,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content text-dark border-0 shadow-lg">
                     <div className="modal-header bg-light border-0 d-flex justify-content-between align-items-center w-100">
-                        <h5 className="modal-title font-bold">Customize Filters</h5>
+                        <h5 className="modal-title font-bold">{t.astrologerSection.filterTitle}</h5>
                         <button
                             type="button"
                             className="btn shadow-none p-0 border-0"
@@ -47,7 +52,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                         <div className="mb-4 flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${localFilter.onlyOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                                <span className="font-bold text-gray-700">Online Astrologers Only</span>
+                                <span className="font-bold text-gray-700">{t.astrologerSection.filterLabels.showOnlineOnly}</span>
                             </div>
                             <div className="form-check form-switch">
                                 <input
@@ -63,23 +68,23 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
 
                         {/* 3. Sort Order */}
                         <div className="mb-4">
-                            <label className="form-label font-bold text-gray-700 mb-2 block">Sort By</label>
+                            <label className="form-label font-bold text-gray-700 mb-2 block">{t.astrologerSection.sortByTitle}</label>
                             <select
                                 className="form-select border-gray-200 shadow-sm"
                                 value={localFilter.sortBy}
                                 onChange={(e) => setLocalFilter({ ...localFilter, sortBy: e.target.value })}
                             >
-                                <option value="newest">Newest First</option>
-                                <option value="rating">Rating: High to Low</option>
-                                <option value="price_asc">Price: Low to High</option>
-                                <option value="price_desc">Price: High to Low</option>
-                                <option value="experience">Experience: High to Low</option>
+                                <option value="newest">{t.astrologerSection.sortOptions.none}</option>
+                                <option value="rating">{t.astrologerSection.sortOptions.rating}</option>
+                                <option value="price_asc">{t.astrologerSection.sortOptions.priceAsc}</option>
+                                <option value="price_desc">{t.astrologerSection.sortOptions.priceDesc}</option>
+                                <option value="experience">{t.astrologerSection.sortOptions.experience}</option>
                             </select>
                         </div>
 
                         {/* 4. Rating Filter */}
                         <div className="mb-4">
-                            <label className="form-label font-bold text-gray-700 mb-2 block">Minimum Rating</label>
+                            <label className="form-label font-bold text-gray-700 mb-2 block">{t.astrologerSection.filterLabels.minRating}</label>
                             <div className="flex gap-2">
                                 {[0, 3, 4, 5].map((rating) => (
                                     <button
@@ -90,7 +95,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                                             : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                                             }`}
                                     >
-                                        {rating === 0 ? 'Any' : <><i className="fa-solid fa-star text-xs mr-1" />{rating}+</>}
+                                        {rating === 0 ? t.astrologerSection.filterLabels.any : <><i className="fa-solid fa-star text-xs mr-1" />{rating}+</>}
                                     </button>
                                 ))}
                             </div>
@@ -99,9 +104,9 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                         {/* 5. Price Range */}
                         <div className="mb-4">
                             <div className="d-flex justify-content-between mb-2">
-                                <label className="form-label font-bold text-gray-700">Price Range</label>
+                                <label className="form-label font-bold text-gray-700">{t.astrologerSection.filterLabels.priceRange}</label>
                                 <span className="px-3 py-1 rounded-full font-bold text-sm shadow-sm bg-primary text-white">
-                                    Up to ₹{localFilter.maxPrice}/min
+                                    {t.astrologerSection.filterLabels.upTo} ₹{localFilter.maxPrice}{t.astrologerSection.filterLabels.perMin}
                                 </span>
                             </div>
                             <input
@@ -140,7 +145,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                                     className={`cursor-pointer transition-colors ${localFilter.maxPrice > 500 ? 'text-primary font-bold' : 'text-gray-400 hover:text-primary'}`}
                                     onClick={() => setLocalFilter({ ...localFilter, maxPrice: 1000 })}
                                 >
-                                    Any Price
+                                    {t.astrologerSection.filterLabels.anyPrice}
                                 </span>
                             </div>
                         </div>
@@ -148,21 +153,21 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                         {/* 6. Language & State */}
                         <div className="grid grid-cols-2 gap-3 mb-2">
                             <div>
-                                <label className="form-label font-bold text-gray-700 text-sm">Language</label>
+                                <label className="form-label font-bold text-gray-700 text-sm">{t.astrologerSection.filterLabels.language}</label>
                                 <input
                                     type="text"
                                     className="form-control form-control-sm border-gray-200"
-                                    placeholder="e.g. Hindi"
+                                    placeholder={t.astrologerSection.filterLabels.languagePlaceholder}
                                     value={localFilter.language}
                                     onChange={(e) => setLocalFilter({ ...localFilter, language: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="form-label font-bold text-gray-700 text-sm">State</label>
+                                <label className="form-label font-bold text-gray-700 text-sm">{t.astrologerSection.filterLabels.state}</label>
                                 <input
                                     type="text"
                                     className="form-control form-control-sm border-gray-200"
-                                    placeholder="e.g. Delhi"
+                                    placeholder={t.astrologerSection.filterLabels.statePlaceholder}
                                     value={localFilter.addressState}
                                     onChange={(e) => setLocalFilter({ ...localFilter, addressState: e.target.value })}
                                 />
@@ -176,7 +181,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                             className="btn btn-light grow font-semibold py-2"
                             onClick={resetFilters}
                         >
-                            Reset All
+                            {t.astrologerSection.applyBtns.resetAll}
                         </button>
                         <button
                             type="button"
@@ -184,7 +189,7 @@ const AstrologerFilterModal: React.FC<AstrologerFilterModalProps> = ({
                             data-bs-dismiss="modal"
                             onClick={applyFilters}
                         >
-                            Apply Filters
+                            {t.astrologerSection.applyBtns.applyFilters}
                         </button>
                     </div>
                 </div>

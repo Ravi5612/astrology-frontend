@@ -1,14 +1,24 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { getProducts } from "../../../libs/api-products";
 import ProductSection from "./ProductSection";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
+import { Product } from "@/lib/types";
 
 const Image = NextImage as any;
 const LinkComponent = Link as any;
 
-const AstrologyProduct = async () => {
-  const products = await getProducts();
+const AstrologyProduct = () => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    getProducts().then(setProducts);
+  }, []);
 
   // Fallback if no products
   const productList = products || [];
@@ -21,7 +31,7 @@ const AstrologyProduct = async () => {
           {/* <!-- View All Button --> */}
           <div className="mt-8 mb-3 flex justify-center">
             <LinkComponent href="/product" className="bg-orange hover:opacity-90 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-all flex items-center gap-2 w-fit no-underline">
-              View All Products
+              {t.products.viewAll}
             </LinkComponent>
           </div>
         </div>

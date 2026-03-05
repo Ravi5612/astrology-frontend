@@ -1,0 +1,108 @@
+export const famousPlacesTranslations = {
+    en: {
+        badge: "ॐ Spiritual Guide & Local Directory",
+        heroTitle1: "Divine Destinations &",
+        heroHighlight: "Famous Places",
+        heroDesc: "Unlock the spiritual energy of Bharat. Explore sacred temples in Mohali and Chandigarh, or embark on a life-changing pilgrimage across the holiest sites in India.",
+        verifiedSites: "Verified Sites",
+        localInsights: "Local Insights",
+
+        section1Title1: "Sacred Temples in",
+        section1Highlight: "Mohali & Chandigarh",
+        section1Desc: "Discover peace and tranquility in the finest local temples, known for their architectural beauty and spiritual significance.",
+
+        section2Title1: "Holy Pilgrimage",
+        section2Highlight: "Across India",
+        section2Desc: "Explore the widely revered pilgrimage sites that define India's rich spiritual heritage and tradition.",
+
+        noResults: "No divine results found at the moment. Please try again.",
+        loadingText: "Exploring India's pilgrimage sites... please check back shortly.",
+
+        card: {
+            reviews: "Reviews",
+            sacredSite: "Sacred Site",
+            viewDetails: "View Details",
+            noAddress: "Address available on request"
+        },
+        detail: {
+            notFound: "Not Found",
+            returnDirectory: "Return to Directory",
+            directory: "Directory",
+            verifiedSite: "Verified Sacred Site",
+            location: "Location",
+            visuals: "Divine Visuals",
+            heritage: "Divine Heritage",
+            descriptionTemplate: "Explore the profound architectural marvel and spiritual significance of {title}. Known for its historical depth, this sacred site offers a sanctuary for peace and meditation.",
+            guidelines: [
+                "Ideal Visit: Brahma Muhurta",
+                "Media: Limited zones",
+                "Attire: Traditional preferred",
+                "Offerings: Local essentials",
+            ],
+            planTitle: "Plan Your Visit",
+            timings: "Darshan Timings",
+            aarti: "Special Aarti",
+            fee: "Entry Fee",
+            free: "Free Darshan",
+            directions: "Get Directions",
+            needGuidance: "Need Guidance?",
+            supportDesc: "Book a personalized spiritual consultation for your visit.",
+            consultNow: "Consult Now"
+        },
+        switchLang: "हिंदी",
+        switchLangLabel: "Switch to Hindi",
+    },
+    hi: {
+        badge: "ॐ आध्यात्मिक मार्गदर्शिका एवं स्थानीय निर्देशिका",
+        heroTitle1: "दिव्य गंतव्य और",
+        heroHighlight: "प्रसिद्ध स्थान",
+        heroDesc: "भारत की आध्यात्मिक ऊर्जा को अनलॉक करें। मोहाली और चंडीगढ़ के पवित्र मंदिरों का अन्वेषण करें, या भारत के सबसे पवित्र स्थलों की जीवन बदलने वाली तीर्थयात्रा पर निकलें।",
+        verifiedSites: "सत्यापित स्थल",
+        localInsights: "स्थानीय अंतर्दृष्टि",
+
+        section1Title1: "पवित्र मंदिर -",
+        section1Highlight: "मोहाली और चंडीगढ़",
+        section1Desc: "बेहतरीन स्थानीय मंदिरों में शांति और सुकून का अनुभव करें, जो अपनी वास्तुकला की सुंदरता और आध्यात्मिक महत्व के लिए जाने जाते हैं।",
+
+        section2Title1: "पवित्र तीर्थयात्रा",
+        section2Highlight: "पूरे भारत में",
+        section2Desc: "उन व्यापक रूप से पूजनीय तीर्थस्थलों का अन्वेषण करें जो भारत की समृद्ध आध्यात्मिक विरासत और परंपरा को परिभाषित करते हैं।",
+
+        noResults: "फिलहाल कोई दिव्य परिणाम नहीं मिला। कृपया पुनः प्रयास करें।",
+        loadingText: "भारत के तीर्थस्थलों की खोज की जा रही है... कृपया कुछ ही देर में पुनः देखें।",
+
+        card: {
+            reviews: "समीक्षाएं",
+            sacredSite: "पवित्र स्थल",
+            viewDetails: "विवरण देखें",
+            noAddress: "अनुरोध पर पता उपलब्ध है"
+        },
+        detail: {
+            notFound: "नहीं मिला",
+            returnDirectory: "निर्देशिका पर लौटें",
+            directory: "निर्देशिका",
+            verifiedSite: "सत्यापित पवित्र स्थल",
+            location: "स्थान",
+            visuals: "दिव्य चित्र",
+            heritage: "दिव्य विरासत",
+            descriptionTemplate: "{title} के गहन वास्तुशिल्प चमत्कार और आध्यात्मिक महत्व का अन्वेषण करें। अपनी ऐतिहासिक गहराई के लिए जाना जाने वाला यह पवित्र स्थल शांति और ध्यान के लिए एक शरणस्थली प्रदान करता है।",
+            guidelines: [
+                "आदर्श दर्शन: ब्रह्म मुहूर्त",
+                "मीडिया: सीमित क्षेत्र",
+                "पोशाक: पारंपरिक बेहतर",
+                "प्रसाद: स्थानीय आवश्यक वस्तुएं",
+            ],
+            planTitle: "अपनी यात्रा की योजना बनाएं",
+            timings: "दर्शन का समय",
+            aarti: "विशेष आरती",
+            fee: "प्रवेश शुल्क",
+            free: "नि:शुल्क दर्शन",
+            directions: "दिशा-निर्देश प्राप्त करें",
+            needGuidance: "मार्गदर्शन चाहिए?",
+            supportDesc: "अपनी यात्रा के लिए व्यक्तिगत आध्यात्मिक परामर्श बुक करें।",
+            consultNow: "अभी परामर्श करें"
+        },
+        switchLang: "English",
+        switchLangLabel: "Switch to English",
+    }
+} as const;

@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 import { getProductImageUrl } from "@/utils/image-utils";
 import { Product } from "@/lib/types";
@@ -22,6 +24,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
+    const { lang } = useLanguageStore();
+    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
     const imageUrl = getProductImageUrl(product);
 
     const originalPrice = Number(product.originalPrice) || 0;
@@ -78,7 +82,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                 <div className="absolute top-3 left-3 z-10">
                     <div className="bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 animate-pulse">
                         <i className="fa-solid fa-tag text-[10px]"></i>
-                        {percentageOff}% OFF
+                        {percentageOff}% {t.products.off}
                     </div>
                 </div>
             )}
@@ -141,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                         onClick={handleAddToCart}
                         className="flex-1 !rounded-full border-orange text-orange hover:bg-orange/5 h-10 text-[13px] px-3 font-semibold"
                     >
-                        Add to Cart
+                        {t.products.addToCart}
                     </Button>
                     <Button
                         variant="primary"
@@ -158,7 +162,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                         loading={isBuyLoading}
                         className="flex-1 rounded-full h-10 text-[13px] px-3 font-semibold !bg-orange hover:!opacity-90"
                     >
-                        Buy Now
+                        {t.products.buyNow}
                     </Button>
                 </div>
             </div>

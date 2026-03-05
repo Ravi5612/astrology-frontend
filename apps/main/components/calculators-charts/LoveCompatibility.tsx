@@ -26,6 +26,9 @@ const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: s
 const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
 const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
+import { useLanguageStore } from "@/store/languageStore";
+import { loveCompatibilityTranslations } from "@/lib/translations/calculators/love-compatibility";
+
 import { LoveCompatibilityResult as ResultType } from "@/lib/types";
 
 const premiumCardStyles = `
@@ -56,17 +59,17 @@ const hashSeed = (str: string): number => {
   return Math.abs(hash);
 };
 
-const getMessageByLove = (love: number): string => {
+const getMessageByLove = (love: number, t: any): string => {
   if (love >= 40 && love <= 55) {
-    return "This connection has potential. With patience and clear communication, it can grow stronger.";
+    return t.results.messages.potential;
   }
   if (love >= 56 && love <= 70) {
-    return "Good match! You both can build trust and create a stable bond with time.";
+    return t.results.messages.good;
   }
   if (love >= 71 && love <= 85) {
-    return "Strong compatibility! Emotional understanding and attraction are naturally high.";
+    return t.results.messages.strong;
   }
-  return "Excellent match! Your bond feels deep, supportive, and long-term focused.";
+  return t.results.messages.excellent;
 };
 
 import { CalculatorProgressBarProps as ProgressBarProps } from "@/lib/types";
@@ -94,6 +97,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ label, value }) => {
 };
 
 const LoveCompatibilityCalcultor: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = loveCompatibilityTranslations[lang as keyof typeof loveCompatibilityTranslations] || loveCompatibilityTranslations.en;
+
   const [maleName, setMaleName] = useState<string>("");
   const [femaleName, setFemaleName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -139,7 +145,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
     const romance = clamp(love + (((seed >> 2) % 21) - 10), 0, 100);
     const communication = clamp(love + (((seed >> 4) % 21) - 10), 0, 100);
 
-    const message = getMessageByLove(love);
+    const message = getMessageByLove(love, t);
 
     setResult({ love, trust, romance, communication, message });
 
@@ -155,12 +161,25 @@ const LoveCompatibilityCalcultor: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Reusable Hero */}
-      <CalculatorHero
-        badgeText="Name Based Love Match"
-        titleMain="Love"
-        titleAccent="Compatibility"
-        paragraph="Enter two names and reveal a cosmic love percentage with trust, romance, and communication insights."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        {/* Language Switcher — top right inside hero overlay */}
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       {/* Form Section */}
       <section className="py-24 relative overflow-hidden">
@@ -172,11 +191,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
 
             <div className="text-center mb-10">
               <h2 className="text-xl md:text-3xl font-black text-burgundy mb-2 tracking-tight">
-                Find Love{" "}
-                <span className="text-red-500 underline decoration-red-100 decoration-2 underline-offset-4">
-                  (Percentage)%
-                </span>{" "}
-                Between
+                {t.form.title.replace("{percentage}", t.form.percentage)}
               </h2>
               <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto mt-2"></div>
             </div>
@@ -188,7 +203,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                   <div className="flex-1 w-full space-y-5">
                     <div className="flex flex-col gap-2">
                       <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
-                        Male Name
+                        {t.form.maleName}
                       </label>
                       <div className="relative">
                         <input
@@ -196,7 +211,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                           required
                           style={{ borderRadius: "9999px" }}
                           className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                          placeholder="Type male name..."
+                          placeholder={t.form.malePlaceholder}
                           value={maleName}
                           onChange={(e) => setMaleName(e.target.value)}
                         />
@@ -227,7 +242,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                   <div className="flex-1 w-full space-y-5">
                     <div className="flex flex-col gap-2">
                       <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
-                        Female Name
+                        {t.form.femaleName}
                       </label>
                       <div className="relative">
                         <input
@@ -235,7 +250,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                           required
                           style={{ borderRadius: "9999px" }}
                           className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                          placeholder="Type female name..."
+                          placeholder={t.form.femalePlaceholder}
                           value={femaleName}
                           onChange={(e) => setFemaleName(e.target.value)}
                         />
@@ -259,7 +274,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                     ) : (
                       <TbCrystalBall size={18} />
                     )}
-                    {loading ? "Calculating..." : "Calculate Love %"}
+                    {loading ? t.form.calculating : t.form.calculateBtn}
                     <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -287,11 +302,11 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                   <div className="relative z-10">
                     <div className="text-center mb-16">
                       <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Match Results
+                        {t.results.badge}
                       </span>
 
                       <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Your <span className="text-primary">Love Score</span>
+                        {t.results.title}
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -309,7 +324,7 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                               <span className="text-4xl text-primary">%</span>
                             </span>
                             <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Cosmic Bond
+                              {t.results.cosmicBond}
                             </span>
                           </div>
 
@@ -334,20 +349,20 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                       <div className="w-full max-w-3xl bg-[#fff9f6] rounded-[3rem] p-8 md:p-12 border border-orange-100">
                         <div className="flex items-center justify-between mb-10">
                           <h4 className="text-xl font-black text-burgundy tracking-tight m-0">
-                            Relationship Breakdown
+                            {t.results.breakdownTitle}
                           </h4>
                           <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-50 flex items-center gap-2">
                             <FaStar className="text-primary" size={14} />
                             <span className="text-xs font-black text-primary uppercase tracking-widest">
-                              Premium Insight
+                              {t.results.premiumInsight}
                             </span>
                           </div>
                         </div>
 
                         <div className="space-y-8">
-                          <ProgressBar label="Trust" value={result.trust} />
-                          <ProgressBar label="Romance" value={result.romance} />
-                          <ProgressBar label="Communication" value={result.communication} />
+                          <ProgressBar label={t.results.trust} value={result.trust} />
+                          <ProgressBar label={t.results.romance} value={result.romance} />
+                          <ProgressBar label={t.results.communication} value={result.communication} />
                         </div>
 
                         <div className="mt-10 flex items-start gap-4 bg-white rounded-2xl p-6 border border-orange-50 shadow-sm">
@@ -356,10 +371,10 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                           </div>
                           <div>
                             <p className="m-0 text-sm font-black text-burgundy">
-                              Tip to strengthen your bond
+                              {t.results.tipTitle}
                             </p>
                             <p className="m-0 text-sm text-gray-500 italic leading-relaxed">
-                              Small efforts daily matter more than big promises. Keep communication honest and consistent.
+                              {t.results.tipDesc}
                             </p>
                           </div>
                         </div>

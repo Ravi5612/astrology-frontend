@@ -3,12 +3,17 @@ import NextImage from "next/image";
 const Image = NextImage as any;
 import Link from "next/link";
 import { fetchPlaceImages, Place } from "@/libs/serp-api";
+import { useLanguageStore } from "../../../store/languageStore";
+import { famousPlacesTranslations } from "../../../lib/famous-places-translations";
 
 interface PlaceCardProps {
   place: Place;
 }
 
 const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
+  const { lang } = useLanguageStore();
+  const t = famousPlacesTranslations[lang as keyof typeof famousPlacesTranslations] || famousPlacesTranslations.en;
+
   const [realImage, setRealImage] = useState<string | null>(null);
 
   const NO_IMAGE_URL = "/images/image-not-found.png";
@@ -44,7 +49,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
           {/* Category Tag */}
           <div className="absolute top-4 left-4">
             <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-brown text-[10px] font-bold uppercase tracking-wider shadow-sm">
-              {place.category || "Sacred Site"}
+              {place.category || t.card.sacredSite}
             </span>
           </div>
         </div>
@@ -68,7 +73,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
                 ))}
               </div>
               <span className="text-[11px] font-bold text-gray-400">
-                {place.ratingCount || "100+"} Reviews
+                {place.ratingCount || "100+"} {t.card.reviews}
               </span>
             </div>
 
@@ -79,14 +84,14 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
             <div className="flex items-start gap-2 text-gray-500">
               <i className="fa-solid fa-location-dot mt-1 text-orange/60 text-xs"></i>
               <p className="text-sm leading-relaxed line-clamp-2 italic">
-                {place.address || "Address available on request"}
+                {place.address || t.card.noAddress}
               </p>
             </div>
           </div>
 
           <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
             <span className="text-[11px] font-bold text-orange uppercase tracking-widest">
-              View Details
+              {t.card.viewDetails}
             </span>
             <div className="w-8 h-8 rounded-full bg-orange/5 flex items-center justify-center group-hover:bg-orange group-hover:text-white transition-all duration-300">
               <i className="fa-solid fa-arrow-right text-[10px]"></i>

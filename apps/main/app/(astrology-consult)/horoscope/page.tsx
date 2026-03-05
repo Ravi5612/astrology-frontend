@@ -4,19 +4,11 @@ import React, { useState } from "react";
 import NextImage from "next/image";
 const Image = NextImage as any;
 import {
-  FaCalendarAlt as FaC,
-  FaClock as FaCl,
-  FaMapMarkerAlt as FaM,
-  FaStar as FaS,
   FaHeart as FaH,
   FaBriefcase as FaB,
   FaLeaf as FaL,
   FaPlane as FaP,
 } from "react-icons/fa";
-const FaCalendarAlt = FaC as any;
-const FaClock = FaCl as any;
-const FaMapMarkerAlt = FaM as any;
-const FaStar = FaS as any;
 const FaHeart = FaH as any;
 const FaBriefcase = FaB as any;
 const FaLeaf = FaL as any;
@@ -29,78 +21,112 @@ import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import ChooseYourZodiac from "@/components/layout/main/ChooseYourZodiac";
-import FeaturedCards from "@/components/ui/common/Featured4Cards";
+import { horoscopeTranslations, type Language } from "@/lib/horoscope-translations";
+import { useLanguageStore } from "@/store/languageStore";
+
+const predictionIcons = [
+  <FaHeart key="love" className="text-danger" />,
+  <FaBriefcase key="career" className="text-blue-500" />,
+  <FaLeaf key="health" className="text-green-500" />,
+  <FaPlane key="travel" className="text-primary" />,
+];
+
+const predictionGradients = [
+  { gradient: "from-red-50 to-transparent", border: "border-red-100/50" },
+  { gradient: "from-blue-50 to-transparent", border: "border-blue-100/50" },
+  { gradient: "from-green-50 to-transparent", border: "border-green-100/50" },
+  { gradient: "from-orange-50 to-transparent", border: "border-orange-100/50" },
+];
 
 const HoroscopePage = () => {
   const [selectedSign, setSelectedSign] = useState(ZodiacSignsData[0]);
+  const { lang, toggleLang } = useLanguageStore();
+
+  const t = horoscopeTranslations[lang];
 
   if (!selectedSign) return null;
 
   return (
-    <div className="main-wrapper">
+    <div className="main-wrapper bg-bg-light">
       {/* Hero Section */}
-      <section className="banner-part light-back">
-        <div className="overlay-hero">
-          <div className="container">
-            <div className="contant-hero">
-              <div className="row align-items-center">
-                <div className="col-lg-7 col-md-12">
-                  <div className="hero-card shine">
-                    <div className="card-z">
-                      <span className="aib-trust-badge">
-                        Free Daily Horoscope Predictions
-                      </span>
-                      <h1>Discover Your Destiny</h1>
-                      <h4 className="card-title">
-                        Accurate Daily & Yearly Horoscopes
-                      </h4>
-                      <p>
-                        Unlock the secrets of the stars with our accurate daily,
-                        weekly, monthly, and yearly horoscopes based on ancient
-                        Vedic Astrology principles. Find out what the planets
-                        have in store for you today.
-                      </p>
-                      <ul className="list-check">
-                        <li>
-                          <i className="fa-solid fa-check"></i> Daily, Weekly &
-                          Monthly Predictions
-                        </li>
-                        <li>
-                          <i className="fa-solid fa-check"></i> Personalized
-                          Zodiac Readings
-                        </li>
-                        <li>
-                          <i className="fa-solid fa-check"></i> Ancient Vedic
-                          Astrology Wisdom
-                        </li>
-                        <li>
-                          <i className="fa-solid fa-check"></i> Love, Career &
-                          Health Insights
-                        </li>
-                        <li>
-                          <i className="fa-solid fa-check"></i> Trusted by
-                          50,000+ Users Daily
-                        </li>
-                      </ul>
-                      <button className="btn-link wfc mt-4 mb-4">
-                        Explore Your Horoscope
-                      </button>
+      <section className="relative overflow-hidden py-20 lg:py-32 bg-secondary text-white">
+        {/* Abstract background elements */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Language Switcher — top right inside hero */}
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+            title={t.switchLangLabel}
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {t.switchLang}
+          </button>
+        </div>
+
+        <div className="container relative z-10">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-7">
+              <div className="max-w-2xl">
+                <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-bold text-sm mb-6 border border-primary/30 backdrop-blur-sm">
+                  {t.badge}
+                </span>
+                <h1
+                  className="text-5xl lg:text-7xl font-black mb-6 leading-tight"
+                  style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                >
+                  {t.heroTitle1}{" "}
+                  <span className="text-primary italic">{t.heroHighlight}</span>{" "}
+                  {t.heroTitle2}
+                </h1>
+                <p
+                  className="text-lg text-white/80 mb-8 leading-relaxed"
+                  style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                >
+                  {t.heroDesc}
+                </p>
+
+                <div className="flex flex-wrap gap-4 mb-10">
+                  {t.features.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-xl backdrop-blur-sm"
+                    >
+                      <i className="fa-solid fa-circle-check text-primary text-xs"></i>
+                      <span className="text-sm font-medium">{item}</span>
                     </div>
-                  </div>
+                  ))}
                 </div>
-                <div className="col-lg-5 col-md-12">
-                  <div className="right-illus relative h-[400px]">
-                    <Image
-                      src="/images/horoscope-round2.png"
-                      alt="Zodiac Wheel"
-                      fill
-                      className="Astrologer-img-h fa-spin object-contain opacity-30"
-                    />
+
+                <a
+                  href="#predictions"
+                  className="inline-flex items-center gap-3 bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg shadow-primary/25 hover:scale-105 no-underline"
+                >
+                  {t.heroBtn}
+                  <i className="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <div className="col-lg-5">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] group-hover:bg-primary/30 transition-all duration-700"></div>
+                <div className="relative aspect-square max-w-md mx-auto">
+                  <Image
+                    src="/images/horoscope-round2.png"
+                    alt="Zodiac Wheel"
+                    fill
+                    className="animate-[spin_60s_linear_infinite] opacity-40 object-contain p-4"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 top-0 flex items-center justify-center p-12">
                     <Image
                       src={selectedSign.image}
                       alt={selectedSign.title}
-                      fill
-                      className="Astrologer-img object-contain"
+                      width={300}
+                      height={300}
+                      className="object-contain drop-shadow-[0_0_30px_rgba(255,107,0,0.5)] transform transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
                 </div>
@@ -110,106 +136,101 @@ const HoroscopePage = () => {
         </div>
       </section>
 
-      <ChooseYourZodiac />
+      <div id="predictions" className="relative -mt-10 z-20">
+        <ChooseYourZodiac />
+      </div>
 
       {/* Prediction Details */}
-      <section className="space-section light-back">
+      <section className="py-20 bg-bg-light">
         <div className="container">
-          <div className="row g-4">
-            <div className="col-lg-12">
-              <div className="light-card p-4 p-md-5 border border-[#fd64102b] shadow-xl rounded-4">
-                <div className="flex items-center gap-6 mb-4 pb-6 border-b border-gray-100">
-                  <div className="bg-[#fd64101a] p-3 rounded-4">
-                    <Image
-                      src={selectedSign.image}
-                      alt={selectedSign.title}
-                      width={60}
-                      height={60}
-                      className="w-16 h-16 object-contain drop-shadow-lg"
-                    />
+          <div className="row justify-content-center">
+            <div className="col-lg-10">
+              <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-premium border border-primary/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                  <HiOutlineSparkles className="text-9xl text-primary" />
+                </div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-8">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center border border-primary/10">
+                      <Image
+                        src={selectedSign.image}
+                        alt={selectedSign.title}
+                        width={60}
+                        height={60}
+                        className="w-14 h-14 object-contain"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-3xl lg:text-4xl font-black text-secondary uppercase tracking-tight mb-1">
+                        {selectedSign.title}{" "}
+                        <span className="text-primary italic">{t.dailyLabel}</span>
+                      </h2>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-primary tracking-widest uppercase">
+                          {t.forecastLabel}
+                        </span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                        <p className="text-gray-500 text-sm font-medium m-0">
+                          {new Date().toLocaleDateString(lang === "hi" ? "hi-IN" : "en-US", {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-4xl font-black text-[#301118] uppercase tracking-tight mb-1">
-                      {selectedSign.title} Daily Horoscope
-                    </h2>
-                    <p className="text-[#fd6410] font-bold text-sm tracking-[0.2em] uppercase">
-                      {new Date().toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </p>
+
+                  <div className="flex items-center gap-2 bg-secondary text-white px-5 py-2.5 rounded-2xl">
+                    <i className="fa-solid fa-star text-accent-gold text-xs"></i>
+                    <span className="text-sm font-bold tracking-wide">{t.highlyAccurate}</span>
                   </div>
                 </div>
 
-                {/* Characteristics Grid */}
-                <div className="row g-4 mb-10">
-                  {[
-                    {
-                      icon: <FaHeart className="text-pink-500" />,
-                      label: "Love & Relations",
-                      text: "Venus aligns beautifully today, bringing warmth to your relationships. Deep conversations with loved ones will strengthen bonds. Single? A chance encounter may spark something special.",
-                      bg: "bg-pink-50",
-                    },
-                    {
-                      icon: <FaBriefcase className="text-blue-500" />,
-                      label: "Career & Finance",
-                      text: "Mercury's position favors professional growth. An opportunity for advancement may present itself. Stay confident in negotiations and trust your instincts with financial decisions.",
-                      bg: "bg-blue-50",
-                    },
-                    {
-                      icon: <FaLeaf className="text-green-500" />,
-                      label: "Health & Wellbeing",
-                      text: "Your energy levels are high today. This is an excellent time for physical activities or starting a new wellness routine. Stay hydrated and maintain balance in all things.",
-                      bg: "bg-green-50",
-                    },
-                    {
-                      icon: <FaPlane className="text-orange-500" />,
-                      label: "Travel & Luck",
-                      text: "Jupiter brings fortunate opportunities, especially in travel or learning. Short trips will be rewarding. Lady Luck is on your side – consider trying something new today!",
-                      bg: "bg-orange-50",
-                    },
-                  ].map((feat, i) => (
+                {/* Prediction Cards */}
+                <div className="row g-4 mb-12">
+                  {t.predictions.map((pred, i) => (
                     <div key={i} className="col-md-6">
                       <div
-                        className={`${feat.bg} p-6 rounded-4 border border-white h-100 flex gap-4`}
+                        className={`bg-gradient-to-br ${(predictionGradients[i] ?? predictionGradients[0])!.gradient} p-8 rounded-2xl border ${(predictionGradients[i] ?? predictionGradients[0])!.border} h-100 transition-all hover:shadow-md group`}
                       >
-                        <div className="text-2xl mt-1">{feat.icon}</div>
-                        <div>
-                          <h4 className="text-sm font-bold text-[#301118] uppercase mb-1">
-                            {feat.label}
-                          </h4>
-                          <p className="text-gray-800 text-xs leading-relaxed italic m-0">
-                            {feat.text}
-                          </p>
+                        <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                          {predictionIcons[i]}
                         </div>
+                        <h4 className="text-base font-bold text-secondary uppercase mb-3 tracking-tight">
+                          {pred.label}
+                        </h4>
+                        <p className="text-gray-600 text-[13px] leading-relaxed mb-0 font-medium opacity-90">
+                          {pred.text}
+                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Extra Details */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 border border-gray-100 p-8 rounded-4 relative overflow-hidden">
-                    <HiOutlineSparkles className="absolute -right-4 -bottom-4 text-gray-200 text-9xl opacity-20" />
-                    <h3 className="text-xl font-bold mb-4 relative z-10 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-[#fd6410] rounded-full"></div>
-                      Cosmic Tip of the Day
-                    </h3>
-                    <p className="text-gray-500 italic relative z-10 leading-relaxed mb-0">
-                      Patience will be your greatest ally today. The Moon is in
-                      a complex position, so avoid making hasty decisions in
-                      property or legal matters. Wear the color{" "}
-                      <strong className="text-[#fd6410]">white</strong> for
-                      mental peace and meditate for 10 minutes to align your
-                      energies.
+                {/* Cosmic Insight */}
+                <div className="bg-secondary p-8 lg:p-10 rounded-3xl relative overflow-hidden shadow-2xl">
+                  <div className="absolute inset-0 bg-primary/5 backdrop-blur-[2px]"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-1 bg-primary rounded-full"></div>
+                      <h3 className="text-xl font-bold text-white mb-0">{t.cosmicInsight}</h3>
+                    </div>
+                    <p className="text-white/70 italic leading-relaxed mb-0 text-lg">
+                      "{t.cosmicText.replace("white", "").replace("सफेद", "")}
+                      <strong className="text-primary underline underline-offset-4 decoration-primary/50">
+                        {t.colorWhite}
+                      </strong>
+                      {lang === "en"
+                        ? " for mental peace and meditate for 10 minutes to align your energies."
+                        : " रंग पहनें और अपनी ऊर्जाओं को संरेखित करने के लिए 10 मिनट ध्यान करें।"}
+                      "
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-
-           
           </div>
         </div>
       </section>
@@ -221,5 +242,3 @@ const HoroscopePage = () => {
 };
 
 export default HoroscopePage;
-
-

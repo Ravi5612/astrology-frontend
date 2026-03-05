@@ -53,7 +53,10 @@ export default async function RootLayout({
       });
       user = res?.user || (res?.id ? res : null);
     } catch (err: any) {
-      console.error("[RootLayout] Server-side auth check failed:", err.message);
+      const errorMsg = err.message || String(err);
+      if (errorMsg !== "Unauthorized" && !errorMsg.includes("Unauthorized")) {
+        console.error("[RootLayout] Server-side auth check failed:", errorMsg);
+      }
     }
   }
 

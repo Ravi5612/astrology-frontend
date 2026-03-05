@@ -1,9 +1,16 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Featured4Cards from "@/components/ui/common/Featured4Cards";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const HeroSection = () => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
   return (
     <section
       className="py-0 overflow-x-hidden"
@@ -32,36 +39,27 @@ const HeroSection = () => {
 
                     {/* aib-trust-badge */}
                     <span className="inline-block px-[14px] py-[6px] bg-[#fde6d3] text-[#c45a13] text-sm font-semibold rounded-[20px] mb-4">
-                      India&apos;s Trusted Astrology Platform
+                      {t.hero.trustBadge}
                     </span>
 
                     {/* banner-part h1 */}
                     <h1 className="text-[40px] md:text-[50px] font-bold tracking-[1px] text-[#2b1b1b] leading-tight mb-4">
-                      Connect with Verified Astrologers Online
+                      {t.hero.title}
                     </h1>
 
                     {/* card-title */}
                     <h4 className="text-[22px] text-orange font-semibold mt-[15px] mb-[10px]">
-                      Instant Chat, Call, or Video Consultations
+                      {t.hero.subtitle}
                     </h4>
 
                     {/* banner-part p */}
                     <p className="text-[16px] text-[#1a1a1a] mb-[18px]">
-                      At Astrology in Bharat, find trusted astrologers for love,
-                      career, health, or life guidance. Connect anytime via
-                      chat, audio, or video and get personalized solutions with
-                      full privacy.
+                      {t.hero.description}
                     </p>
 
                     {/* list-check */}
                     <ul className="list-none p-0 m-0">
-                      {[
-                        "Verified & Experienced Astrologers",
-                        "Instant Chat, Call & Video Support",
-                        "100% Privacy & Confidentiality",
-                        "Accurate Predictions & Remedies",
-                        "Trusted by Thousands Across India",
-                      ].map((point) => (
+                      {t.hero.features.map((point) => (
                         <li
                           key={point}
                           className="flex items-center gap-2 text-[16px] text-[#1e1e1e] py-[7px]"
@@ -91,7 +89,7 @@ const HeroSection = () => {
                         letterSpacing: "1px",
                       }}
                     >
-                      Start Consultation
+                      {t.hero.startConsultationBtn}
                     </Link>
                   </div>
                 </div>

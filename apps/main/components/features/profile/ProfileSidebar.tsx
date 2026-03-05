@@ -1,4 +1,6 @@
 import React from 'react';
+import { useLanguageStore } from '@/store/languageStore';
+import { profileTranslations } from '@/lib/translations/profile';
 
 interface ProfileSidebarProps {
     profileData: any;
@@ -22,17 +24,20 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     handleImageChange,
     savingSections
 }) => {
+    const { lang } = useLanguageStore();
+    const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
+
     const menuItems = [
-        { icon: "fa-regular fa-user", label: "Personal Profile", id: "profile" },
-        { icon: "fa-solid fa-wallet", label: "My Wallet", id: "wallet" },
-        { icon: "fa-solid fa-gift", label: "My Rewards", id: "rewards" },
-        { icon: "fa-regular fa-heart", label: "My Wishlist", id: "wishlist" },
-        { icon: "fa-solid fa-clock-rotate-left", label: "Consultation History", id: "history" },
-        { icon: "fa-solid fa-bag-shopping", label: "My Orders", id: "orders" },
-        { icon: "fa-solid fa-scroll", label: "My Kundli Reports", id: "reports" },
-        { icon: "fa-solid fa-circle-question", label: "My Support Tickets", id: "disputes" },
-        { icon: "fa-solid fa-bell", label: "All Notifications", id: "notifications" },
-        { icon: "fa-solid fa-headset", label: "Help & Support", id: "support" },
+        { icon: "fa-regular fa-user", label: t.sidebar.tabs.profile, id: "profile" },
+        { icon: "fa-solid fa-wallet", label: t.sidebar.tabs.wallet, id: "wallet" },
+        { icon: "fa-solid fa-gift", label: t.sidebar.tabs.rewards, id: "rewards" },
+        { icon: "fa-regular fa-heart", label: t.sidebar.tabs.wishlist, id: "wishlist" },
+        { icon: "fa-solid fa-clock-rotate-left", label: t.sidebar.tabs.history, id: "history" },
+        { icon: "fa-solid fa-bag-shopping", label: t.sidebar.tabs.orders, id: "orders" },
+        { icon: "fa-solid fa-scroll", label: t.sidebar.tabs.reports, id: "reports" },
+        { icon: "fa-solid fa-circle-question", label: t.sidebar.tabs.disputes, id: "disputes" },
+        { icon: "fa-solid fa-bell", label: t.sidebar.tabs.notifications, id: "notifications" },
+        { icon: "fa-solid fa-headset", label: t.sidebar.tabs.support, id: "support" },
     ];
 
     return (
@@ -75,7 +80,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                                 transition: "all 0.3s ease",
                                 transform: "translate(20%, 20%)"
                             }}
-                            title="Update Profile Picture"
+                            title={t.sidebar.updatePhoto}
                         >
                             <i className="fa-solid fa-camera" style={{ fontSize: "10px" }}></i>
                             <input
@@ -95,7 +100,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
                     <div className="text-start">
                         <h6 className="fw-bold mb-0 text-dark d-flex align-items-center gap-1">
-                            {profileData.username || "User Name"}
+                            {profileData.username || t.sidebar.userNameFallback}
                             <i className="fa-solid fa-check-circle text-brown" style={{ fontSize: "12px" }}></i>
                         </h6>
                     </div>
@@ -112,43 +117,52 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                 }}
             >
                 <div className="border-0 pt-3 px-3">
-                    <small className="text-uppercase fw-bold" style={{ fontSize: "11px", letterSpacing: "1px", color: "white" }}>ACCOUNT MENU</small>
+                    <small
+                        className="text-uppercase fw-bold"
+                        style={{ fontSize: "11px", letterSpacing: "1px", color: "white", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                    >
+                        {t.sidebar.accountMenu}
+                    </small>
                 </div>
                 <div className=" p-2">
-                    {menuItems.map((item, index) => (
-                        <a
-                            key={index}
-                            href="#"
-                            className={`border-0 rounded-3 d-flex align-items-center px-3 py-3 mb-1 transition-all text-decoration-none ${activeTab === item.id
-                                ? 'fw-bold shadow-sm'
-                                : ''
-                                }`}
-                            style={
-                                activeTab === item.id
-                                    ? { backgroundColor: "#FF6B00", color: "white" }
-                                    : { color: "white" }
-                            }
-                            onMouseEnter={(e) => {
-                                if (activeTab !== item.id) {
-                                    e.currentTarget.style.backgroundColor = "#FF6B00";
-                                    e.currentTarget.style.color = "white";
+                    {menuItems.map((item, index) => {
+                        const baseStyle = activeTab === item.id
+                            ? { backgroundColor: "#FF6B00", color: "white" }
+                            : { color: "white" };
+
+                        return (
+                            <a
+                                key={index}
+                                href="#"
+                                className={`border-0 rounded-3 d-flex align-items-center px-3 py-3 mb-1 transition-all text-decoration-none ${activeTab === item.id
+                                    ? 'fw-bold shadow-sm'
+                                    : ''
+                                    }`}
+                                style={
+                                    lang === "hi" ? { ...baseStyle, fontFamily: "'Noto Sans Devanagari', sans-serif" } : baseStyle
                                 }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (activeTab !== item.id) {
-                                    e.currentTarget.style.backgroundColor = "transparent";
-                                    e.currentTarget.style.color = "white";
-                                }
-                            }}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setActiveTab(item.id);
-                            }}
-                        >
-                            <i className={`${item.icon} me-3`} style={{ width: "20px" }}></i>
-                            {item.label}
-                        </a>
-                    ))}
+                                onMouseEnter={(e) => {
+                                    if (activeTab !== item.id) {
+                                        e.currentTarget.style.backgroundColor = "#FF6B00";
+                                        e.currentTarget.style.color = "white";
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (activeTab !== item.id) {
+                                        e.currentTarget.style.backgroundColor = "transparent";
+                                        e.currentTarget.style.color = "white";
+                                    }
+                                }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setActiveTab(item.id);
+                                }}
+                            >
+                                <i className={`${item.icon} me-3`} style={{ width: "20px" }}></i>
+                                {item.label}
+                            </a>
+                        );
+                    })}
                 </div>
             </div>
         </div>
@@ -156,5 +170,3 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 };
 
 export default ProfileSidebar;
-
-

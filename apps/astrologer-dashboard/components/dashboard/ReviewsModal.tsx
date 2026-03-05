@@ -69,8 +69,20 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                             <div key={review.id} className="border-b border-gray-50 pb-6 last:border-0 last:pb-0">
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center">
-                                            <User className="w-5 h-5 text-yellow-600" />
+                                        <div className="w-10 h-10 bg-yellow-50 rounded-full flex items-center justify-center overflow-hidden border border-yellow-100 flex-shrink-0">
+                                            {review.user.avatar ? (
+                                                <img
+                                                    src={review.user.avatar}
+                                                    alt={review.user.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        (e.target as any).src = ""; // Clear src if it fails
+                                                        (e.target as any).style.display = 'none'; // Hide image
+                                                    }}
+                                                />
+                                            ) : (
+                                                <User className="w-5 h-5 text-yellow-600" />
+                                            )}
                                         </div>
                                         <div>
                                             <p className="font-semibold text-gray-900">{review.user.name}</p>

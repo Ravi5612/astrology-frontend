@@ -27,8 +27,9 @@ export async function GET(request: Request) {
 
     // 2. Fetch Horoscope Data
     const today = new Date().toISOString();
+    const lang = searchParams.get("lang") || "en"; // default English
     const dataResponse = await fetch(
-      `https://api.prokerala.com/v2/horoscope/daily/advanced?sign=${sign}&datetime=${today}&type=all`,
+      `https://api.prokerala.com/v2/horoscope/daily/advanced?sign=${sign}&datetime=${today}&type=all&lang=${lang}`,
       {
         headers: {
           Authorization: `Bearer ${tokenData.access_token}`,
@@ -38,6 +39,31 @@ export async function GET(request: Request) {
     );
 
     const result = await dataResponse.json();
+
+    // 3. Fallback Translation if lang=hi (Prokerala advanced doesn't return Hindi text)
+    if (lang === "hi" && result.data && result.data.daily_predictions) {
+      try {
+        const translateText = async (text: string) => {
+          const res = await fetch(
+            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q=${encodeURIComponent(
+              text
+            )}`
+          );
+          const json = await res.json();
+          return json[0].map((item: any) => item[0]).join("");
+        };
+
+        const predictions = result.data.daily_predictions[0].predictions;
+        for (let i = 0; i < predictions.length; i++) {
+          predictions[i].prediction = await translateText(predictions[i].prediction);
+          if (predictions[i].seek) predictions[i].seek = await translateText(predictions[i].seek);
+          if (predictions[i].challenge) predictions[i].challenge = await translateText(predictions[i].challenge);
+          if (predictions[i].insight) predictions[i].insight = await translateText(predictions[i].insight);
+        }
+      } catch (translateError) {
+        console.error("Translation failed, falling back to English:", translateError);
+      }
+    }
 
     // Response with CORS headers for safety
     return NextResponse.json(result, {

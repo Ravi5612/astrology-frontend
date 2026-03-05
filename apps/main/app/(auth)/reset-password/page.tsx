@@ -6,8 +6,13 @@ import React, { useState, FormEvent, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import { toast } from "react-toastify";
+import { useLanguageStore } from "@/store/languageStore";
+import { authTranslations } from "@/lib/translations/auth";
 
 const ResetPasswordContent: React.FC = () => {
+    const { lang } = useLanguageStore();
+    const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
@@ -20,26 +25,26 @@ const ResetPasswordContent: React.FC = () => {
 
     useEffect(() => {
         if (!token) {
-            toast.error("Invalid or missing reset token.");
+            toast.error(t.resetPassword.errors.invalidToken);
             router.push("/sign-in");
         }
-    }, [token, router]);
+    }, [token, router, t.resetPassword.errors.invalidToken]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         if (!password) {
-            toast.error("Password is required.");
+            toast.error(t.resetPassword.errors.required);
             return;
         }
 
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match.");
+            toast.error(t.resetPassword.errors.match);
             return;
         }
 
         if (password.length < 6) {
-            toast.error("Password must be at least 6 characters long.");
+            toast.error(t.resetPassword.errors.length);
             return;
         }
 
@@ -54,9 +59,9 @@ const ResetPasswordContent: React.FC = () => {
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                toast.error(data?.message || "Failed to reset password. The link may have expired.");
+                toast.error(data?.message || t.resetPassword.errors.failed);
             } else {
-                toast.success(data?.message || "Password reset successful!");
+                toast.success(data?.message || t.resetPassword.successMessage);
                 setIsSuccess(true);
                 setTimeout(() => { router.push("/sign-in"); }, 3000);
             }
@@ -74,22 +79,31 @@ const ResetPasswordContent: React.FC = () => {
                     <div className="col-lg-6">
                         <div className="form-data shadow-sm p-4 rounded-xl bg-white">
                             <div className="sign-in-heading mb-4 text-center">
-                                <h2 style={{ color: "var(--primary-color)" }}>Reset Password</h2>
-                                <p className="text-muted">Enter your new password below.</p>
+                                <h2
+                                    style={{ color: "var(--primary-color)", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                >
+                                    {t.resetPassword.title}
+                                </h2>
+                                <p
+                                    className="text-muted"
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                >
+                                    {t.resetPassword.subtitle}
+                                </p>
                             </div>
 
                             {!isSuccess ? (
                                 <form onSubmit={handleSubmit}>
                                     <div className="form-group mb-3">
                                         <label htmlFor="password" className="form-label fw-semibold">
-                                            New Password *
+                                            {t.resetPassword.passwordLabel}
                                         </label>
                                         <div className="position-relative">
                                             <input
                                                 type={showPassword ? "text" : "password"}
                                                 id="password"
                                                 className="form-control"
-                                                placeholder="Enter New Password"
+                                                placeholder={t.resetPassword.passwordPlaceholder}
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
@@ -107,13 +121,13 @@ const ResetPasswordContent: React.FC = () => {
 
                                     <div className="form-group mb-4">
                                         <label htmlFor="confirmPassword" className="form-label fw-semibold">
-                                            Confirm New Password *
+                                            {t.resetPassword.confirmPasswordLabel}
                                         </label>
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             id="confirmPassword"
                                             className="form-control"
-                                            placeholder="Confirm New Password"
+                                            placeholder={t.resetPassword.confirmPasswordPlaceholder}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             required
@@ -125,7 +139,7 @@ const ResetPasswordContent: React.FC = () => {
                                         className="btn w-100 py-2 fw-semibold bg-primary hover:bg-primary-hover text-white border-0 transition-all font-bold"
                                         disabled={isLoading}
                                     >
-                                        {isLoading ? "Resetting..." : "Reset Password"}
+                                        {isLoading ? t.resetPassword.resetting : t.resetPassword.submit}
                                     </button>
                                 </form>
                             ) : (
@@ -133,11 +147,18 @@ const ResetPasswordContent: React.FC = () => {
                                     <div className="mb-4">
                                         <i className="fa-solid fa-circle-check text-success" style={{ fontSize: "4rem" }}></i>
                                     </div>
-                                    <h3>Success!</h3>
-                                    <p className="text-muted">Your password has been reset successfully. Redirecting you to sign in...</p>
+                                    <h3 style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                        {t.resetPassword.successTitle}
+                                    </h3>
+                                    <p
+                                        className="text-muted"
+                                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                                    >
+                                        {t.resetPassword.successMessage}
+                                    </p>
                                     <div className="mt-4">
                                         <Link href="/sign-in" className="btn bg-primary hover:bg-primary-hover text-white border-0 transition-all font-bold px-4">
-                                            Go to Sign In Now
+                                            {t.resetPassword.goToSignIn}
                                         </Link>
                                     </div>
                                 </div>

@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { loginAction } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import { API_CONFIG } from "@/lib/api-config";
+import { useLanguageStore } from "@/store/languageStore";
+import { authTranslations } from "@/lib/translations/auth";
 
 const Image = NextImage as any;
 const Link = NextLink as any;
@@ -16,12 +18,15 @@ const SignInForm: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clientLogin } = useAuthStore();
+  const { lang } = useLanguageStore();
   const callbackUrl = searchParams.get("callbackUrl") || "/profile";
+
+  const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
 
   React.useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      const message = errorParam === "google_auth_failed" ? "Google login failed." : decodeURIComponent(errorParam);
+      const message = errorParam === "google_auth_failed" ? t.signIn.errors.googleFailed : decodeURIComponent(errorParam);
       toast.error(message);
       // Clean up URL
       router.replace(window.location.pathname);
@@ -50,7 +55,7 @@ const SignInForm: React.FC = () => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      toast.error("Email and Password are required.");
+      toast.error(t.signIn.errors.required);
       return;
     }
 
@@ -67,12 +72,12 @@ const SignInForm: React.FC = () => {
         // Just update the Zustand UI state — NO token passed to client
         clientLogin(result.user);
 
-        toast.success("Sign In successful!");
+        toast.success(t.signIn.success);
         // Redirect to callback URL or profile page
         router.push(callbackUrl);
       }
     } catch {
-      toast.error("An unexpected error occurred.");
+      toast.error(t.signIn.errors.unexpected);
     } finally {
       setIsLoading(false);
     }
@@ -94,25 +99,25 @@ const SignInForm: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-gray-50">
         <div>
           <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
-            Welcome to
+            {t.signIn.welcome}
           </h6>
           <span className="text-xl font-black text-orange block">
-            Astrology Bharat
+            {t.signIn.brandName}
           </span>
         </div>
         <div className="text-left sm:text-right">
           <h6 className="text-gray-400 text-[10px] uppercase tracking-[0.15em] mb-0.5">
-            No Account?
+            {t.signIn.noAccount}
           </h6>
           <Link href="/register" className="text-base font-bold text-[#4A1D1F] hover:text-orange transition-all">
-            Sign Up
+            {t.signIn.signUp}
           </Link>
         </div>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-3xl font-black text-[#301118]">Sign In</h2>
-        <p className="text-gray-400 text-sm mt-1 font-medium">Access your personalized cosmic insights</p>
+        <h2 className="text-3xl font-black text-[#301118]">{t.signIn.title}</h2>
+        <p className="text-gray-400 text-sm mt-1 font-medium">{t.signIn.subtitle}</p>
       </div>
 
       <div className="mb-6">
@@ -128,7 +133,7 @@ const SignInForm: React.FC = () => {
             width={20}
             className="group-hover:scale-110 transition-transform"
           />
-          <span className="font-bold text-gray-600 text-sm">Continue with Google</span>
+          <span className="font-bold text-gray-600 text-sm">{t.signIn.google}</span>
         </button>
       </div>
 
@@ -136,20 +141,20 @@ const SignInForm: React.FC = () => {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-50"></div>
         </div>
-        <span className="relative px-3 text-[10px] font-black text-gray-300 bg-white uppercase tracking-[0.2em]">OR WITH EMAIL</span>
+        <span className="relative px-3 text-[10px] font-black text-gray-300 bg-white uppercase tracking-[0.2em]">{t.signIn.orEmail}</span>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-            Email Address
+            {t.signIn.emailLabel}
           </label>
           <input
             type="email"
             id="email"
             name="email"
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-            placeholder="example@mail.com"
+            placeholder={t.signIn.emailPlaceholder}
             value={formData.email}
             onChange={handleInputChange}
             required
@@ -158,7 +163,7 @@ const SignInForm: React.FC = () => {
 
         <div>
           <label htmlFor="password" className="block text-[11px] font-black text-black mb-1.5 uppercase tracking-wider">
-            Password
+            {t.signIn.passwordLabel}
           </label>
           <div className="relative">
             <input
@@ -166,7 +171,7 @@ const SignInForm: React.FC = () => {
               id="password"
               name="password"
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-orange focus:ring-4 focus:ring-orange/5 outline-none transition-all placeholder:text-gray-300 text-black font-semibold text-sm"
-              placeholder="••••••••"
+              placeholder={t.signIn.passwordPlaceholder}
               value={formData.password}
               onChange={handleInputChange}
               required
@@ -186,7 +191,7 @@ const SignInForm: React.FC = () => {
             href="/forgot-password"
             className="text-xs font-bold text-gray-300 hover:text-orange transition-all"
           >
-            Forgot Password?
+            {t.signIn.forgotPassword}
           </Link>
         </div>
 
@@ -198,9 +203,9 @@ const SignInForm: React.FC = () => {
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Signing In...
+              {t.signIn.signingIn}
             </span>
-          ) : "Sign In Account"}
+          ) : t.signIn.submit}
         </button>
       </form>
     </div>

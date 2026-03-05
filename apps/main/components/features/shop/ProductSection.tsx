@@ -10,6 +10,8 @@ const SearchIcon = Search as any;
 const XIcon = X as any;
 
 import { Product } from "@/lib/types";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 interface ProductSectionProps {
     products: Product[];
@@ -34,6 +36,8 @@ const ProductSkeleton = () => {
 };
 
 const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
+    const { lang } = useLanguageStore();
+    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
     const [searchQuery, setSearchQuery] = useState("");
 
     // Filter products based on search query
@@ -51,12 +55,11 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                 <div className="max-w-2xl">
                     <h2 className="text-[32px] font-semibold mb-[35px] relative pb-[15px] text-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#a9a9a92b] after:w-full inline-block md:block">
                         <span className="relative after:content-[''] after:bg-orange after:w-full after:h-[2px] after:absolute after:left-0 after:bottom-[-15px]">
-                            Astrology Products
+                            {t.products.title}
                         </span>
                     </h2>
                     <p className="text-gray-700 m-0 font-medium">
-                        Energized & Expert-Recommended Astrology Products for Positive
-                        Life Changes
+                        {t.products.subtitle}
                     </p>
                 </div>
                 <div className="w-full md:w-auto flex justify-start md:justify-end">
@@ -68,7 +71,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search products..."
+                                placeholder={t.products.searchPlaceholder}
                                 className="w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-10 text-base outline-none transition-all 
                                     hover:border-orange focus:border-orange focus:ring-1 focus:ring-orange placeholder-gray-400 text-gray-700 bg-white"
                             />
@@ -96,7 +99,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                 ) : filteredProducts.length === 0 ? (
                     <div className="w-full text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
                         <p className="text-gray-500 font-medium text-lg">
-                            No products found for "{searchQuery}"
+                            {t.products.noResults.replace("{query}", searchQuery)}
                         </p>
                     </div>
                 ) : (

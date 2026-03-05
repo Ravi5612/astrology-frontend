@@ -19,7 +19,10 @@ import {
     GiSparkles,
     GiGoldBar,
     GiDiamonds,
+    GiLotus,
 } from "react-icons/gi";
+import { useLanguageStore } from "@/store/languageStore";
+import { dahejTranslations } from "@/lib/translations/calculators/dahej";
 
 import { ResultData, JewelrySet } from "@/lib/types";
 import {
@@ -28,7 +31,6 @@ import {
     jewelrySets,
     landProperties,
 } from "./constants";
-import { JewelrySet } from "@/lib/types";
 import {
     normalizeName,
     hashSeed,
@@ -41,6 +43,9 @@ import { ProgressBar } from "./ProgressBar";
 import { IncludedItemCard } from "./IncludedItemCard";
 
 const DahejCalculatorPage = () => {
+    const { lang, toggleLang } = useLanguageStore();
+    const t = dahejTranslations[lang as keyof typeof dahejTranslations] || dahejTranslations.en;
+
     const [fullName, setFullName] = useState("");
     const [job, setJob] = useState("");
     const [dob, setDob] = useState("");
@@ -99,25 +104,32 @@ const DahejCalculatorPage = () => {
         const ageContribution = Math.max(10, Math.min(40, 50 - Math.abs(age - 28) * 2));
         const salaryContribution = Math.max(5, Math.min(30, salaryNum / 100000));
 
-        // Select items based on hash
-        const carIndex = (nameHash + jobHash) % cars.length;
-        const jewelryIndex = (dobHash + jobHash) % jewelrySets.length;
-        const landIndex = (nameHash + dobHash) % landProperties.length;
+        // Select items based on hash from translated lists
+        const carIndex = (nameHash + jobHash) % t.cars.length;
+        const jewelryIndex = (dobHash + jobHash) % t.jewelrySets.length;
+        const landIndex = (nameHash + dobHash) % t.landProperties.length;
 
-        const selectedCar = cars[carIndex];
-        const selectedJewelry = jewelrySets[jewelryIndex];
-        const selectedLand = landProperties[landIndex];
+        const selectedCar = t.cars[carIndex] || cars[carIndex] || "";
+        const baseJewelry = (jewelrySets[jewelryIndex] || jewelrySets[0])!;
+        const transJewelry = t.jewelrySets[jewelryIndex];
+        const selectedJewelry: JewelrySet = {
+            ...baseJewelry,
+            name: transJewelry?.name || baseJewelry.name,
+            items: [...(transJewelry?.items || baseJewelry.items)],
+            icon: baseJewelry.icon,
+        };
+        const selectedLand = t.landProperties[landIndex] || landProperties[landIndex] || "";
 
         // Determine item tier based on dahej amount
-        let itemTier = "Standard";
-        if (baseDahej >= 5000000 && baseDahej < 15000000) itemTier = "Premium";
-        else if (baseDahej >= 15000000) itemTier = "Luxury";
+        let itemTier = lang === "hi" ? "मानक" : "Standard";
+        if (baseDahej >= 5000000 && baseDahej < 15000000) itemTier = lang === "hi" ? "प्रीमियम" : "Premium";
+        else if (baseDahej >= 15000000) itemTier = lang === "hi" ? "लग्जरी" : "Luxury";
 
-        const message = getMessageByDahej(baseDahej);
+        const messageKey = getMessageByDahej(baseDahej);
 
         setResult({
             dahej: Math.round(baseDahej),
-            formattedDahej: formatIndianCurrency(baseDahej),
+            formattedDahej: formatIndianCurrency(baseDahej, lang === "hi" ? { lakh: "लाख", cr: "करोड़" } : { lakh: "Lakh", cr: "Cr" }),
             age,
             jobTier,
             itemTier,
@@ -132,7 +144,7 @@ const DahejCalculatorPage = () => {
                 jewelry: selectedJewelry,
                 land: selectedLand,
             },
-            message,
+            message: t.messages[messageKey],
         });
 
         setTimeout(() => {
@@ -168,19 +180,34 @@ const DahejCalculatorPage = () => {
 
                 <div className="container relative z-10 px-6">
                     <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+                        <div className="flex justify-center mb-6">
+                            <button
+                                onClick={toggleLang}
+                                className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 transition-all group"
+                            >
+                                <img
+                                    src={lang === "en" ? "https://flagcdn.com/w40/in.png" : "https://flagcdn.com/w40/us.png"}
+                                    alt="flag"
+                                    className="w-5 h-3.5 object-cover rounded-sm group-hover:scale-110 transition-transform"
+                                />
+                                <span className="text-xs font-black uppercase tracking-widest">
+                                    {lang === "en" ? "हिन्दी" : "English"}
+                                </span>
+                            </button>
+                        </div>
                         <span className="inline-block bg-[#d4af37] text-[#301118] px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[4px] mb-8">
-                            Premium Dahej Estimation
+                            {t.hero.badge}
                         </span>
 
                         <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-none overflow-visible py-2">
-                            Dahej{" "}
+                            {t.hero.titleMain}{" "}
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] via-[#f4d03f] to-[#d4af37]">
-                                Calculator
+                                {t.hero.titleAccent}
                             </span>
                         </h1>
 
                         <p className="text-xl md:text-2xl text-orange-100/60 leading-relaxed font-light italic mb-12">
-                            A complete estimation including car, jewelry, and land properties. For entertainment purposes only!
+                            {t.hero.paragraph}
                         </p>
                     </div>
                 </div>
@@ -196,10 +223,10 @@ const DahejCalculatorPage = () => {
 
                         <div className="text-center mb-10">
                             <h2 className="text-xl md:text-3xl font-black text-[#301118] mb-2 tracking-tight">
-                                Enter Details for <span className="text-[#d4af37] underline decoration-[#d4af37]/30 decoration-2 underline-offset-4">Complete Estimation</span>
+                                {t.form.title.split("{complete}")[0]}<span className="text-[#d4af37] underline decoration-[#d4af37]/30 decoration-2 underline-offset-4">{t.form.complete}</span>{t.form.title.split("{complete}")[1]}
                             </h2>
                             <p className="text-sm text-[#301118]/50 italic mt-2">
-                                *This calculator is purely for entertainment and fun. All results are randomly generated.
+                                {t.form.subTitle}
                             </p>
                             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-2"></div>
                         </div>
@@ -210,7 +237,7 @@ const DahejCalculatorPage = () => {
                                     {/* Full Name */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                                            Full Name
+                                            {t.form.fullName}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -218,7 +245,7 @@ const DahejCalculatorPage = () => {
                                                 required
                                                 style={{ borderRadius: "9999px" }}
                                                 className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-[#d4af37] outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                                                placeholder="Enter full name..."
+                                                placeholder={t.form.fullNamePlaceholder}
                                                 value={fullName}
                                                 onChange={(e) => setFullName(e.target.value)}
                                             />
@@ -231,7 +258,7 @@ const DahejCalculatorPage = () => {
                                     {/* Profession */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                                            Profession
+                                            {t.form.profession}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -239,7 +266,7 @@ const DahejCalculatorPage = () => {
                                                 required
                                                 style={{ borderRadius: "9999px" }}
                                                 className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-[#d4af37] outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                                                placeholder="e.g., Engineer, Doctor, Teacher"
+                                                placeholder={t.form.professionPlaceholder}
                                                 value={job}
                                                 onChange={(e) => setJob(e.target.value)}
                                             />
@@ -252,7 +279,7 @@ const DahejCalculatorPage = () => {
                                     {/* Date of Birth */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                                            Date of Birth
+                                            {t.form.dob}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -272,7 +299,7 @@ const DahejCalculatorPage = () => {
                                     {/* Annual Salary */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                                            Annual Salary (₹)
+                                            {t.form.salary}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -282,7 +309,7 @@ const DahejCalculatorPage = () => {
                                                 step="10000"
                                                 style={{ borderRadius: "9999px" }}
                                                 className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-[#d4af37] outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                                                placeholder="e.g., 800000"
+                                                placeholder={t.form.salaryPlaceholder}
                                                 value={salary}
                                                 onChange={(e) => setSalary(e.target.value)}
                                             />
@@ -301,11 +328,11 @@ const DahejCalculatorPage = () => {
                                         className="relative group inline-flex items-center gap-3 bg-gradient-to-r from-[#d4af37] to-[#f4d03f] text-[#301118] px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:opacity-90 transition-all duration-500 shadow-xl disabled:opacity-50"
                                     >
                                         {loading ? <FaSpinner className="animate-spin" /> : <TbCrystalBall size={18} />}
-                                        {loading ? "Calculating..." : "Estimate Dahej"}
+                                        {loading ? t.form.calculating : t.form.button}
                                         <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                                     </button>
                                     <p className="text-xs text-[#301118]/40 mt-3 italic">
-                                        Note: Results are randomly generated for entertainment
+                                        {t.form.note}
                                     </p>
                                 </div>
                             </div>
@@ -332,14 +359,14 @@ const DahejCalculatorPage = () => {
                                     <div className="relative z-10">
                                         <div className="text-center mb-16">
                                             <span className="inline-block bg-[#d4af37]/10 text-[#d4af37] px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                                                Complete Estimation Results
+                                                {t.results.badge}
                                             </span>
 
                                             <h2 className="text-4xl md:text-6xl font-black text-[#301118] mb-6 tracking-tight">
-                                                Your <span className="text-[#d4af37]">Dahej Package</span>
+                                                {t.results.title.split("{package}")[0]} <span className="text-[#d4af37]">{t.results.package}</span>
                                             </h2>
                                             <p className="text-lg text-[#301118]/60 mb-4">
-                                                Tier: <span className="font-black text-[#d4af37]">{result.itemTier}</span> Package
+                                                {t.results.tierLabel} <span className="font-black text-[#d4af37]">{result.itemTier}</span> {t.results.packageLabel}
                                             </p>
                                             <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mb-16"></div>
                                         </div>
@@ -354,7 +381,7 @@ const DahejCalculatorPage = () => {
                                                             {result.formattedDahej}
                                                         </span>
                                                         <span className="text-[12px] font-black uppercase tracking-[4px] text-[#d4af37] mt-4 block">
-                                                            Total Estimated Value
+                                                            {t.results.totalValue}
                                                         </span>
                                                     </div>
                                                     <GiDiamonds className="absolute -top-4 -right-4 text-[#d4af37] text-5xl animate-bounce shadow-xl" />
@@ -371,7 +398,7 @@ const DahejCalculatorPage = () => {
                                                         "{result.message}"
                                                     </p>
                                                     <p className="text-sm text-orange-100/60 mt-4 italic">
-                                                        Age: {result.age} years | Profession Tier: {result.jobTier}/4
+                                                        {t.results.age}: {result.age} {t.results.years} | {t.results.jobTier}: {result.jobTier}/4
                                                     </p>
                                                 </div>
                                             </div>
@@ -381,10 +408,10 @@ const DahejCalculatorPage = () => {
                                                 <div className="w-full mb-16">
                                                     <div className="text-center mb-12">
                                                         <h3 className="text-3xl font-black text-[#301118] mb-4 tracking-tight">
-                                                            What's Included
+                                                            {t.results.includedTitle}
                                                         </h3>
                                                         <p className="text-[#301118]/60 max-w-2xl mx-auto">
-                                                            Your estimated dahej package includes the following premium items:
+                                                            {t.results.includedDesc}
                                                         </p>
                                                     </div>
 
@@ -392,9 +419,9 @@ const DahejCalculatorPage = () => {
                                                         {/* Car */}
                                                         <IncludedItemCard
                                                             icon={<FaCar size={28} className="text-[#d4af37]" />}
-                                                            title="Car"
+                                                            title={t.results.items.car}
                                                             items={[result.includedItems.car]}
-                                                            description="Premium vehicle for comfortable transportation"
+                                                            description={t.results.items.carDesc}
                                                         />
 
                                                         {/* Jewelry */}
@@ -402,15 +429,15 @@ const DahejCalculatorPage = () => {
                                                             icon={<FaGem size={28} className="text-[#d4af37]" />}
                                                             title={result.includedItems.jewelry.name}
                                                             items={result.includedItems.jewelry.items}
-                                                            description="Exclusive jewelry set for special occasions"
+                                                            description={t.results.items.jewelryDesc}
                                                         />
 
                                                         {/* Land */}
                                                         <IncludedItemCard
                                                             icon={<FaHome size={28} className="text-[#d4af37]" />}
-                                                            title="Land Property"
+                                                            title={t.results.items.land}
                                                             items={[result.includedItems.land]}
-                                                            description="Prime real estate for future development"
+                                                            description={t.results.items.landDesc}
                                                         />
                                                     </div>
                                                 </div>
@@ -420,21 +447,21 @@ const DahejCalculatorPage = () => {
                                             <div className="w-full max-w-3xl bg-[#fffcf6] rounded-[3rem] p-8 md:p-12 border border-yellow-100">
                                                 <div className="flex items-center justify-between mb-10">
                                                     <h4 className="text-xl font-black text-[#301118] tracking-tight m-0">
-                                                        Estimation Factors
+                                                        {t.results.factorsTitle}
                                                     </h4>
                                                     <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-yellow-50 flex items-center gap-2">
                                                         <FaStar className="text-[#d4af37]" size={14} />
                                                         <span className="text-xs font-black text-[#d4af37] uppercase tracking-widest">
-                                                            Contribution Weight
+                                                            {t.results.weightLabel}
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 <div className="space-y-8">
-                                                    <ProgressBar label="Name Influence" value={result.breakdown.name} max={50} />
-                                                    <ProgressBar label="Profession Impact" value={result.breakdown.job} max={50} />
-                                                    <ProgressBar label="Age Factor" value={result.breakdown.age} max={50} />
-                                                    <ProgressBar label="Salary Consideration" value={result.breakdown.salary} max={50} />
+                                                    <ProgressBar label={t.factors.name} value={result.breakdown.name} max={50} />
+                                                    <ProgressBar label={t.factors.job} value={result.breakdown.job} max={50} />
+                                                    <ProgressBar label={t.factors.age} value={result.breakdown.age} max={50} />
+                                                    <ProgressBar label={t.factors.salary} value={result.breakdown.salary} max={50} />
                                                 </div>
 
                                                 <div className="mt-10 flex items-start gap-4 bg-white rounded-2xl p-6 border border-yellow-50 shadow-sm">
@@ -443,10 +470,10 @@ const DahejCalculatorPage = () => {
                                                     </div>
                                                     <div>
                                                         <p className="m-0 text-sm font-black text-[#301118]">
-                                                            Remember!
+                                                            {t.results.remember}
                                                         </p>
                                                         <p className="m-0 text-sm text-gray-500 italic leading-relaxed">
-                                                            True partnerships are built on love, respect, and mutual understanding—not material possessions. This calculator is for entertainment only.
+                                                            {t.results.rememberDesc}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -455,9 +482,7 @@ const DahejCalculatorPage = () => {
                                             {/* Disclaimer */}
                                             <div className="mt-12 p-6 bg-red-50 border border-red-100 rounded-2xl max-w-2xl">
                                                 <p className="text-sm text-red-600 text-center italic">
-                                                    ⚠️ <strong>Important Disclaimer:</strong> This calculator is purely for entertainment purposes.
-                                                    Dowry (Dahej) is illegal in India under the Dowry Prohibition Act, 1961.
-                                                    We strongly discourage the practice of dowry and promote equality in partnerships.
+                                                    {t.results.disclaimer}
                                                 </p>
                                             </div>
                                         </div>

@@ -30,8 +30,20 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, loading }) =>
                     <div key={review.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                         <div className="flex justify-between items-start mb-2">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <User className="w-4 h-4 text-gray-400" />
+                                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
+                                    {review.user.avatar ? (
+                                        <img
+                                            src={review.user.avatar}
+                                            alt={review.user.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as any).src = "";
+                                                (e.target as any).style.display = 'none';
+                                            }}
+                                        />
+                                    ) : (
+                                        <User className="w-4 h-4 text-gray-400" />
+                                    )}
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">{review.user.name}</p>

@@ -3,7 +3,7 @@ import {
     GiRing,
     GiDiamonds,
     GiNecklace,
-    GiWristwatch,
+    GiWatch,
     GiGoldBar,
 } from "react-icons/gi";
 
@@ -89,7 +89,7 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Modern Collection",
         items: ["1 Platinum Watch", "2 Diamond Studs", "Gold Chain with Pendant", "2 Gold Rings"],
-        icon: <GiWristwatch className="text-gray-300" />
+        icon: <GiWatch className="text-gray-300" />
     },
     {
         name: "Royal Heritage",
@@ -109,7 +109,7 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Business Executive",
         items: ["Rolex Watch", "2 Platinum Rings", "Gold Chain", "Cufflinks"],
-        icon: <GiWristwatch className="text-gray-600" />
+        icon: <GiWatch className="text-gray-600" />
     },
     {
         name: "Wedding Set",

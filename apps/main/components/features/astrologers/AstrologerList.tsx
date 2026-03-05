@@ -25,9 +25,11 @@ const SwiperSlide = SwiperSlideComp as any;
 
 import AstrologerListHeader from "./AstrologerListHeader";
 import AstrologerFilterModal from "./AstrologerFilterModal";
-
+import AstrologerSortModal from "./AstrologerSortModal";
 
 import { getApiUrl, getBasePath } from "@/utils/api-config";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const API_BASE_URL = getApiUrl();
 
@@ -98,8 +100,10 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
   initialPagination,
   initialError,
   layout = 'slider',
-  title = "Find Your Astrologer",
+  title,
 }) => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -185,8 +189,8 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
     if (initialError) {
       toast.error(
         initialError === "server_unreachable"
-          ? "Server is unreachable. Please check your connection."
-          : "Failed to load experts"
+          ? (lang === 'hi' ? "सर्वर तक नहीं पहुँचा जा सकता। कृपया अपना कनेक्शन जांचें।" : "Server is unreachable. Please check your connection.")
+          : (lang === 'hi' ? "विशेषज्ञों को लोड करने में विफल" : "Failed to load experts")
       );
     }
 
@@ -289,7 +293,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
         setAstrologers((prev) => [...prev, ...mappedData]);
         setHasMore(pagination.hasMore);
       } catch (error) {
-        toast.error("Failed to load more astrologers");
+        toast.error(lang === 'hi' ? "और ज्योतिषी लोड करने में विफल" : "Failed to load more astrologers");
         console.error(error);
       } finally {
         setLoading(false);
@@ -357,7 +361,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
         <div className="relative mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {title}
+            {title || t.astrologerSection.title}
           </h2>
           <div className="w-48 h-1 bg-orange"></div>
         </div>
@@ -383,6 +387,14 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
           setLocalFilter={setLocalFilter}
           applyFilters={applyFilters}
           resetFilters={resetFilters}
+        />
+
+        {/* Sort Modal */}
+        <AstrologerSortModal
+          modalId={sortModalId}
+          sortBy={filterState.sortBy}
+          setSortBy={(val) => setFilterState({ ...filterState, sortBy: val })}
+          applySort={() => { }} // Logic is handled via setFilterState which triggers effect
         />
 
 
@@ -418,12 +430,12 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
                 ))
               ) : !loading && initialError ? (
                 <div className="w-full text-center py-10 flex flex-col items-center justify-center">
-                  <p className="text-red-500 font-semibold mb-2">Failed to load astrologers</p>
-                  <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">Retry</button>
+                  <p className="text-red-500 font-semibold mb-2">{lang === 'hi' ? "ज्योतिषियों को लोड करने में विफल" : "Failed to load astrologers"}</p>
+                  <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">{lang === 'hi' ? "पुन: प्रयास करें" : "Retry"}</button>
                 </div>
               ) : !loading && astrologers.length === 0 ? (
                 <div className="w-full text-center py-10">
-                  <p className="text-gray-500 font-medium">No astrologers found matching your criteria.</p>
+                  <p className="text-gray-500 font-medium">{t.astrologerSection.noResults.title}</p>
                 </div>
               ) : (
                 Array.from({ length: 4 }).map((_, i) => (
@@ -465,12 +477,12 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
                 ))
               ) : !loading && initialError ? (
                 <div className="col-12 text-center py-10">
-                  <p className="text-red-500 font-semibold mb-2">Failed to load astrologers</p>
-                  <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">Retry</button>
+                  <p className="text-red-500 font-semibold mb-2">{t.astrologerSection.failedToLoad}</p>
+                  <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">{t.astrologerSection.retry}</button>
                 </div>
               ) : !loading && astrologers.length === 0 ? (
                 <div className="col-12 text-center py-10">
-                  <p className="text-gray-500 font-medium">No astrologers found matching your criteria.</p>
+                  <p className="text-gray-500 font-medium">{t.astrologerSection.noResults.title}</p>
                 </div>
               ) : (
                 Array.from({ length: 8 }).map((_, i) => (
@@ -495,7 +507,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
                   onClick={handleLoadMore}
                   className="bg-white border border-orange text-orange px-8 py-2.5 rounded-full font-bold hover:bg-orange hover:text-white transition-all duration-300 shadow-md mx-auto"
                 >
-                  Load More Experts
+                  {t.astrologerSection.loadMore}
                 </button>
               </div>
             )}
@@ -505,7 +517,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
         {layout === 'slider' && (
           <div className="view-all mt-4">
             <Link href="/our-astrologers" className="bg-orange hover:opacity-90 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit">
-              <i className="fa-regular fa-user"></i> View All Astrologers
+              <i className="fa-regular fa-user"></i> {t.astrologerSection.viewAllAstrologers}
             </Link>
           </div>
         )}

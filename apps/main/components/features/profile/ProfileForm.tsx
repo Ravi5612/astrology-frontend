@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useLanguageStore } from '@/store/languageStore';
+import { profileTranslations } from '@/lib/translations/profile';
 import { Button } from "@repo/ui";
 import PhoneVerifyModal from './PhoneVerifyModal';
 
@@ -40,6 +42,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     handleSaveSection,
     refreshProfile,
 }) => {
+    const { lang } = useLanguageStore();
+    const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
+
     const [copied, setCopied] = useState(false);
     const [showPhoneVerify, setShowPhoneVerify] = useState(false);
 
@@ -54,11 +59,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             {/* Personal Details Card */}
             <div className="card border-0 shadow-sm rounded-4 mb-4">
                 <div className="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 className="fw-bold mb-0">
+                    <h5
+                        className="fw-bold mb-0"
+                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                    >
                         <span className="me-2 p-2 rounded-circle" style={{ backgroundColor: "rgba(242, 94, 10, 0.1)", color: "var(--primary)" }}>
                             <i className="fa-regular fa-id-card"></i>
                         </span>
-                        Personal Details
+                        {t.personalDetails.title}
                     </h5>
                     {!editingSections.personal ? (
                         <Button
@@ -66,9 +74,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                             size="md"
                             onClick={() => setEditingSections(prev => ({ ...prev, personal: true }))}
                             className="shadow-orange-200"
+                            style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                         >
                             <i className="fa-solid fa-pen-to-square"></i>
-                            Edit Profile
+                            {t.personalDetails.edit}
                         </Button>
                     ) : (
                         <div className="flex gap-2">
@@ -76,8 +85,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 variant="secondary"
                                 size="md"
                                 onClick={() => setEditingSections(prev => ({ ...prev, personal: false }))}
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Cancel
+                                {t.personalDetails.cancel}
                             </Button>
                             <Button
                                 variant="success"
@@ -85,8 +95,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 loading={savingSections.personal}
                                 onClick={() => handleSaveSection('personal')}
                                 className="shadow-green-200"
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Save Changes
+                                {t.personalDetails.save}
                             </Button>
                         </div>
                     )}
@@ -96,31 +107,35 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
 
                         <div className="col-md-12">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">User ID</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.userId}
+                            </label>
                             <div className="d-flex align-items-center gap-2">
                                 <span
                                     className="fw-bold mb-0 px-3 py-1 rounded-full text-sm"
                                     style={{ backgroundColor: "rgba(255,107,0,0.1)", color: "#FF6B00", letterSpacing: "0.05em", fontFamily: "monospace" }}
                                 >
-                                    {clientUser?.uid || "Not assigned"}
+                                    {clientUser?.uid || t.personalDetails.notAssigned}
                                 </span>
                                 {clientUser?.uid && (
                                     <button
                                         type="button"
-                                        title={copied ? "Copied!" : "Copy ID"}
+                                        title={copied ? t.personalDetails.copied : t.personalDetails.copyId}
                                         className={`btn btn-sm px-2 py-1 ${copied ? 'btn-success' : 'btn-outline-secondary'}`}
                                         style={{ fontSize: "11px", transition: "all 0.2s" }}
                                         onClick={handleCopy}
                                     >
                                         <i className={`fa-${copied ? 'solid fa-check' : 'regular fa-copy'}`}></i>
-                                        {copied && <span className="ms-1" style={{ fontSize: "10px" }}>Copied!</span>}
+                                        {copied && <span className="ms-1" style={{ fontSize: "10px", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>{t.personalDetails.copied}</span>}
                                     </button>
                                 )}
                             </div>
                         </div>
 
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">User Name</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.userName}
+                            </label>
                             {editingSections.personal ? (
                                 <input
                                     type="text"
@@ -129,30 +144,38 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                     onChange={(e) => handleInputChange('username', e.target.value)}
                                 />
                             ) : (
-                                <p className="fw-bold mb-0">{profileData.username || "Not set"}</p>
+                                <p className="fw-bold mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.username || t.personalDetails.notSet}
+                                </p>
                             )}
                         </div>
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">EMAIL ADDRESS</label>
-                            <p className="fw-bold mb-0">{clientUser?.email || "Not set"}</p>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.email}
+                            </label>
+                            <p className="fw-bold mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {clientUser?.email || t.personalDetails.notSet}
+                            </p>
                         </div>
                         <div className="col-md-6">
                             <div className="d-flex align-items-center gap-2 mb-1">
-                                <label className="text-muted small fw-bold text-uppercase mb-0">PHONE NUMBER</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.personalDetails.phone}
+                                </label>
                                 {profileData.phone && (
                                     profileData.phone_verified_at ? (
                                         <span
                                             className="badge px-2 py-1 d-inline-flex align-items-center gap-1"
-                                            style={{ backgroundColor: "rgba(25,135,84,0.1)", color: "#198754", fontSize: "10px" }}
+                                            style={{ backgroundColor: "rgba(25,135,84,0.1)", color: "#198754", fontSize: "10px", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                         >
-                                            <i className="fa-solid fa-circle-check"></i> VERIFIED
+                                            <i className="fa-solid fa-circle-check"></i> {t.personalDetails.verified}
                                         </span>
                                     ) : (
                                         <span
                                             className="badge px-2 py-1 d-inline-flex align-items-center gap-1"
-                                            style={{ backgroundColor: "rgba(220,53,69,0.1)", color: "#dc3545", fontSize: "10px" }}
+                                            style={{ backgroundColor: "rgba(220,53,69,0.1)", color: "#dc3545", fontSize: "10px", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                         >
-                                            <i className="fa-solid fa-circle-xmark"></i> UNVERIFIED
+                                            <i className="fa-solid fa-circle-xmark"></i> {t.personalDetails.unverified}
                                         </span>
                                     )
                                 )}
@@ -166,100 +189,121 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 />
                             ) : (
                                 <div className="d-flex align-items-center gap-2">
-                                    <p className="fw-bold mb-0">{profileData.phone || "Not set"}</p>
+                                    <p className="fw-bold mb-0">{profileData.phone || t.personalDetails.notSet}</p>
                                     {profileData.phone && !profileData.phone_verified_at && (
                                         <button
                                             type="button"
                                             onClick={() => setShowPhoneVerify(true)}
                                             className="btn btn-sm px-3 py-1 lh-1 text-white fw-bold"
-                                            style={{ fontSize: "11px", backgroundColor: "#fd6410", borderColor: "#fd6410" }}
+                                            style={{ fontSize: "11px", backgroundColor: "#fd6410", borderColor: "#fd6410", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                         >
-                                            Verify Now
+                                            {t.personalDetails.verifyNow}
                                         </button>
                                     )}
                                 </div>
                             )}
                         </div>
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">GENDER</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.gender}
+                            </label>
                             {editingSections.personal ? (
                                 <select
                                     className="form-select fw-bold"
                                     value={profileData.gender || ""}
                                     onChange={(e) => handleInputChange('gender', e.target.value as any)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 >
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="male">{t.personalDetails.genders.male}</option>
+                                    <option value="female">{t.personalDetails.genders.female}</option>
+                                    <option value="other">{t.personalDetails.genders.other}</option>
                                 </select>
                             ) : (
-                                <p className="fw-bold mb-0 text-capitalize">{profileData.gender || "Not set"}</p>
+                                <p className="fw-bold mb-0 text-capitalize" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.gender ? t.personalDetails.genders[profileData.gender as keyof typeof t.personalDetails.genders] : t.personalDetails.notSet}
+                                </p>
                             )}
                         </div>
 
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">MARITAL STATUS</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.maritalStatus}
+                            </label>
                             {editingSections.personal ? (
                                 <select
                                     className="form-select fw-bold"
                                     value={profileData.marital_status || ""}
                                     onChange={(e) => handleInputChange('marital_status', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 >
-                                    <option value="">Select Status</option>
-                                    <option value="single">Single</option>
-                                    <option value="married">Married</option>
-                                    <option value="divorced">Divorced</option>
-                                    <option value="widowed">Widowed</option>
-                                    <option value="other">Other</option>
+                                    <option value="">{t.personalDetails.maritalStatuses.select}</option>
+                                    <option value="single">{t.personalDetails.maritalStatuses.single}</option>
+                                    <option value="married">{t.personalDetails.maritalStatuses.married}</option>
+                                    <option value="divorced">{t.personalDetails.maritalStatuses.divorced}</option>
+                                    <option value="widowed">{t.personalDetails.maritalStatuses.widowed}</option>
+                                    <option value="other">{t.personalDetails.maritalStatuses.other}</option>
                                 </select>
                             ) : (
-                                <p className="fw-bold mb-0 text-capitalize">{profileData.marital_status || "Not set"}</p>
+                                <p className="fw-bold mb-0 text-capitalize" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.marital_status ? t.personalDetails.maritalStatuses[profileData.marital_status as keyof typeof t.personalDetails.maritalStatuses] : t.personalDetails.notSet}
+                                </p>
                             )}
                         </div>
 
                         <div className="col-md-6">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">OCCUPATION</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.occupation}
+                            </label>
                             {editingSections.personal ? (
                                 <input
                                     type="text"
                                     className="form-control fw-bold"
                                     value={profileData.occupation || ""}
                                     onChange={(e) => handleInputChange('occupation', e.target.value)}
-                                    placeholder="e.g. Software Engineer, Business Owner"
+                                    placeholder={t.personalDetails.occupationPlaceholder}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             ) : (
-                                <p className="fw-bold mb-0">{profileData.occupation || "Not set"}</p>
+                                <p className="fw-bold mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.occupation || t.personalDetails.notSet}
+                                </p>
                             )}
                         </div>
 
                         <div className="col-md-12">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">ABOUT ME / NOTES FOR ASTROLOGER</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.personalDetails.aboutMe}
+                            </label>
                             {editingSections.personal ? (
                                 <textarea
                                     className="form-control fw-bold"
                                     rows={3}
                                     value={profileData.about_me || ""}
                                     onChange={(e) => handleInputChange('about_me', e.target.value)}
-                                    placeholder="Share your spiritual journey or specific problems you're seeking guidance for..."
+                                    placeholder={t.personalDetails.aboutMePlaceholder}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             ) : (
-                                <p className="fw-medium mb-0 text-gray-600 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-200">
-                                    {profileData.about_me || "Share details about yourself to help astrologers provide better guidance."}
+                                <p className="fw-medium mb-0 text-gray-600 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-200" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.about_me || t.personalDetails.aboutMeFallback}
                                 </p>
                             )}
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
 
             {/* Address Details Card */}
-            <div className="card border-0 shadow-sm rounded-4 mb-4">
+            < div className="card border-0 shadow-sm rounded-4 mb-4" >
                 <div className="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 className="fw-bold mb-0">
+                    <h5
+                        className="fw-bold mb-0"
+                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                    >
                         <span className="me-2 p-2 rounded-circle" style={{ backgroundColor: "#e2f8ff", color: "#00b4d8" }}>
                             <i className="fa-solid fa-location-dot"></i>
                         </span>
-                        Address Details
+                        {t.addressDetails.title}
                     </h5>
                     {!editingSections.address ? (
                         <Button
@@ -267,9 +311,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                             size="md"
                             onClick={() => setEditingSections(prev => ({ ...prev, address: true }))}
                             className="shadow-orange-200"
+                            style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                         >
                             <i className="fa-solid fa-location-dot"></i>
-                            Edit Address
+                            {t.addressDetails.edit}
                         </Button>
                     ) : (
                         <div className="flex gap-2">
@@ -277,8 +322,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 variant="secondary"
                                 size="md"
                                 onClick={() => setEditingSections(prev => ({ ...prev, address: false }))}
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Cancel
+                                {t.addressDetails.cancel}
                             </Button>
                             <Button
                                 variant="success"
@@ -286,8 +332,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 loading={savingSections.address}
                                 onClick={() => handleSaveSection('address')}
                                 className="shadow-green-200"
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Save Address
+                                {t.addressDetails.save}
                             </Button>
                         </div>
                     )}
@@ -296,57 +343,75 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     {editingSections.address ? (
                         <div className="row g-3">
                             <div className="col-md-12">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">Address Line 1</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.line1}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.line1 || ""}
                                     onChange={(e) => handleAddressChange(0, 'line1', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                             <div className="col-md-12">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">Address Line 2 (Optional)</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.line2}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.line2 || ""}
                                     onChange={(e) => handleAddressChange(0, 'line2', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                             <div className="col-md-6">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">City</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.city}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.city || ""}
                                     onChange={(e) => handleAddressChange(0, 'city', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                             <div className="col-md-6">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">State</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.state}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.state || ""}
                                     onChange={(e) => handleAddressChange(0, 'state', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                             <div className="col-md-4">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">Country</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.country}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.country || ""}
                                     onChange={(e) => handleAddressChange(0, 'country', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                             <div className="col-md-4">
-                                <label className="text-muted small fw-bold text-uppercase mb-1">Zip Code</label>
+                                <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.zipCode}
+                                </label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={profileData.addresses?.[0]?.zipCode || ""}
                                     onChange={(e) => handleAddressChange(0, 'zipCode', e.target.value)}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
                         </div>
@@ -358,27 +423,32 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                     <div>
                                         <p className="fw-bold mb-0">{profileData.addresses[0]?.line1}</p>
                                         {profileData.addresses[0]?.line2 && <p className="text-muted mb-0">{profileData.addresses[0]?.line2}</p>}
-                                        <p className="text-muted mb-0">
+                                        <p className="text-muted mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                                             {profileData.addresses[0]?.city}, {profileData.addresses[0]?.state}, {profileData.addresses[0]?.country} - {profileData.addresses[0]?.zipCode}
                                         </p>
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-muted italic mb-0">No address set. Click Edit to add one.</p>
+                                <p className="text-muted italic mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {t.addressDetails.noAddress}
+                                </p>
                             )}
                         </div>
                     )}
                 </div>
-            </div>
+            </div >
 
             {/* Astro Birth Details Card */}
-            <div className="card border-0 shadow-sm rounded-4 mb-4">
+            < div className="card border-0 shadow-sm rounded-4 mb-4" >
                 <div className="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 className="fw-bold mb-0">
+                    <h5
+                        className="fw-bold mb-0"
+                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                    >
                         <span className="me-2 p-2 rounded-circle" style={{ backgroundColor: "#f0f2f5", color: "#333" }}>
                             <i className="fa-regular fa-calendar"></i>
                         </span>
-                        Astro Birth Details
+                        {t.astroDetails.title}
                     </h5>
                     {!editingSections.astro ? (
                         <Button
@@ -386,9 +456,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                             size="md"
                             onClick={() => setEditingSections(prev => ({ ...prev, astro: true }))}
                             className="bg-purple-500 hover:bg-purple-600 shadow-purple-100"
+                            style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                         >
                             <i className="fa-solid fa-moon"></i>
-                            Edit Birth Data
+                            {t.astroDetails.edit}
                         </Button>
                     ) : (
                         <div className="flex gap-2">
@@ -396,8 +467,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 variant="secondary"
                                 size="md"
                                 onClick={() => setEditingSections(prev => ({ ...prev, astro: false }))}
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Cancel
+                                {t.astroDetails.cancel}
                             </Button>
                             <Button
                                 variant="success"
@@ -405,8 +477,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 loading={savingSections.astro}
                                 onClick={() => handleSaveSection('astro')}
                                 className="shadow-green-200"
+                                style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                Save Birth Data
+                                {t.astroDetails.save}
                             </Button>
                         </div>
                     )}
@@ -414,7 +487,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 <div className="card-body p-4">
                     <div className="row g-4">
                         <div className="col-md-4">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">DATE OF BIRTH</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.astroDetails.dob}
+                            </label>
                             {editingSections.astro ? (
                                 <input
                                     type="date"
@@ -431,12 +506,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                             month: 'short',
                                             year: 'numeric'
                                         })
-                                    ) : "Not set"}
+                                    ) : t.astroDetails.notSet}
                                 </p>
                             )}
                         </div>
                         <div className="col-md-4">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">TIME OF BIRTH</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.astroDetails.tob}
+                            </label>
                             {editingSections.astro ? (
                                 <input
                                     type="time"
@@ -445,21 +522,28 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                     onChange={(e) => handleInputChange('time_of_birth', e.target.value)}
                                 />
                             ) : (
-                                <p className="fw-bold mb-0 text-dark"><i className="fa-regular fa-clock me-2 text-warning"></i>{profileData.time_of_birth || "Not set"}</p>
+                                <p className="fw-bold mb-0 text-dark">
+                                    <i className="fa-regular fa-clock me-2 text-warning"></i>{profileData.time_of_birth || t.astroDetails.notSet}
+                                </p>
                             )}
                         </div>
                         <div className="col-md-4">
-                            <label className="text-muted small fw-bold text-uppercase mb-1">BIRTH PLACE</label>
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                {t.astroDetails.pob}
+                            </label>
                             {editingSections.astro ? (
                                 <input
                                     type="text"
                                     className="form-control fw-bold"
                                     value={profileData.place_of_birth || ""}
                                     onChange={(e) => handleInputChange('place_of_birth', e.target.value)}
-                                    placeholder="City, Country"
+                                    placeholder={t.astroDetails.pobPlaceholder}
+                                    style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             ) : (
-                                <p className="fw-bold mb-0 text-dark"><i className="fa-solid fa-location-dot me-2 text-warning"></i>{profileData.place_of_birth || "Not set"}</p>
+                                <p className="fw-bold mb-0 text-dark" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    <i className="fa-solid fa-location-dot me-2 text-warning"></i>{profileData.place_of_birth || t.astroDetails.notSet}
+                                </p>
                             )}
                         </div>
                     </div>

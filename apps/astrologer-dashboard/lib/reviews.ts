@@ -18,15 +18,18 @@ export interface ReviewStats {
 }
 
 export const getExpertReviewStats = async (expertId: number): Promise<ReviewStats> => {
-    const response: any = await apiClient.get(`/reviews/expert/${expertId}/stats`);
+    const response: any = await apiClient.get(`/reviews/expert/${expertId}/stats`, {
+        timeoutMs: 20000
+    });
     return response?.data ?? response;
 };
 
 export const getExpertReviews = async (expertId: number, page: number = 1, limit: number = 10) => {
     const response: any = await apiClient.get(`/reviews/expert/${expertId}`, {
-        params: { page, limit }
+        params: { page, limit },
+        timeoutMs: 30000
     });
-    return response?.data ?? response;
+    return response;
 };
 
 

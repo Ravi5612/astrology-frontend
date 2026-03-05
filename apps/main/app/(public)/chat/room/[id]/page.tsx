@@ -835,11 +835,18 @@ function ChatRoomContent() {
                                     <div className={`w-full ${isDarkMode ? 'bg-white/5' : 'bg-gray-50'} rounded-2xl p-5 mb-6 space-y-3 flex-shrink-0`}>
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="opacity-50 font-bold uppercase tracking-tighter">Total Duration</span>
-                                            <span className="font-black">{sessionSummary?.durationMins || 0} Minutes</span>
+                                            <span className="font-black">
+                                                {sessionSummary?.durationMins ? (
+                                                    <>
+                                                        {Math.floor(sessionSummary.durationMins) > 0 && `${Math.floor(sessionSummary.durationMins)} Min `}
+                                                        {Math.round((sessionSummary.durationMins % 1) * 60)} Sec
+                                                    </>
+                                                ) : '0 Sec'}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="opacity-50 font-bold uppercase tracking-tighter">Charge per minute</span>
-                                            <span className="font-black">₹{sessionSummary?.pricePerMinute || 0}</span>
+                                            <span className="font-black">₹{sessionSummary?.pricePerMinute || (sessionSummary as any)?.price_per_minute || 0}</span>
                                         </div>
                                         <div className="h-px bg-current opacity-10"></div>
                                         {sessionSummary?.isFree && (
@@ -850,7 +857,7 @@ function ChatRoomContent() {
                                         )}
                                         <div className="flex justify-between items-center">
                                             <span className="text-[#fd6410] font-black uppercase tracking-tighter text-sm">Amount Deducted</span>
-                                            <span className="text-xl font-black">₹{sessionSummary?.totalCost || 0}</span>
+                                            <span className="text-xl font-black">₹{sessionSummary?.totalCost || (sessionSummary as any)?.total_cost || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-xs opacity-60">
                                             <span>Remaining Balance</span>

@@ -5,8 +5,13 @@ import { fetchPlaces, Place } from "@/libs/serp-api";
 import PlaceCard from "@/components/features/famous-places/PlaceCard";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
+import { useLanguageStore } from "@/store/languageStore";
+import { famousPlacesTranslations } from "@/lib/famous-places-translations";
 
 const FamousPlacesPage = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = famousPlacesTranslations[lang as keyof typeof famousPlacesTranslations] || famousPlacesTranslations.en;
+
   const [temples, setTemples] = useState<Place[]>([]);
   const [pilgrimages, setPilgrimages] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,28 +67,38 @@ const FamousPlacesPage = () => {
           <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-orange rounded-full blur-[100px]"></div>
         </div>
 
+        {/* Language Switcher — top right inside hero */}
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+            title={t.switchLangLabel}
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {t.switchLang}
+          </button>
+        </div>
+
         <div className="container relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange/10 border border-orange/20 text-orange text-xs font-bold uppercase tracking-widest mb-6 animate-fade-in">
-            <span className="text-lg leading-none">ॐ</span> Spiritual Guide & Local Directory
+            {t.badge}
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 tracking-tight text-white leading-tight">
-            Divine Destinations & <br />
-            <span className="text-orange drop-shadow-sm">Famous Places</span>
+            {t.heroTitle1} <br />
+            <span className="text-orange drop-shadow-sm">{t.heroHighlight}</span>
           </h1>
 
           <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-body leading-relaxed mb-10">
-            Unlock the spiritual energy of Bharat. Explore sacred temples in
-            Mohali and Chandigarh, or embark on a life-changing pilgrimage
-            across the holiest sites in India.
+            {t.heroDesc}
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
             <div className="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-semibold flex items-center gap-2">
-              <i className="fa-solid fa-om text-orange"></i> Verified Sites
+              <i className="fa-solid fa-om text-orange"></i> {t.verifiedSites}
             </div>
             <div className="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-semibold flex items-center gap-2">
-              <i className="fa-solid fa-map-location-dot text-orange"></i> Local Insights
+              <i className="fa-solid fa-map-location-dot text-orange"></i> {t.localInsights}
             </div>
           </div>
         </div>
@@ -102,11 +117,10 @@ const FamousPlacesPage = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-                  Sacred Temples in <span className="text-orange">Mohali & Chandigarh</span>
+                  {t.section1Title1} <span className="text-orange">{t.section1Highlight}</span>
                 </h2>
                 <p className="text-white/60 text-lg leading-relaxed font-body">
-                  Discover peace and tranquility in the finest local temples, known
-                  for their architectural beauty and spiritual significance.
+                  {t.section1Desc}
                 </p>
               </div>
               <div className="hidden md:block h-px flex-1 bg-gray-100 mx-8 mb-4"></div>
@@ -126,7 +140,7 @@ const FamousPlacesPage = () => {
                   <i className="fa-solid fa-om text-gray-300 text-2xl"></i>
                 </div>
                 <p className="text-gray-500 font-medium">
-                  No divine results found at the moment. Please try again.
+                  {t.noResults}
                 </p>
               </div>
             )}
@@ -145,11 +159,10 @@ const FamousPlacesPage = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-                  Holy Pilgrimage <span className="text-orange">Across India</span>
+                  {t.section2Title1} <span className="text-orange">{t.section2Highlight}</span>
                 </h2>
                 <p className="text-white/60 text-lg leading-relaxed font-body">
-                  Explore the widely revered pilgrimage sites that define
-                  India&apos;s rich spiritual heritage and tradition.
+                  {t.section2Desc}
                 </p>
               </div>
               <div className="hidden md:block h-px flex-1 bg-gray-100 mx-8 mb-4"></div>
@@ -169,7 +182,7 @@ const FamousPlacesPage = () => {
                   <i className="fa-solid fa-map-location-dot text-gray-300 text-2xl"></i>
                 </div>
                 <p className="text-gray-500 font-medium">
-                  Exploring India&apos;s pilgrimage sites... please check back shortly.
+                  {t.loadingText}
                 </p>
               </div>
             )}

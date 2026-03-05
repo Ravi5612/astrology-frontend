@@ -1,53 +1,67 @@
+"use client";
 import React from "react";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import NextLink from "next/link";
 import NextImage from "next/image";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const Link = NextLink as any;
 const Image = NextImage as any;
 
 const ChooseYourZodiac = () => {
+  const { lang } = useLanguageStore();
+  const tHome = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
+  const title1 = tHome.zodiac.title1;
+  const highlight = tHome.zodiac.highlight;
+  const title2 = tHome.zodiac.title2;
+  const desc = tHome.zodiac.desc;
+
   return (
-    <section
-      className="py-10 md:py-16 relative overflow-hidden"
-      style={{
-        backgroundImage: 'url(/images/white-background.png)',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-        <div className="bg-white p-5 md:p-6 rounded-[3px] shadow-[0_4px_9px_0_rgba(0,0,0,0.08)]">
-          <h2 className="text-[32px] font-semibold mb-[35px] relative pb-[15px] text-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#a9a9a92b] after:w-full">
-            <span className="relative after:content-[''] after:bg-orange after:w-full after:h-[2px] after:absolute after:left-0 after:bottom-[-15px]">
-              Choose Your Zodiac Sign
-            </span>
-          </h2>
-          <p className="text-center text-[#1a1a1a] mb-8 text-base font-medium">
-            Discover Your Daily, Monthly and Yearly Horoscope
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+    <section className="py-20 relative overflow-hidden bg-bg-light">
+      <div className="container">
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-premium border border-primary/5">
+          <div className="text-center mb-16">
+            <h2
+              className="text-4xl md:text-5xl font-black text-secondary mb-4 relative inline-block"
+              style={{
+                fontFamily:
+                  lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
+              }}
+            >
+              {title1}{" "}
+              <span className="text-primary italic">{highlight}</span>{" "}
+              {title2}
+              <div className="absolute -bottom-2 left-0 w-full h-1 bg-primary/20 rounded-full"></div>
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-lg mt-6">{desc}</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8">
             {ZodiacSignsData.map((sign) => (
               <Link
                 href={`/horoscope/${sign.title.toLowerCase()}`}
                 key={sign.id}
-                className="block h-full group no-underline"
+                className="block group no-underline"
               >
-                <div
-                  className="bg-white overflow-hidden shadow-[0_4px_8px_rgba(0,0,0,0.1)] text-center p-4 rounded-[10px] transition-all duration-300 ease-in-out text-[#1a1a1a] hover:-translate-y-1.5 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] h-full flex flex-col items-center justify-center cursor-pointer border border-[#daa23e40] hover:border-orange"
-                >
-                  <div className="relative w-24 h-24 mb-3">
+                <div className="bg-white overflow-hidden shadow-sm hover:shadow-premium-hover text-center p-6 rounded-2xl transition-all duration-500 ease-out text-secondary hover:-translate-y-2 flex flex-col items-center justify-center cursor-pointer border border-gray-100 hover:border-primary/30">
+                  <div className="relative w-24 h-24 mb-4">
+                    {/* Decorative aura on hover */}
+                    <div className="absolute inset-0 bg-primary/0 rounded-full blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
                     <Image
                       src={sign.image}
                       alt={sign.title}
                       fill
-                      className="object-contain transition-transform duration-300 group-hover:scale-110"
+                      className="object-contain relative z-10 transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
                     />
                   </div>
-                  <h3 className="text-lg font-bold mb-1 group-hover:text-orange transition-colors">
+                  <h3 className="text-xl font-black mb-1 group-hover:text-primary transition-colors tracking-tight">
                     {sign.title}
                   </h3>
-                  <p className="text-xs text-gray-500 font-medium">{sign.date}</p>
+                  <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em]">
+                    {sign.date}
+                  </p>
                 </div>
               </Link>
             ))}
@@ -59,5 +73,3 @@ const ChooseYourZodiac = () => {
 };
 
 export default ChooseYourZodiac;
-
-

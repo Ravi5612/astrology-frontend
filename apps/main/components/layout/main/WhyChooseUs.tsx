@@ -1,7 +1,13 @@
+"use client";
 import React from "react";
 import homepageData from "../../../public/data/homepage.json";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const WhyChooseUs = () => {
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
   // Split into left and right columns (3 each)
   const leftItems = homepageData.whyChooseUs.slice(0, 3);
   const rightItems = homepageData.whyChooseUs.slice(3, 6);
@@ -13,10 +19,10 @@ const WhyChooseUs = () => {
         {/* Header - Top Left aligned */}
         <div className="mb-12 text-left">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Why Choose Astrology in Bharat
+            {t.whyChooseUs.title}
           </h2>
           <p className="text-[#dfdfdf] text-sm md:text-base">
-            Trusted Astrology. Accurate Guidance. Complete Privacy.
+            {t.whyChooseUs.subtitle}
           </p>
         </div>
 
@@ -24,14 +30,14 @@ const WhyChooseUs = () => {
 
           {/* Left Cards */}
           <div className="md:col-span-4 space-y-4">
-            {leftItems.map((item) => (
+            {leftItems.map((item, index) => (
               <div
                 key={item.id}
                 className="bg-[#1e0b0fa6] border border-white/20 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center hover:border-white/40 transition-all duration-300"
               >
                 <i className={`fa-solid ${item.icon} text-3xl text-white mb-4`}></i>
                 <h4 className="text-white text-lg font-bold leading-tight">
-                  {item.title}
+                  {t.whyChooseUs.reasons[index]}
                 </h4>
               </div>
             ))}
@@ -62,14 +68,14 @@ const WhyChooseUs = () => {
 
           {/* Right Cards */}
           <div className="md:col-span-4 space-y-4">
-            {rightItems.map((item) => (
+            {rightItems.map((item, index) => (
               <div
                 key={item.id}
                 className="bg-[#1e0b0fa6] border border-white/20 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-center hover:border-white/40 transition-all duration-300"
               >
                 <i className={`fa-solid ${item.icon} text-3xl text-white mb-4`}></i>
                 <h4 className="text-white text-lg font-bold leading-tight">
-                  {item.title}
+                  {t.whyChooseUs.reasons[index + 3]}
                 </h4>
               </div>
             ))}

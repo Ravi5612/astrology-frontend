@@ -5,8 +5,13 @@ import { useParams } from "next/navigation";
 import { fetchPlaceImages, getPlaceBySlug, Place } from "@/libs/serp-api";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguageStore } from "@/store/languageStore";
+import { famousPlacesTranslations } from "@/lib/famous-places-translations";
 
 const PlaceDetailPage = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = famousPlacesTranslations[lang as keyof typeof famousPlacesTranslations] || famousPlacesTranslations.en;
+
   const { slug } = useParams();
   const [place, setPlace] = useState<Place | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -42,12 +47,12 @@ const PlaceDetailPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white p-6">
         <div className="text-center p-6 bg-white rounded-lg border border-slate-200 max-w-sm">
-          <h2 className="text-base font-bold text-brown mb-1">Not Found</h2>
+          <h2 className="text-base font-bold text-brown mb-1">{t.detail.notFound}</h2>
           <Link
             href="/famous-places"
             className="text-xs font-bold text-orange"
           >
-            Return to Directory
+            {t.detail.returnDirectory}
           </Link>
         </div>
       </div>
@@ -92,10 +97,22 @@ const PlaceDetailPage = () => {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Directory
+              {t.detail.directory}
             </Link>
-            <div className="px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest">
-              {place.category}
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={toggleLang}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3 py-1 rounded-full text-[10px] font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+                title={t.switchLangLabel}
+              >
+                <span>{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+                {t.switchLang}
+              </button>
+
+              <div className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest">
+                {place.category || t.card.sacredSite}
+              </div>
             </div>
           </div>
         </div>
@@ -114,7 +131,7 @@ const PlaceDetailPage = () => {
               </div>
               <div className="w-1 h-1 rounded-full bg-white/40"></div>
               <span className="text-[10px] font-bold uppercase tracking-tight">
-                Verified Sacred Site
+                {t.detail.verifiedSite}
               </span>
             </div>
             <h1 className="text-3xl md:text-5xl font-display font-bold leading-tight tracking-tight drop-shadow-sm">
@@ -153,10 +170,10 @@ const PlaceDetailPage = () => {
               </div>
               <div className="pr-4">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
-                  Location
+                  {t.detail.location}
                 </span>
                 <p className="text-[13px] text-brown leading-relaxed font-semibold">
-                  {place.address}
+                  {place.address || t.card.noAddress}
                 </p>
               </div>
             </div>
@@ -165,7 +182,7 @@ const PlaceDetailPage = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Divine Visuals
+                  {t.detail.visuals}
                 </span>
                 <div className="flex-1 h-px bg-slate-100"></div>
               </div>
@@ -189,27 +206,19 @@ const PlaceDetailPage = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-orange uppercase tracking-widest">
-                  Divine Heritage
+                  {t.detail.heritage}
                 </span>
                 <div className="flex-1 h-px bg-slate-100"></div>
               </div>
               <div className="grid md:grid-cols-5 gap-6">
                 <div className="md:col-span-3">
                   <p className="text-[13px] text-slate-600 leading-relaxed">
-                    Explore the profound architectural marvel and spiritual
-                    significance of {place.title}. Known for its historical
-                    depth, this sacred site offers a sanctuary for peace and
-                    meditation.
+                    {t.detail.descriptionTemplate.replace("{title}", place.title)}
                   </p>
                 </div>
                 <div className="md:col-span-2 bg-slate-50/50 rounded-lg p-5 border border-slate-100/50">
                   <div className="space-y-3">
-                    {[
-                      "Ideal Visit: Brahma Muhurta",
-                      "Media: Limited zones",
-                      "Attire: Traditional preferred",
-                      "Offerings: Local essentials",
-                    ].map((item, i) => (
+                    {t.detail.guidelines.map((item, i) => (
                       <div
                         key={i}
                         className="flex items-center gap-2.5 text-[11px] font-bold text-[#301118]/70"
@@ -231,7 +240,7 @@ const PlaceDetailPage = () => {
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
                 <div className="bg-brown px-6 py-3.5 flex justify-between items-center text-white">
                   <h4 className="text-[10px] font-bold uppercase tracking-widest">
-                    Plan Your Visit
+                    {t.detail.planTitle}
                   </h4>
                   <svg
                     className="w-3 h-3 text-orange"
@@ -246,7 +255,7 @@ const PlaceDetailPage = () => {
                   <div className="space-y-3.5 pb-4">
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                        Darshan Timings
+                        {t.detail.timings}
                       </span>
                       <span className="text-[12px] font-bold text-brown">
                         05:00 - 21:00
@@ -254,7 +263,7 @@ const PlaceDetailPage = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                        Special Aarti
+                        {t.detail.aarti}
                       </span>
                       <span className="text-[12px] font-bold text-brown">
                         06:30 & 19:30
@@ -262,10 +271,10 @@ const PlaceDetailPage = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                        Entry Fee
+                        {t.detail.fee}
                       </span>
                       <span className="text-[12px] font-bold text-green-600">
-                        Free Darshan
+                        {t.detail.free}
                       </span>
                     </div>
                   </div>
@@ -276,7 +285,7 @@ const PlaceDetailPage = () => {
                     rel="noopener noreferrer"
                     className="block w-full bg-orange hover:bg-brown text-white py-3 rounded-xl font-bold text-[11px] text-center no-underline transition-all uppercase tracking-widest"
                   >
-                    Get Directions
+                    {t.detail.directions}
                   </a>
                 </div>
               </div>
@@ -285,13 +294,13 @@ const PlaceDetailPage = () => {
               <div className="bg-[#FFF9F5] p-6 rounded-2xl border border-primary/10 border-dashed">
                 <h4 className="text-[10px] font-bold text-brown uppercase tracking-widest mb-2 flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange"></span>
-                  Need Guidance?
+                  {t.detail.needGuidance}
                 </h4>
                 <p className="text-[12px] text-slate-500 mb-5 leading-relaxed">
-                  Book a personalized spiritual consultation for your visit.
+                  {t.detail.supportDesc}
                 </p>
                 <button className="w-full bg-white border border-brown text-brown hover:bg-brown hover:text-white py-2.5 rounded-lg font-bold text-[11px] transition-all uppercase tracking-widest">
-                  Consult Now
+                  {t.detail.consultNow}
                 </button>
               </div>
             </div>
