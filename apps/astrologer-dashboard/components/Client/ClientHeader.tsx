@@ -1,5 +1,5 @@
 import React from "react";
-import { Search } from "lucide-react";
+import { Search, History } from "lucide-react";
 
 interface ClientHeaderProps {
     searchTerm: string;
@@ -11,9 +11,12 @@ export default function ClientHeader({
     setSearchTerm,
 }: ClientHeaderProps) {
     return (
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
-                Clients & Consultation History
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 pt-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-0 flex items-center gap-3">
+                <span className="w-10 h-10 rounded-full flex items-center justify-center bg-[#e3f2fd] text-[#1e88e5]">
+                    <History size={20} />
+                </span>
+                Consultation History
             </h1>
             <div className="relative w-full sm:w-64">
                 <input

@@ -16,8 +16,8 @@
             "icon": "Coins"
         },
         {
-            "label": "Clients History",
-            "href": "/dashboard/client-history",
+            "label": "Consultation History",
+            "href": "/dashboard/consultation-history",
             "icon": "History"
         },
         {
@@ -29,6 +29,11 @@
             "label": "My Wallet",
             "href": "/dashboard/wallet",
             "icon": "Wallet"
+        },
+        {
+            "label": "Product",
+            "href": "/dashboard/product",
+            "icon": "ShoppingBag"
         },
         {
             "label": "Account",

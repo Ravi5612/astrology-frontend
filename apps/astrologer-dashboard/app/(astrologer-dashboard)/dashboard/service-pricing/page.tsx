@@ -183,7 +183,7 @@ const ServicePricingPage = () => {
   }
 
   return (
-    <div className="p-4 sm:p-8 min-h-screen bg-gray-50">
+    <div className="p-4 sm:p-8 min-h-screen">
       {/* Header Section */}
       <div className="max-w-3xl mx-auto text-center mb-12 flex flex-col items-center">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-yellow-700 tracking-tight">

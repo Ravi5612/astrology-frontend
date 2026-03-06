@@ -14,6 +14,7 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AuthService } from "@/services/auth.service";
 import QueryProvider from "@/providers/QueryProvider";
+import SmoothScroll from "@/components/layout/SmoothScroll";
 
 // Google Fonts setup
 const outfit = Outfit({
@@ -68,7 +69,9 @@ export default async function RootLayout({
           <AuthInitializer initialUser={user}>
             <CartInitializer>
               <WishlistInitializer>
-                <ClientLayout>{children}</ClientLayout>
+                <SmoothScroll>
+                  <ClientLayout>{children}</ClientLayout>
+                </SmoothScroll>
               </WishlistInitializer>
             </CartInitializer>
           </AuthInitializer>

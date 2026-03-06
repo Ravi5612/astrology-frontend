@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface ConsultationChatModalProps {
     isOpen: boolean;
@@ -15,7 +16,20 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
     chatMessages,
     userAvatar,
 }) => {
-    if (!isOpen || !selectedSession) return null;
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            setMounted(false);
+        };
+    }, [isOpen]);
+
+    if (!mounted || !isOpen || !selectedSession) return null;
 
     const renderMessageContent = (msg: any) => {
         const content = msg.content || "";
@@ -28,7 +42,8 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                             background: "linear-gradient(135deg, #fff9c4 0%, #fff176 100%)",
                             border: "1px solid #fdd835",
                             maxWidth: "100%",
-                            minWidth: "260px"
+                            width: "100%",
+                            minWidth: "280px"
                         }}>
                         <div className="position-absolute top-0 end-0 p-2 opacity-10">
                             <i className="fa-solid fa-dharmachakra fa-3x"></i>
@@ -54,7 +69,7 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                                 <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Time</label>
                                 <p className="mb-0 fw-bold text-dark small">{data.tob || 'N/A'}</p>
                             </div>
-                            <div className="col-12 mt-2">
+                            <div className="col-12 mt-2 border-top border-dark border-opacity-10 pt-2">
                                 <label className="text-uppercase text-muted fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>Place of Birth</label>
                                 <p className="mb-0 fw-bold text-dark small"><i className="fa-solid fa-location-dot me-1 text-danger opacity-50"></i> {data.pob || 'N/A'}</p>
                             </div>
@@ -74,7 +89,7 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
         selectedSession.expert?.image ||
         "/images/dummy-astrologer.jpg";
 
-    return (
+    return createPortal(
         <div
             className="position-fixed d-flex align-items-center justify-content-center"
             style={{
@@ -83,9 +98,12 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                 right: 0,
                 bottom: 0,
                 backgroundColor: "rgba(0,0,0,0.75)",
-                zIndex: 99999,
+                zIndex: 999999,
                 backdropFilter: "blur(10px)",
-                padding: "20px"
+                padding: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
             }}
             onClick={onClose}
         >
@@ -94,9 +112,10 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                 style={{
                     maxWidth: "600px",
                     width: "100%",
-                    maxHeight: "85vh",
+                    maxHeight: "90vh",
                     position: "relative",
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+                    zIndex: 1000000
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -139,7 +158,7 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                 </div>
 
                 {/* Chat Messages */}
-                <div className="p-4 overflow-auto" style={{ maxHeight: "60vh" }}>
+                <div className="p-4 overflow-auto" style={{ maxHeight: "calc(90vh - 180px)" }} data-lenis-prevent>
                     {chatMessages.length === 0 ? (
                         <div className="text-center py-5">
                             <i className="fa-solid fa-message fa-3x text-muted mb-3"></i>
@@ -158,10 +177,17 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                                 if (isAdmin) {
                                     const isEnded = content.toLowerCase().includes('end') || content.toLowerCase().includes('finish') || content.toLowerCase().includes('close');
                                     return (
-                                        <div key={msg.id || index} className="text-center my-2">
+                                        <div key={msg.id || index} className="text-center my-3 w-100">
                                             <span
-                                                className={`px-3 py-1 rounded-pill font-bold shadow-sm ${isEnded ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-light text-muted'}`}
-                                                style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                                                className={`px-4 py-2 rounded-pill font-bold shadow-sm d-inline-block border ${isEnded ? 'border-danger border-opacity-25' : 'border-light'}`}
+                                                style={{
+                                                    fontSize: '11px',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.05em',
+                                                    backgroundColor: isEnded ? 'rgba(220, 53, 69, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                                    color: isEnded ? '#dc3545' : '#6c757d',
+                                                    minWidth: '200px'
+                                                }}
                                             >
                                                 {msg.content}
                                             </span>
@@ -238,13 +264,18 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                 <div className="p-4 border-top bg-light">
                     <div className="d-flex gap-2 justify-content-between align-items-center">
                         <div className="d-flex gap-2 flex-wrap">
-                            <span className="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2">
-                                <i className="fa-solid fa-clock me-1"></i>
-                                Duration: {selectedSession.durationMins || selectedSession.duration_mins || selectedSession.duration || 0} mins
+                            <span
+                                className="badge px-3 py-2 rounded-pill d-flex align-items-center gap-1 border border-secondary border-opacity-10"
+                                style={{ backgroundColor: 'rgba(74, 29, 31, 0.1)', color: '#4A1D1F' }}
+                            >
+                                <i className="fa-solid fa-clock opacity-50"></i>
+                                Duration: {selectedSession.durationString || `${selectedSession.durationMins || selectedSession.duration_mins || selectedSession.duration || 0} mins`}
                             </span>
                             {(selectedSession.totalCost > 0 || selectedSession.total_cost > 0) && (
-                                <span className="badge bg-dark bg-opacity-10 text-dark px-3 py-2">
-                                    <i className="fa-solid fa-indian-rupee-sign me-1"></i>
+                                <span
+                                    className="badge px-3 py-2 rounded-pill d-flex align-items-center gap-1 bg-dark bg-opacity-10 text-dark border border-dark border-opacity-10"
+                                >
+                                    <i className="fa-solid fa-indian-rupee-sign opacity-50"></i>
                                     Cost: ₹{selectedSession.totalCost || selectedSession.total_cost}
                                 </span>
                             )}
@@ -258,7 +289,8 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

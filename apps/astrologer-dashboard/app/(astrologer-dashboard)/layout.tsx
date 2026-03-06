@@ -42,7 +42,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <ChatNotificationListener />
       <CallNotificationListener />
-      <div className="min-h-screen bg-gray-50 flex">
+      <div className="min-h-screen flex bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat bg-fixed relative">
         {/* Sidebar */}
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 

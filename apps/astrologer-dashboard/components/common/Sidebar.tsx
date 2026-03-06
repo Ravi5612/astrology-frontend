@@ -64,7 +64,7 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
     return (
       <button
         onClick={item.onClick}
-        className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 text-white hover:bg-[#2d1111] mt-auto"
+        className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-white hover:!bg-[#fd6410] mt-auto"
       >
         <item.icon className="w-5 h-5 shrink-0" />
         <span>{item.label}</span>
@@ -77,10 +77,10 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
       <Link
         href={item.href}
         className={cn(
-          "flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
+          "flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
           isActiveLink
-            ? "bg-[#2d1111] text-white shadow-lg"
-            : "text-white hover:bg-[#2d1111]/80"
+            ? "bg-[#fd6410] text-white shadow-lg"
+            : "text-white hover:!bg-[#fd6410]"
         )}
         aria-current={isActiveLink ? "page" : undefined}
       >
@@ -95,8 +95,8 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
       <button
         onClick={() => onToggleSubmenu(item.label)}
         className={cn(
-          "w-full px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-between text-white hover:bg-[#2d1111] transition-colors duration-200",
-          isSubmenuOpen && "bg-[#2d1111]"
+          "w-full px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-between text-white hover:!bg-[#fd6410] transition-all duration-200",
+          isSubmenuOpen && "bg-[#fd6410]"
         )}
         aria-expanded={isSubmenuOpen}
         aria-controls={`submenu-${item.label.replace(/\s/g, "-").toLowerCase()}`}
@@ -124,7 +124,7 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
                 <button
                   key={subItem.label}
                   onClick={subItem.onClick}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-[#2d1111]/80 transition-colors duration-200"
+                  className="block w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:!bg-[#fd6410] transition-all duration-200"
                 >
                   {subItem.label}
                 </button>
@@ -135,8 +135,8 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
                 key={subItem.label}
                 href={subItem.href}
                 className={cn(
-                  "block px-3 py-2 rounded-lg text-sm text-white hover:bg-[#2d1111]/80 transition-colors duration-200",
-                  isSubmenuActive && "bg-[#2d1111] text-white font-medium"
+                  "block px-3 py-2 rounded-lg text-sm text-white hover:!bg-[#fd6410] transition-all duration-200",
+                  isSubmenuActive && "bg-[#fd6410] text-white font-medium"
                 )}
                 aria-current={isSubmenuActive ? "page" : undefined}
               >
@@ -196,7 +196,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(
 
         <aside
           className={cn(
-            "fixed left-0 top-0 h-full w-64 flex flex-col bg-[#fd6410] text-white transition-transform duration-300 ease-in-out z-50 overflow-y-auto no-scrollbar shadow-xl",
+            "fixed left-0 top-0 h-full w-64 flex flex-col bg-[#301118] text-white transition-transform duration-300 ease-in-out z-50 overflow-y-auto no-scrollbar shadow-xl",
             isOpen ? "translate-x-0" : "-translate-x-full",
             "lg:translate-x-0"
           )}

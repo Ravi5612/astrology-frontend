@@ -77,7 +77,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
                 isRefreshing = true;
                 const refreshUrl = isServer ? `${getBasePath()}/api/v1/auth/refresh` : "/api/v1/auth/refresh";
                 refreshPromise = safeFetch(refreshUrl, {
-                    method: "GET",
+                    method: "POST",
                     credentials: "include",
                 } as any).then(([, refreshError]) => {
                     isRefreshing = false;

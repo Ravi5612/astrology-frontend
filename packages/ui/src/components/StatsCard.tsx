@@ -25,7 +25,7 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
     let gridColsClass = "sm:grid-cols-2 xl:grid-cols-4"; // Default
 
     if (columns === 2) gridColsClass = "sm:grid-cols-2";
-    if (columns === 3) gridColsClass = "sm:grid-cols-3";
+    if (columns === 3) gridColsClass = "md:grid-cols-3 lg:grid-cols-3";
     // Force 4 columns on medium (md) screens and up, as requested
     if (columns === 4) gridColsClass = "sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4";
 
@@ -46,7 +46,7 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
                         {/* CONTENT */}
                         <div className="relative z-10 flex items-start gap-3">
                             {/* LEFT TEXT */}
-                            <div className="flex-1 min-w-0 overflow-hidden">
+                            <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-600 mb-1 truncate">
                                     {stat.title}
                                 </p>

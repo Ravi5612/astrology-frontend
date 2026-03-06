@@ -651,7 +651,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
         style={{ backdropFilter: 'saturate(160%) blur(8px)' }}
       >
         <div className="max-w-[1320px] mx-auto px-8 lg:px-16 py-3">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             {/* Logo + Nav — takes most of the space */}
             <div className="flex-1">
               <nav className="flex items-center">
@@ -690,7 +690,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   style={isMenuOpen ? { top: '100%', maxHeight: '80vh', overflowY: 'auto' } : {}}
                 >
                   <ul
-                    className={`flex items-center gap-2 xl:gap-4 ${isMenuOpen
+                    className={`flex items-center gap-2 xl:gap-8 translate-y-2 ${isMenuOpen
                       ? 'flex-col items-start w-full py-2 px-3 gap-0'
                       : 'flex-row mx-auto'
                       }`}
