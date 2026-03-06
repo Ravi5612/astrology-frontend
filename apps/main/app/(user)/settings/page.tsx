@@ -47,8 +47,8 @@ export default function ClientSettingsPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await apiClient.get('/client/profile');
-        const data = res.data;
+        const res = await apiClient.get<any>('/client/profile');
+        const data = res.data ?? res;
 
         setFormData({
           full_name: data.user.name || "",

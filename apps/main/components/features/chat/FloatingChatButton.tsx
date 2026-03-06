@@ -25,7 +25,7 @@ export default function FloatingChatButton() {
             try {
                 // Securely fetch the active session for this client from backend
                 const response = await apiClient.get('/chat/sessions/active-client');
-                const session = response.data;
+                const session = (response as any).data ?? response;
 
                 console.log("[FloatingChatDebug] Backend response:", session);
 

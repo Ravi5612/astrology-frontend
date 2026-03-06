@@ -9,6 +9,7 @@ export interface ClientUser {
     roles?: string[];   // Array format (backward compat)
     avatar?: string;    // Current active avatar
     profile_picture?: string; // Specifically the user's uploaded picture
+    phone?: string;
 }
 
 export const AuthService = {

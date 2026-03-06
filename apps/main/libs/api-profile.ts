@@ -25,7 +25,7 @@ export const uploadClientDocument = async (file: File): Promise<{ url: string; m
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.post('/client/profile/upload-document', formData);
+    const response = await apiClient.post('/client/profile/upload-document', formData as any);
     return ((response as any)?.data ?? response) as { url: string; message: string };
 };
 
@@ -61,7 +61,7 @@ export const getMyOrders = async () => {
 };
 
 export const getWalletTransactions = async (params?: { purpose?: string, page?: number, limit?: number }) => {
-    const response = await apiClient.get('/wallet/transactions', { params });
+    const response = await apiClient.get('/wallet/transactions', { params } as any);
     return (response as any)?.data ?? response;
 };
 
@@ -116,7 +116,7 @@ export const getSupportSettings = async (): Promise<SupportSettings> => {
 // Disputes / Support Tickets
 
 export const createDispute = async (data: CreateDisputeDto) => {
-    const response = await apiClient.post('/support/disputes', data);
+    const response = await apiClient.post('/support/disputes', data as any);
     return unwrap(response);
 };
 

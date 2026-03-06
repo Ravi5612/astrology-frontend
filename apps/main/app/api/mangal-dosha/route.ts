@@ -98,7 +98,7 @@ export async function GET(request: Request) {
     if (!dataResponse.ok) {
       console.error("Prokerala Mangal Dosha Error Result:", result);
       return NextResponse.json(
-        { error: result.errors?.[0]?.detail || "API request failed" },
+        { error: (result as any).errors?.[0]?.detail || "API request failed" },
         { status: dataResponse.status }
       );
     }

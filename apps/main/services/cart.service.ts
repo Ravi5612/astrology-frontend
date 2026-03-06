@@ -7,7 +7,7 @@ export const CartService = {
     getCart: async () => {
         const response = await apiClient.get("/cart", {
             params: { _t: new Date().getTime() } // Anti-cache
-        });
+        } as any);
         return unwrap(response);
     },
 

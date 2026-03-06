@@ -21,7 +21,7 @@ export interface CartItem {
     };
 }
 
-interface CartState {
+export interface CartState {
     cartItems: CartItem[];
     cartCount: number;
     cartTotal: number;

@@ -36,8 +36,8 @@ export const useCart = () => {
                 if (existingItemIndex > -1) {
                     newItems[existingItemIndex] = {
                         ...newItems[existingItemIndex],
-                        quantity: newItems[existingItemIndex].quantity + quantity,
-                    };
+                        quantity: (newItems[existingItemIndex]?.quantity || 0) + quantity,
+                    } as any;
                 } else {
                     newItems.push({
                         id: Math.random(),

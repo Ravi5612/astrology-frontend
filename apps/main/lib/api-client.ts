@@ -45,6 +45,9 @@ function buildUrl(path: string): string {
     return apiPath;
 }
 
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { method = "GET", body = null, headers = {}, timeoutMs, _retry = false } = options;
 
@@ -70,13 +73,23 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     if (error) {
         // Access token may expire during session; refresh once and retry.
         if (error.status === 401 && !_retry) {
-            const refreshUrl = isServer ? `${getBasePath()}/api/v1/auth/refresh` : "/api/v1/auth/refresh";
-            const [, refreshError] = await safeFetch(refreshUrl, {
-                method: "GET",
-                credentials: "include",
-            } as any);
+            if (!isRefreshing) {
+                isRefreshing = true;
+                const refreshUrl = isServer ? `${getBasePath()}/api/v1/auth/refresh` : "/api/v1/auth/refresh";
+                refreshPromise = safeFetch(refreshUrl, {
+                    method: "GET",
+                    credentials: "include",
+                } as any).then(([, refreshError]) => {
+                    isRefreshing = false;
+                    refreshPromise = null;
+                    return !refreshError;
+                });
+            }
 
-            if (!refreshError) {
+            // Wait for the ongoing refresh to complete
+            const refreshSuccess = await refreshPromise;
+
+            if (refreshSuccess) {
                 return request<T>(path, { ...options, _retry: true });
             }
         }
@@ -97,7 +110,7 @@ export const apiClient = {
     put: <T>(path: string, body?: Record<string, unknown>, opts?: Omit<RequestOptions, "method">) =>
         request<T>(path, { ...opts, method: "PUT", body }),
 
-    patch: <T>(path: string, body?: Record<string, unknown>, opts?: Omit<RequestOptions, "method">) =>
+    patch: <T>(path: string, body?: Record<string, unknown> | FormData, opts?: Omit<RequestOptions, "method">) =>
         request<T>(path, { ...opts, method: "PATCH", body }),
 
     delete: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>
