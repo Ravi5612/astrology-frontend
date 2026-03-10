@@ -6,7 +6,7 @@
  */
 
 export const getBasePath = (): string => {
-    const rawUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const rawUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543";
     // Remove any trailing /api/v1 (recursive and case-insensitive) and trailing slashes
     return rawUrl.replace(/\/+$/, "").replace(/\/api\/v1\/?$/i, "").replace(/\/+$/, "");
 };

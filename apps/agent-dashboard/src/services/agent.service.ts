@@ -74,10 +74,17 @@ export interface RegisterUserResponse {
         referredByAgentId: string;
     };
     tempPassword: string; // ⚠️ Show once only — never store
+    emailSent?: boolean;
+    emailError?: string;
 }
 
 export const registerUserByAgent = async (payload: RegisterUserPayload): Promise<RegisterUserResponse> => {
-    return apiClient.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, payload as Record<string, any>);
+    const { userType, ...rest } = payload;
+    const body = {
+        ...rest,
+        roles: [userType], // 'expert' or 'client'
+    };
+    return apiClient.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
 };
 
 // ── Dashboard Stats ──────────────────────────────────────────────────────────

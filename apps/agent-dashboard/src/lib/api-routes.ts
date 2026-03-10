@@ -9,6 +9,6 @@ export const API_ROUTES = {
         PROFILE: '/agent/profile',
         LISTINGS: '/agent/listings',          // GET + POST
         DASHBOARD_STATS: '/agent/dashboard/stats',
-        REGISTER_USER: '/agent/register-user', // POST — register expert/client
+        REGISTER_USER: '/auth/agent/register', // POST — register expert/client
     },
 } as const;

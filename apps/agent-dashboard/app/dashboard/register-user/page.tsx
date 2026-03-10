@@ -29,7 +29,12 @@ export default function RegisterUserPage() {
             setTempPassword(res.tempPassword);
             setRegisteredUser(res.user);
             setForm(EMPTY_FORM);
-            toast.success(`${form.userType === "expert" ? "Expert" : "Client"} registered successfully! ✅`);
+
+            if (res.emailSent === false) {
+                toast.warning(`User registered, but credentials email failed to send: ${res.emailError || "Unknown error"}. Please share the password manually.`);
+            } else {
+                toast.success(`${form.userType === "expert" ? "Expert" : "Client"} registered successfully! ✅`);
+            }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed. Try again.");
         } finally {
@@ -75,8 +80,8 @@ export default function RegisterUserPage() {
                                     type="button"
                                     onClick={() => setForm((f) => ({ ...f, userType: type }))}
                                     className={`flex-1 py-2.5 rounded-xl border text-sm font-bold capitalize transition-all ${form.userType === type
-                                            ? "bg-primary text-white border-primary shadow-sm"
-                                            : "bg-gray-50 text-gray-600 border-gray-200 hover:border-primary hover:text-primary"
+                                        ? "bg-primary text-white border-primary shadow-sm"
+                                        : "bg-gray-50 text-gray-600 border-gray-200 hover:border-primary hover:text-primary"
                                         }`}
                                 >
                                     {type === "expert" ? "⭐ Expert (Astrologer)" : "👤 Client"}
@@ -130,14 +135,14 @@ export default function RegisterUserPage() {
                                 <CheckCircle className="w-7 h-7 text-green-600" />
                             </div>
                             <h3 className="text-lg font-black text-gray-900">Registration Successful!</h3>
-                            <p className="text-sm text-gray-500 mt-1">{registeredUser.name} has been registered as <span className="font-bold text-primary capitalize">{registeredUser.role}</span></p>
+                            <p className="text-sm text-gray-500 mt-1">{registeredUser.name} has been registered as <span className="font-bold text-primary capitalize">{registeredUser.roles?.[0]?.name || registeredUser.role || "user"}</span></p>
                         </div>
 
                         {/* User Details */}
                         <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-1.5">
                             <p className="text-xs text-gray-500">Name: <span className="font-bold text-gray-800">{registeredUser.name}</span></p>
                             <p className="text-xs text-gray-500">Email: <span className="font-bold text-gray-800">{registeredUser.email}</span></p>
-                            <p className="text-xs text-gray-500">Role: <span className="font-bold text-gray-800 capitalize">{registeredUser.role}</span></p>
+                            <p className="text-xs text-gray-500">Role: <span className="font-bold text-gray-800 capitalize">{registeredUser.roles?.[0]?.name || registeredUser.role || "user"}</span></p>
                         </div>
 
                         {/* Temp Password */}
