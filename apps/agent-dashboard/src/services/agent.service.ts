@@ -52,14 +52,17 @@ export const getAgentListings = async (params?: ListingParams): Promise<Listings
 };
 
 export interface ReferredUser {
-    id: number;
+    id: number | string;
     name: string;
-    email: string;
+    email: string | null;
     phone: string | null;
     status: string;
-    type: 'astrologer' | 'client';
+    type: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
     avatar: string | null;
     createdAt: string;
+    location?: string | null;
+    deity?: string | null;
+    items?: string | null;
 }
 
 export interface ReferredUsersResponse {
@@ -70,7 +73,7 @@ export interface ReferredUsersResponse {
 }
 
 export interface ReferredUsersParams {
-    type?: 'astrologer' | 'client';
+    type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
     search?: string;
     page?: number;
     limit?: number;

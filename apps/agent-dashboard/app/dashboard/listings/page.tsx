@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     Star, Users, Building2, ShoppingBag, LayoutList,
     Mail, Phone, Calendar, Search, X, UserCheck, UserX,
-    Clock, RefreshCw,
+    MapPin, Flame, Clock, RefreshCw, CheckCircle, AlertCircle,
 } from "lucide-react";
 import { getReferredUsers, type ReferredUser } from "@/src/services/agent.service";
 import { toast } from "react-toastify";
@@ -20,7 +20,6 @@ interface Tab {
     activeBg: string;
     activeText: string;
     badgeBg: string;
-    live: boolean; // false = coming soon
 }
 
 const TABS: Tab[] = [
@@ -32,77 +31,75 @@ const TABS: Tab[] = [
         activeBg: "bg-primary",
         activeText: "text-white",
         badgeBg: "bg-gray-100 text-gray-700",
-        live: true,
     },
     {
         id: "astrologer",
         label: "Astrologer",
         icon: Star,
         color: "text-yellow-600",
-        activeBg: "bg-yellow-500",
+        activeBg: "bg-yellow-700",
         activeText: "text-white",
         badgeBg: "bg-yellow-100 text-yellow-700",
-        live: true,
     },
     {
         id: "client",
         label: "Clients",
         icon: Users,
         color: "text-blue-600",
-        activeBg: "bg-blue-500",
+        activeBg: "bg-blue-700",
         activeText: "text-white",
         badgeBg: "bg-blue-100 text-blue-700",
-        live: true,
     },
     {
         id: "mandir",
         label: "Mandirs",
         icon: Building2,
         color: "text-orange-600",
-        activeBg: "bg-orange-500",
+        activeBg: "bg-orange-700",
         activeText: "text-white",
         badgeBg: "bg-orange-100 text-orange-700",
-        live: false,
     },
     {
         id: "puja_shop",
         label: "Puja Shop",
         icon: ShoppingBag,
         color: "text-purple-600",
-        activeBg: "bg-purple-500",
+        activeBg: "bg-purple-800",
         activeText: "text-white",
         badgeBg: "bg-purple-100 text-purple-700",
-        live: false,
     },
 ];
 
 // ── Avatar helper ────────────────────────────────────────────────────────────
-function UserAvatar({ user }: { user: ReferredUser }) {
-    const initials = (user.name ?? "?")
+function ListingAvatar({ item }: { item: ReferredUser }) {
+    const initials = (item.name ?? "?")
         .split(" ")
         .map((w) => w[0])
         .slice(0, 2)
         .join("")
         .toUpperCase();
 
-    const isAstrologer = user.type === "astrologer";
-
-    if (user.avatar) {
+    if (item.avatar) {
         return (
             <img
-                src={user.avatar}
-                alt={user.name}
+                src={item.avatar}
+                alt={item.name}
                 className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
             />
         );
     }
 
+    const gradientMap: Record<string, string> = {
+        astrologer: "bg-gradient-to-br from-yellow-500 to-amber-700",
+        client: "bg-gradient-to-br from-blue-500 to-indigo-700",
+        mandir: "bg-gradient-to-br from-orange-500 to-red-700",
+        puja_shop: "bg-gradient-to-br from-purple-500 to-pink-700",
+    };
+
     return (
         <div
             className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-sm ${
-                isAstrologer
-                    ? "bg-gradient-to-br from-yellow-400 to-amber-600"
-                    : "bg-gradient-to-br from-blue-400 to-indigo-600"
+                gradientMap[item.type] ?? "bg-gradient-to-br from-gray-400 to-gray-600"
             }`}
         >
             {initials}
@@ -112,94 +109,117 @@ function UserAvatar({ user }: { user: ReferredUser }) {
 
 // ── Type Badge ───────────────────────────────────────────────────────────────
 function TypeBadge({ type }: { type: ReferredUser["type"] }) {
-    if (type === "astrologer") {
-        return (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-700 border border-yellow-200">
-                <Star className="w-2.5 h-2.5" />
-                Astrologer
-            </span>
-        );
-    }
+    const config: Record<string, { bg: string; text: string; border: string; icon: React.ElementType; label: string }> = {
+        astrologer: { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200", icon: Star, label: "Astrologer" },
+        client: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200", icon: Users, label: "Client" },
+        mandir: { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-200", icon: Building2, label: "Mandir" },
+        puja_shop: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-200", icon: ShoppingBag, label: "Puja Shop" },
+    };
+
+    const c = config[type] ?? config.client;
+    const Icon = c.icon;
+
     return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
-            <Users className="w-2.5 h-2.5" />
-            Client
+        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.bg} ${c.text} border ${c.border}`}>
+            <Icon className="w-2.5 h-2.5" />
+            {c.label}
         </span>
     );
 }
 
-// ── User Card ────────────────────────────────────────────────────────────────
-function UserCard({ user }: { user: ReferredUser }) {
-    const joined = user.createdAt
-        ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+// ── Status Badge ─────────────────────────────────────────────────────────────
+function StatusBadge({ status }: { status: string }) {
+    if (status === "approved" || status === "active") {
+        return (
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wide">Active</span>
+            </div>
+        );
+    }
+    if (status === "rejected") {
+        return (
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+                <AlertCircle className="w-3 h-3 text-red-400" />
+                <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">Rejected</span>
+            </div>
+        );
+    }
+    // pending
+    return (
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+            <Clock className="w-3 h-3 text-amber-400" />
+            <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wide">Pending</span>
+        </div>
+    );
+}
+
+// ── Listing Card (handles all types) ─────────────────────────────────────────
+function ListingCard({ item }: { item: ReferredUser }) {
+    const joined = item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("en-IN", {
               day: "numeric",
               month: "short",
               year: "numeric",
           })
         : "—";
 
+    const isPlace = item.type === "mandir" || item.type === "puja_shop";
+
     return (
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 p-5 flex flex-col gap-4">
             {/* Top row */}
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0">
-                    <UserAvatar user={user} />
+                    <ListingAvatar item={item} />
                     <div className="min-w-0">
                         <p className="font-black text-gray-900 text-sm truncate leading-tight">
-                            {user.name ?? "Unknown"}
+                            {item.name ?? "Unknown"}
                         </p>
                         <div className="mt-1">
-                            <TypeBadge type={user.type} />
+                            <TypeBadge type={item.type} />
                         </div>
                     </div>
                 </div>
-                {/* Status dot */}
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-[10px] font-bold text-green-600 uppercase tracking-wide">Active</span>
-                </div>
+                <StatusBadge status={item.status} />
             </div>
 
             {/* Details */}
             <div className="space-y-2">
-                {user.email && (
+                {/* Email (users only) */}
+                {item.email && (
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                         <Mail className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
-                        <span className="truncate">{user.email}</span>
+                        <span className="truncate">{item.email}</span>
                     </div>
                 )}
-                {user.phone && (
+                {/* Phone */}
+                {item.phone && (
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                         <Phone className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
-                        <span>{user.phone}</span>
+                        <span>{item.phone}</span>
                     </div>
                 )}
+                {/* Location (mandir / puja_shop) */}
+                {isPlace && item.location && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
+                        <span className="truncate">{item.location}</span>
+                    </div>
+                )}
+                {/* Deity (mandir / puja_shop) */}
+                {isPlace && item.deity && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <Flame className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
+                        <span className="truncate">{item.deity}</span>
+                    </div>
+                )}
+                {/* Date */}
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                     <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-                    <span>Joined {joined}</span>
+                    <span>{isPlace ? "Submitted" : "Joined"} {joined}</span>
                 </div>
             </div>
-        </div>
-    );
-}
-
-// ── Coming Soon placeholder ──────────────────────────────────────────────────
-function ComingSoon({ tab }: { tab: Tab }) {
-    const Icon = tab.icon;
-    return (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className={`w-20 h-20 rounded-3xl ${tab.activeBg} bg-opacity-10 flex items-center justify-center mb-5 shadow-inner`}
-                style={{ background: "rgba(0,0,0,0.04)" }}>
-                <Icon className={`w-9 h-9 ${tab.color}`} />
-            </div>
-            <h3 className="text-lg font-black text-gray-800 mb-2">{tab.label} Listings</h3>
-            <p className="text-sm text-gray-400 max-w-xs leading-relaxed">
-                {tab.label} listing API is coming soon. Once it&apos;s ready, all your{" "}
-                {tab.label.toLowerCase()} registrations will appear here.
-            </p>
-            <span className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest">
-                <Clock className="w-3.5 h-3.5" /> Coming Soon
-            </span>
         </div>
     );
 }
@@ -244,15 +264,13 @@ export default function ListingsPage() {
     }, [search]);
 
     const currentTab = TABS.find((t) => t.id === activeTab)!;
-    const isLive = currentTab.live;
 
-    // Fetch referred users (only for live tabs)
+    // Fetch listings
     const fetchData = useCallback(async () => {
-        if (!isLive) return;
         setLoading(true);
         try {
-            const params: { type?: "astrologer" | "client"; search?: string } = {};
-            if (activeTab === "astrologer" || activeTab === "client") {
+            const params: { type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop'; search?: string } = {};
+            if (activeTab !== "all") {
                 params.type = activeTab;
             }
             if (debouncedSearch.trim()) {
@@ -266,24 +284,28 @@ export default function ListingsPage() {
         } finally {
             setLoading(false);
         }
-    }, [activeTab, debouncedSearch, isLive, refreshKey]);
+    }, [activeTab, debouncedSearch, refreshKey]);
 
     useEffect(() => {
-        if (isLive) {
-            fetchData();
-        }
-    }, [fetchData, isLive]);
+        fetchData();
+    }, [fetchData]);
 
     // Per-tab counts from live data (when tab = all)
     const astrologerCount = useMemo(() => data.filter((u) => u.type === "astrologer").length, [data]);
     const clientCount = useMemo(() => data.filter((u) => u.type === "client").length, [data]);
+    const mandirCount = useMemo(() => data.filter((u) => u.type === "mandir").length, [data]);
+    const pujaShopCount = useMemo(() => data.filter((u) => u.type === "puja_shop").length, [data]);
 
     // Badge counts per tab button
     const getTabCount = (tab: Tab): number | null => {
-        if (!tab.live) return null;
         if (tab.id === "all") return total;
-        if (tab.id === "astrologer") return activeTab === "all" ? astrologerCount : total;
-        if (tab.id === "client") return activeTab === "all" ? clientCount : total;
+        if (activeTab === "all") {
+            if (tab.id === "astrologer") return astrologerCount;
+            if (tab.id === "client") return clientCount;
+            if (tab.id === "mandir") return mandirCount;
+            if (tab.id === "puja_shop") return pujaShopCount;
+        }
+        if (tab.id === activeTab) return total;
         return null;
     };
 
@@ -345,106 +367,112 @@ export default function ListingsPage() {
                                     {count}
                                 </span>
                             )}
-                            {!tab.live && (
-                                <span className="ml-1 text-[9px] font-black text-orange-500 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                                    Soon
-                                </span>
-                            )}
                         </button>
                     );
                 })}
             </div>
 
-            {/* Content */}
-            {!isLive ? (
+            {/* Search bar */}
+            <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                    id="listings-search"
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search by name, email, or location…"
+                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all"
+                />
+                {search && (
+                    <button
+                        onClick={() => setSearch("")}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                )}
+            </div>
+
+            {/* Summary strip */}
+            {!loading && data.length > 0 && (
+                <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex items-center gap-2 bg-white rounded-xl border border-gray-200 px-4 py-2 shadow-sm">
+                        <UserCheck className="w-4 h-4 text-green-500" />
+                        <span className="text-xs font-bold text-gray-700">
+                            {total} total
+                        </span>
+                    </div>
+                    {activeTab === "all" && (
+                        <>
+                            {astrologerCount > 0 && (
+                                <div className="flex items-center gap-2 bg-yellow-50 rounded-xl border border-yellow-200 px-4 py-2 shadow-sm">
+                                    <Star className="w-4 h-4 text-yellow-600" />
+                                    <span className="text-xs font-bold text-yellow-700">
+                                        {astrologerCount} astrologers
+                                    </span>
+                                </div>
+                            )}
+                            {clientCount > 0 && (
+                                <div className="flex items-center gap-2 bg-blue-50 rounded-xl border border-blue-200 px-4 py-2 shadow-sm">
+                                    <Users className="w-4 h-4 text-blue-600" />
+                                    <span className="text-xs font-bold text-blue-700">
+                                        {clientCount} clients
+                                    </span>
+                                </div>
+                            )}
+                            {mandirCount > 0 && (
+                                <div className="flex items-center gap-2 bg-orange-50 rounded-xl border border-orange-200 px-4 py-2 shadow-sm">
+                                    <Building2 className="w-4 h-4 text-orange-600" />
+                                    <span className="text-xs font-bold text-orange-700">
+                                        {mandirCount} mandirs
+                                    </span>
+                                </div>
+                            )}
+                            {pujaShopCount > 0 && (
+                                <div className="flex items-center gap-2 bg-purple-50 rounded-xl border border-purple-200 px-4 py-2 shadow-sm">
+                                    <ShoppingBag className="w-4 h-4 text-purple-600" />
+                                    <span className="text-xs font-bold text-purple-700">
+                                        {pujaShopCount} puja shops
+                                    </span>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
+
+            {/* Grid */}
+            {loading ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div
+                            key={i}
+                            className="bg-white rounded-2xl border border-gray-200 p-5 h-44 animate-pulse"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="w-11 h-11 rounded-xl bg-gray-200" />
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-3 bg-gray-200 rounded w-32" />
+                                    <div className="h-2.5 bg-gray-100 rounded w-20" />
+                                </div>
+                            </div>
+                            <div className="mt-4 space-y-2">
+                                <div className="h-2.5 bg-gray-100 rounded w-full" />
+                                <div className="h-2.5 bg-gray-100 rounded w-3/4" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : data.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-                    <ComingSoon tab={currentTab} />
+                    <EmptyState search={search} onClear={() => setSearch("")} />
                 </div>
             ) : (
-                <>
-                    {/* Search bar */}
-                    <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                        <input
-                            id="listings-search"
-                            type="text"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search by name or email…"
-                            className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all"
-                        />
-                        {search && (
-                            <button
-                                onClick={() => setSearch("")}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Summary strip */}
-                    {!loading && data.length > 0 && (
-                        <div className="flex items-center gap-4 flex-wrap">
-                            <div className="flex items-center gap-2 bg-white rounded-xl border border-gray-200 px-4 py-2 shadow-sm">
-                                <UserCheck className="w-4 h-4 text-green-500" />
-                                <span className="text-xs font-bold text-gray-700">
-                                    {total} total
-                                </span>
-                            </div>
-                            {activeTab === "all" && (
-                                <>
-                                    <div className="flex items-center gap-2 bg-yellow-50 rounded-xl border border-yellow-200 px-4 py-2 shadow-sm">
-                                        <Star className="w-4 h-4 text-yellow-500" />
-                                        <span className="text-xs font-bold text-yellow-700">
-                                            {astrologerCount} astrologers
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 bg-blue-50 rounded-xl border border-blue-200 px-4 py-2 shadow-sm">
-                                        <Users className="w-4 h-4 text-blue-500" />
-                                        <span className="text-xs font-bold text-blue-700">
-                                            {clientCount} clients
-                                        </span>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Grid */}
-                    {loading ? (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {Array.from({ length: 6 }).map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="bg-white rounded-2xl border border-gray-200 p-5 h-44 animate-pulse"
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-11 h-11 rounded-xl bg-gray-200" />
-                                        <div className="flex-1 space-y-2">
-                                            <div className="h-3 bg-gray-200 rounded w-32" />
-                                            <div className="h-2.5 bg-gray-100 rounded w-20" />
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 space-y-2">
-                                        <div className="h-2.5 bg-gray-100 rounded w-full" />
-                                        <div className="h-2.5 bg-gray-100 rounded w-3/4" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : data.length === 0 ? (
-                        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-                            <EmptyState search={search} onClear={() => setSearch("")} />
-                        </div>
-                    ) : (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {data.map((user) => (
-                                <UserCard key={user.id} user={user} />
-                            ))}
-                        </div>
-                    )}
-                </>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {data.map((item) => (
+                        <ListingCard key={item.id} item={item} />
+                    ))}
+                </div>
             )}
         </div>
     );
