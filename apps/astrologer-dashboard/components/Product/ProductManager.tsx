@@ -154,7 +154,18 @@ export default function ProductManager() {
                     <p className="text-gray-500 mt-1 text-sm">Manage and sell your astrology products.</p>
                 </div>
                 <button
-                    onClick={() => { setShowForm(!showForm); resetForm(); }}
+                    onClick={() => {
+                        if (showForm) {
+                            resetForm(); // this also sets showForm(false)
+                        } else {
+                            // Clear form data and open fresh
+                            setFormData({ name: "", shortDescription: "", description: "", price: 0, originalPrice: 0, stock: 0, imageUrl: "", isActive: true });
+                            setEditingId(null);
+                            setSelectedFile(null);
+                            setImageMode("file");
+                            setShowForm(true);
+                        }
+                    }}
                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md ${showForm
                         ? "bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50"
                         : "bg-[#F25E0A] hover:bg-[#d94f00] text-white"

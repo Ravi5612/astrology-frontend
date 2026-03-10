@@ -16,10 +16,14 @@ const XIcon = X as any;
 
 import { Astrologer } from "@/lib/types";
 
+import { Product } from "@/lib/types";
+
 export default function AstrologerDetailsClient({
   astrologer,
+  products = [],
 }: {
   astrologer: Astrologer;
+  products?: Product[];
 }) {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -417,42 +421,7 @@ export default function AstrologerDetailsClient({
       {/* Astrology Products Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <ProductSection
-            products={[
-              {
-                id: "1",
-                name: "Original Rudraksha Mala",
-                price: 1499,
-                originalPrice: 2999,
-                imageUrl: "/images/dummy-astrologer.jpg",
-                description: "Authentic 5 Mukhi Rudraksha mala for peace and meditation."
-              },
-              {
-                id: "2",
-                name: "Vedic Astrology Guide",
-                price: 899,
-                originalPrice: 1499,
-                imageUrl: "/images/astro-img2.png",
-                description: "Comprehensive guide to understanding planetary movements."
-              },
-              {
-                id: "3",
-                name: "Crystal Tortoise",
-                price: 599,
-                originalPrice: 999,
-                imageUrl: "/images/astro-img3.png",
-                description: "Feng Shui crystal tortoise for longevity and stability."
-              },
-              {
-                id: "4",
-                name: "Shri Yantra",
-                price: 2100,
-                originalPrice: 3500,
-                imageUrl: "/images/dummy-astrologer.jpg",
-                description: "Sacred geometry yantra for wealth and prosperity."
-              }
-            ]}
-          />
+          <ProductSection products={products} />
         </div>
       </section>
 

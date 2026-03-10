@@ -37,9 +37,45 @@ export default function ConsultationPrep() {
     const { isClientAuthenticated } = useAuthStore();
 
     useEffect(() => {
+        const preventDefault = (e: any) => {
+            if (showSecurityModal) {
+                // Check if the scroll is happening inside our scrollable container
+                let target = e.target;
+                let isInsideScrollable = false;
+
+                while (target && target !== document.body) {
+                    if (target.classList?.contains('modal-scroll-area')) {
+                        isInsideScrollable = true;
+                        break;
+                    }
+                    target = target.parentElement;
+                }
+
+                if (!isInsideScrollable) {
+                    e.preventDefault();
+                }
+            }
+        };
+
+        if (showSecurityModal) {
+            window.addEventListener('wheel', preventDefault, { passive: false });
+            window.addEventListener('touchmove', preventDefault, { passive: false });
+            document.documentElement.classList.add('no-scroll');
+        } else {
+            document.documentElement.classList.remove('no-scroll');
+        }
+
+        return () => {
+            window.removeEventListener('wheel', preventDefault);
+            window.removeEventListener('touchmove', preventDefault);
+            document.documentElement.classList.remove('no-scroll');
+        };
+    }, [showSecurityModal]);
+
+    useEffect(() => {
         const fetchAstro = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/expert/${id}`);
+                const response = await fetch(`${API_BASE_URL}/expert/details/${id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setAstrologer({
@@ -178,6 +214,14 @@ export default function ConsultationPrep() {
                 }
                 .astro-card-glow {
                     background: radial-gradient(circle at 50% 50%, rgba(255,107,0,0.15), transparent 70%);
+                }
+                .no-scroll {
+                    overflow: hidden !important;
+                    height: 100vh !important;
+                    width: 100vw !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
                 }
                 `}
             </style>
@@ -442,8 +486,18 @@ export default function ConsultationPrep() {
 
             {/* Security Tips Modal */}
             {showSecurityModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-lg max-h-[95vh] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300 pointer-events-auto"
+                    onWheel={(e) => {
+                        e.stopPropagation();
+                        // Only prevent default if we're scrolling the backdrop itself
+                        if (e.target === e.currentTarget) e.preventDefault();
+                    }}
+                >
+                    <div
+                        className="bg-white w-full max-w-lg max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative"
+                        onWheel={(e) => e.stopPropagation()}
+                    >
                         {/* Header - Fixed */}
                         <div className="p-3 md:p-4 bg-gradient-to-br from-red-500 to-orange-500 text-white relative overflow-hidden flex-shrink-0">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
@@ -461,7 +515,11 @@ export default function ConsultationPrep() {
                         </div>
 
                         {/* Content - Scrollable */}
-                        <div className="p-4 md:p-6 space-y-4 overflow-y-auto flex-1">
+                        <div
+                            className="p-4 md:p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar overscroll-contain min-h-0 modal-scroll-area"
+                            style={{ WebkitOverflowScrolling: 'touch' }}
+                            onWheel={(e) => e.stopPropagation()}
+                        >
                             <div className="space-y-3">
                                 {[
                                     {
@@ -537,7 +595,7 @@ export default function ConsultationPrep() {
                                         id="agreeTerms"
                                         className="m-2 w-5 h-5 rounded border-2 border-orange-400 text-orange-500 focus:ring-2 focus:ring-orange-500 cursor-pointer flex-shrink-0"
                                     />
-                                    <span className="text-xs md:text-sm font-bold text-gray-800transition-colors leading-relaxed">
+                                    <span className="text-xs md:text-sm font-bold text-gray-800 transition-colors leading-relaxed">
                                         I have read and understood all the safety guidelines and disclaimer. I agree to follow these precautions during my consultation and will not share any contact details.
                                     </span>
                                 </label>

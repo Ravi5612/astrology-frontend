@@ -1,20 +1,65 @@
 "use client";
-
-import React, { useState } from "react";
-import { Wallet, TrendingUp, TrendingDown, DollarSign, Calendar, AlertCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Wallet, TrendingUp, TrendingDown, DollarSign, Calendar, AlertCircle, Loader2 } from "lucide-react";
+import { getPendingWithdrawals, updateWithdrawalStatus, getWithdrawalStats } from "@/src/services/admin.service";
+import { toast } from "react-toastify";
 
 export default function AdminPayoutsPage() {
-    // Mock data - replace with actual API call
-    const [payoutRequests] = useState<any[]>([]);
-    const [stats] = useState({
+    const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState<number | null>(null);
+    const [stats, setStats] = useState({
         totalPending: 0,
         totalApproved: 0,
         totalRejected: 0,
         totalAmount: 0,
+        totalPaid: 0,
     });
 
+    const fetchPayouts = async () => {
+        try {
+            setLoading(true);
+            const [payoutsResponse, statsResponse] = await Promise.all([
+                getPendingWithdrawals(),
+                getWithdrawalStats()
+            ]);
+
+            setPayoutRequests(payoutsResponse.items || []);
+            setStats({
+                totalPending: statsResponse.totalPending || 0,
+                totalApproved: statsResponse.totalApproved || 0,
+                totalRejected: statsResponse.totalRejected || 0,
+                totalAmount: statsResponse.totalAmountPending || 0,
+                totalPaid: statsResponse.totalAmountApproved || 0,
+            });
+        } catch (error) {
+            console.error("Failed to fetch payouts or stats:", error);
+            toast.error("Failed to load payout data");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPayouts();
+    }, []);
+
+    const handleAction = async (id: number, status: 'completed' | 'rejected') => {
+        try {
+            setProcessingId(id);
+            await updateWithdrawalStatus(id, { status });
+            toast.success(`Withdrawal ${status === 'completed' ? 'Approved' : 'Rejected'} successfully`);
+            fetchPayouts(); // Refresh list
+        } catch (error) {
+            console.error(`Failed to ${status} withdrawal:`, error);
+            toast.error(`Failed to ${status} withdrawal`);
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-transparent">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -23,45 +68,50 @@ export default function AdminPayoutsPage() {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    {/* Pending */}
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div className="bg-white rounded-lg shadow-sm p-5">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-600">Pending Requests</h3>
-                            <Wallet className="w-5 h-5 text-yellow-600" />
+                            <h3 className="text-xs font-medium text-gray-600">Pending Requests</h3>
+                            <Wallet className="w-4 h-4 text-yellow-600" />
                         </div>
-                        <p className="text-2xl font-bold text-gray-800">{stats.totalPending}</p>
-                        <p className="text-sm text-gray-500 mt-1">Awaiting approval</p>
+                        <p className="text-xl font-bold text-gray-800">{stats.totalPending}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Awaiting approval</p>
                     </div>
 
-                    {/* Approved */}
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-white rounded-lg shadow-sm p-5">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-600">Approved</h3>
-                            <TrendingUp className="w-5 h-5 text-green-600" />
+                            <h3 className="text-xs font-medium text-gray-600">Approved</h3>
+                            <TrendingUp className="w-4 h-4 text-green-600" />
                         </div>
-                        <p className="text-2xl font-bold text-gray-800">{stats.totalApproved}</p>
-                        <p className="text-sm text-gray-500 mt-1">Successfully processed</p>
+                        <p className="text-xl font-bold text-gray-800">{stats.totalApproved}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Ready for transfer</p>
                     </div>
 
-                    {/* Rejected */}
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-white rounded-lg shadow-sm p-5">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-600">Rejected</h3>
-                            <TrendingDown className="w-5 h-5 text-red-600" />
+                            <h3 className="text-xs font-medium text-gray-600">Rejected</h3>
+                            <TrendingDown className="w-4 h-4 text-red-600" />
                         </div>
-                        <p className="text-2xl font-bold text-gray-800">{stats.totalRejected}</p>
-                        <p className="text-sm text-gray-500 mt-1">Declined requests</p>
+                        <p className="text-xl font-bold text-gray-800">{stats.totalRejected}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Declined requests</p>
                     </div>
 
-                    {/* Total Amount */}
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-white rounded-lg shadow-sm p-5">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-600">Total Amount</h3>
-                            <DollarSign className="w-5 h-5 text-blue-600" />
+                            <h3 className="text-xs font-medium text-gray-600">Pending Amount</h3>
+                            <DollarSign className="w-4 h-4 text-blue-600" />
                         </div>
-                        <p className="text-2xl font-bold text-gray-800">₹{stats.totalAmount.toLocaleString()}</p>
-                        <p className="text-sm text-gray-500 mt-1">Pending payouts</p>
+                        <p className="text-xl font-bold text-gray-800">₹{stats.totalAmount.toLocaleString()}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Total pending volume</p>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-sm p-5 border-l-4 border-green-500">
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-xs font-medium text-gray-600">Total Paid</h3>
+                            <DollarSign className="w-4 h-4 text-green-600" />
+                        </div>
+                        <p className="text-xl font-bold text-green-600">₹{stats.totalPaid.toLocaleString()}</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Total cash outflow</p>
                     </div>
                 </div>
 
@@ -71,24 +121,23 @@ export default function AdminPayoutsPage() {
                         <h2 className="text-lg font-semibold text-gray-800">Recent Payout Requests</h2>
                     </div>
 
-                    {payoutRequests.length === 0 ? (
+                    {loading ? (
+                        <div className="p-12 flex justify-center items-center">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        </div>
+                    ) : payoutRequests.length === 0 ? (
                         <div className="p-12 text-center">
                             <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                                 <Wallet className="w-8 h-8 text-gray-400" />
                             </div>
                             <h3 className="text-lg font-medium text-gray-800 mb-2">No Payout Requests</h3>
-                            <p className="text-gray-600 mb-6">
-                                Currently, there are no payout requests from experts. <br />
-                                Requests will appear here when experts withdraw their earnings.
-                            </p>
+                            <p className="text-gray-600 mb-6">Currently, there are no payout requests from experts.</p>
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
                                 <div className="flex items-start space-x-3">
                                     <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                     <div className="text-left">
-                                        <p className="text-sm font-medium text-blue-800 mb-1">How it works</p>
-                                        <p className="text-sm text-blue-700">
-                                            Experts can request payouts from their wallet. You'll review and approve or reject each request here.
-                                        </p>
+                                        <p className="text-sm font-medium text-blue-800 mb-1">Expert Payouts</p>
+                                        <p className="text-sm text-blue-700">Requests will appear here when experts withdraw their earnings from the dashboard.</p>
                                     </div>
                                 </div>
                             </div>
@@ -98,21 +147,11 @@ export default function AdminPayoutsPage() {
                             <table className="w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Expert
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Amount
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expert</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Details</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -121,20 +160,36 @@ export default function AdminPayoutsPage() {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm font-medium text-gray-900">{request.expertName}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">₹{request.amount.toLocaleString()}</div>
+                                            <td className="px-6 py-4 whitespace-nowrap text-green-600 font-bold">
+                                                ₹{request.amount.toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-500">{request.date}</div>
+                                                {request.bankAccount ? (
+                                                    <div className="text-xs text-gray-700">
+                                                        <p className="font-bold">{request.bankAccount.bankName}</p>
+                                                        <p>A/C: {request.bankAccount.accountNumber}</p>
+                                                        <p>IFSC: {request.bankAccount.ifsc}</p>
+                                                    </div>
+                                                ) : <span className="text-red-500 text-xs">Missing Info</span>}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    {request.status}
-                                                </span>
+                                                <div className="text-sm text-gray-500">{new Date(request.date).toLocaleDateString()}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button className="text-green-600 hover:text-green-900 mr-3">Approve</button>
-                                                <button className="text-red-600 hover:text-red-900">Reject</button>
+                                                <button
+                                                    onClick={() => handleAction(request.id, 'completed')}
+                                                    disabled={processingId === request.id}
+                                                    className="text-green-600 hover:text-green-900 mr-4 disabled:opacity-50"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAction(request.id, 'rejected')}
+                                                    disabled={processingId === request.id}
+                                                    className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                                >
+                                                    Reject
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -147,6 +202,7 @@ export default function AdminPayoutsPage() {
         </div>
     );
 }
+
 
 
 

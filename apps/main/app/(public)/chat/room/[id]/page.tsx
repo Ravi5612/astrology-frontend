@@ -112,7 +112,7 @@ function ChatRoomContent() {
     useEffect(() => {
         const fetchExpertData = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/expert/${id}`);
+                const response = await fetch(`${API_BASE_URL}/expert/details/${id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setExpertData({
@@ -267,6 +267,9 @@ function ChatRoomContent() {
             console.log("[UserChatDebug] Session ended event received", data);
             setSessionStatus(data.status === 'expired' ? 'completed' : 'completed');
             setSessionSummary(data);
+
+            // Fetch latest balance to update header immediately
+            refreshBalance();
 
             if (data.status === 'terminated') {
                 setMessages(prev => [...prev, {

@@ -121,11 +121,17 @@ function ExpertChatRoomContent() {
         chatSocket.on('session_ended', (data: any) => {
             console.log("[ExpertChatDebug] Session ended event received!", data);
             setSessionStatus('completed');
+
             if (data?.terminatedBy === 'admin') {
                 toast.error(`SESSION TERMINATED BY ADMIN: ${data.interventionMessage || 'Administrative action'}`);
             } else {
-                toast.info("Session has ended.");
+                toast.info("Session has ended. Redirecting...", { autoClose: 2000 });
             }
+
+            // ✅ Auto-close chat room and go back after 2 seconds
+            setTimeout(() => {
+                router.back();
+            }, 2000);
         });
 
         return () => {

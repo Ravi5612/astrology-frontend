@@ -24,7 +24,7 @@ export const getWalletTransactions = async (page: number = 1, limit: number = 10
         const response: any = await apiClient.get(`/expert/wallet/transactions?page=${page}&limit=${limit}`);
         const data = response?.data?.data || response?.data || response;
 
-        const transactions = (data.transactions || (Array.isArray(data) ? data : [])).map((tx: any) => ({
+        const transactions = (data.items || data.transactions || (Array.isArray(data) ? data : [])).map((tx: any) => ({
             id: tx.id,
             date: tx.created_at || tx.createdAt || tx.date,
             description: tx.description || tx.purpose || "Transaction",
@@ -47,9 +47,8 @@ export const getWalletTransactions = async (page: number = 1, limit: number = 10
 export const requestWithdrawal = async (amount: number, bankAccountId: string) => {
     try {
         const response: any = await apiClient.post('/expert/wallet/withdraw', {
-            amount,
-            bank_account_id: bankAccountId, // Support snake_case
-            bankAccountId // Support camelCase fallback
+            amount: Number(amount),
+            bank_account_id: Number(bankAccountId), // Backend expects number and snake_case
         });
         return response?.data ?? response;
     } catch (error) {

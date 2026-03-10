@@ -516,7 +516,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
 
         {layout === 'slider' && (
           <div className="view-all mt-4">
-            <Link href="/our-astrologers" className="bg-orange hover:opacity-90 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit">
+            <Link href="/our-astrologers" className="no-underline bg-orange hover:opacity-90 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit">
               <i className="fa-regular fa-user"></i> {t.astrologerSection.viewAllAstrologers}
             </Link>
           </div>
