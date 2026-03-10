@@ -21,6 +21,7 @@ import {
     LogOut,
     Menu,
     Handshake,
+    List,
 } from "lucide-react";
 
 // ── Menu config ─────────────────────────────────────────────
@@ -34,10 +35,8 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "My Profile", href: "/dashboard/profile", icon: User },
-    { label: "Register User", href: "/dashboard/register-user", icon: UserPlus },
-    { label: "Astrologers", href: "/dashboard/astrologers", icon: Star },
-    { label: "Mandirs", href: "/dashboard/mandirs", icon: Building2 },
-    { label: "Puja Shops", href: "/dashboard/puja-shops", icon: ShoppingBag },
+    { label: "Registeration", href: "/dashboard/registeration", icon: UserPlus },
+    { label: "Listings", href: "/dashboard/listings", icon: List },
     { label: "Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
     { label: "Signout", href: "#", icon: LogOut },
 ];
