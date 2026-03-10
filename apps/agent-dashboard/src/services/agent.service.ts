@@ -51,6 +51,39 @@ export const getAgentListings = async (params?: ListingParams): Promise<Listings
     return apiClient.get<ListingsResponse>(API_ROUTES.AGENTS.LISTINGS, params as Record<string, any>);
 };
 
+export interface ReferredUser {
+    id: number | string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    status: string;
+    type: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
+    avatar: string | null;
+    createdAt: string;
+    location?: string | null;
+    deity?: string | null;
+    items?: string | null;
+}
+
+export interface ReferredUsersResponse {
+    data: ReferredUser[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+export interface ReferredUsersParams {
+    type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
+    search?: string;
+    page?: number;
+    limit?: number;
+}
+
+export const getReferredUsers = async (params?: ReferredUsersParams): Promise<ReferredUsersResponse> => {
+    return apiClient.get<ReferredUsersResponse>(API_ROUTES.AGENTS.REFERRED_USERS, params as Record<string, any>);
+};
+
+
 export const createListing = async (payload: CreateListingPayload) => {
     return apiClient.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>);
 };
