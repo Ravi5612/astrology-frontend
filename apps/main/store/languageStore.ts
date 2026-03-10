@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Language } from "@/lib/horoscope-translations";
+import type { Language } from "../lib/horoscope-translations";
 
 interface LanguageState {
     lang: Language;

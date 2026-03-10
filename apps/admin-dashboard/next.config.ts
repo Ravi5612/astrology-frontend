@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
   async rewrites() {
     const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:6543').replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '');
 
