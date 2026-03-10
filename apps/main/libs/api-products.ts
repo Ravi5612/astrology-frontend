@@ -1,8 +1,6 @@
 import { Product } from "@/lib/types";
 import { getApiUrl } from "@/utils/api-config";
 
-const API_BASE_URL = getApiUrl();
-
 const normalizeProduct = (raw: any): Product => {
     const images = Array.isArray(raw?.images) ? raw.images : [];
     const firstImage = images[0];
@@ -25,7 +23,7 @@ const normalizeProduct = (raw: any): Product => {
 
 export const getProducts = async (): Promise<Product[]> => {
     try {
-        const res = await fetch(`${API_BASE_URL}/products`, {
+        const res = await fetch(`${getApiUrl()}/products`, {
             cache: "no-store" // ❌ NO CACHE AT ALL
         });
 

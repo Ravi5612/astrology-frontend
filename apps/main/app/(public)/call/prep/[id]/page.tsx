@@ -27,9 +27,9 @@ interface AstrologerData {
     is_available: boolean;
 }
 
-const API_BASE_URL = getApiUrl();
 
 function CallPrepContent() {
+    const API_BASE_URL = getApiUrl();
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();

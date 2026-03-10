@@ -31,8 +31,6 @@ import { getApiUrl, getBasePath } from "@/utils/api-config";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
 
-const API_BASE_URL = getApiUrl();
-
 import { ExpertProfile, ClientExpertProfile } from "@/lib/types";
 
 interface AstrologerListProps {
@@ -284,7 +282,7 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
         }).filter(([, v]) => v !== undefined)).toString();
 
         const [responseData, fetchErr] = await safeFetch<{ data: ExpertProfile[]; pagination: { hasMore: boolean } }>(
-          `${API_BASE_URL}/expert/list?${queryString}`
+          `${getApiUrl()}/expert/list?${queryString}`
         );
         if (fetchErr || !responseData) throw fetchErr;
         const { data, pagination } = responseData;

@@ -7,18 +7,14 @@
 
 import { getApiUrl, getBasePath } from "@/utils/api-config";
 
-const BASE = getApiUrl();
-// Strip trailing /api/v1 if present, for safeFetch full-URL usage
-export const CLEAN_BASE = getBasePath();
-
 export const API_CONFIG = {
     AUTH: {
-        LOGIN: { url: `${CLEAN_BASE}/api/v1/auth/email/login`, method: "POST" },
-        REGISTER: { url: `${CLEAN_BASE}/api/v1/auth/email/register`, method: "POST" },
+        LOGIN: { get url() { return `${getBasePath()}/api/v1/auth/email/login` }, method: "POST" },
+        REGISTER: { get url() { return `${getBasePath()}/api/v1/auth/email/register` }, method: "POST" },
         LOGOUT: { url: "auth/logout", method: "POST" },
-        REFRESH: { url: `${CLEAN_BASE}/api/v1/auth/refresh`, method: "POST" },
+        REFRESH: { get url() { return `${getBasePath()}/api/v1/auth/refresh` }, method: "POST" },
         ME: { url: "client/profile", method: "GET" },
-        GOOGLE_LOGIN: { url: `${CLEAN_BASE}/api/v1/auth/google/login`, method: "GET" },
+        GOOGLE_LOGIN: { get url() { return `${getBasePath()}/api/v1/auth/google/login` }, method: "GET" },
     },
     WALLET: {
         BALANCE: { url: "wallet/balance", method: "GET" },
@@ -52,12 +48,12 @@ export const API_CONFIG = {
 // Keep backward-compat alias for existing imports
 export const API_ROUTES = {
     AUTH: {
-        LOGIN: API_CONFIG.AUTH.LOGIN.url,
-        LOGOUT: API_CONFIG.AUTH.LOGOUT.url,
+        get LOGIN() { return API_CONFIG.AUTH.LOGIN.url; },
+        get LOGOUT() { return API_CONFIG.AUTH.LOGOUT.url; },
         REFRESH: "auth/refresh",             // relative path for interceptor check
-        ME: API_CONFIG.AUTH.ME.url,
+        get ME() { return API_CONFIG.AUTH.ME.url; },
     },
     WALLET: {
-        BALANCE: API_CONFIG.WALLET.BALANCE.url,
+        get BALANCE() { return API_CONFIG.WALLET.BALANCE.url; },
     },
-} as const;
+};

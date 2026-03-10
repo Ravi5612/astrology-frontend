@@ -12,9 +12,8 @@ const { PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, User, Loader2, Star, X 
 
 import { CallStatus, CallSession } from "@/lib/types";
 
-const SOCKET_URL = getApiUrl().replace('/api/v1', '');
-
 export default function CallRoomPage() {
+    const SOCKET_URL = getApiUrl().replace('/api/v1', '');
     const params = useParams();
     const router = useRouter();
     const sessionId = params.id as string;

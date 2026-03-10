@@ -13,7 +13,7 @@ import { ProductCard } from "./ProductCard";
 const Swiper = SwiperComp as any;
 const SwiperSlide = SwiperSlideComp as any;
 
-import { API_BASE_URL } from "@/utils/api-config";
+import { getApiUrl } from "@/utils/api-config";
 
 const ProductsCarousel = () => {
   const [productList, setProductList] = useState<any[]>([]);
@@ -22,7 +22,7 @@ const ProductsCarousel = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const [data, err] = await safeFetch<any>(`${API_BASE_URL}/products`);
+        const [data, err] = await safeFetch<any>(`${getApiUrl()}/products`);
         if (err || !data) {
           console.error("Error fetching products for carousel:", err);
         } else {

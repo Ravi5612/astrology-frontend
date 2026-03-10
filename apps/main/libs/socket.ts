@@ -1,36 +1,50 @@
 import { io, Socket } from "socket.io-client";
-
 import { getBasePath } from "@/utils/api-config";
 
-const SOCKET_URL = getBasePath();
+// We use a dummy socket for SSR to avoid build-time crashes with socket.io-client
+const createDummySocket = () => ({
+    on: () => { },
+    off: () => { },
+    emit: () => { },
+    connect: () => { },
+    disconnect: () => { },
+    connected: false,
+} as unknown as Socket);
 
-console.log("[Socket] Main App connecting to:", SOCKET_URL);
+const isBrowser = typeof window !== "undefined";
 
-export const socket: Socket = io(SOCKET_URL, {
-    transports: ["websocket"],
-    autoConnect: true,
-});
+const SOCKET_URL = isBrowser ? getBasePath() : "";
 
-// Chat specific socket instance
-export const chatSocket: Socket = io(`${SOCKET_URL}/chat`, {
-    transports: ["websocket"],
-    autoConnect: false, // We'll connect manually when entering chat room
-});
+export const socket: Socket = isBrowser
+    ? io(SOCKET_URL, {
+        transports: ["websocket"],
+        autoConnect: true,
+    })
+    : createDummySocket();
 
-socket.on("connect", () => {
-    console.log("[Socket] ✅ Main App Connected! ID:", socket.id);
-});
+export const chatSocket: Socket = isBrowser
+    ? io(`${SOCKET_URL}/chat`, {
+        transports: ["websocket"],
+        autoConnect: false,
+    })
+    : createDummySocket();
 
-socket.on("connect_error", (err) => {
-    console.error("[Socket] ❌ Main App Connection Error:", err.message);
-});
+if (isBrowser) {
+    socket.on("connect", () => {
+        console.log("[Socket] ✅ Main App Connected! ID:", socket.id);
+    });
 
-chatSocket.on("connect", () => {
-    console.log("[ChatSocket] ✅ Connected! ID:", chatSocket.id);
-});
+    socket.on("connect_error", (err) => {
+        console.error("[Socket] ❌ Main App Connection Error:", err.message);
+    });
 
-chatSocket.on("connect_error", (err) => {
-    console.error("[ChatSocket] ❌ Connection Error:", err.message);
-});
+    chatSocket.on("connect", () => {
+        console.log("[ChatSocket] ✅ Connected! ID:", chatSocket.id);
+    });
+
+    chatSocket.on("connect_error", (err) => {
+        console.error("[ChatSocket] ❌ Connection Error:", err.message);
+    });
+}
 
 

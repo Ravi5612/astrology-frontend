@@ -6,7 +6,7 @@ import safeFetch from "@packages/safe-fetch/safeFetch";
 import { SkeletonCard } from "../../features/astrologers/SkeletonCard";
 import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
 
-import { getBasePath, API_BASE_URL } from "@/utils/api-config";
+import { getBasePath, getApiUrl } from "@/utils/api-config";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
 
@@ -77,7 +77,7 @@ const OurAstrologer = () => {
         try {
             if (!isSilent) setLoading(true);
             const [responseData, fetchErr] = await safeFetch<{ data: ExpertProfile[]; pagination: PaginationInfo }>(
-                `${API_BASE_URL}/expert/list?${new URLSearchParams(Object.entries({
+                `${getApiUrl()}/expert/list?${new URLSearchParams(Object.entries({
                     limit: String(limit),
                     offset: String(currentOffset),
                     ...(debouncedSearch && { q: debouncedSearch }),

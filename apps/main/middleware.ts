@@ -11,7 +11,6 @@ interface JwtPayload {
 
 import { getApiUrl } from "@/utils/api-config";
 
-const API_BASE_URL = getApiUrl();
 const debug = (...args: unknown[]) => {
   if (process.env.NODE_ENV !== "production") {
     console.log("[AuthDebug][middleware]", ...args);
@@ -134,7 +133,7 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    const refreshRes = await fetch(`${getApiUrl()}/auth/refresh`, {
       method: "POST",
       cache: "no-store",
       credentials: "include",

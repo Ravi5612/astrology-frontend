@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import { Product } from "@/lib/types";
 
-const API_BASE_URL = getApiUrl();
 
 const normalizeProduct = (raw: any): Product => {
   const images = Array.isArray(raw?.images) ? raw.images : [];
@@ -32,6 +31,7 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const API_BASE_URL = getApiUrl();
 
   if (!id || typeof id !== "string") {
     return notFound();

@@ -1,4 +1,3 @@
-
 /**
  * Utility to get a clean API URL from environment variables.
  * Handles cases where the environment variable might already contain /api/v1
@@ -14,5 +13,3 @@ export const getBasePath = (): string => {
 export const getApiUrl = (): string => {
     return `${getBasePath()}/api/v1`;
 };
-
-export const API_BASE_URL = getApiUrl();

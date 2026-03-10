@@ -1,6 +1,4 @@
-// Native fetch is used instead of previously used HTTP clients for Next.js caching support
-
-import { API_BASE_URL } from '../utils/api-config';
+import { getApiUrl } from '../utils/api-config';
 
 export interface ExpertProfile {
   id: number;
@@ -68,7 +66,7 @@ export const getExperts = async (
       }
     });
 
-    const url = `${API_BASE_URL}/expert/list?${queryParams.toString()}`;
+    const url = `${getApiUrl()}/expert/list?${queryParams.toString()}`;
 
     const response = await fetch(url, {
       cache: 'no-store',
@@ -131,7 +129,7 @@ export const getExpertReviews = async (
   limit: number = 10
 ): Promise<FetchReviewsResponse> => {
   try {
-    const url = `${API_BASE_URL}/reviews/expert/${expertId}?page=${page}&limit=${limit}`;
+    const url = `${getApiUrl()}/reviews/expert/${expertId}?page=${page}&limit=${limit}`;
     const response = await fetch(url, { cache: 'no-store' });
 
     if (!response.ok) throw new Error("Failed to fetch reviews");

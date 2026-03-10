@@ -14,9 +14,8 @@ import { Astrologer } from "@/lib/types";
 const Image = NextImage as any;
 const { ChevronLeft, MessageSquare, User, Calendar, MapPin, UserX } = LucideIcons as any;
 
-const API_BASE_URL = getApiUrl();
-
 export default function ConsultationPrep() {
+    const API_BASE_URL = getApiUrl();
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
