@@ -113,5 +113,3 @@ const WishlistGrid: React.FC = () => {
 };
 
 export default WishlistGrid;
-
-
