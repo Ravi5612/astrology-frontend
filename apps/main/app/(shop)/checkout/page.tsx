@@ -138,7 +138,7 @@ const CheckoutContent = () => {
     city: "",
     state: "",
     country: "India",
-    zipCode: ""
+    zip_code: ""
   });
 
   const [loadingProfile, setLoadingProfile] = useState(false);
@@ -157,7 +157,7 @@ const CheckoutContent = () => {
             city: defaultAddr.city || "",
             state: defaultAddr.state || "",
             country: defaultAddr.country || "India",
-            zipCode: defaultAddr.zipCode || ""
+            zip_code: defaultAddr.zip_code || defaultAddr.zipCode || ""
           });
           console.log("📍 Auto-filled address from profile:", defaultAddr);
         }
@@ -179,7 +179,7 @@ const CheckoutContent = () => {
   const handlePayment = async () => {
     // Basic validation for shipping address if it's a product order
     if (isOrder) {
-      if (!address.line1 || !address.city || !address.state || !address.zipCode) {
+      if (!address.line1 || !address.city || !address.state || !address.zip_code) {
         toast.error("Please fill in all required shipping address fields");
         return;
       }
@@ -442,9 +442,9 @@ const CheckoutContent = () => {
                         <label className="form-label small fw-bold">Pincode*</label>
                         <input
                           type="text"
-                          name="zipCode"
+                          name="zip_code"
                           className="form-control"
-                          value={address.zipCode}
+                          value={address.zip_code}
                           onChange={handleAddressChange}
                         />
                       </div>

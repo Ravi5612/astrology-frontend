@@ -5,8 +5,8 @@ export interface AddressDto {
     city: string;
     state: string;
     country: string;
-    zipCode?: string;
     zip_code?: string;
+    is_primary?: boolean;
     tag?: string;
 }
 
@@ -23,10 +23,15 @@ export interface ClientProfileData {
     preferences?: string;
     language_preference?: string;
     profile_picture?: string;
-    marital_status?: 'single' | 'married' | 'divorced' | 'widowed' | 'other';
+    marital_status?: 'single' | 'married' | 'divorced' | 'widowed' | 'other' | string;
     occupation?: string;
     about_me?: string;
     addresses?: AddressDto[];
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+    };
 }
 
 export interface UserDetails {

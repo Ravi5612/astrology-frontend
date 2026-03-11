@@ -9,7 +9,7 @@ interface JwtPayload {
   role?: string;
 }
 
-import { getApiUrl } from "@/utils/api-config";
+import { getApiUrl } from "./utils/api-config";
 
 const debug = (...args: unknown[]) => {
   if (process.env.NODE_ENV !== "production") {

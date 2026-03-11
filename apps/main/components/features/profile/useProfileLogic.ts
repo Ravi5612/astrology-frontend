@@ -17,7 +17,7 @@ const normalizeAddressesForUI = (addresses?: any[]) => {
     if (!Array.isArray(addresses)) return addresses;
     return addresses.map((addr: any) => ({
         ...addr,
-        zipCode: addr?.zipCode ?? addr?.zip_code ?? "",
+        zip_code: addr?.zip_code ?? addr?.zipCode ?? "",
     }));
 };
 
@@ -136,6 +136,7 @@ export const useProfileLogic = () => {
             if (data) {
                 setProfileData({
                     ...data,
+                    full_name: data.full_name || data.user?.name || "",
                     addresses: normalizeAddressesForUI(data.addresses),
                 });
                 if (data.profile_picture) {
@@ -480,7 +481,7 @@ export const useProfileLogic = () => {
         setProfileData(prev => {
             const addresses = [...(prev.addresses || [])];
             if (!addresses[index]) {
-                addresses[index] = { line1: '', city: '', state: '', country: '', zipCode: '' };
+                addresses[index] = { line1: '', city: '', state: '', country: '', zip_code: '' };
             }
             addresses[index] = { ...addresses[index], [key]: value };
             return { ...prev, addresses };
@@ -533,11 +534,25 @@ export const useProfileLogic = () => {
 
             if (section === 'address' && payload.addresses && Array.isArray(payload.addresses)) {
                 payload.addresses = payload.addresses.map((addr: any) => {
-                    const { createdAt, updatedAt, user, profile_client, ...cleanAddr } = addr;
-                    if (cleanAddr.zipCode !== undefined) {
-                        cleanAddr.zip_code = cleanAddr.zipCode;
-                        delete cleanAddr.zipCode;
-                    }
+                    // Only keep fields that exist in the backend AddressDto
+                    const cleanAddr: any = {
+                        line1: addr.line1,
+                    };
+                    if (addr.id !== undefined) cleanAddr.id = addr.id;
+                    if (addr.line2 !== undefined && addr.line2 !== '') cleanAddr.line2 = addr.line2;
+                    if (addr.house_no !== undefined && addr.house_no !== '') cleanAddr.house_no = addr.house_no;
+                    if (addr.city !== undefined && addr.city !== '') cleanAddr.city = addr.city;
+                    if (addr.district !== undefined && addr.district !== '') cleanAddr.district = addr.district;
+                    if (addr.state !== undefined && addr.state !== '') cleanAddr.state = addr.state;
+                    if (addr.country !== undefined && addr.country !== '') cleanAddr.country = addr.country;
+                    // Handle zip_code — may come from backend as zip_code OR old zipCode
+                    const zipVal = addr.zip_code ?? addr.zipCode;
+                    if (zipVal !== undefined && zipVal !== '') cleanAddr.zip_code = zipVal;
+                    if (addr.pincode !== undefined && addr.pincode !== '') cleanAddr.pincode = addr.pincode;
+                    // Handle is_primary — may come as is_primary OR old isPrimary
+                    const primaryVal = addr.is_primary ?? addr.isPrimary;
+                    if (primaryVal !== undefined) cleanAddr.is_primary = primaryVal;
+                    if (addr.tag !== undefined) cleanAddr.tag = addr.tag;
                     return cleanAddr;
                 });
             }

@@ -44,7 +44,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
         <div>
             <div className="card border-0 rounded-top-4 mb-0 p-3 shadow-lg" style={{ backgroundColor: "white" }}>
                 <div className="card-body p-0 d-flex align-items-center gap-3">
-                    <div className="position-relative d-inline-block flex-shrink-0">
+                    <div className="position-relative d-inline-block shrink-0">
                         <div style={{
                             width: "60px",
                             height: "60px",
@@ -100,7 +100,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
                     <div className="text-start">
                         <h6 className="fw-bold mb-0 text-dark d-flex align-items-center gap-1">
-                            {profileData.username || t.sidebar.userNameFallback}
+                            {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
                             <i className="fa-solid fa-check-circle text-brown" style={{ fontSize: "12px" }}></i>
                         </h6>
                     </div>

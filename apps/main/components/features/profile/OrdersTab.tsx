@@ -131,7 +131,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                                                             }}
                                                         />
                                                     </div>
-                                                    <div className="flex-grow-1">
+                                                    <div className="grow">
                                                         <div className="d-flex justify-content-between">
                                                             <h6 className="mb-0 fw-bold">{product?.name || "Product Name"}</h6>
                                                             <span className="fw-bold">₹{item.price || 0}</span>
@@ -196,7 +196,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                                                             <p className="font-bold text-gray-800 mb-1">{(order.shippingAddress || order.shipping_address).full_name || userName}</p>
                                                             <p className="mb-0">{(order.shippingAddress || order.shipping_address).line1}</p>
                                                             {(order.shippingAddress || order.shipping_address).line2 && <p className="mb-0">{(order.shippingAddress || order.shipping_address).line2}</p>}
-                                                            <p className="mb-0">{(order.shippingAddress || order.shipping_address).city}, {(order.shippingAddress || order.shipping_address).state} - {(order.shippingAddress || order.shipping_address).zipCode || (order.shippingAddress || order.shipping_address).zip_code}</p>
+                                                            <p className="mb-0">{(order.shippingAddress || order.shipping_address).city}, {(order.shippingAddress || order.shipping_address).state} - {(order.shippingAddress || order.shipping_address).zip_code || (order.shippingAddress || order.shipping_address).zipCode}</p>
                                                             <p className="mt-2 text-gray-500"><i className="fa-solid fa-phone me-2"></i>{(order.shippingAddress || order.shipping_address).phone || userPhone}</p>
                                                         </div>
                                                     ) : (

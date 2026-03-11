@@ -9,8 +9,8 @@ interface AddressDto {
   city: string;
   state: string;
   country: string;
-  zipCode: string;
-  isPrimary?: boolean;
+  zip_code: string;
+  is_primary?: boolean;
 }
 
 interface ProfileFormData {
@@ -42,8 +42,8 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
         city: "",
         state: "",
         country: "",
-        zipCode: "",
-        isPrimary: false,
+        zip_code: "",
+        is_primary: false,
       },
     ],
   });
@@ -83,8 +83,8 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
         city: "",
         state: "",
         country: "",
-        zipCode: "",
-        isPrimary: false,
+        zip_code: "",
+        is_primary: false,
       };
     }
 
@@ -111,7 +111,7 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
           city: "",
           state: "",
           country: "",
-          zipCode: "",
+          zip_code: "",
           isPrimary: false,
         },
       ],
@@ -133,8 +133,8 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
               city: "",
               state: "",
               country: "",
-              zipCode: "",
-              isPrimary: false,
+              zip_code: "",
+              is_primary: false,
             },
           ],
     }));
@@ -156,7 +156,7 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
           !addr.city ||
           !addr.state ||
           !addr.country ||
-          !addr.zipCode
+          !addr.zip_code
         ) {
           setError(
             "Please fill all required address fields (Address Line 1, City, State, Country, Zip Code)."
@@ -205,7 +205,7 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
             addr.city?.trim() &&
             addr.state?.trim() &&
             addr.country?.trim() &&
-            addr.zipCode?.trim()
+            addr.zip_code?.trim()
         )
         .map((addr) => {
           const addressDto: any = {
@@ -213,7 +213,7 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
             city: addr.city.trim(),
             state: addr.state.trim(),
             country: addr.country.trim(),
-            zipCode: addr.zipCode.trim(),
+            zip_code: addr.zip_code.trim(),
           };
 
           // Add optional line2 if provided
@@ -221,9 +221,9 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
             addressDto.line2 = addr.line2.trim();
           }
 
-          // Add optional isPrimary if provided (default to false)
-          if (addr.isPrimary !== undefined) {
-            addressDto.isPrimary = addr.isPrimary;
+          // Add optional is_primary if provided (default to false)
+          if (addr.is_primary !== undefined) {
+            addressDto.is_primary = addr.is_primary;
           }
 
           return addressDto;
@@ -289,8 +289,8 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
           city: "",
           state: "",
           country: "",
-          zipCode: "",
-          isPrimary: false,
+          zip_code: "",
+          is_primary: false,
         },
       ],
     });
@@ -533,8 +533,8 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
                           <input
                             type="text"
                             className="form-control"
-                            name="zipCode"
-                            value={address.zipCode}
+                            name="zip_code"
+                            value={address.zip_code}
                             onChange={(e) => handleAddressChange(e, index)}
                             required={index === 0}
                           />
@@ -545,14 +545,14 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
                             <input
                               className="form-check-input"
                               type="checkbox"
-                              name="isPrimary"
-                              checked={address.isPrimary || false}
+                              name="is_primary"
+                              checked={address.is_primary || false}
                               onChange={(e) => handleAddressChange(e, index)}
-                              id={`isPrimary-${index}`}
+                              id={`is_primary-${index}`}
                             />
                             <label
                               className="form-check-label"
-                              htmlFor={`isPrimary-${index}`}
+                              htmlFor={`is_primary-${index}`}
                             >
                               Set as Primary Address
                             </label>

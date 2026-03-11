@@ -134,6 +134,24 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
                         <div className="col-md-6">
                             <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                Full Name
+                            </label>
+                            {editingSections.personal ? (
+                                <input
+                                    type="text"
+                                    className="form-control fw-bold"
+                                    value={profileData.full_name || ""}
+                                    onChange={(e) => handleInputChange('full_name', e.target.value)}
+                                />
+                            ) : (
+                                <p className="fw-bold mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                    {profileData.full_name || clientUser?.name || t.personalDetails.notSet}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="col-md-6">
+                            <label className="text-muted small fw-bold text-uppercase mb-1" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                                 {t.personalDetails.userName}
                             </label>
                             {editingSections.personal ? (
@@ -409,8 +427,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                 <input
                                     type="text"
                                     className="form-control"
-                                    value={profileData.addresses?.[0]?.zipCode || ""}
-                                    onChange={(e) => handleAddressChange(0, 'zipCode', e.target.value)}
+                                    value={profileData.addresses?.[0]?.zip_code || ""}
+                                    onChange={(e) => handleAddressChange(0, 'zip_code', e.target.value)}
                                     style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                                 />
                             </div>
@@ -424,7 +442,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                                         <p className="fw-bold mb-0">{profileData.addresses[0]?.line1}</p>
                                         {profileData.addresses[0]?.line2 && <p className="text-muted mb-0">{profileData.addresses[0]?.line2}</p>}
                                         <p className="text-muted mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
-                                            {profileData.addresses[0]?.city}, {profileData.addresses[0]?.state}, {profileData.addresses[0]?.country} - {profileData.addresses[0]?.zipCode}
+                                            {profileData.addresses[0]?.city}, {profileData.addresses[0]?.state}, {profileData.addresses[0]?.country} - {profileData.addresses[0]?.zip_code}
                                         </p>
                                     </div>
                                 </div>
