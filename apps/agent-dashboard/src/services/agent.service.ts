@@ -63,6 +63,10 @@ export interface ReferredUser {
     location?: string | null;
     deity?: string | null;
     items?: string | null;
+    commission?: number;
+    commissionPercent?: number;
+    totalSpending?: number | null;
+    totalEarning?: number | null;
 }
 
 export interface ReferredUsersResponse {

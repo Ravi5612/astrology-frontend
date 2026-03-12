@@ -219,6 +219,23 @@ function ListingCard({ item }: { item: ReferredUser }) {
                     <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>{isPlace ? "Submitted" : "Joined"} {joined}</span>
                 </div>
+
+                {/* Commission Section */}
+                {!isPlace && (item.commission !== undefined) && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                Commission ({item.commissionPercent}%)
+                            </span>
+                            <span className="text-sm font-black text-primary">
+                                ₹{item.commission?.toLocaleString("en-IN")}
+                            </span>
+                        </div>
+                        <p className="text-[9px] text-gray-400 mt-0.5 italic">
+                            Earned from {item.type === 'astrologer' ? 'total earnings' : 'total spending'}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
