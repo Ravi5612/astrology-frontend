@@ -36,8 +36,8 @@ export default function CallRoomPage() {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const deviceRef = useRef<any>(null);   // Twilio Voice Device (audio)
     const callRef = useRef<any>(null);      // Twilio Voice Call | Twilio Video Room
-    const localVideoRef = useRef<HTMLVideoElement | null>(null);
-    const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+    const localVideoRef = useRef<HTMLDivElement | null>(null);
+    const remoteVideoRef = useRef<HTMLDivElement | null>(null);
     const cancelledRef = useRef(false); // Prevents StrictMode/Fast Refresh from killing video room
     const hasSetupRef = useRef(false);  // Prevents StrictMode double socket setup
 
@@ -83,6 +83,12 @@ export default function CallRoomPage() {
                     setCallType(session.type);
                     setSessionData(session);
                 }
+
+                // If call is already ACTIVE or ONGOING, we should connect immediately
+                if (session && (session.status === 'active' || session.status === 'ongoing')) {
+                    console.log('[CallRoom] 🔌 Session is already active/ongoing. Joining now...');
+                    handleCallAccepted();
+                }
             } catch (err) {
                 console.error('Failed to pre-fetch session', err);
             }
@@ -90,23 +96,33 @@ export default function CallRoomPage() {
 
         checkAndStartLocalVideo();
 
-        const handleCallAccepted = async (data: any) => {
+        const handleCallAccepted = async (data?: any) => {
             if (cancelledRef.current) return;
-            console.log('[CallRoom] Expert accepted. Token:', data.token ? '✅' : '❌', '| Type:', data.session?.type);
-            const type = data.session?.type || 'audio';
+            console.log('[CallRoom] Expert accepted/already active. Fetching user-specific token...');
+            
             setStatus('connecting');
-            setSessionData(data.session);
-            setCallType(type);
-
+            
             try {
+                // Fetch our own token to avoid identity collision with expert
+                const tokenRes: any = await apiClient.get(`/call/token/${sessionId}`);
+                if (!tokenRes?.token && !data?.token) throw new Error('Failed to retrieve call token');
+                
+                const myToken = tokenRes?.token || data?.token;
+                const roomName = tokenRes?.roomName || data?.roomName;
+                const session = tokenRes?.session || data?.session;
+                const type = session?.type || 'audio';
+
+                setSessionData(session);
+                setCallType(type);
+
                 if (type === 'video') {
-                    await initVideoCall(data.token, data.roomName);
+                    await initVideoCall(myToken, roomName);
                 } else {
-                    await initAudioCall(data.token);
+                    await initAudioCall(myToken);
                 }
             } catch (err) {
                 if (cancelledRef.current) return;
-                console.error('[CallRoom] Init failed:', err);
+                console.error('[CallRoom] Connection failed:', err);
                 toast.error('Could not connect call. Please try again.');
                 setStatus('ended');
             }
@@ -128,6 +144,21 @@ export default function CallRoomPage() {
         };
     }, [sessionId]);
 
+    // Handle re-attaching local video when status changes (PiP movement)
+    useEffect(() => {
+        const videoTrack = localTracksRef.current.find(t => t.kind === 'video');
+        if (videoTrack && localVideoRef.current) {
+            console.log('[CallRoom] 🔄 Re-attaching local video to new container (Status:', status, ')');
+            const el = videoTrack.attach();
+            el.style.width = '100%';
+            el.style.height = '100%';
+            el.style.objectFit = 'cover';
+            el.style.transform = 'scaleX(-1)';
+            localVideoRef.current.innerHTML = '';
+            localVideoRef.current.appendChild(el);
+        }
+    }, [status]);
+
     const localTracksRef = useRef<any[]>([]);
 
     const startLocalVideoPreview = async () => {
@@ -143,8 +174,10 @@ export default function CallRoomPage() {
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
                 el.style.transform = 'scaleX(-1)';
-                localVideoRef.current.innerHTML = '';
-                localVideoRef.current.appendChild(el);
+                if (localVideoRef.current) {
+                    localVideoRef.current.innerHTML = '';
+                    localVideoRef.current.appendChild(el);
+                }
             }
         } catch (err) {
             console.error('Failed to start local preview', err);
@@ -227,14 +260,21 @@ export default function CallRoomPage() {
             console.log('[UserVideo] 📡 Attaching remote track:', track.kind);
             if (track.kind === 'video' && remoteVideoRef.current) {
                 const el = track.attach();
+                el.setAttribute('data-track-sid', track.sid || '');
                 el.style.width = '100%';
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
-                remoteVideoRef.current.innerHTML = '';
-                remoteVideoRef.current.appendChild(el);
+                
+                // Clear and append
+                if (remoteVideoRef.current) {
+                    remoteVideoRef.current.innerHTML = '';
+                    remoteVideoRef.current.appendChild(el);
+                    console.log('[UserVideo] ✅ Remote video element appended.');
+                }
             } else if (track.kind === 'audio') {
                 const el = track.attach();
                 document.body.appendChild(el);
+                console.log('[UserVideo] ✅ Remote audio element appended.');
             }
         };
 

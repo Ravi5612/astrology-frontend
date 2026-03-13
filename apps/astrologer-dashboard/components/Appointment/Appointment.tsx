@@ -325,6 +325,16 @@ export default function AppointmentsPage() {
         setAppointments(prev => prev.map(a => a.id === targetId ? { ...a, status: 'completed' as any } : a));
       };
 
+      const handleCallAccepted = (data: any) => {
+        console.log("[AppointmentDebug] ✅ Call Accepted Event received (Remote):", data);
+        const targetId = (data.session?.id || data.id);
+        if (!targetId) return;
+
+        setAppointments(prev => prev.map(a =>
+          a.id === targetId ? { ...a, status: 'active' as const } : a
+        ));
+      };
+
       chatSocket.on('new_chat_request', handleNewRequest);
       callSocket.on('new_call_request', handleNewCallRequest);
 
@@ -339,6 +349,7 @@ export default function AppointmentsPage() {
       // 4. Real-time update when session is ENDED (completed or expired)
       chatSocket.on('session_ended', handleSessionEnded);
       callSocket.on('call_ended', handleCallEnded);
+      callSocket.on('call_accepted', handleCallAccepted);
 
       return () => {
         console.log("[AppointmentDebug] Cleaning up socket listeners...");
@@ -346,6 +357,10 @@ export default function AppointmentsPage() {
         chatSocket.off('session_activated');
         chatSocket.off('session_ended', handleSessionEnded);
         chatSocket.off('connect');
+
+        callSocket.off('new_call_request', handleNewCallRequest);
+        callSocket.off('call_accepted', handleCallAccepted);
+        callSocket.off('call_ended', handleCallEnded);
       };
     }
   }, [isExpertAuthenticated, expertUser]);

@@ -24,8 +24,8 @@ export default function ExpertVideoCallPage() {
 
     const roomRef = useRef<any>(null);       // Twilio Video Room
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const localVideoRef = useRef<HTMLVideoElement | null>(null);
-    const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+    const localVideoRef = useRef<HTMLDivElement | null>(null);
+    const remoteVideoRef = useRef<HTMLDivElement | null>(null);
     const hasConnectedRef = useRef(false); // Prevents StrictMode double-invoke of acceptAndConnect
 
     useEffect(() => {
@@ -70,6 +70,7 @@ export default function ExpertVideoCallPage() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId]);
+    const localTracksRef = useRef<any[]>([]);
 
     const initVideoRoom = async (token: string, roomName: string) => {
         console.log('[ExpertVideo] 🎥 Connecting to Twilio Video room:', roomName);
@@ -77,17 +78,21 @@ export default function ExpertVideoCallPage() {
 
         // Create local audio + video tracks
         const localTracks = await TwilioVideo.createLocalTracks({ audio: true, video: { width: 640 } });
+        localTracksRef.current = localTracks;
 
         // Attach local video preview
         const localVideoTrack = localTracks.find((t: any) => t.kind === 'video') as any;
         if (localVideoTrack && localVideoRef.current) {
             const el = localVideoTrack.attach();
+            el.setAttribute('data-track-sid', localVideoTrack.sid);
             el.style.width = '100%';
             el.style.height = '100%';
             el.style.objectFit = 'cover';
-            el.style.transform = 'scaleX(-1)';
-            localVideoRef.current.innerHTML = '';
-            localVideoRef.current.appendChild(el);
+            el.style.transform = 'scaleX(-1)'; // Mirror for local preview
+            if (localVideoRef.current) {
+                localVideoRef.current.innerHTML = '';
+                localVideoRef.current.appendChild(el);
+            }
         }
 
         const room = await TwilioVideo.connect(token, {
@@ -115,17 +120,22 @@ export default function ExpertVideoCallPage() {
         };
 
         const attachRemoteTrack = (track: any) => {
-            console.log('[ExpertVideo] 📡 Attaching remote track:', track.kind);
+            console.log('[ExpertVideo] 📡 Attaching remote track:', track.kind, '| SID:', track.sid);
             if (track.kind === 'video' && remoteVideoRef.current) {
                 const el = track.attach();
                 el.style.width = '100%';
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
-                remoteVideoRef.current.innerHTML = ''; // Clear existing content
-                remoteVideoRef.current.appendChild(el); // Append the new video element
+                
+                if (remoteVideoRef.current) {
+                    remoteVideoRef.current.innerHTML = ''; // Clear existing content
+                    remoteVideoRef.current.appendChild(el); // Append the new video element
+                    console.log('[ExpertVideo] ✅ Remote video element ATTACHED.');
+                }
             } else if (track.kind === 'audio') {
                 const el = track.attach();
                 document.body.appendChild(el);
+                console.log('[ExpertVideo] ✅ Remote audio element ATTACHED.');
             }
         };
 
@@ -139,10 +149,25 @@ export default function ExpertVideoCallPage() {
 
         room.on('disconnected', (room: any, error: any) => {
             if (error) console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
-            localTracks.forEach((t: any) => t.stop?.());
+            localTracksRef.current.forEach((t: any) => t.stop?.());
             handleCallEnded();
         });
     };
+
+    // Re-attach local video on status change or re-mount
+    useEffect(() => {
+        const localVideoTrack = localTracksRef.current.find(t => t.kind === 'video');
+        if (localVideoTrack && localVideoRef.current) {
+            console.log('[ExpertVideo] 🔄 Re-attaching local preview to container (Status:', status, ')');
+            const el = localVideoTrack.attach();
+            el.style.width = '100%';
+            el.style.height = '100%';
+            el.style.objectFit = 'cover';
+            el.style.transform = 'scaleX(-1)';
+            localVideoRef.current.innerHTML = '';
+            localVideoRef.current.appendChild(el);
+        }
+    }, [status]);
 
     const startTimer = () => {
         if (timerRef.current) return;
