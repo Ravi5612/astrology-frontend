@@ -34,7 +34,7 @@ export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeStatus, setActiveStatus] = useState("all");
 
-  const fetchChatSessions = async () => {
+  const fetchAllSessions = async () => {
     if (!isExpertAuthenticated || !expertUser) {
       console.log("[AppointmentDebug] Not authenticated or no expert user. Authentication status:", isExpertAuthenticated);
       setLoading(false);
@@ -42,12 +42,21 @@ export default function AppointmentsPage() {
     }
 
     try {
-      console.log("[AppointmentDebug] Fetching chat sessions (pending + completed) for expert user ID:", expertUser.id);
+      console.log("[AppointmentDebug] Fetching all sessions (chat + call) for expert user ID:", expertUser.id);
 
-      // Fetch both pending sessions, completed ones, relevant reviews and stats
-      const [pendingRes, completedRes, reviewsRes, statsRes] = await Promise.allSettled([
+      // Fetch Chat & Call sessions (pending + completed), reviews and stats
+      const [
+        chatPendingRes,
+        chatCompletedRes,
+        callPendingRes,
+        callCompletedRes,
+        reviewsRes,
+        statsRes
+      ] = await Promise.allSettled([
         apiClient.get("/chat/sessions/appointments/pending"),
         apiClient.get("/chat/sessions/appointments/completed"),
+        apiClient.get("/call/sessions/appointments/pending"),
+        apiClient.get("/call/sessions/appointments/completed"),
         expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID"),
         getDashboardStats('today').catch(err => {
           console.error("[Appointment] Today stats fetch failed:", err);
@@ -62,18 +71,20 @@ export default function AppointmentsPage() {
         return [];
       };
 
-      const pendingSessions = getSessionsData(pendingRes);
-      const completedSessions = getSessionsData(completedRes);
+      const chatPending = getSessionsData(chatPendingRes).map((s: any) => ({ ...s, _source: 'chat' }));
+      const chatCompleted = getSessionsData(chatCompletedRes).map((s: any) => ({ ...s, _source: 'chat' }));
+      const callPending = getSessionsData(callPendingRes).map((s: any) => ({ ...s, _source: 'call' }));
+      const callCompleted = getSessionsData(callCompletedRes).map((s: any) => ({ ...s, _source: 'call' }));
 
-      const allSessions: any[] = [...pendingSessions, ...completedSessions];
-
+      const allSessions: any[] = [...chatPending, ...chatCompleted, ...callPending, ...callCompleted];
       const reviews = (reviewsRes.status === 'fulfilled' ? ((reviewsRes.value as any).data || (Array.isArray(reviewsRes.value) ? reviewsRes.value : [])) : []);
 
-      // Deduplicate sessions by ID (prevents double display if session is in both pending and completed)
+      // Deduplicate sessions by ID and Source (since IDs might overlap between chat and call)
       const uniqueSessionsMap = new Map();
       allSessions.forEach(session => {
-        if (!uniqueSessionsMap.has(session.id)) {
-          uniqueSessionsMap.set(session.id, session);
+        const key = `${session._source}_${session.id}`;
+        if (!uniqueSessionsMap.has(key)) {
+          uniqueSessionsMap.set(key, session);
         }
       });
 
@@ -86,8 +97,9 @@ export default function AppointmentsPage() {
         return dateB - dateA;
       });
 
-      const chatAppointments: Appointment[] = await Promise.all(uniqueSessions.map(async (session: any) => {
+      const mappedAppointments: Appointment[] = await Promise.all(uniqueSessions.map(async (session: any) => {
         let currentStatus = session.status;
+        const source = session._source;
 
         // Match review if missing from session data
         let sessionReview = session.review;
@@ -105,52 +117,43 @@ export default function AppointmentsPage() {
           }
         }
 
-        // Fix: Backend pending endpoint might return stale "active" status even if session ended.
-        // We double-check the status for any "active" session using the individual session endpoint.
-        if (currentStatus === 'active') {
+        // Verification logic (placeholder for calls if needed, mostly for chat status sync)
+        if (source === 'chat' && currentStatus === 'active') {
           try {
             const verificationRes: any = await apiClient.get(`/chat/session/${session.id}?_t=${Date.now()}`);
             const verifiedPayload = verificationRes?.data ?? verificationRes;
             if (verifiedPayload && verifiedPayload.status) {
-              console.log(`[AppointmentDebug] Verified status for session ${session.id}: ${verifiedPayload.status}`);
               currentStatus = verifiedPayload.status;
             }
-          } catch (err) {
-            console.warn(`[AppointmentDebug] Failed to verify session ${session.id}`, err);
-          }
+          } catch (err) { }
         }
 
-        if (!session.expiresAt) {
-          console.warn(`[AppointmentDebug] ⚠️ Missing expiresAt for session ${session.id}. Raw session:`, session);
-        } else {
-          console.log(`[AppointmentDebug] ✅ Received expiresAt for session ${session.id}: ${session.expiresAt}`);
-        }
+        const isCall = source === 'call';
+        const callTypeLabel = session.type === 'video' ? 'Video' : 'Voice';
 
         return {
           id: session.id,
           name: session.user?.name || "Client",
           avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
-          service: "Chat Consultation",
+          service: isCall ? `${callTypeLabel} Call` : "Chat Consultation",
           date: session.created_at || session.createdAt || new Date().toISOString(),
-          status: currentStatus, // Use the verified status
+          status: currentStatus,
           type: "new",
           reminder: false,
-          meetingLink: `/chat/${session.id}`,
+          meetingLink: isCall ? (session.type === 'video' ? `/video/${session.id}` : `/call/${session.id}`) : `/chat/${session.id}`,
           sessionId: session.id,
           clientId: session.client_id || session.userId || session.clientId,
           expiresAt: session.expires_at || session.expiresAt,
           isFree: !!(session.is_free ?? session.isFree),
           freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
           durationMins: (() => {
-            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? 0;
+            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? session.duration_seconds / 60 ?? 0;
             if (d === 0 && (currentStatus === 'completed' || currentStatus === 'expired')) {
-              const start = (session.activated_at || session.activatedAt) ? new Date(session.activated_at || session.activatedAt).getTime() :
-                (session.start_time || session.startTime ? new Date(session.start_time || session.startTime).getTime() : 0);
-              const end = (session.ended_at || session.endedAt) ? new Date(session.ended_at || session.endedAt).getTime() :
-                (session.end_time || session.endTime ? new Date(session.end_time || session.endTime).getTime() : 0);
+              const start = (session.activated_at || session.activatedAt || session.start_time) ? new Date(session.activated_at || session.activatedAt || session.start_time).getTime() : 0;
+              const end = (session.ended_at || session.endedAt || session.end_time) ? new Date(session.ended_at || session.endedAt || session.end_time).getTime() : 0;
               if (start > 0 && end > 0) return Math.ceil((end - start) / (1000 * 60));
             }
-            return d;
+            return Math.ceil(d);
           })(),
           review: sessionReview ? {
             rating: sessionReview.rating || 0,
@@ -165,10 +168,10 @@ export default function AppointmentsPage() {
         setStats(statsRes.value);
       }
 
-      console.log("[AppointmentDebug] Mapped appointments:", chatAppointments);
-      setAppointments(chatAppointments);
+      console.log("[AppointmentDebug] Mapped appointments:", mappedAppointments);
+      setAppointments(mappedAppointments);
     } catch (error) {
-      console.error("[AppointmentDebug] Failed to fetch chat sessions:", error);
+      console.error("[AppointmentDebug] Failed to fetch sessions:", error);
       setAppointments([]);
     } finally {
       setLoading(false);
@@ -179,9 +182,10 @@ export default function AppointmentsPage() {
   useEffect(() => {
     console.log("[AppointmentDebug] useEffect triggered. Auth:", isExpertAuthenticated, "ExpertUser:", expertUser?.id);
     setLoading(true);
-    fetchChatSessions();
+    fetchAllSessions();
 
     if (isExpertAuthenticated && expertUser) {
+      // ... (socket listeners remain same)
       const registrationId = expertUser.profileId || expertUser.id;
 
       const connectSocket = () => {

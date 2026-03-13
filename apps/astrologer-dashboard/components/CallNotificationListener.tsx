@@ -19,19 +19,27 @@ export const CallNotificationListener: React.FC = () => {
         const expertId = user.profileId || user.id;
 
         const registerExpert = () => {
-            console.log("[CallSocket] Registering expert:", expertId);
-            callSocket.emit('register_expert', { expertId });
+            console.log("[CallSocket] Registering expert with ID:", expertId);
+            callSocket.emit('register_expert', { expertId }, (res: any) => {
+                console.log("[CallSocket] Registration response:", res);
+            });
         };
 
         if (!callSocket.connected) {
+            console.log("[CallSocket] Socket not connected, connecting...");
             callSocket.connect();
         } else {
+            console.log("[CallSocket] Socket already connected, registering expert...");
             registerExpert();
         }
 
         const onConnect = () => {
-            console.log("[CallSocket] Connected. Registering expert...");
+            console.log("[CallSocket] ✅ Connected to /call namespace. ID:", callSocket.id);
             registerExpert();
+        };
+
+        const onConnectError = (err: any) => {
+            console.error("[CallSocket] ❌ Connection error:", err.message);
         };
 
         const handleNewCall = (data: any) => {
@@ -89,10 +97,13 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         callSocket.on('connect', onConnect);
+        callSocket.on('connect_error', onConnectError);
         callSocket.on('new_call_request', handleNewCall);
 
         return () => {
+            console.log("[CallSocket] Cleaning up listeners...");
             callSocket.off('connect', onConnect);
+            callSocket.off('connect_error', onConnectError);
             callSocket.off('new_call_request', handleNewCall);
         };
     }, [isAuthenticated, user, router]);

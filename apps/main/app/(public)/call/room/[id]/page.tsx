@@ -45,8 +45,7 @@ export default function CallRoomPage() {
     useEffect(() => {
         cancelledRef.current = false;
 
-        // On StrictMode second mount, reconnect socket and re-join room, but skip
-        // disconnecting the old socket to protect an active video/audio call.
+        // On StrictMode second mount, reconnect socket and re-join room
         if (!hasSetupRef.current) {
             hasSetupRef.current = true;
             socketRef.current = io(`${SOCKET_URL}/call`, {
@@ -58,8 +57,31 @@ export default function CallRoomPage() {
         const socket = socketRef.current!;
         socket.emit('join_call_room', { sessionId: parseInt(sessionId) });
 
+        // Start local preview immediately for video calls
+        const checkAndStartLocalVideo = async () => {
+            // We don't know the callType yet from server, so we check URL params or just wait for session data
+            // Actually, we can check searchParams if provided, but typically we get it from session.
+            // Let's fetch session info first if not present
+            try {
+                const res = await apiClient.get(`/call/session/${sessionId}`);
+                const session = res.data || res;
+                if (session && session.type === 'video') {
+                    setCallType('video');
+                    setSessionData(session);
+                    startLocalVideoPreview();
+                } else if (session) {
+                    setCallType(session.type);
+                    setSessionData(session);
+                }
+            } catch (err) {
+                console.error('Failed to pre-fetch session', err);
+            }
+        };
+
+        checkAndStartLocalVideo();
+
         const handleCallAccepted = async (data: any) => {
-            if (cancelledRef.current) return; // StrictMode double-invoke guard
+            if (cancelledRef.current) return;
             console.log('[CallRoom] Expert accepted. Token:', data.token ? '✅' : '❌', '| Type:', data.session?.type);
             const type = data.session?.type || 'audio';
             setStatus('connecting');
@@ -88,17 +110,32 @@ export default function CallRoomPage() {
         socket.on('call_ended', onCallEnded);
 
         return () => {
-            cancelledRef.current = true; // Stop any in-flight async chains
-            // Remove listeners but DO NOT disconnect socket —
-            // disconnecting on StrictMode cleanup causes backend to end the video session.
+            cancelledRef.current = true;
             socket.off('call_accepted', handleCallAccepted);
             socket.off('call_ended', onCallEnded);
             if (timerRef.current) clearInterval(timerRef.current);
             deviceRef.current?.destroy?.();
-            // NOTE: Do NOT disconnect callRef — handled by handleEndCall explicitly.
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId]);
+
+    const localTracksRef = useRef<any[]>([]);
+
+    const startLocalVideoPreview = async () => {
+        try {
+            const TwilioVideo = await import('twilio-video');
+            const tracks = await TwilioVideo.createLocalTracks({ audio: true, video: { width: 640 } });
+            localTracksRef.current = tracks;
+
+            const videoTrack = tracks.find(t => t.kind === 'video');
+            if (videoTrack && localVideoRef.current) {
+                const el = videoTrack.attach();
+                localVideoRef.current.replaceWith(el);
+                localVideoRef.current = el as any;
+            }
+        } catch (err) {
+            console.error('Failed to start local preview', err);
+        }
+    };
 
     // ─── Audio Call (Twilio Voice SDK) ────────────────────────────────────
     const initAudioCall = async (token: string) => {
@@ -140,16 +177,17 @@ export default function CallRoomPage() {
         console.log('[UserVideo] 🎥 Connecting to Twilio Video room:', roomName);
         const TwilioVideo = await import('twilio-video');
 
-        // Request camera + mic
-        const localTracks = await TwilioVideo.createLocalTracks({ audio: true, video: { width: 640 } });
+        // Use existing tracks if already started for preview
+        let localTracks = localTracksRef.current;
+        if (localTracks.length === 0) {
+            localTracks = await TwilioVideo.createLocalTracks({ audio: true, video: { width: 640 } });
+            localTracksRef.current = localTracks;
+        }
 
-        // Attach local video preview
+        // Attach local video preview (if not already attached)
         const localVideoTrack = localTracks.find((t: any) => t.kind === 'video') as any;
         if (localVideoTrack && localVideoRef.current) {
-            localVideoRef.current.srcObject = null;
-            const el = localVideoTrack.attach();
-            localVideoRef.current.replaceWith(el);
-            localVideoRef.current = el;
+            // Already handled by startLocalVideoPreview if it ran
         }
 
         const room = await TwilioVideo.connect(token, {
@@ -206,6 +244,8 @@ export default function CallRoomPage() {
         if (timerRef.current) clearInterval(timerRef.current);
         deviceRef.current?.destroy?.();
         if (callRef.current?.disconnect) callRef.current.disconnect();
+        // Stop local tracks
+        localTracksRef.current.forEach(track => track.stop());
         // Show rating modal instead of instant redirect
         setShowRatingModal(true);
     };
@@ -286,46 +326,79 @@ export default function CallRoomPage() {
             <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-6">
 
                 {/* ── VIDEO LAYOUT ─────────────────────────────────────── */}
-                {callType === 'video' && status !== 'ringing' ? (
+                {callType === 'video' ? (
                     <div className="w-full relative">
-                        {/* Remote video (large) */}
-                        <div className="w-full h-[60vh] max-h-[500px] bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative">
-                            <video
-                                ref={remoteVideoRef as any}
-                                autoPlay
-                                playsInline
-                                className="w-full h-full object-cover"
-                            />
-                            {status === 'connecting' && (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                                    <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                                    <p className="text-white/60 font-bold uppercase tracking-widest text-sm">Connecting video...</p>
+                        {/* Main Video Area (Remote when connected, Local when ringing) */}
+                        <div className="w-full h-[65vh] max-h-[600px] bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative">
+                            {status === 'connected' ? (
+                                <video
+                                    ref={remoteVideoRef as any}
+                                    autoPlay
+                                    playsInline
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <video
+                                    ref={localVideoRef as any}
+                                    autoPlay
+                                    playsInline
+                                    muted
+                                    className="w-full h-full object-cover scale-x-[-1]"
+                                />
+                            )}
+
+                            {/* Waiting Message Overlay */}
+                            {status === 'ringing' && (
+                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 gap-4">
+                                    <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center animate-bounce shadow-2xl shadow-primary/50">
+                                        <Video className="w-10 h-10 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-white drop-shadow-lg">Waiting for expert...</h3>
+                                        <p className="text-white/70 font-bold mt-1">Please wait for the astrologer to pick the call</p>
+                                    </div>
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/20">
+                                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                                        <span className="text-[10px] uppercase tracking-widest font-black">Connecting Securely</span>
+                                    </div>
                                 </div>
                             )}
+
+                            {status === 'connecting' && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60">
+                                    <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                                    <p className="text-white font-bold uppercase tracking-widest text-sm">Initializing Secure Stream...</p>
+                                </div>
+                            )}
+
                             {/* Expert name overlay */}
-                            <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                <span className="text-white text-xs font-bold">{sessionData?.expert?.user?.name || 'Expert'}</span>
-                            </div>
+                            {status === 'connected' && (
+                                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
+                                    <span className="text-white text-xs font-bold">{sessionData?.expert?.user?.name || 'Expert'}</span>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Local video (pip - bottom right) */}
-                        <div className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-xl">
-                            <video
-                                ref={localVideoRef as any}
-                                autoPlay
-                                playsInline
-                                muted
-                                className="w-full h-full object-cover"
-                            />
-                            {isCameraOff && (
-                                <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                                    <User className="w-8 h-8 text-neutral-400" />
+                        {/* Local video (PiP - bottom right, only when connected to remote) */}
+                        {status === 'connected' && (
+                            <div className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-20">
+                                <video
+                                    ref={localVideoRef as any}
+                                    autoPlay
+                                    playsInline
+                                    muted
+                                    className="w-full h-full object-cover scale-x-[-1]"
+                                />
+                                {isCameraOff && (
+                                    <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
+                                        <User className="w-8 h-8 text-neutral-400" />
+                                    </div>
+                                )}
+                                <div className="absolute bottom-1 left-0 right-0 text-center">
+                                    <span className="text-white/60 text-[9px] font-bold">You</span>
                                 </div>
-                            )}
-                            <div className="absolute bottom-1 left-0 right-0 text-center">
-                                <span className="text-white/60 text-[9px] font-bold">You</span>
                             </div>
-                        </div>
+                        )}
                     </div>
                 ) : (
                     /* ── AUDIO LAYOUT ─────────────────────────────────── */
