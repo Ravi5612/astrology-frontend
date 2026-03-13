@@ -39,6 +39,7 @@ function CallPrepContent() {
     const [astrologer, setAstrologer] = useState<AstrologerData | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
+    const [userBalance, setUserBalance] = useState<number>(0);
     const [showSecurityModal, setShowSecurityModal] = useState(false);
     const { isClientAuthenticated } = useAuthStore();
 
@@ -73,7 +74,17 @@ function CallPrepContent() {
             }
         };
         if (id) fetchAstro();
-    }, [id]);
+
+        const fetchBalance = async () => {
+            try {
+                const response = await apiClient.get('/wallet/balance');
+                setUserBalance(Number(response));
+            } catch (error) {
+                console.error("Failed to fetch balance:", error);
+            }
+        };
+        if (isClientAuthenticated) fetchBalance();
+    }, [id, isClientAuthenticated]);
 
     const handleStartCall = async () => {
         if (!isClientAuthenticated) {
@@ -135,8 +146,9 @@ function CallPrepContent() {
                 router.push(`/call/room/${response.session.id}`);
             }
         } catch (error: any) {
-            console.error("Initiation error:", error);
-            const msg = error.message || error.response?.data?.message || "Failed to start call";
+            console.error("[CallPrep] Initiation error details:", error);
+            // safeFetch stores the JSON response in error.body
+            const msg = error.body?.message || error.message || "Failed to start call";
             toast.error(msg);
         } finally {
             setActionLoading(false);
@@ -265,15 +277,47 @@ function CallPrepContent() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-8 pt-10">
-                                <button
-                                    onClick={handleStartCall}
-                                    disabled={actionLoading}
-                                    className="w-full py-5 bg-orange text-white rounded-3xl font-black text-xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-70"
-                                >
-                                    {type === 'video' ? <Video className="w-6 h-6" /> : <Phone className="w-6 h-6" />}
-                                    <span>{actionLoading ? "STARTING..." : `START ${type.toUpperCase()} CALL`}</span>
-                                </button>
+                            <div className="p-8 pt-10 space-y-4">
+                                <div className="flex items-center justify-between px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                            <LucideIcons.Wallet className="w-4 h-4 text-green-600" />
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-500">Your Balance</span>
+                                    </div>
+                                    <span className="text-xl font-black text-gray-900">₹{userBalance.toFixed(2)}</span>
+                                </div>
+
+                                {userBalance < callPrice * 5 ? (
+                                    <div className="p-6 bg-red-50 rounded-3xl border border-red-100">
+                                        <div className="flex items-start gap-4 mb-4">
+                                            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                                                <LucideIcons.AlertCircle className="w-6 h-6 text-red-500" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-red-900 leading-none mb-1">Low Balance</h4>
+                                                <p className="text-xs text-red-600 font-medium">You need at least ₹{callPrice * 5} for 5 mins.</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => router.push("/wallet")}
+                                            className="w-full py-4 bg-red-500 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <LucideIcons.CreditCard className="w-5 h-5" />
+                                            <span>RECHARGE NOW</span>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={handleStartCall}
+                                        disabled={actionLoading}
+                                        className="w-full py-5 bg-orange text-white rounded-3xl font-black text-xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-70"
+                                    >
+                                        {type === 'video' ? <Video className="w-6 h-6" /> : <Phone className="w-6 h-6" />}
+                                        <span>{actionLoading ? "STARTING..." : `START ${type.toUpperCase()} CALL`}</span>
+                                    </button>
+                                )}
+                                
                                 <p className="text-center text-[10px] text-gray-400 font-black uppercase tracking-widest mt-6">
                                     🔒 Secured by 256-Bit SSL Encryption
                                 </p>
