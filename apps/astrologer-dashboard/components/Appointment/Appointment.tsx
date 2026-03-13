@@ -9,7 +9,7 @@ import RescheduleModal from "./RescheduleModal";
 import { Appointment } from "./types";
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/store/useAuthStore";
-import { chatSocket } from "@/lib/socket";
+import { chatSocket, callSocket } from "@/lib/socket";
 import { getExpertReviews } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
 
@@ -199,7 +199,16 @@ export default function AppointmentsPage() {
         const rid = expertUser.profileId || expertUser.id;
         console.log(`[AppointmentDebug] Emitting 'register_expert' for ID: ${rid} (Room: expert_${rid})`);
         chatSocket.emit('register_expert', { expertId: rid }, (response: any) => {
-          console.log("[AppointmentDebug] 'register_expert' success:", response);
+          console.log("[AppointmentDebug] 'register_expert' (Chat) success:", response);
+        });
+
+        if (!callSocket.connected) {
+          console.log("[AppointmentDebug] Attempting to connect CallSocket...");
+          callSocket.connect();
+        }
+        console.log(`[AppointmentDebug] Emitting 'register_expert' (Call) for ID: ${rid}`);
+        callSocket.emit('register_expert', { expertId: rid }, (response: any) => {
+          console.log("[AppointmentDebug] 'register_expert' (Call) success:", response);
         });
       };
 
@@ -254,18 +263,37 @@ export default function AppointmentsPage() {
         });
       };
 
-      chatSocket.on('new_chat_request', handleNewRequest);
+      const handleNewCallRequest = (data: any) => {
+        const { session } = data;
+        console.log("[AppointmentDebug] 🚨 New Real-time CALL Request RECEIVED via Socket:", session.id);
 
-      // 3. Real-time update when session is ACTIVATED
-      chatSocket.on('session_activated', (session: any) => {
-        console.log("[AppointmentDebug] Session Activated:", session.id);
-        setAppointments(prev => prev.map(a =>
-          a.id === session.id ? { ...a, status: 'active' as const } : a
-        ));
-      });
+        const newAppt: Appointment = {
+          id: session.id,
+          name: session.user?.name || "Client",
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          service: session.type === 'video' ? "Video Call" : "Voice Call",
+          date: session.created_at || session.createdAt || new Date().toISOString(),
+          status: "pending",
+          type: "new",
+          reminder: false,
+          meetingLink: session.type === 'video' ? `/video/${session.id}` : `/call/${session.id}`,
+          sessionId: session.id,
+          clientId: session.client_id || session.userId || session.clientId,
+          expiresAt: session.expires_at || session.expiresAt,
+          isFree: !!(session.is_free ?? session.isFree),
+          freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
+          durationMins: session.duration_mins ?? session.durationMins ?? 0,
+          review: session.review,
+          terminatedBy: session.terminated_by || session.terminatedBy,
+        };
 
-      // 4. Real-time update when session is ENDED (completed or expired)
-      chatSocket.on('session_ended', (data: any) => {
+        setAppointments(prev => {
+          if (prev.some(a => a.id === newAppt.id)) return prev;
+          return [newAppt, ...prev];
+        });
+      };
+
+      const handleSessionEnded = (data: any) => {
         console.log("[AppointmentDebug] 🏁 Session Ended Event received:", data);
         const targetId = data.id || data.sessionId;
         if (!targetId) {
@@ -289,13 +317,34 @@ export default function AppointmentsPage() {
             } : a
           );
         });
+      };
+
+      const handleCallEnded = (data: any) => {
+        console.log("[AppointmentDebug] 🏁 Call Ended Event received:", data);
+        const targetId = data.id || data.sessionId;
+        setAppointments(prev => prev.map(a => a.id === targetId ? { ...a, status: 'completed' as any } : a));
+      };
+
+      chatSocket.on('new_chat_request', handleNewRequest);
+      callSocket.on('new_call_request', handleNewCallRequest);
+
+      // 3. Real-time update when session is ACTIVATED
+      chatSocket.on('session_activated', (session: any) => {
+        console.log("[AppointmentDebug] Session Activated:", session.id);
+        setAppointments(prev => prev.map(a =>
+          a.id === session.id ? { ...a, status: 'active' as const } : a
+        ));
       });
+
+      // 4. Real-time update when session is ENDED (completed or expired)
+      chatSocket.on('session_ended', handleSessionEnded);
+      callSocket.on('call_ended', handleCallEnded);
 
       return () => {
         console.log("[AppointmentDebug] Cleaning up socket listeners...");
         chatSocket.off('new_chat_request', handleNewRequest);
         chatSocket.off('session_activated');
-        chatSocket.off('session_ended');
+        chatSocket.off('session_ended', handleSessionEnded);
         chatSocket.off('connect');
       };
     }
@@ -308,7 +357,7 @@ export default function AppointmentsPage() {
     if (hasActiveSession) {
       console.log("[AppointmentDebug] Active session detected, starting polling fallback...");
       const interval = setInterval(() => {
-        fetchChatSessions();
+        fetchAllSessions();
       }, 15000); // Poll every 15s
       return () => clearInterval(interval);
     }

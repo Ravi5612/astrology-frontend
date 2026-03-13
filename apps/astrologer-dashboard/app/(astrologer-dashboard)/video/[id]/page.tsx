@@ -101,11 +101,16 @@ export default function ExpertVideoCallPage() {
 
         // Attach remote participant (user)
         const attachRemoteParticipant = (participant: any) => {
-            console.log('[ExpertVideo] 👤 Remote participant:', participant.identity);
+            console.log('[ExpertVideo] 👤 Remote participant joined:', participant.identity);
+
             participant.tracks.forEach((pub: any) => {
                 if (pub.isSubscribed && pub.track) attachRemoteTrack(pub.track);
             });
-            participant.on('trackSubscribed', (track: any) => attachRemoteTrack(track));
+
+            participant.on('trackSubscribed', (track: any) => {
+                console.log('[ExpertVideo] 📡 Track subscribed:', track.kind);
+                attachRemoteTrack(track);
+            });
         };
 
         const attachRemoteTrack = (track: any) => {
@@ -115,18 +120,23 @@ export default function ExpertVideoCallPage() {
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
                 remoteVideoRef.current.replaceWith(el);
-                remoteVideoRef.current = el;
+                remoteVideoRef.current = el as any;
+            } else if (track.kind === 'audio') {
+                const el = track.attach();
+                document.body.appendChild(el);
             }
         };
 
         room.participants.forEach(attachRemoteParticipant);
         room.on('participantConnected', attachRemoteParticipant);
-        room.on('participantDisconnected', () => {
-            console.log('[ExpertVideo] 👤 User left the call.');
+
+        room.on('participantDisconnected', (participant: any) => {
+            console.log('[ExpertVideo] 👤 Participant disconnected:', participant.identity);
             handleCallEnded();
         });
-        room.on('disconnected', () => {
-            console.log('[ExpertVideo] 📴 Room disconnected.');
+
+        room.on('disconnected', (room: any, error: any) => {
+            if (error) console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
             localTracks.forEach((t: any) => t.stop?.());
             handleCallEnded();
         });

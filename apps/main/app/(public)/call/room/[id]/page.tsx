@@ -216,7 +216,10 @@ export default function CallRoomPage() {
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
                 remoteVideoRef.current.replaceWith(el);
-                remoteVideoRef.current = el;
+                remoteVideoRef.current = el as any;
+            } else if (track.kind === 'audio') {
+                const el = track.attach();
+                document.body.appendChild(el);
             }
         };
 
