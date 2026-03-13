@@ -26,15 +26,20 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         if (!callSocket.connected) {
-            console.log("[CallSocket] Socket not connected, connecting...");
+            console.log("[CallSocket] 🔌 Socket not connected, connecting to /call namespace...");
             callSocket.connect();
         } else {
-            console.log("[CallSocket] Socket already connected, registering expert...");
+            console.log("[CallSocket] ✅ Socket already connected, registering expert...");
             registerExpert();
         }
 
         const onConnect = () => {
-            console.log("[CallSocket] ✅ Connected to /call namespace. ID:", callSocket.id);
+            console.log("[CallSocket] ✅ CONNECTED to /call namespace. ID:", callSocket.id);
+            registerExpert();
+        };
+
+        const onReconnect = (attempt: number) => {
+            console.log("[CallSocket] 🔄 RECONNECTED to /call namespace after", attempt, "attempts. Re-registering...");
             registerExpert();
         };
 
@@ -97,12 +102,14 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         callSocket.on('connect', onConnect);
+        callSocket.on('reconnect', onReconnect);
         callSocket.on('connect_error', onConnectError);
         callSocket.on('new_call_request', handleNewCall);
 
         return () => {
-            console.log("[CallSocket] Cleaning up listeners...");
+            console.log("[CallSocket] 🧹 Cleaning up listeners...");
             callSocket.off('connect', onConnect);
+            callSocket.off('reconnect', onReconnect);
             callSocket.off('connect_error', onConnectError);
             callSocket.off('new_call_request', handleNewCall);
         };

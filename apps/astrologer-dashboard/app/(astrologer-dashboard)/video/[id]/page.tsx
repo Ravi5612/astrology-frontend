@@ -85,8 +85,9 @@ export default function ExpertVideoCallPage() {
             el.style.width = '100%';
             el.style.height = '100%';
             el.style.objectFit = 'cover';
-            localVideoRef.current.replaceWith(el);
-            localVideoRef.current = el;
+            el.style.transform = 'scaleX(-1)';
+            localVideoRef.current.innerHTML = '';
+            localVideoRef.current.appendChild(el);
         }
 
         const room = await TwilioVideo.connect(token, {
@@ -114,13 +115,14 @@ export default function ExpertVideoCallPage() {
         };
 
         const attachRemoteTrack = (track: any) => {
+            console.log('[ExpertVideo] 📡 Attaching remote track:', track.kind);
             if (track.kind === 'video' && remoteVideoRef.current) {
                 const el = track.attach();
                 el.style.width = '100%';
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
-                remoteVideoRef.current.replaceWith(el);
-                remoteVideoRef.current = el as any;
+                remoteVideoRef.current.innerHTML = ''; // Clear existing content
+                remoteVideoRef.current.appendChild(el); // Append the new video element
             } else if (track.kind === 'audio') {
                 const el = track.attach();
                 document.body.appendChild(el);
@@ -213,11 +215,9 @@ export default function ExpertVideoCallPage() {
             <div className="flex-1 relative bg-neutral-950">
                 {/* Remote video (large — user's camera) */}
                 <div className="absolute inset-0 flex items-center justify-center bg-neutral-900">
-                    <video
+                    <div
                         ref={remoteVideoRef as any}
-                        autoPlay
-                        playsInline
-                        className="w-full h-full object-cover"
+                        className="w-full h-full"
                     />
                     {status !== 'connected' && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
@@ -239,12 +239,9 @@ export default function ExpertVideoCallPage() {
 
                 {/* Local video (PIP — expert's camera, bottom right) */}
                 <div className="absolute bottom-6 right-6 w-36 h-48 bg-neutral-800 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl z-10">
-                    <video
+                    <div
                         ref={localVideoRef as any}
-                        autoPlay
-                        playsInline
-                        muted
-                        className="w-full h-full object-cover"
+                        className="w-full h-full"
                     />
                     {isCameraOff && (
                         <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">

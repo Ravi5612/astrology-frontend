@@ -55,9 +55,19 @@ export default function CallRoomPage() {
         }
 
         const socket = socketRef.current!;
-        socket.emit('join_call_room', { sessionId: parseInt(sessionId) });
 
-        // Start local preview immediately for video calls
+        const onConnect = () => {
+            console.log('[CallRoom] ✅ Socket connected. Joining room:', sessionId);
+            socket.emit('join_call_room', { sessionId: parseInt(sessionId) });
+            // Refresh session status on connect to ensure we're not stuck in 'ringing'
+            checkAndStartLocalVideo();
+        };
+
+        if (socket.connected) {
+            onConnect();
+        } else {
+            socket.on('connect', onConnect);
+        }
         const checkAndStartLocalVideo = async () => {
             // We don't know the callType yet from server, so we check URL params or just wait for session data
             // Actually, we can check searchParams if provided, but typically we get it from session.
@@ -129,8 +139,12 @@ export default function CallRoomPage() {
             const videoTrack = tracks.find(t => t.kind === 'video');
             if (videoTrack && localVideoRef.current) {
                 const el = videoTrack.attach();
-                localVideoRef.current.replaceWith(el);
-                localVideoRef.current = el as any;
+                el.style.width = '100%';
+                el.style.height = '100%';
+                el.style.objectFit = 'cover';
+                el.style.transform = 'scaleX(-1)';
+                localVideoRef.current.innerHTML = '';
+                localVideoRef.current.appendChild(el);
             }
         } catch (err) {
             console.error('Failed to start local preview', err);
@@ -210,13 +224,14 @@ export default function CallRoomPage() {
         };
 
         const attachRemoteTrack = (track: any) => {
+            console.log('[UserVideo] 📡 Attaching remote track:', track.kind);
             if (track.kind === 'video' && remoteVideoRef.current) {
                 const el = track.attach();
                 el.style.width = '100%';
                 el.style.height = '100%';
                 el.style.objectFit = 'cover';
-                remoteVideoRef.current.replaceWith(el);
-                remoteVideoRef.current = el as any;
+                remoteVideoRef.current.innerHTML = '';
+                remoteVideoRef.current.appendChild(el);
             } else if (track.kind === 'audio') {
                 const el = track.attach();
                 document.body.appendChild(el);
@@ -334,19 +349,14 @@ export default function CallRoomPage() {
                         {/* Main Video Area (Remote when connected, Local when ringing) */}
                         <div className="w-full h-[65vh] max-h-[600px] bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative">
                             {status === 'connected' ? (
-                                <video
+                                <div
                                     ref={remoteVideoRef as any}
-                                    autoPlay
-                                    playsInline
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full"
                                 />
                             ) : (
-                                <video
+                                <div
                                     ref={localVideoRef as any}
-                                    autoPlay
-                                    playsInline
-                                    muted
-                                    className="w-full h-full object-cover scale-x-[-1]"
+                                    className="w-full h-full"
                                 />
                             )}
 
@@ -385,12 +395,9 @@ export default function CallRoomPage() {
                         {/* Local video (PiP - bottom right, only when connected to remote) */}
                         {status === 'connected' && (
                             <div className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-20">
-                                <video
+                                <div
                                     ref={localVideoRef as any}
-                                    autoPlay
-                                    playsInline
-                                    muted
-                                    className="w-full h-full object-cover scale-x-[-1]"
+                                    className="w-full h-full"
                                 />
                                 {isCameraOff && (
                                     <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
