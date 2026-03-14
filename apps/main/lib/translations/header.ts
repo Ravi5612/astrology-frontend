@@ -14,7 +14,7 @@ export const headerTranslations = {
         // Navigation Links
         navHome: "Home",
         navDailyHoroscope: "Daily Horoscope",
-        navAstrologyConsult: "Astrology Consult",
+        navAstrologyConsult: "Calculators",
         navFamousPlaces: "Famous Places",
         navLiveDarshan: "Live Darshan",
 

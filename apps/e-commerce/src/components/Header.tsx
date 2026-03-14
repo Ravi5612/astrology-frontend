@@ -12,7 +12,7 @@ const Header = () => {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
-    { name: "Astrology Consult", href: "/consult" },
+    { name: "Calculator", href: "/consult" },
     { name: "Blog", href: "/blog" },
     { name: "Kundli Prediction", href: "/kundli" },
   ];
