@@ -77,7 +77,7 @@ function CallPrepContent() {
 
         const fetchBalance = async () => {
             try {
-                const response = await apiClient.get('/wallet/balance');
+                const response: any = await apiClient.get('/wallet/balance');
                 setUserBalance(Number(response));
             } catch (error) {
                 console.error("Failed to fetch balance:", error);
