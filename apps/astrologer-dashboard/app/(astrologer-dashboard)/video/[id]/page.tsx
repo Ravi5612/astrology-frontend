@@ -21,6 +21,7 @@ export default function ExpertVideoCallPage() {
     const [isCameraOff, setIsCameraOff] = useState(false);
     const [callDuration, setCallDuration] = useState(0);
     const [sessionData, setSessionData] = useState<any>(null);
+    const [hasRemoteTrack, setHasRemoteTrack] = useState(false);
 
     const roomRef = useRef<any>(null);       // Twilio Video Room
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -131,6 +132,7 @@ export default function ExpertVideoCallPage() {
                     remoteVideoRef.current.innerHTML = ''; // Clear existing content
                     remoteVideoRef.current.appendChild(el); // Append the new video element
                     console.log('[ExpertVideo] ✅ Remote video element ATTACHED.');
+                    setHasRemoteTrack(true);
                 }
             } else if (track.kind === 'audio') {
                 const el = track.attach();
@@ -254,8 +256,15 @@ export default function ExpertVideoCallPage() {
                             </p>
                         </div>
                     )}
+                    {status === 'connected' && !hasRemoteTrack && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-[5]">
+                            <p className="text-white/40 font-bold text-sm uppercase tracking-widest animate-pulse">
+                                Waiting for client...
+                            </p>
+                        </div>
+                    )}
                     {/* Client name tag */}
-                    {status === 'connected' && (
+                    {status === 'connected' && hasRemoteTrack && (
                         <div className="absolute bottom-6 left-6 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
                             <span className="text-sm font-bold">{sessionData?.user?.name || 'Client'}</span>
                         </div>

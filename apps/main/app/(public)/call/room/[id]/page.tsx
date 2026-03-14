@@ -40,6 +40,7 @@ export default function CallRoomPage() {
     const remoteVideoRef = useRef<HTMLDivElement | null>(null);
     const cancelledRef = useRef(false); // Prevents StrictMode/Fast Refresh from killing video room
     const hasSetupRef = useRef(false);  // Prevents StrictMode double socket setup
+    const hasAcceptedRef = useRef(false); // Prevents multiple invocations of call assignment
 
     // ─── Setup Socket ──────────────────────────────────────────────────────
     useEffect(() => {
@@ -68,12 +69,14 @@ export default function CallRoomPage() {
         } else {
             socket.on('connect', onConnect);
         }
+        let pollTimer: NodeJS.Timeout | null = null;
         const checkAndStartLocalVideo = async () => {
             // We don't know the callType yet from server, so we check URL params or just wait for session data
             // Actually, we can check searchParams if provided, but typically we get it from session.
             // Let's fetch session info first if not present
+            if (hasAcceptedRef.current) return;
             try {
-                const res = await apiClient.get(`/call/session/${sessionId}`);
+                const res: any = await apiClient.get(`/call/session/${sessionId}`);
                 const session = res.data || res;
                 if (session && session.type === 'video') {
                     setCallType('video');
@@ -87,7 +90,8 @@ export default function CallRoomPage() {
                 // If call is already ACTIVE or ONGOING, we should connect immediately
                 if (session && (session.status === 'active' || session.status === 'ongoing')) {
                     console.log('[CallRoom] 🔌 Session is already active/ongoing. Joining now...');
-                    handleCallAccepted();
+                    if (pollTimer) clearInterval(pollTimer);
+                    handleCallAccepted(session);
                 }
             } catch (err) {
                 console.error('Failed to pre-fetch session', err);
@@ -95,27 +99,32 @@ export default function CallRoomPage() {
         };
 
         checkAndStartLocalVideo();
+        pollTimer = setInterval(checkAndStartLocalVideo, 3000);
 
         const handleCallAccepted = async (data?: any) => {
-            if (cancelledRef.current) return;
+            if (cancelledRef.current || hasAcceptedRef.current) return;
+            hasAcceptedRef.current = true;
+            if (pollTimer) clearInterval(pollTimer);
             console.log('[CallRoom] Expert accepted/already active. Fetching user-specific token...');
             
             setStatus('connecting');
             
             try {
                 // Fetch our own token to avoid identity collision with expert
-                const tokenRes: any = await apiClient.get(`/call/token/${sessionId}`);
-                if (!tokenRes?.token && !data?.token) throw new Error('Failed to retrieve call token');
+                const tokenResponse: any = await apiClient.get(`/call/token/${sessionId}`);
+                const tokenData = tokenResponse?.data || tokenResponse;
+
+                if (!tokenData?.token && !data?.token) throw new Error('Failed to retrieve call token');
                 
-                const myToken = tokenRes?.token || data?.token;
-                const roomName = tokenRes?.roomName || data?.roomName;
-                const session = tokenRes?.session || data?.session;
-                const type = session?.type || 'audio';
+                const myToken = tokenData?.token || data?.token;
+                const roomName = tokenData?.roomName || data?.roomName;
+                const sessionPayload = tokenData?.session || data?.session;
+                const callTypeFromServer = sessionPayload?.type || 'audio';
 
-                setSessionData(session);
-                setCallType(type);
+                setSessionData(sessionPayload);
+                setCallType(callTypeFromServer);
 
-                if (type === 'video') {
+                if (callTypeFromServer === 'video') {
                     await initVideoCall(myToken, roomName);
                 } else {
                     await initAudioCall(myToken);
@@ -137,6 +146,7 @@ export default function CallRoomPage() {
 
         return () => {
             cancelledRef.current = true;
+            if (pollTimer) clearInterval(pollTimer);
             socket.off('call_accepted', handleCallAccepted);
             socket.off('call_ended', onCallEnded);
             if (timerRef.current) clearInterval(timerRef.current);
