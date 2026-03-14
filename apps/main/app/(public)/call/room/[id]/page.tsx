@@ -73,7 +73,7 @@ export default function CallRoomPage() {
             // Actually, we can check searchParams if provided, but typically we get it from session.
             // Let's fetch session info first if not present
             try {
-                const res = await apiClient.get(`/call/session/${sessionId}`);
+                const res: any = await apiClient.get(`/call/session/${sessionId}`);
                 const session = res.data || res;
                 if (session && session.type === 'video') {
                     setCallType('video');
