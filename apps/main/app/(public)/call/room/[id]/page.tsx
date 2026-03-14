@@ -323,9 +323,17 @@ export default function CallRoomPage() {
         if (reviewSubmitting || reviewSubmitted) return;
         setReviewSubmitting(true);
         try {
+            const expertData = (sessionData as any)?.expert;
+            const expertIdVal = expertData?.id || (sessionData as any)?.expertId || (sessionData as any)?.expert_id;
+            if (!expertIdVal) {
+                toast.error('Could not identify expert for review');
+                setReviewSubmitting(false);
+                return;
+            }
+
             await apiClient.post('/reviews', {
                 sessionId: parseInt(sessionId),
-                expertId: sessionData?.expert?.id || sessionData?.expertId,
+                expertId: expertIdVal,
                 rating: reviewRating,
                 comment: reviewComment.trim(),
             });
@@ -340,9 +348,17 @@ export default function CallRoomPage() {
         setTimeout(() => router.push('/'), 1500);
     };
 
-    const handleEndCall = () => {
+    const handleEndCall = async () => {
         deviceRef.current?.disconnectAll?.();
         if (callRef.current?.disconnect) callRef.current.disconnect();
+        
+        // Use standard POST to /call/end as our API usually expects
+        try {
+            await apiClient.post(`/call/end`, { sessionId: parseInt(sessionId) });
+        } catch (err) {
+            console.error('[CallRoom] Failed to end call on backend', err);
+        }
+
         socketRef.current?.emit('end_call', { sessionId: parseInt(sessionId) });
         handleCallEnded();
     };

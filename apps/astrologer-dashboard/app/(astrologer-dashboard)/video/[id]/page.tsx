@@ -185,7 +185,12 @@ export default function ExpertVideoCallPage() {
         setTimeout(() => router.push('/dashboard'), 3000);
     };
 
-    const handleEndCall = () => {
+    const handleEndCall = async () => {
+        try {
+            await apiClient.post(`/call/end`, { sessionId: parseInt(sessionId) });
+        } catch (err) {
+            console.error('[ExpertVideo] Failed to end call on backend', err);
+        }
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
         handleCallEnded();
     };
