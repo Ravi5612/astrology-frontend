@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { AstrologerListHeaderProps, astrologerSpecializations as rawSpecializations } from "@/lib/types";
 import { useLanguageStore } from "../../../store/languageStore";
@@ -46,6 +46,8 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
 
     const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
     const [page, setPage] = useState(0);
+    const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const visibleItems = allItems.slice(
         page * ITEMS_PER_PAGE,
@@ -53,11 +55,25 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     );
 
     const goLeft = () => {
-        setPage((prev) => (prev <= 0 ? totalPages - 1 : prev - 1));
+        if (isAnimating) return;
+        setSlideDirection("right"); // items slide right (coming from left)
+        setIsAnimating(true);
+        setTimeout(() => {
+            setPage((prev) => (prev <= 0 ? totalPages - 1 : prev - 1));
+            setSlideDirection(null);
+            setIsAnimating(false);
+        }, 300);
     };
 
     const goRight = () => {
-        setPage((prev) => (prev >= totalPages - 1 ? 0 : prev + 1));
+        if (isAnimating) return;
+        setSlideDirection("left"); // items slide left (going to next)
+        setIsAnimating(true);
+        setTimeout(() => {
+            setPage((prev) => (prev >= totalPages - 1 ? 0 : prev + 1));
+            setSlideDirection(null);
+            setIsAnimating(false);
+        }, 300);
     };
 
     return (
@@ -103,7 +119,7 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
                 )}
             </div>
 
-            {/* Specialization Paginated Slider */}
+            {/* Specialization Paginated Slider with Animation */}
             <div className="w-full lg:w-[43.33%] flex items-center gap-2">
                 <button
                     onClick={goLeft}
@@ -111,26 +127,39 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
                 >
                     <i className="fa-solid fa-chevron-left text-xl"></i>
                 </button>
-                <div className="flex gap-3 py-2 w-full justify-center">
-                    {visibleItems.map((item) => {
-                        const isAll = item.key === "__all__";
-                        const label = isAll
-                            ? t.astrologerSection.all
-                            : ((t.astrologerSection as any).specializations?.[item.key] || item.value);
-                        const isActive = isAll
-                            ? selectedSpecialization === ""
-                            : selectedSpecialization === item.value;
+                <div className="overflow-hidden w-full">
+                    <div
+                        className="flex gap-3 py-2 justify-center"
+                        style={{
+                            transition: slideDirection ? 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out' : 'none',
+                            transform: slideDirection === 'left'
+                                ? 'translateX(-100%)'
+                                : slideDirection === 'right'
+                                    ? 'translateX(100%)'
+                                    : 'translateX(0)',
+                            opacity: slideDirection ? 0 : 1,
+                        }}
+                    >
+                        {visibleItems.map((item) => {
+                            const isAll = item.key === "__all__";
+                            const label = isAll
+                                ? t.astrologerSection.all
+                                : ((t.astrologerSection as any).specializations?.[item.key] || item.value);
+                            const isActive = isAll
+                                ? selectedSpecialization === ""
+                                : selectedSpecialization === item.value;
 
-                        return (
-                            <div
-                                key={item.key}
-                                onClick={() => setSelectedSpecialization(item.value)}
-                                className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md shrink-0 whitespace-nowrap ${isActive ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
-                            >
-                                {label}
-                            </div>
-                        );
-                    })}
+                            return (
+                                <div
+                                    key={item.key}
+                                    onClick={() => setSelectedSpecialization(item.value)}
+                                    className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-colors duration-300 shadow-md shrink-0 whitespace-nowrap ${isActive ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
+                                >
+                                    {label}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
                 <button
                     onClick={goRight}
