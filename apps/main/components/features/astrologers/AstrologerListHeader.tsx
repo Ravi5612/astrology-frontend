@@ -1,9 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import { AstrologerListHeaderProps, astrologerSpecializations as rawSpecializations } from "@/lib/types";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
+
+const ITEMS_PER_PAGE = 2;
 
 const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     searchQuery,
@@ -36,6 +38,28 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
         { key: "childlessCouple", value: "Childless Couple Solution" }
     ];
 
+    // Build full list: "All" + specializations
+    const allItems = [
+        { key: "__all__", value: "" },
+        ...specializations,
+    ];
+
+    const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+    const [page, setPage] = useState(0);
+
+    const visibleItems = allItems.slice(
+        page * ITEMS_PER_PAGE,
+        page * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+    );
+
+    const goLeft = () => {
+        setPage((prev) => (prev <= 0 ? totalPages - 1 : prev - 1));
+    };
+
+    const goRight = () => {
+        setPage((prev) => (prev >= totalPages - 1 ? 0 : prev + 1));
+    };
+
     return (
         <div className="flex flex-col lg:flex-row items-center gap-6 mb-8 text-white">
             {/* Search Box */}
@@ -55,7 +79,7 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
             </div>
 
             {/* Filter & Reset */}
-            <div className="w-full lg:w-3/12 flex items-center justify-center lg:justify-end gap-6">
+            <div className="w-full lg:w-2/12 flex items-center justify-center lg:justify-end gap-6">
                 <button
                     type="button"
                     className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all relative"
@@ -79,38 +103,38 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
                 )}
             </div>
 
-            {/* Specialization Slider */}
-            <div className="w-full lg:w-4/12 flex items-center gap-2">
+            {/* Specialization Paginated Slider */}
+            <div className="w-full lg:w-[43.33%] flex items-center gap-2">
                 <button
-                    onClick={() => scrollTabs("left")}
-                    className="text-orange hover:scale-110 transition-transform p-1"
+                    onClick={goLeft}
+                    className="text-orange hover:scale-110 transition-transform p-1 shrink-0"
                 >
                     <i className="fa-solid fa-chevron-left text-xl"></i>
                 </button>
-                <div
-                    className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden whitespace-nowrap py-2 w-full px-2"
-                    id="list-slider"
-                    ref={scrollContainerRef}
-                >
-                    <div
-                        onClick={() => setSelectedSpecialization("")}
-                        className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === "" ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
-                    >
-                        {t.astrologerSection.all}
-                    </div>
-                    {specializations.map((spec) => (
-                        <div
-                            key={spec.key}
-                            onClick={() => setSelectedSpecialization(spec.value)}
-                            className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md ${selectedSpecialization === spec.value ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
-                        >
-                            {(t.astrologerSection as any).specializations?.[spec.key] || spec.value}
-                        </div>
-                    ))}
+                <div className="flex gap-3 py-2 w-full justify-center">
+                    {visibleItems.map((item) => {
+                        const isAll = item.key === "__all__";
+                        const label = isAll
+                            ? t.astrologerSection.all
+                            : ((t.astrologerSection as any).specializations?.[item.key] || item.value);
+                        const isActive = isAll
+                            ? selectedSpecialization === ""
+                            : selectedSpecialization === item.value;
+
+                        return (
+                            <div
+                                key={item.key}
+                                onClick={() => setSelectedSpecialization(item.value)}
+                                className={`px-6 py-2 rounded-full text-sm font-bold cursor-pointer transition-all duration-300 shadow-md shrink-0 whitespace-nowrap ${isActive ? "bg-orange text-white" : "bg-white text-gray-800 hover:bg-orange hover:text-white"}`}
+                            >
+                                {label}
+                            </div>
+                        );
+                    })}
                 </div>
                 <button
-                    onClick={() => scrollTabs("right")}
-                    className="text-orange hover:scale-110 transition-transform p-1"
+                    onClick={goRight}
+                    className="text-orange hover:scale-110 transition-transform p-1 shrink-0"
                 >
                     <i className="fa-solid fa-chevron-right text-xl"></i>
                 </button>
@@ -120,5 +144,3 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
 };
 
 export default AstrologerListHeader;
-
-

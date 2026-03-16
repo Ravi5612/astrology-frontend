@@ -330,14 +330,39 @@ const AstrologerList: React.FC<AstrologerListProps> = ({
     };
 
     const scrollTabs = (direction: "left" | "right") => {
-        if (scrollContainerRef.current) {
-            const { current } = scrollContainerRef;
-            const scrollAmount = 200;
-            if (direction === "left") {
-                current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-            } else {
-                current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        const container = scrollContainerRef.current;
+        if (!container) return;
+        const children = Array.from(container.children) as HTMLElement[];
+        if (children.length === 0) return;
+
+        const containerLeft = container.getBoundingClientRect().left;
+        const containerWidth = container.clientWidth;
+
+        if (direction === "right") {
+            // Find the first child that is partially or fully hidden on the right
+            for (const child of children) {
+                const childRight = child.getBoundingClientRect().right - containerLeft + container.scrollLeft;
+                if (childRight > container.scrollLeft + containerWidth + 1) {
+                    // Scroll so this child starts at the left edge
+                    const childLeft = child.getBoundingClientRect().left - containerLeft + container.scrollLeft;
+                    container.scrollTo({ left: childLeft, behavior: "smooth" });
+                    return;
+                }
             }
+        } else {
+            // Find the first child that is partially or fully hidden on the left
+            for (let i = children.length - 1; i >= 0; i--) {
+                const child = children[i]!;
+                const childLeft = child.getBoundingClientRect().left - containerLeft + container.scrollLeft;
+                if (childLeft < container.scrollLeft - 1) {
+                    // Scroll so items end cleanly: position so this child's right edge aligns with container's right, but snap to child start
+                    const targetScroll = childLeft;
+                    container.scrollTo({ left: targetScroll, behavior: "smooth" });
+                    return;
+                }
+            }
+            // If no partially hidden item found on left, scroll to start
+            container.scrollTo({ left: 0, behavior: "smooth" });
         }
     };
 
