@@ -24,28 +24,7 @@ const Swiper = SwiperComponent as any;
 const SwiperSlide = SwiperSlideComponent as any;
 import { getNotificationSocket, connectNotificationSocket } from "./utils/socket";
 
-// Custom Navigation Buttons Component
-const SwiperNavButtons = () => {
-  const swiper = useSwiper();
-  return (
-    <>
-      <div
-        className="absolute top-1/2 -translate-y-1/2 left-[10px] w-8 h-8 bg-white border border-primary rounded-full flex items-center justify-center text-primary cursor-pointer z-[100] transition-all duration-300 shadow-md hover:bg-[#301118] hover:border-[#301118] hover:text-white hover:scale-110 pointer-events-auto"
-        style={{ marginLeft: '-10px' }}
-        onClick={() => swiper.slidePrev()}
-      >
-        <i className="fa-solid fa-chevron-left text-xs" />
-      </div>
-      <div
-        className="absolute top-1/2 -translate-y-1/2 right-[10px] w-8 h-8 bg-white border border-primary rounded-full flex items-center justify-center text-primary cursor-pointer z-[100] transition-all duration-300 shadow-md hover:bg-[#301118] hover:border-[#301118] hover:text-white hover:scale-110 pointer-events-auto"
-        style={{ marginRight: '-10px' }}
-        onClick={() => swiper.slideNext()}
-      >
-        <i className="fa-solid fa-chevron-right text-xs" />
-      </div>
-    </>
-  );
-};
+
 
 // Swiper styles are imported in the root layout.tsx to avoid resolution issues in the shared package.
 const SERVICES_DATA_KEYS = [
@@ -871,10 +850,19 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
       {
         isClient && (
-          <header className="bg-orange shadow-[0_4px_15px_rgba(0,0,0,0.1)]">
-            <div className="max-w-[1320px] mx-auto relative px-8 lg:px-16">
+          <header className="bg-orange shadow-[0_4px_15px_rgba(0,0,0,0.1)] z-10 relative">
+            <div className="max-w-[1320px] mx-auto px-2 lg:px-4 py-[5px]">
+              <div className="flex items-center gap-2">
+                <div className="custom-swiper-prev flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
+                  <i className="fa-solid fa-chevron-left text-xs" />
+                </div>
+                <div className="flex-1 overflow-hidden">
               <Swiper
                 modules={[Navigation, Autoplay]}
+                navigation={{
+                  prevEl: '.custom-swiper-prev',
+                  nextEl: '.custom-swiper-next',
+                }}
                 spaceBetween={25}
                 slidesPerView={2}
                 grabCursor={true}
@@ -888,13 +876,12 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   768: { slidesPerView: 4 },
                   1024: { slidesPerView: 5 },
                 }}
-                className="w-full relative px-8"
+                className="w-full relative"
               >
-                <SwiperNavButtons />
 
                 {SERVICES_DATA_KEYS.map((service) => (
                   <SwiperSlide key={service.id}>
-                    <div className="flex justify-center w-full p-[5px] w-[80%]">
+                    <div className="flex justify-center w-full p-[5px]">
                       <a
                         href={service.href}
                         onClick={(e) => {
@@ -920,6 +907,11 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   </SwiperSlide>
                 ))}
               </Swiper>
+                </div>
+                <div className="custom-swiper-next flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
+                  <i className="fa-solid fa-chevron-right text-xs" />
+                </div>
+              </div>
             </div>
           </header>
         )
