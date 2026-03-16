@@ -204,7 +204,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(
         >
           <div className="flex items-center justify-between p-6 bg-white border-b border-orange-100 shrink-0">
             <img
-              src="/images/logo.png"
+              src="/images/web-logo.png"
               alt="Logo"
               className="rounded-2xl"
             />
