@@ -8,6 +8,7 @@ import { registerAction } from "@/actions/auth";
 import { API_CONFIG } from "@/lib/api-config";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
+import { VerificationPopup } from "@repo/ui";
 
 const Image = NextImage as any;
 const Link = NextLink as any;
@@ -25,6 +26,8 @@ const SignUpForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showVerification, setShowVerification] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState("");
     const { lang } = useLanguageStore();
     const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
 
@@ -95,7 +98,9 @@ const SignUpForm: React.FC = () => {
             if (result.error) {
                 toast.error(result.error);
             } else if (result.success) {
-                toast.success(result.message || t.signUp.success);
+                setRegisteredEmail(formData.email);
+                setShowVerification(true);
+                // Clear form data after showing popup
                 setFormData({ fullName: "", email: "", password: "", confirmPassword: "", phoneNumber: "" });
             }
         } catch {
@@ -265,6 +270,13 @@ const SignUpForm: React.FC = () => {
                     ) : t.signUp.submit}
                 </button>
             </form>
+
+            {/* Verification Popup */}
+            <VerificationPopup
+                isOpen={showVerification}
+                email={registeredEmail}
+                onClose={() => setShowVerification(false)}
+            />
         </div>
     );
 };

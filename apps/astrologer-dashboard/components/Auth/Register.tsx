@@ -9,7 +9,7 @@ import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 
-import { Button } from "@repo/ui";
+import { Button, VerificationPopup } from "@repo/ui";
 const Image = NextImage as any;
 const Link = NextLink as any;
 const UserIcon = User as any;
@@ -32,6 +32,8 @@ const RegisterPage: React.FC = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showVerification, setShowVerification] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -49,10 +51,8 @@ const RegisterPage: React.FC = () => {
             const result = await astrologerRegisterAction({ name, email, password });
 
             if (result.success) {
-                toast.success(result.message || "Signup successful. Please verify your email.");
-                setTimeout(() => {
-                    router.push("/");
-                }, 3000);
+                setRegisteredEmail(email);
+                setShowVerification(true);
             } else {
                 setError(result.error || "Registration failed");
             }
@@ -239,6 +239,15 @@ const RegisterPage: React.FC = () => {
                     </form>
                 </div>
             </div>
+
+            <VerificationPopup
+                isOpen={showVerification}
+                email={registeredEmail}
+                onClose={() => {
+                    setShowVerification(false);
+                    router.push("/");
+                }}
+            />
         </div>
     );
 };
