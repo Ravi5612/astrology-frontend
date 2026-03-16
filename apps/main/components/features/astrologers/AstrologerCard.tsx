@@ -316,8 +316,8 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             onClick={handleVideoCallClick}
             className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
           >
-            <i className="fa-solid fa-video text-sm flex-shrink-0" />
-            <span className="text-[14px] font-bold flex-shrink-0">{t.astrologerCard.videoCall}</span>
+            <i className="fa-solid fa-video text-sm shrink-0" />
+            <span className="text-[14px] font-bold shrink-0">{t.astrologerCard.videoCall}</span>
             <span className="text-[11px] font-semibold opacity-95 truncate">
               {video_call_price && video_call_price > 0 ? `₹${video_call_price}${t.astrologerCard.perMin}` : (price > 0 ? `₹${price * 2}${t.astrologerCard.perMin}` : t.astrologerCard.free)}
             </span>
@@ -328,7 +328,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
       {/* VIDEO MODAL — custom Tailwind, no Bootstrap */}
       {show && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShow(false)}
         >
           <div

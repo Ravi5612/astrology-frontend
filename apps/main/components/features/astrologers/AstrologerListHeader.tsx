@@ -5,7 +5,6 @@ import { AstrologerListHeaderProps, astrologerSpecializations as rawSpecializati
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
 
-const ITEMS_PER_PAGE = 2;
 
 const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     searchQuery,
@@ -44,14 +43,25 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
         ...specializations,
     ];
 
-    const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+    const [itemsPerPage, setItemsPerPage] = useState(2);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setItemsPerPage(window.innerWidth < 640 ? 1 : 2);
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const totalPages = Math.ceil(allItems.length / itemsPerPage);
     const [page, setPage] = useState(0);
     const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
 
     const visibleItems = allItems.slice(
-        page * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+        page * itemsPerPage,
+        page * itemsPerPage + itemsPerPage
     );
 
     const goLeft = () => {

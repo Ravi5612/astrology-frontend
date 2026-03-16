@@ -605,14 +605,14 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     <div className="flex gap-3">
                       <Link
                         href={PATHS.SIGN_IN}
-                        className="bg-orange text-white rounded-[5px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
+                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
                       >
                         {t.signIn}
                       </Link>
 
                       <Link
                         href={PATHS.REGISTER}
-                        className="bg-orange text-white rounded-[5px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
+                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
                       >
                         {t.register}
                       </Link>
@@ -864,7 +864,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   nextEl: '.custom-swiper-next',
                 }}
                 spaceBetween={25}
-                slidesPerView={2}
+                slidesPerView={1}
                 grabCursor={true}
                 loop={SERVICES_DATA_KEYS.length > 5}
                 autoplay={{
