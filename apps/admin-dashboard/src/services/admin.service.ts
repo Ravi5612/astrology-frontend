@@ -177,10 +177,11 @@ export const markDisputeMessagesRead = async (disputeId: number) => {
 };
 
 // Live Sessions
-export const getLiveSessions = async (type?: string) => {
-  const res = await api.get(`/admin/live-sessions${type ? `?type=${type}` : ""}`) as any;
+export const getLiveSessions = async (type?: string, params?: { page?: number; limit?: number }) => {
+  const res = await api.get("/admin/live-sessions", { params: { type, ...params } }) as any;
   return res.data;
 };
+
 
 export const getChatHistory = async (id: number) => {
   const res = await api.get(`/admin/live-sessions/${id}/history`) as any;

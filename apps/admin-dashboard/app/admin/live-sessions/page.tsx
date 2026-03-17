@@ -2,8 +2,9 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { StatsCards } from "@repo/ui";
+import { StatsCards, Button } from "@repo/ui";
 import { toast } from "react-toastify";
+
 
 import {
   RefreshCw,
@@ -31,24 +32,32 @@ export default function LiveSessionsPage() {
   const [sessions, setSessions] = useState<LiveSession[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>("chat_live");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [volume, setVolume] = useState<number>(80);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [expiredPage, setExpiredPage] = useState(1);
+  const [hasMoreExpired, setHasMoreExpired] = useState(false);
 
   // Modal State
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [selectedSessionMessages, setSelectedSessionMessages] = useState<any[]>([]);
   const [viewingSession, setViewingSession] = useState<LiveSession | null>(null);
 
-  const fetchSessions = async () => {
+  const fetchSessions = async (isLoadMore = false) => {
     try {
-      setIsRefreshing(true);
+      if (isLoadMore) setIsLoadingMore(true);
+      else setIsRefreshing(true);
+
       const supportedFilters = ["chat_live", "expired", "admin_terminated"];
       const apiFilter = supportedFilters.includes(activeFilter) ? activeFilter : undefined;
 
-      const response = await getLiveSessions(apiFilter);
-      const data = Array.isArray(response) ? response : (response?.data || []);
+      const pageToFetch = isLoadMore ? expiredPage + 1 : 1;
+      // Use a large limit for live sessions to show all, and 12 for expired as requested
+      const limit = activeFilter === "expired" ? 12 : 100;
 
-      const mappedSessions: LiveSession[] = data.map((s: any) => ({
+      const response = await getLiveSessions(apiFilter, { page: pageToFetch, limit });
+      const items = response?.items || [];
+      const total = response?.total || 0;
+
+      const mappedSessions: LiveSession[] = items.map((s: any) => ({
         id: (s.id || "").toString(),
         user: {
           id: (s.user?.id || s.user_id || "0").toString(),
@@ -68,8 +77,8 @@ export default function LiveSessionsPage() {
           (s.status === 'pending' || s.status === 'PENDING') ? 'pending' :
             (s.status === 'expired' || s.status === 'EXPIRED') ? 'expired' :
               (s.status === 'completed' || s.status === 'COMPLETED') && (s.terminated_by === 'admin' || s.terminatedBy === 'admin') ? 'admin-terminated' :
-                (s.status === 'completed' || s.status === 'COMPLETED') ? 'ended' :
-                  (s.status === 'cancelled' || s.status === 'CANCELLED') ? 'ended' : 'ended',
+                (s.status === 'completed' || s.status === 'COMPLETED') ? 'expired' :
+                  (s.status === 'cancelled' || s.status === 'CANCELLED') ? 'expired' : 'expired',
         startTime: new Date(s.start_time || s.startTime || s.created_at || s.createdAt || Date.now()),
         duration: s.duration || 0,
         connectionQuality: s.connection_quality || s.connectionQuality || "excellent",
@@ -79,27 +88,46 @@ export default function LiveSessionsPage() {
         issues: s.issues || []
       }));
 
-      setSessions(mappedSessions);
+      if (isLoadMore) {
+        setSessions(prev => [...prev, ...mappedSessions]);
+        setExpiredPage(pageToFetch);
+      } else {
+        setSessions(mappedSessions);
+        setExpiredPage(1);
+      }
+
+      if (activeFilter === "expired") {
+        const totalLoaded = isLoadMore ? sessions.length + mappedSessions.length : mappedSessions.length;
+        setHasMoreExpired(totalLoaded < total);
+      } else {
+        setHasMoreExpired(false);
+      }
+
     } catch (error: any) {
       console.error("Failed to fetch sessions:", error);
-      setSessions([]);
-      // Only show toast if it's a real server error, not a 404 or missing route
+      if (!isLoadMore) setSessions([]);
       if (error?.status && error.status !== 404) {
         toast.error("Failed to fetch live sessions");
       }
     } finally {
       setIsRefreshing(false);
+      setIsLoadingMore(false);
     }
   };
 
+
   useEffect(() => {
     fetchSessions();
-    const interval = setInterval(fetchSessions, 30000); // Auto refresh every 30s
-    return () => clearInterval(interval);
+    // Only auto-refresh for live tab
+    if (activeFilter === "chat_live") {
+      const interval = setInterval(() => fetchSessions(false), 30000);
+      return () => clearInterval(interval);
+    }
   }, [activeFilter]);
 
   // Simple calculations
   const stats = useMemo(() => {
+    // Note: Stats are based on the current visible sessions.
     const total = sessions.length;
     const live = sessions.filter(s => s.status === "live").length;
     const withIssues = sessions.filter(s => s.status === "technical-issue").length;
@@ -143,8 +171,10 @@ export default function LiveSessionsPage() {
 
   // Filter logic aligned with sessionsConfig.ts
   const filteredSessions = useMemo(() => {
+    // Since we now paginate on the server for 'expired', the 'sessions' array already matches the filter mostly.
+    // However, we still apply local filtering to be safe or if other filters are selected.
     if (activeFilter === "chat_live") {
-      return sessions.filter(s => s.status === "live" && s.sessionType === "chat");
+      return sessions.filter(s => s.status === "live");
     }
     if (activeFilter === "expired") {
       return sessions.filter(s => s.status === "expired" || s.status === "ended");
@@ -152,6 +182,8 @@ export default function LiveSessionsPage() {
     if (activeFilter === "admin_terminated") {
       return sessions.filter(s => s.status === "admin-terminated");
     }
+
+
 
     // Secondary filters
     if (activeFilter === "video") return sessions.filter(s => s.sessionType === "video");
@@ -239,6 +271,21 @@ export default function LiveSessionsPage() {
           </div>
         )}
       </div>
+
+      {/* Load More Button for Expired Sessions */}
+      {activeFilter === "expired" && hasMoreExpired && (
+        <div className="flex justify-center mt-8 pb-10">
+          <Button
+            onClick={() => fetchSessions(true)}
+            loading={isLoadingMore}
+            variant="outline"
+            className="px-10 py-3 rounded-full font-bold shadow-md hover:shadow-lg transition-all"
+          >
+            Load More Previous Sessions
+          </Button>
+        </div>
+      )}
+
 
       {/* Chat History Modal */}
       <ChatHistoryModal
