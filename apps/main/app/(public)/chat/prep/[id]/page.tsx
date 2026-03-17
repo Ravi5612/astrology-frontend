@@ -7,12 +7,14 @@ import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
 import apiClient, { getClientProfile } from "@/libs/api-profile";
 import { toast } from "react-toastify";
-import { useAuthStore } from "@/store/useAuthStore"; // Changed import
+import { useAuthStore } from "@/store/useAuthStore";
+import { VerificationPopup } from "@repo/ui";
+import { UserX } from "lucide-react";
 
 import { Astrologer } from "@/lib/types";
 
 const Image = NextImage as any;
-const { ChevronLeft, MessageSquare, User, Calendar, MapPin, UserX } = LucideIcons as any;
+const { ChevronLeft, MessageSquare, User, Calendar, MapPin } = LucideIcons as any;
 
 export default function ConsultationPrep() {
     const API_BASE_URL = getApiUrl();
@@ -25,6 +27,7 @@ export default function ConsultationPrep() {
     const [actionLoading, setActionLoading] = useState(false);
     const [askSomeoneElse, setAskSomeoneElse] = useState(true);
     const [showSecurityModal, setShowSecurityModal] = useState(false);
+    const [showOfflinePopup, setShowOfflinePopup] = useState(false);
     const [clientProfile, setClientProfile] = useState<any>(null);
     const [someoneElseData, setSomeoneElseData] = useState({
         name: "",
@@ -123,12 +126,21 @@ export default function ConsultationPrep() {
             return;
         }
 
+        if (astrologer && !astrologer.is_available) {
+            setShowOfflinePopup(true);
+            return;
+        }
+
         // Show security modal first
         setShowSecurityModal(true);
     };
 
     const proceedToChat = async () => {
         setShowSecurityModal(false);
+        if (astrologer && !astrologer.is_available) {
+            setShowOfflinePopup(true);
+            return;
+        }
         setActionLoading(true);
         try {
             const response = await apiClient.post<any>("/chat/initiate", { expertId: parseInt(id) });
@@ -632,6 +644,20 @@ export default function ConsultationPrep() {
                     </div>
                 </div>
             )}
+            {/* Offline Popup */}
+            <VerificationPopup
+                isOpen={showOfflinePopup}
+                onClose={() => setShowOfflinePopup(false)}
+                title="Astrologer is Offline"
+                buttonText="I Understand"
+                icon={<UserX className="w-10 h-10 text-orange-500" />}
+                description={
+                    <>
+                        Right now <span className="font-bold text-gray-900">{astrologer?.name}</span> is offline. <br />
+                        Please try again later when the astrologer is available.
+                    </>
+                }
+            />
         </div>
     );
 }
