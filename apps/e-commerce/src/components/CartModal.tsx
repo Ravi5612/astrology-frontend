@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { loadRazorpay } from "@/lib/razorpay";
 import { useRouter } from "next/navigation";
+import { useClientAuth, apiClient } from "@repo/ui";
 
 const CartModal = () => {
   const {
@@ -14,13 +15,70 @@ const CartModal = () => {
     clearCart,
     addToHistory,
   } = useCart();
+  const { isClientAuthenticated, clientBalance, refreshBalance, clientUser } = useClientAuth();
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"wallet" | "razorpay">("wallet");
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "123 Cosmic Way",
+    city: "New Delhi",
+    state: "Delhi",
+    zip: "110001",
+    country: "India"
+  });
   const router = useRouter();
 
   if (!isCartOpen) return null;
 
   const handleCheckout = async () => {
+    if (!isClientAuthenticated) {
+      alert("Please login to place an order");
+      router.push("/sign-in");
+      closeCart();
+      return;
+    }
+
     setLoading(true);
+
+    if (paymentMethod === "wallet") {
+      if (clientBalance < cartTotal) {
+        alert("Insufficient wallet balance. Please top up your wallet.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await apiClient.post<any>("/orders", {
+          payment_method: "wallet",
+          shipping_address: shippingAddress,
+        });
+
+        if (response.status === 201 || response.status === 200) {
+          const savedOrder = response.data;
+          const orderData = {
+            id: savedOrder.id || `ORDER_${Date.now()}`,
+            items: cart,
+            total: cartTotal,
+            date: new Date().toISOString(),
+            status: "Paid",
+          };
+          addToHistory(orderData);
+          await refreshBalance();
+          clearCart();
+          closeCart();
+          router.push("/orders");
+        } else {
+          throw new Error("Failed to create order");
+        }
+      } catch (error: any) {
+        console.error("Checkout error:", error);
+        alert(error?.message || "Something went wrong during checkout");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Razorpay Flow
     const res = await loadRazorpay();
 
     if (!res) {
@@ -29,7 +87,7 @@ const CartModal = () => {
       return;
     }
 
-    // Mock Options for Razorpay
+    // Mock Options for Razorpay - In a real app, we'd call backend to create a pending order first
     const options = {
       key: "rzp_test_1234567890", // Mock Key
       amount: cartTotal * 100, // Amount in paise
@@ -37,23 +95,34 @@ const CartModal = () => {
       name: "Astrology in Bharat",
       description: "Purchase of Astrology Products",
       image: "/images/web-logo.png",
-      handler: function (response: any) {
-        // Success Handler
-        const orderData = {
-          id: response.razorpay_payment_id || `ORDER_${Date.now()}`,
-          items: cart,
-          total: cartTotal,
-          date: new Date().toISOString(),
-          status: "Paid",
-        };
-        addToHistory(orderData);
-        clearCart();
-        closeCart();
-        router.push("/orders");
+      handler: async function (response: any) {
+        try {
+          // In a real app, we'd verify payment and create/update order on backend
+          await apiClient.post("/orders", {
+            payment_method: "razorpay",
+            shipping_address: shippingAddress,
+            razorpay_payment_id: response.razorpay_payment_id
+          });
+          
+          const orderData = {
+            id: response.razorpay_payment_id || `ORDER_${Date.now()}`,
+            items: cart,
+            total: cartTotal,
+            date: new Date().toISOString(),
+            status: "Paid",
+          };
+          addToHistory(orderData);
+          clearCart();
+          closeCart();
+          router.push("/orders");
+        } catch (err) {
+          alert("Order created but payment verification pending.");
+          router.push("/orders");
+        }
       },
       prefill: {
-        name: "Test User",
-        email: "test@example.com",
+        name: clientUser?.name || "Test User",
+        email: clientUser?.email || "test@example.com",
         contact: "9999999999",
       },
       theme: {
@@ -63,11 +132,7 @@ const CartModal = () => {
 
     const paymentObject = new (window as any).Razorpay(options);
     paymentObject.open();
-
-    // Simulate "Processing" state while modal is open - though Razorpay handles its own modal,
-    // user requested a "dummy razorpay checkout animation".
-    // We will show a custom overlay on top of our app to simulate "Connecting to Gateway"
-    setLoading(true);
+    setLoading(false);
   };
 
   if (loading) {
@@ -154,8 +219,45 @@ const CartModal = () => {
         </div>
 
         {cart.length > 0 && (
-          <div className="p-4 border-t bg-gray-50">
-            <div className="flex justify-between mb-4 text-lg font-bold">
+          <div className="p-4 border-t bg-gray-50 space-y-4">
+            {/* Payment Method Selector */}
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-gray-700">Select Payment Method</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setPaymentMethod("wallet")}
+                  className={`py-2 px-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 text-sm font-semibold ${
+                    paymentMethod === "wallet"
+                      ? "border-theme-orange bg-orange-50 text-theme-orange"
+                      : "border-gray-100 bg-white text-gray-500"
+                  }`}
+                >
+                  <i className="fa-solid fa-wallet"></i>
+                  Wallet
+                </button>
+                <button
+                  onClick={() => setPaymentMethod("razorpay")}
+                  className={`py-2 px-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 text-sm font-semibold ${
+                    paymentMethod === "razorpay"
+                      ? "border-theme-orange bg-orange-50 text-theme-orange"
+                      : "border-gray-100 bg-white text-gray-500"
+                  }`}
+                >
+                  <i className="fa-solid fa-credit-card"></i>
+                  Razorpay
+                </button>
+              </div>
+              {paymentMethod === "wallet" && isClientAuthenticated && (
+                <div className="flex justify-between items-center text-xs bg-white p-2 rounded-lg border border-dashed">
+                  <span className="text-gray-500">Available Balance:</span>
+                  <span className={`font-bold ${clientBalance >= cartTotal ? "text-green-600" : "text-red-500"}`}>
+                    ₹{clientBalance.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-between text-lg font-bold pt-2 border-t">
               <span>Total:</span>
               <span>₹{cartTotal.toLocaleString("en-IN")}</span>
             </div>
@@ -168,7 +270,7 @@ const CartModal = () => {
                 <i className="fa-solid fa-spinner fa-spin"></i>
               ) : (
                 <>
-                  Checkout with Razorpay{" "}
+                  {paymentMethod === "wallet" ? "Pay with Wallet" : "Checkout with Razorpay"}{" "}
                   <i className="fa-solid fa-arrow-right"></i>
                 </>
               )}

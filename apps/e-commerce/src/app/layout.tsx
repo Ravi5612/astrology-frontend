@@ -3,7 +3,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import "@repo/styles";
-import { Header, Footer } from "@repo/ui";
+import { Header, Footer, ClientAuthProvider } from "@repo/ui";
 import { CartProvider } from "@/context/CartContext";
 import CartModal from "@/components/CartModal";
 import FloatingCartButton from "@/components/FloatingCartButton";
@@ -34,13 +34,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} ${poppins.variable}`}>
       <body className="min-h-screen bg-white text-black font-pl">
-        <CartProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <CartModal />
-          <FloatingCartButton />
-        </CartProvider>
+        <ClientAuthProvider>
+          <CartProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <CartModal />
+            <FloatingCartButton />
+          </CartProvider>
+        </ClientAuthProvider>
       </body>
     </html>
   );

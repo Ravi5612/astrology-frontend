@@ -1,8 +1,11 @@
 "use client";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
+  id: number;
   image: string;
   title: string;
   description: string;
@@ -11,12 +14,15 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({
+  id,
   image,
   title,
   description,
   price,
   originalPrice,
 }: ProductCardProps) => {
+  const { addToCart } = useCart();
+
   return (
     <div className="group relative rounded-xl bg-white border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
       {/* Image Section */}
@@ -51,7 +57,10 @@ const ProductCard = ({
 
         {/* CTA */}
         <div className="flex items-center gap-3">
-          <button className="flex-1 rounded-xl bg-theme-orange text-white py-2.5 text-sm font-bold hover:bg-orange-600 transition shadow-md hover:shadow-lg">
+          <button 
+            onClick={() => addToCart({ id, image, title, price, quantity: 1 })}
+            className="flex-1 rounded-xl bg-theme-orange text-white py-2.5 text-sm font-bold hover:bg-orange-600 transition shadow-md hover:shadow-lg active:scale-95"
+          >
             Add to Cart
           </button>
 

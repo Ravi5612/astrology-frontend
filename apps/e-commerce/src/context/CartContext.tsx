@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useClientAuth, apiClient } from "@repo/ui";
 
 export interface CartItem {
   id: number;
@@ -28,6 +29,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
+  const { isClientAuthenticated } = useClientAuth();
 
   // Load from local storage
   useEffect(() => {
@@ -46,7 +48,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("aib_history", JSON.stringify(history));
   }, [history]);
 
-  const addToCart = (item: CartItem) => {
+  const addToCart = async (item: CartItem) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
@@ -57,10 +59,23 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       return [...prev, { ...item, quantity: 1 }];
     });
     setIsCartOpen(true);
+
+    // Sync with backend if authenticated
+    if (isClientAuthenticated) {
+      try {
+        await apiClient.post("/cart/add", {
+          product_id: item.id,
+          quantity: 1,
+        });
+      } catch (err) {
+        console.error("Failed to sync cart with backend", err);
+      }
+    }
   };
 
   const removeFromCart = (id: number) => {
     setCart((prev) => prev.filter((i) => i.id !== id));
+    // Optional: add backend sync for removal too
   };
 
   const clearCart = () => setCart([]);
