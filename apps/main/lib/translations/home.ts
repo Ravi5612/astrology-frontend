@@ -90,6 +90,7 @@ export const homeTranslations = {
                 familyProblem: "Family Problem Solution",
                 disputeSolution: "Dispute Solution",
                 childlessCouple: "Childless Couple Solution",
+                businessProblem: "Business Problem Solution"
             },
         },
         astrologerCard: {
@@ -279,6 +280,7 @@ export const homeTranslations = {
                 familyProblem: "पारिवारिक समस्या समाधान",
                 disputeSolution: "विवाद समाधान",
                 childlessCouple: "निसंतान दंपत्ति समाधान",
+                businessProblem: "व्यापार समस्या समाधान"
             },
         },
         astrologerCard: {

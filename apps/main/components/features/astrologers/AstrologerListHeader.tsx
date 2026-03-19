@@ -34,7 +34,8 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
         { key: "exLoveBack", value: "Get Your Ex Love Back" },
         { key: "familyProblem", value: "Family Problem Solution" },
         { key: "disputeSolution", value: "Dispute Solution" },
-        { key: "childlessCouple", value: "Childless Couple Solution" }
+        { key: "childlessCouple", value: "Childless Couple Solution" },
+        { key: "businessProblem", value: "Business Problem Solution" }
     ];
 
     // Build full list: "All" + specializations
@@ -44,6 +45,18 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     ];
 
     const [itemsPerPage, setItemsPerPage] = useState(2);
+    const [page, setPage] = useState(0);
+
+    // Effect to jump to the page containing the selected specialization (e.g. from homepage redirect)
+    useEffect(() => {
+        if (selectedSpecialization) {
+            const index = allItems.findIndex(item => item.value === selectedSpecialization);
+            if (index !== -1) {
+                const targetPage = Math.floor(index / itemsPerPage);
+                setPage(targetPage);
+            }
+        }
+    }, [selectedSpecialization, itemsPerPage]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -55,9 +68,9 @@ const AstrologerListHeader: React.FC<AstrologerListHeaderProps> = ({
     }, []);
 
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
-    const [page, setPage] = useState(0);
     const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
+
 
     const visibleItems = allItems.slice(
         page * itemsPerPage,
