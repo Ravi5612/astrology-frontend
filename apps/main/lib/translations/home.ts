@@ -123,7 +123,14 @@ export const homeTranslations = {
             title: "Consult The Right Astrologer For You",
             items: {
                 "Love Problem Solution": "Love Problem Solution",
-                "Marriage Problem": "Marriage Problem"
+                "Marriage Problem": "Marriage Problem",
+                "Divorce Problem Solution": "Divorce Problem Solution",
+                "Breakup Problem Solution": "Breakup Problem Solution",
+                "Get Your Ex Love Back": "Get Your Ex Love Back",
+                "Family Problem Solution": "Family Problem Solution",
+                "Dispute Solution": "Dispute Solution",
+                "Childless Couple Solution": "Childless Couple Solution",
+                "Business Problem Solution": "Business Problem Solution"
             }
         },
         zodiac: {
@@ -305,7 +312,14 @@ export const homeTranslations = {
             title: "अपने लिए सही ज्योतिषी से परामर्श करें",
             items: {
                 "Love Problem Solution": "प्रेम समस्या समाधान",
-                "Marriage Problem": "विवाह समस्या"
+                "Marriage Problem": "विवाह समस्या",
+                "Divorce Problem Solution": "तलाक समस्या समाधान",
+                "Breakup Problem Solution": "ब्रेकअप समस्या समाधान",
+                "Get Your Ex Love Back": "अपना खोया प्यार वापस पाएं",
+                "Family Problem Solution": "पारिवारिक समस्या समाधान",
+                "Dispute Solution": "विवाद समाधान",
+                "Childless Couple Solution": "निसंतान दंपत्ति समाधान",
+                "Business Problem Solution": "व्यापार समस्या समाधान"
             }
         },
         zodiac: {

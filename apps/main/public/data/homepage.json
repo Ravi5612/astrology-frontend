@@ -81,6 +81,62 @@
             "price": 699,
             "slug": "marriage-problem",
             "description": "Solutions for marriage predictions, compatibility, and delays."
+        },
+        {
+            "id": 3,
+            "image": "/images/services/services3.jpg",
+            "title": "Divorce Problem Solution",
+            "price": 799,
+            "slug": "divorce-problem-solution",
+            "description": "Expert guidance to navigate divorce and related legal problems."
+        },
+        {
+            "id": 4,
+            "image": "/images/services/services4.jpg",
+            "title": "Breakup Problem Solution",
+            "price": 499,
+            "slug": "breakup-problem-solution",
+            "description": "Heal and recover from emotional distress after a relationship breakup."
+        },
+        {
+            "id": 5,
+            "image": "/images/services/services5.jpg",
+            "title": "Get Your Ex Love Back",
+            "price": 899,
+            "slug": "ex-love-back",
+            "description": "Powerful astrological remedies to reuninte with your ex-partner."
+        },
+        {
+            "id": 6,
+            "image": "/images/services/services6.jpg",
+            "title": "Family Problem Solution",
+            "price": 649,
+            "slug": "family-problem-solution",
+            "description": "Restore harmony and resolve conflicts within your family."
+        },
+        {
+            "id": 7,
+            "image": "/images/services/services7.jpg",
+            "title": "Dispute Solution",
+            "price": 749,
+            "slug": "dispute-solution",
+            "description": "Expert solutions for property, legal, or personal disputes."
+        },
+        {
+            "id": 8,
+            "image": "/images/services/services8.jpg",
+            "title": "Childless Couple Solution",
+            "price": 999,
+            "slug": "childless-couple-solution",
+            "description": "Astrological remedies for couples facing challenges in conceiving."
+        },
+        {
+            "id": 9,
+            "image": "/images/services/services9.jpg",
+            "title": "Business Problem Solution",
+            "price": 849,
+            "slug": "business-problem-solution",
+            "description": "Expand your business and overcome financial hurdles with astrology."
         }
     ],
     "testimonials": [
