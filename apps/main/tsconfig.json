@@ -36,7 +36,8 @@
     ".next/types/**/*.ts",
     "../../packages/ui/src/**/*.ts",
     "../../packages/ui/src/**/*.tsx",
-    "../../packages/lib/src/**/*.ts"
+    "../../packages/lib/src/**/*.ts",
+    "env.d.ts"
   ],
   "exclude": [
     "node_modules",
