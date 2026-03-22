@@ -1,40 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import {
-  FaUser as FaU,
-  FaHeart as FaH,
-  FaBriefcase as FaB,
-  FaHospital as FaHos,
-  FaCheck as FaC,
-  FaTimes as FaT,
-  FaDice as FaD,
-  FaPalette as FaP,
-  FaCalendarAlt as FaCa,
-  FaGem as FaG,
-  FaChartBar as FaCb,
-  FaArrowRight as FaAr,
-} from "react-icons/fa";
-const FaUser = FaU as any;
-const FaHeart = FaH as any;
-const FaBriefcase = FaB as any;
-const FaHospital = FaHos as any;
-const FaCheck = FaC as any;
-const FaTimes = FaT as any;
-const FaDice = FaD as any;
-const FaPalette = FaP as any;
-const FaCalendarAlt = FaCa as any;
-const FaGem = FaG as any;
-const FaChartBar = FaCb as any;
-const FaArrowRight = FaAr as any;
-
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-const TbCrystalBall = TbCb as any;
+import Image from "next/image";
 
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
+import { CharacteristicsGrid } from "./characteristics-grid";
+import { SidebarStats } from "./sidebar-stats";
+import { TbCrystalBall } from "react-icons/tb";
 
 const SunSignPage = () => {
   const [selectedSign, setSelectedSign] = useState(ZodiacSignsData[0]);
@@ -173,50 +146,7 @@ const SunSignPage = () => {
                 </div>
 
                 {/* Characteristics Grid */}
-                <div className="row g-4 mb-10">
-                  {[
-                    {
-                      icon: <FaUser className="text-blue-500" />,
-                      label: "Personality",
-                      text: "Strong, ambitious and determined individuals with a natural spark for leadership.",
-                      bg: "bg-blue-50",
-                    },
-                    {
-                      icon: <FaHeart className="text-pink-500" />,
-                      label: "Love & Relations",
-                      text: "Passionate and loyal partners who seek deep emotional connections.",
-                      bg: "bg-pink-50",
-                    },
-                    {
-                      icon: <FaBriefcase className="text-orange-500" />,
-                      label: "Career",
-                      text: "Excel in creative and structured environments where their skills are valued.",
-                      bg: "bg-orange-50",
-                    },
-                    {
-                      icon: <FaHospital className="text-green-500" />,
-                      label: "Health",
-                      text: "Generally strong constitution but need to maintain balance in routines.",
-                      bg: "bg-green-50",
-                    },
-                  ].map((feat, i) => (
-                    <div key={i} className="col-md-6">
-                      <div
-                        className={`${feat.bg} p-6 rounded-4 border border-white h-100 flex gap-4`}
-                      >
-                        <div className="text-2xl mt-1">{feat.icon}</div>
-                        <div>
-                          <h4 className="text-sm font-bold text-[#301118] uppercase mb-1">
-                            {feat.label}
-                          </h4>
-                          <p className="text-gray-500 text-xs leading-relaxed italic m-0">
-                            {feat.text}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <CharacteristicsGrid />
 
                 {/* Extra Details */}
                 <div className="space-y-6">
@@ -239,81 +169,7 @@ const SunSignPage = () => {
             </div>
 
             {/* Sidebar Stats */}
-            <div className="col-lg-4">
-              <div className="space-y-6">
-                <div className="bg-[#301118] text-white p-8 rounded-4 border border-[#fd64102b] shadow-xl">
-                  <h3 className="text-lg font-bold mb-6 flex items-center gap-3">
-                    <FaChartBar className="text-[#fd6410]" /> Key Attributes
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      {
-                        icon: <FaPalette />,
-                        label: "Lucky Color",
-                        val: "Golden & Red",
-                      },
-                      {
-                        icon: <FaDice />,
-                        label: "Lucky No.",
-                        val: "1, 5, 9",
-                      },
-                      {
-                        icon: <FaGem />,
-                        label: "Stone",
-                        val: "Ruby / Amber",
-                      },
-                      {
-                        icon: <FaCalendarAlt />,
-                        label: "Lucky Day",
-                        val: "Sunday",
-                      },
-                    ].map((stat, i) => (
-                      <div
-                        key={i}
-                        className="flex justify-between items-center bg-white/5 p-4 rounded-3 border border-white/5"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-orange-400">{stat.icon}</span>
-                          <span className="text-[10px] font-bold uppercase text-gray-400">
-                            {stat.label}
-                          </span>
-                        </div>
-                        <span className="text-sm font-bold text-orange-200">
-                          {stat.val}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="light-card p-8 bg-orange-50 border border-orange-100 rounded-4">
-                  <h4 className="text-[#301118] font-black uppercase tracking-wider text-sm mb-4">
-                    compatibility
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-green-100 text-green-600 p-2 rounded-full">
-                        <FaCheck size={10} />
-                      </div>
-                      <span className="text-xs font-bold text-gray-500 italic">
-                        Best With: Leo, Sagittarius, Aries
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="bg-red-100 text-red-600 p-2 rounded-full">
-                        <FaTimes size={10} />
-                      </div>
-                      <span className="text-xs font-bold text-gray-500 italic">
-                        Challenge With: Scorpio, Aquarius
-                      </span>
-                    </div>
-                  </div>
-                  <button className="btn-link mt-8 w-full flex items-center justify-center gap-4 text-xs bg-[#fd6410] text-white rounded-xl border-0 font-bold uppercase tracking-widest">
-                    View Full Compatibility <FaArrowRight />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <SidebarStats />
           </div>
         </div>
       </section>
@@ -325,5 +181,3 @@ const SunSignPage = () => {
 };
 
 export default SunSignPage;
-
-

@@ -1,32 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import NextImage, { ImageProps } from "next/image";
-const Image = NextImage as React.FC<ImageProps>;
-import {
-  FaChevronRight as FaCr,
-  FaMars as FaM,
-  FaVenus as FaV,
-  FaRegCheckCircle as FaRcc,
-  FaSpinner as FaSp,
-  FaStar as FaS,
-  FaChevronDown,
-} from "react-icons/fa";
-const FaChevronRight = FaCr as React.ComponentType<any>;
-const FaMars = FaM as React.ComponentType<any>;
-const FaVenus = FaV as React.ComponentType<any>;
-const FaRegCheckCircle = FaRcc as React.ComponentType<any>;
-const FaSpinner = FaSp as React.ComponentType<any>;
-const FaStar = FaS as React.ComponentType<any>;
-const FaChevronDownIcon = FaChevronDown as React.ComponentType<any>;
-
-import { MdAutoAwesome as MdAa } from "react-icons/md";
-const MdAutoAwesome = MdAa as any;
+import Image, { ImageProps } from "next/image";
 
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import {
+  FaChevronRight,
+  FaChevronDown,
+  FaMars,
+  FaRegCheckCircle,
+  FaSpinner,
+  FaStar,
+  FaVenus,
+} from "react-icons/fa";
+import { MdAutoAwesome } from "react-icons/md";
 
 const NakshatraMilanPage = () => {
   const [boyDetails, setBoyDetails] = useState({
@@ -79,7 +69,7 @@ const NakshatraMilanPage = () => {
   const handleInputChange = (
     gender: "boy" | "girl",
     field: string,
-    value: any
+    value: any,
   ) => {
     if (gender === "boy") {
       setBoyDetails((prev) => ({ ...prev, [field]: value }));
@@ -90,7 +80,7 @@ const NakshatraMilanPage = () => {
 
   const handleLocationSelect = (
     gender: "boy" | "girl",
-    location: { name: string; lat: string; lon: string }
+    location: { name: string; lat: string; lon: string },
   ) => {
     if (gender === "boy") {
       setBoyDetails((prev) => ({
@@ -126,8 +116,16 @@ const NakshatraMilanPage = () => {
     setLoading(true);
 
     try {
-      const boyQuery = new URLSearchParams({ datetime: `${boyDetails.date}T${boyDetails.time}:00+05:30`, lat: boyDetails.lat, lon: boyDetails.lon }).toString();
-      const girlQuery = new URLSearchParams({ datetime: `${girlDetails.date}T${girlDetails.time}:00+05:30`, lat: girlDetails.lat, lon: girlDetails.lon }).toString();
+      const boyQuery = new URLSearchParams({
+        datetime: `${boyDetails.date}T${boyDetails.time}:00+05:30`,
+        lat: boyDetails.lat,
+        lon: boyDetails.lon,
+      }).toString();
+      const girlQuery = new URLSearchParams({
+        datetime: `${girlDetails.date}T${girlDetails.time}:00+05:30`,
+        lat: girlDetails.lat,
+        lon: girlDetails.lon,
+      }).toString();
       const matchQuery = new URLSearchParams({
         boy_dob: `${boyDetails.date}T${boyDetails.time}:00+05:30`,
         boy_lat: boyDetails.lat,
@@ -137,11 +135,12 @@ const NakshatraMilanPage = () => {
         girl_lon: girlDetails.lon,
       }).toString();
 
-      const [[boyData, boyErr], [girlData, girlErr], [matchData, matchErr]] = await Promise.all([
-        safeFetch<any>(`/api/birth-details?${boyQuery}`),
-        safeFetch<any>(`/api/birth-details?${girlQuery}`),
-        safeFetch<any>(`/api/kundali-matching?${matchQuery}`),
-      ]);
+      const [[boyData, boyErr], [girlData, girlErr], [matchData, matchErr]] =
+        await Promise.all([
+          safeFetch<any>(`/api/birth-details?${boyQuery}`),
+          safeFetch<any>(`/api/birth-details?${girlQuery}`),
+          safeFetch<any>(`/api/kundali-matching?${matchQuery}`),
+        ]);
 
       if (boyErr || girlErr || matchErr) {
         setError("Failed to fetch birth details. Please check your inputs.");
@@ -152,7 +151,10 @@ const NakshatraMilanPage = () => {
           match: matchData?.data || matchData,
         });
         setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }, 300);
       }
     } finally {
@@ -404,10 +406,11 @@ const NakshatraMilanPage = () => {
                         </span>
                       </div>
                       <div
-                        className={`px-8 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest ${results.match.guna_milan.total_points >= 18
+                        className={`px-8 py-2 rounded-full text-[13px] font-bold uppercase tracking-widest ${
+                          results.match.guna_milan.total_points >= 18
                             ? "bg-green-50 text-green-600"
                             : "bg-red-50 text-red-600"
-                          }`}
+                        }`}
                       >
                         {results.match.guna_milan.total_points >= 25
                           ? "Perfect Match"
@@ -701,10 +704,11 @@ const NakshatraMilanPage = () => {
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`light-card border rounded-3xl transition-all duration-300 ${openFaq === i
+                className={`light-card border rounded-3xl transition-all duration-300 ${
+                  openFaq === i
                     ? "border-[#fd6410] bg-white shadow-xl"
                     : "border-[#fd64101a] hover:bg-white hover:border-[#fd641044]"
-                  }`}
+                }`}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -718,15 +722,16 @@ const NakshatraMilanPage = () => {
                   <div
                     className={`p-2 rounded-full transition-all duration-300 ${openFaq === i ? "bg-[#fd6410] text-white rotate-180" : "bg-orange-50 text-[#fd6410]"}`}
                   >
-                    <FaChevronDownIcon size={12} />
+                    <FaChevronDown size={12} />
                   </div>
                 </button>
 
                 <div
-                  className={`overflow-hidden transition-all duration-500 ease-in-out ${openFaq === i
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                    openFaq === i
                       ? "max-h-[200px] opacity-100"
                       : "max-h-0 opacity-0"
-                    }`}
+                  }`}
                 >
                   <div className="p-5 md:p-6 pt-0 border-t border-orange-50 mt-1">
                     <p className="text-sm text-gray-500 leading-relaxed italic m-0">
@@ -747,5 +752,3 @@ const NakshatraMilanPage = () => {
 };
 
 export default NakshatraMilanPage;
-
-

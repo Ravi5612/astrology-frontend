@@ -1,15 +1,10 @@
 import React from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import { HiOutlineSparkles as HiOs } from "react-icons/hi";
-const HiOutlineSparkles = HiOs as any;
-import { FaGem as FaGe, FaArrowLeft as FaAl } from "react-icons/fa";
-const FaGem = FaGe as any;
-const FaArrowLeft = FaAl as any;
-import NextLink from "next/link";
-const Link = NextLink as any;
+import Image from "next/image";
+import Link from "next/link";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
+import { FaGem, FaArrowLeft } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 const BuyProductsPage = () => {
   return (
@@ -126,5 +121,3 @@ const BuyProductsPage = () => {
 };
 
 export default BuyProductsPage;
-
-

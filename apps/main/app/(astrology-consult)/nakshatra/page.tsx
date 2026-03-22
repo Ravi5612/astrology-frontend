@@ -1,34 +1,20 @@
 import React from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import {
-  FaSearch as FaSe,
-  FaBolt as FaBo,
-  FaGlobe as FaGl,
-  FaTheaterMasks as FaTm,
-  FaCheck as FaCh,
-  FaTimes as FaTi,
-  FaFileAlt as FaFa,
-  FaChevronRight as FaCr,
-} from "react-icons/fa";
-const FaSearch = FaSe as any;
-const FaBolt = FaBo as any;
-const FaGlobe = FaGl as any;
-const FaTheaterMasks = FaTm as any;
-const FaCheck = FaCh as any;
-const FaTimes = FaTi as any;
-const FaFileAlt = FaFa as any;
-const FaChevronRight = FaCr as any;
+import Image from "next/image";
 
-import { GiCrystalBall as GiCb, GiHorseHead as GiHh } from "react-icons/gi";
-const GiCrystalBall = GiCb as any;
-const GiHorseHead = GiHh as any;
-
-import { HiOutlineSparkles as HiOs } from "react-icons/hi";
-const HiOutlineSparkles = HiOs as any;
-
+import { GiCrystalBall, GiHorseHead } from "react-icons/gi";
+import { HiOutlineSparkles } from "react-icons/hi";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
+import {
+  FaBolt,
+  FaCheck,
+  FaChevronRight,
+  FaFileAlt,
+  FaGlobe,
+  FaSearch,
+  FaTheaterMasks,
+  FaTimes,
+} from "react-icons/fa";
 
 const NakshatraPage = () => {
   const nakshatras = [
@@ -356,5 +342,3 @@ const NakshatraPage = () => {
 };
 
 export default NakshatraPage;
-
-

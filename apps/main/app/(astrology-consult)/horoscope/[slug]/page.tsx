@@ -2,35 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import NextLink from "next/link";
-const Link = NextLink as any;
-import {
-  FaHeart as FaH,
-  FaBriefcase as FaB,
-  FaLeaf as FaL,
-  FaPlane as FaP,
-  FaStar as FaS,
-  FaCalendarAlt as FaC,
-  FaClock as FaCl,
-  FaMapMarkerAlt as FaM,
-} from "react-icons/fa";
-const FaHeart = FaH as any;
-const FaBriefcase = FaB as any;
-const FaLeaf = FaL as any;
-const FaPlane = FaP as any;
-const FaStar = FaS as any;
-const FaCalendarAlt = FaC as any;
-const FaClock = FaCl as any;
-const FaMapMarkerAlt = FaM as any;
-
-import { HiOutlineSparkles as HiOs } from "react-icons/hi";
-const HiOutlineSparkles = HiOs as any;
-
+import Image from "next/image";
+import Link from "next/link";
 import { ZodiacSignsData } from "@/components/features/services/zodiac";
 import CTA from "@/components/layout/main/CTA";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
+import { FaLeaf, FaBriefcase, FaHeart, FaPlane } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 export default function ZodiacDetailsPage() {
   const params = useParams();
@@ -42,7 +20,7 @@ export default function ZodiacDetailsPage() {
   const [lang, setLang] = useState<"en" | "hi">("en");
 
   const signData = ZodiacSignsData.find(
-    (s) => s.title.toLowerCase() === slug?.toLowerCase()
+    (s) => s.title.toLowerCase() === slug?.toLowerCase(),
   );
 
   useEffect(() => {
@@ -85,13 +63,29 @@ export default function ZodiacDetailsPage() {
   const getPredictionCategory = (type: string) => {
     switch (type) {
       case "Health":
-        return { label: "Health & Wellbeing", bg: "bg-green-50", border: "border-green-100/50" };
+        return {
+          label: "Health & Wellbeing",
+          bg: "bg-green-50",
+          border: "border-green-100/50",
+        };
       case "Career":
-        return { label: "Career & Finance", bg: "bg-blue-50", border: "border-blue-100/50" };
+        return {
+          label: "Career & Finance",
+          bg: "bg-blue-50",
+          border: "border-blue-100/50",
+        };
       case "Love":
-        return { label: "Love & Relations", bg: "bg-danger/5", border: "border-danger/10" };
+        return {
+          label: "Love & Relations",
+          bg: "bg-danger/5",
+          border: "border-danger/10",
+        };
       default:
-        return { label: type + " Forecast", bg: "bg-primary/5", border: "border-primary/10" };
+        return {
+          label: type + " Forecast",
+          bg: "bg-primary/5",
+          border: "border-primary/10",
+        };
     }
   };
 
@@ -108,7 +102,10 @@ export default function ZodiacDetailsPage() {
           <p className="text-gray-500 mb-8 text-lg">
             The destiny of this sign is still being written by the stars.
           </p>
-          <Link href="/horoscope" className="inline-block bg-primary text-white px-8 py-3 rounded-full font-bold no-underline transition-transform hover:scale-105">
+          <Link
+            href="/horoscope"
+            className="inline-block bg-primary text-white px-8 py-3 rounded-full font-bold no-underline transition-transform hover:scale-105"
+          >
             Back to Horoscopes
           </Link>
         </div>
@@ -142,14 +139,19 @@ export default function ZodiacDetailsPage() {
                   {signData.date} • Daily Guide
                 </span>
                 <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-tight">
-                  {signData.title} <span className="text-primary italic">Daily</span> Predictions
+                  {signData.title}{" "}
+                  <span className="text-primary italic">Daily</span> Predictions
                 </h1>
                 <p className="text-lg text-white/70 mb-8 leading-relaxed font-medium">
-                  {signData.title}, the stars are aligning for you today. Explore how planetary movements are influencing your personal and professional life with our expert Vedic analysis.
+                  {signData.title}, the stars are aligning for you today.
+                  Explore how planetary movements are influencing your personal
+                  and professional life with our expert Vedic analysis.
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-1 bg-primary rounded-full"></div>
-                  <span className="text-sm font-bold text-white/50 tracking-widest uppercase">Ancient Wisdom • Modern Guidance</span>
+                  <span className="text-sm font-bold text-white/50 tracking-widest uppercase">
+                    Ancient Wisdom • Modern Guidance
+                  </span>
                 </div>
               </div>
             </div>
@@ -187,15 +189,23 @@ export default function ZodiacDetailsPage() {
             <div className="bg-white rounded-3xl p-20 text-center shadow-premium border border-primary/5">
               <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-8 shadow-sm"></div>
               <h3 className="text-2xl font-black text-secondary animate-pulse tracking-tight">
-                Consulting the heavens for <span className="text-primary">{signData.title}</span>...
+                Consulting the heavens for{" "}
+                <span className="text-primary">{signData.title}</span>...
               </h3>
-              <p className="text-gray-400 mt-2 font-medium italic">Wait for the cosmic alignment</p>
+              <p className="text-gray-400 mt-2 font-medium italic">
+                Wait for the cosmic alignment
+              </p>
             </div>
           ) : error ? (
             <div className="bg-white rounded-3xl p-20 text-center shadow-premium border border-danger/10">
               <div className="text-6x?l mb-6">✨</div>
-              <h3 className="text-xl font-bold text-secondary mb-3">The stars are currently veiled</h3>
-              <p className="text-gray-500 italic max-w-sm mx-auto">Our connection with the cosmic data is momentarily disrupted. Please check back soon.</p>
+              <h3 className="text-xl font-bold text-secondary mb-3">
+                The stars are currently veiled
+              </h3>
+              <p className="text-gray-500 italic max-w-sm mx-auto">
+                Our connection with the cosmic data is momentarily disrupted.
+                Please check back soon.
+              </p>
             </div>
           ) : (
             <div className="row g-4 justify-content-center">
@@ -218,7 +228,8 @@ export default function ZodiacDetailsPage() {
                       </div>
                       <div>
                         <h2 className="text-2xl lg:text-3xl font-black text-secondary uppercase tracking-tight mb-1">
-                          {signData.title} <span className="text-primary">Horoscope</span>
+                          {signData.title}{" "}
+                          <span className="text-primary">Horoscope</span>
                         </h2>
                         <div className="flex items-center gap-3">
                           <p className="text-gray-500 text-sm font-bold m-0 tracking-widest uppercase">
@@ -234,7 +245,9 @@ export default function ZodiacDetailsPage() {
 
                     <div className="flex items-center gap-3 bg-secondary text-white px-5 py-2.5 rounded-full shadow-lg shadow-secondary/20">
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                      <span className="text-xs font-black tracking-widest uppercase">Live Forecast</span>
+                      <span className="text-xs font-black tracking-widest uppercase">
+                        Live Forecast
+                      </span>
                     </div>
                   </div>
 
@@ -247,7 +260,9 @@ export default function ZodiacDetailsPage() {
                           <div
                             className={`p-10 rounded-3xl border border-gray-100 hover:border-primary/20 h-100 transition-all duration-500 hover:shadow-premium group flex flex-col relative overflow-hidden`}
                           >
-                            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${p.type === 'Love' ? 'from-danger' : p.type === 'Career' ? 'from-blue-500' : 'from-primary'} to-transparent opacity-30`}></div>
+                            <div
+                              className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${p.type === "Love" ? "from-danger" : p.type === "Career" ? "from-blue-500" : "from-primary"} to-transparent opacity-30`}
+                            ></div>
 
                             <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500 group-hover:shadow-md">
                               {getIcon(p.type)}
@@ -275,16 +290,29 @@ export default function ZodiacDetailsPage() {
                     <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
                       <div className="lg:w-2/3">
                         <div className="flex items-center gap-4 mb-6">
-                          <div className="px-4 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full">Pro Tip</div>
-                          <h3 className="text-3xl font-black text-white mb-0 tracking-tight">Today's Spiritual <span className="text-primary italic">Alignment</span></h3>
+                          <div className="px-4 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
+                            Pro Tip
+                          </div>
+                          <h3 className="text-3xl font-black text-white mb-0 tracking-tight">
+                            Today's Spiritual{" "}
+                            <span className="text-primary italic">
+                              Alignment
+                            </span>
+                          </h3>
                         </div>
                         <p className="text-white/70 text-lg lg:text-xl font-medium leading-relaxed italic border-l-4 border-primary pl-8 py-2">
-                          "Patience will be your greatest ally. The cosmic energies favor thoughtful decisions. Wear colors that resonate with your spirit and meditate for 10 minutes to align your energy with the universe."
+                          "Patience will be your greatest ally. The cosmic
+                          energies favor thoughtful decisions. Wear colors that
+                          resonate with your spirit and meditate for 10 minutes
+                          to align your energy with the universe."
                         </p>
                       </div>
 
                       <div className="lg:w-1/3 w-full">
-                        <Link href="/our-astrologers" className="block w-full text-center bg-white hover:bg-primary text-secondary hover:text-white px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest no-underline transition-all shadow-xl hover:-translate-y-1">
+                        <Link
+                          href="/our-astrologers"
+                          className="block w-full text-center bg-white hover:bg-primary text-secondary hover:text-white px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest no-underline transition-all shadow-xl hover:-translate-y-1"
+                        >
                           Consult Astrologer
                           <i className="fa-solid fa-arrow-right ml-3"></i>
                         </Link>
@@ -303,7 +331,8 @@ export default function ZodiacDetailsPage() {
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-black text-secondary uppercase tracking-tighter mb-4">
-              Explore Our <span className="text-primary italic">Zodiac</span> Constellations
+              Explore Our <span className="text-primary italic">Zodiac</span>{" "}
+              Constellations
             </h2>
             <div className="w-20 h-1.5 bg-primary/20 mx-auto rounded-full"></div>
           </div>
@@ -313,10 +342,11 @@ export default function ZodiacDetailsPage() {
               <Link
                 key={sign.id}
                 href={`/horoscope/${sign.title.toLowerCase()}`}
-                className={`p-4 rounded-[2rem] text-center border transition-all duration-500 no-underline flex flex-col items-center justify-center group ${slug?.toLowerCase() === sign.title.toLowerCase()
-                  ? "border-primary bg-primary/5 shadow-premium scale-110 relative z-10"
-                  : "border-gray-50 hover:border-primary/20 hover:bg-primary/5 hover:-translate-y-2"
-                  }`}
+                className={`p-4 rounded-[2rem] text-center border transition-all duration-500 no-underline flex flex-col items-center justify-center group ${
+                  slug?.toLowerCase() === sign.title.toLowerCase()
+                    ? "border-primary bg-primary/5 shadow-premium scale-110 relative z-10"
+                    : "border-gray-50 hover:border-primary/20 hover:bg-primary/5 hover:-translate-y-2"
+                }`}
               >
                 <div className="relative w-12 h-12 mb-3">
                   <Image

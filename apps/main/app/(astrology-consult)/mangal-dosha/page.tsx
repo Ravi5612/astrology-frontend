@@ -1,46 +1,28 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import {
-  FaCalendarAlt as FaCa,
-  FaMapMarkerAlt as FaMma,
-  FaHeartBroken as FaHb,
-  FaChartLine as FaCl,
-  FaHospital as FaHos,
-  FaUser as FaU,
-  FaComments as FaCom,
-  FaPhoneAlt as FaPa,
-  FaCheck as FaC,
-  FaChevronRight as FaCr,
-  FaExclamationTriangle as FaEt,
-  FaSpinner as FaSp,
-  FaMars as FaMa,
-  FaCheckCircle as FaCc,
-} from "react-icons/fa";
-const FaCalendarAlt = FaCa as any;
-const FaMapMarkerAlt = FaMma as any;
-const FaHeartBroken = FaHb as any;
-const FaChartLine = FaCl as any;
-const FaHospital = FaHos as any;
-const FaUser = FaU as any;
-const FaComments = FaCom as any;
-const FaPhoneAlt = FaPa as any;
-const FaCheck = FaC as any;
-const FaChevronRight = FaCr as any;
-const FaExclamationTriangle = FaEt as any;
-const FaSpinner = FaSp as any;
-const FaMars = FaMa as any;
-const FaCheckCircle = FaCc as any;
-
-import { GiMeditation as GiM } from "react-icons/gi";
-const GiMeditation = GiM as any;
+import Image from "next/image";
 
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import {
+  FaCalendarAlt,
+  FaChartLine,
+  FaCheck,
+  FaCheckCircle,
+  FaChevronRight,
+  FaComments,
+  FaExclamationTriangle,
+  FaHeartBroken,
+  FaHospital,
+  FaMars,
+  FaPhoneAlt,
+  FaSpinner,
+  FaUser,
+} from "react-icons/fa";
+import { GiMeditation } from "react-icons/gi";
 
 const MangalDoshaPage = () => {
   const [details, setDetails] = useState({
@@ -122,20 +104,30 @@ const MangalDoshaPage = () => {
         lon: details.lon,
       }).toString();
 
-      const [rawData, fetchErr] = await safeFetch<any>(`/api/mangal-dosha?${query}`);
+      const [rawData, fetchErr] = await safeFetch<any>(
+        `/api/mangal-dosha?${query}`,
+      );
 
       if (fetchErr || !rawData) {
-        setError(fetchErr?.message || "Failed to generate report. Please try again.");
+        setError(
+          fetchErr?.message || "Failed to generate report. Please try again.",
+        );
         return;
       }
 
       let data = rawData?.data ?? rawData;
       const finalData = data?.mangal_dosha || data;
 
-      if (finalData && (finalData.description || finalData.has_dosha !== undefined)) {
+      if (
+        finalData &&
+        (finalData.description || finalData.has_dosha !== undefined)
+      ) {
         setResult(finalData);
         setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }, 300);
       } else {
         setError("The API returned data in an unexpected format.");
@@ -410,16 +402,18 @@ const MangalDoshaPage = () => {
                     {/* Status Card */}
                     <div className="flex-1">
                       <div
-                        className={`h-full rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center relative overflow-hidden ${result.has_dosha
-                          ? "bg-red-50 border border-red-100"
-                          : "bg-green-50 border border-green-100"
-                          }`}
+                        className={`h-full rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center relative overflow-hidden ${
+                          result.has_dosha
+                            ? "bg-red-50 border border-red-100"
+                            : "bg-green-50 border border-green-100"
+                        }`}
                       >
                         <div
-                          className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-xl ${result.has_dosha
-                            ? "bg-red-500 text-white"
-                            : "bg-green-500 text-white"
-                            }`}
+                          className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-xl ${
+                            result.has_dosha
+                              ? "bg-red-500 text-white"
+                              : "bg-green-500 text-white"
+                          }`}
                         >
                           {result.has_dosha ? (
                             <FaMars size={40} className="animate-pulse" />
@@ -428,16 +422,18 @@ const MangalDoshaPage = () => {
                           )}
                         </div>
                         <h3
-                          className={`text-2xl font-black uppercase tracking-wider mb-2 ${result.has_dosha ? "text-red-600" : "text-green-600"
-                            }`}
+                          className={`text-2xl font-black uppercase tracking-wider mb-2 ${
+                            result.has_dosha ? "text-red-600" : "text-green-600"
+                          }`}
                         >
                           {result.has_dosha
                             ? "Manglik Dosha Present"
                             : "No Mangal Dosha"}
                         </h3>
                         <p
-                          className={`font-bold text-sm uppercase tracking-widest ${result.has_dosha ? "text-red-400" : "text-green-400"
-                            }`}
+                          className={`font-bold text-sm uppercase tracking-widest ${
+                            result.has_dosha ? "text-red-400" : "text-green-400"
+                          }`}
                         >
                           {result.has_dosha
                             ? "Requires Attention"
@@ -490,46 +486,46 @@ const MangalDoshaPage = () => {
                   {/* Exceptions & Remedies Section (New) */}
                   {(result.exceptions?.length > 0 ||
                     result.remedies?.length > 0) && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {result.exceptions?.length > 0 && (
-                          <div className="bg-orange-50 rounded-[2rem] p-8 border border-orange-100">
-                            <h4 className="text-lg font-bold text-[#301118] mb-4 flex items-center gap-2">
-                              <FaCheckCircle className="text-[#fd6410]" />{" "}
-                              Exceptions Found
-                            </h4>
-                            <ul className="space-y-2">
-                              {result.exceptions.map((ex: any, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="text-sm text-gray-700 list-disc list-inside"
-                                >
-                                  {renderContent(ex)}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {result.exceptions?.length > 0 && (
+                        <div className="bg-orange-50 rounded-[2rem] p-8 border border-orange-100">
+                          <h4 className="text-lg font-bold text-[#301118] mb-4 flex items-center gap-2">
+                            <FaCheckCircle className="text-[#fd6410]" />{" "}
+                            Exceptions Found
+                          </h4>
+                          <ul className="space-y-2">
+                            {result.exceptions.map((ex: any, idx: number) => (
+                              <li
+                                key={idx}
+                                className="text-sm text-gray-700 list-disc list-inside"
+                              >
+                                {renderContent(ex)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
-                        {result.remedies?.length > 0 && (
-                          <div className="bg-[#301118] text-white rounded-[2rem] p-8 border border-white/10">
-                            <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                              <GiMeditation className="text-[#fd6410]" />{" "}
-                              Recommended Remedies
-                            </h4>
-                            <ul className="space-y-2">
-                              {result.remedies.map((rem: any, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="text-sm text-gray-300 list-disc list-inside"
-                                >
-                                  {renderContent(rem)}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      {result.remedies?.length > 0 && (
+                        <div className="bg-[#301118] text-white rounded-[2rem] p-8 border border-white/10">
+                          <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <GiMeditation className="text-[#fd6410]" />{" "}
+                            Recommended Remedies
+                          </h4>
+                          <ul className="space-y-2">
+                            {result.remedies.map((rem: any, idx: number) => (
+                              <li
+                                key={idx}
+                                className="text-sm text-gray-300 list-disc list-inside"
+                              >
+                                {renderContent(rem)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -664,5 +660,3 @@ const MangalDoshaPage = () => {
 };
 
 export default MangalDoshaPage;
-
-

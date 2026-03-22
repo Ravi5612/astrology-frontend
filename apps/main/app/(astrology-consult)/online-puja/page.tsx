@@ -1,15 +1,10 @@
 import React from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import { HiOutlineSparkles as HiOs } from "react-icons/hi";
-const HiOutlineSparkles = HiOs as any;
-import { FaPray as FaPr, FaArrowLeft as FaAl } from "react-icons/fa";
-const FaPray = FaPr as any;
-const FaArrowLeft = FaAl as any;
-import NextLink from "next/link";
-const Link = NextLink as any;
+import Image from "next/image";
+import Link from "next/link";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
+import { FaArrowLeft, FaPray } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 const OnlinePujaPage = () => {
   return (
@@ -123,5 +118,3 @@ const OnlinePujaPage = () => {
 };
 
 export default OnlinePujaPage;
-
-

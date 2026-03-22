@@ -1,31 +1,19 @@
 import React from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import {
-  FaMoon as FaMo,
-  FaHeart as FaH,
-  FaBriefcase as FaB,
-  FaUserFriends as FaUf,
-  FaStar as FaS,
-  FaPhoneAlt as FaPa,
-  FaCheck as FaC,
-  FaExclamation as FaE,
-} from "react-icons/fa";
-const FaMoon = FaMo as any;
-const FaHeart = FaH as any;
-const FaBriefcase = FaB as any;
-const FaUserFriends = FaUf as any;
-const FaStar = FaS as any;
-const FaPhoneAlt = FaPa as any;
-const FaCheck = FaC as any;
-const FaExclamation = FaE as any;
-
-import { HiOutlineSparkles as HiOs } from "react-icons/hi";
-const HiOutlineSparkles = HiOs as any;
-
+import Image from "next/image";
+import { HiOutlineSparkles } from "react-icons/hi";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
+import {
+  FaBriefcase,
+  FaCheck,
+  FaExclamation,
+  FaHeart,
+  FaMoon,
+  FaPhoneAlt,
+  FaStar,
+  FaUserFriends,
+} from "react-icons/fa";
 
 const MoonSignPage = () => {
   return (
@@ -241,5 +229,3 @@ const MoonSignPage = () => {
 };
 
 export default MoonSignPage;
-
-

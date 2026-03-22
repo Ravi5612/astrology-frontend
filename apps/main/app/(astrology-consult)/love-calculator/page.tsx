@@ -1,67 +1,32 @@
 "use client";
 import React, { useState, useRef } from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
-import {
-  FaHeart as FaH,
-  FaUser as FaU,
-  FaUserFriends as FaUf,
-  FaRing as FaR,
-  FaArrowRight as FaAr,
-  FaStar as FaS,
-  FaBalanceScale as FaBs,
-  FaBullseye as FaBul,
-  FaMars as FaM,
-  FaVenus as FaV,
-  FaChevronRight as FaCr,
-  FaSpinner as FaSp,
-  FaHandshake as FaHs,
-} from "react-icons/fa";
-const FaHeart = FaH as any;
-const FaUser = FaU as any;
-const FaUserFriends = FaUf as any;
-const FaRing = FaR as any;
-const FaArrowRight = FaAr as any;
-const FaStar = FaS as any;
-const FaBalanceScale = FaBs as any;
-const FaBullseye = FaBul as any;
-const FaMars = FaM as any;
-const FaVenus = FaV as any;
-const FaChevronRight = FaCr as any;
-const FaSpinner = FaSp as any;
-const FaHandshake = FaHs as any;
-
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-const TbCrystalBall = TbCb as any;
-import { MdOutlineFavorite as MdOf, MdOutlineSecurity as MdOs } from "react-icons/md";
-const MdOutlineFavorite = MdOf as any;
-const MdOutlineSecurity = MdOs as any;
-
-import {
-  GiLotus as GiL,
-  GiFlowerEmblem as GiFe,
-  GiStarShuriken as GiSs,
-  GiSparkles as GiSpark,
-  GiLion as GiLionI,
-  GiYinYang as GiYy,
-  GiLovers as GiLov
-} from "react-icons/gi";
-const GiLotus = GiL as any;
-const GiFlowerEmblem = GiFe as any;
-const GiStarShuriken = GiSs as any;
-const GiSparkles = GiSpark as any;
-const GiLion = GiLionI as any;
-const GiYinYang = GiYy as any;
-const GiLovers = GiLov as any;
 
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
-import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import safeFetch from "@packages/safe-fetch/safeFetch";
 import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
 import { loveCalculatorTranslations } from "@/lib/translations/calculators/love-calculator";
+import {
+  GiFlowerEmblem,
+  GiLotus,
+  GiSparkles,
+  GiStarShuriken,
+} from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import {
+  FaBalanceScale,
+  FaBullseye,
+  FaChevronRight,
+  FaHeart,
+  FaMars,
+  FaRing,
+  FaSpinner,
+  FaStar,
+  FaUserFriends,
+  FaVenus,
+} from "react-icons/fa";
 
 // Premium Section Animations & Styles
 const premiumStyles = `
@@ -95,7 +60,10 @@ const premiumStyles = `
 
 const LoveCalculatorPage = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = loveCalculatorTranslations[lang as keyof typeof loveCalculatorTranslations] || loveCalculatorTranslations.en;
+  const t =
+    loveCalculatorTranslations[
+      lang as keyof typeof loveCalculatorTranslations
+    ] || loveCalculatorTranslations.en;
 
   const [activeMode, setActiveMode] = useState<"simple" | "advanced">("simple");
   const [loading, setLoading] = useState(false);
@@ -113,8 +81,24 @@ const LoveCalculatorPage = () => {
 
   // Advanced Mode State
   const [advancedData, setAdvancedData] = useState({
-    boy: { name: "", date: "", time: "", lat: "", lon: "", tz: 5.5, locationName: "" },
-    girl: { name: "", date: "", time: "", lat: "", lon: "", tz: 5.5, locationName: "" },
+    boy: {
+      name: "",
+      date: "",
+      time: "",
+      lat: "",
+      lon: "",
+      tz: 5.5,
+      locationName: "",
+    },
+    girl: {
+      name: "",
+      date: "",
+      time: "",
+      lat: "",
+      lon: "",
+      tz: 5.5,
+      locationName: "",
+    },
   });
 
   // Helper to safely render any content (string, object, array)
@@ -145,14 +129,21 @@ const LoveCalculatorPage = () => {
     setSimpleData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAdvancedInputChange = (gender: "boy" | "girl", field: string, value: any) => {
+  const handleAdvancedInputChange = (
+    gender: "boy" | "girl",
+    field: string,
+    value: any,
+  ) => {
     setAdvancedData((prev) => ({
       ...prev,
       [gender]: { ...prev[gender], [field]: value },
     }));
   };
 
-  const handleLocationSelect = (gender: "boy" | "girl", location: { name: string; lat: string; lon: string }) => {
+  const handleLocationSelect = (
+    gender: "boy" | "girl",
+    location: { name: string; lat: string; lon: string },
+  ) => {
     handleAdvancedInputChange(gender, "locationName", location.name);
     handleAdvancedInputChange(gender, "lat", location.lat);
     handleAdvancedInputChange(gender, "lon", location.lon);
@@ -168,13 +159,16 @@ const LoveCalculatorPage = () => {
     setResult(null);
 
     try {
-      const [data, err] = await safeFetch<any>("/api/v1/matchmaking/love-calculator", {
-        method: "POST",
-        body: JSON.stringify({
-          yourName: simpleData.p1Name,
-          partnerName: simpleData.p2Name
-        }),
-      });
+      const [data, err] = await safeFetch<any>(
+        "/api/v1/matchmaking/love-calculator",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            yourName: simpleData.p1Name,
+            partnerName: simpleData.p2Name,
+          }),
+        },
+      );
 
       if (err || !data) {
         toast.error(err?.message || t.form.errors.failedScore);
@@ -182,7 +176,10 @@ const LoveCalculatorPage = () => {
         setResult({ type: "simple", ...data.data });
         toast.success(t.results.success.score);
         setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }, 300);
         toast.error(data.message || t.form.errors.failedScore);
       }
@@ -194,7 +191,14 @@ const LoveCalculatorPage = () => {
   const calculateAdvancedMatch = async (e: React.FormEvent) => {
     e.preventDefault();
     const { boy, girl } = advancedData;
-    if (!boy.date || !boy.time || !boy.lat || !girl.date || !girl.time || !girl.lat) {
+    if (
+      !boy.date ||
+      !boy.time ||
+      !boy.lat ||
+      !girl.date ||
+      !girl.time ||
+      !girl.lat
+    ) {
       toast.error(t.form.errors.birthDetails);
       return;
     }
@@ -203,21 +207,32 @@ const LoveCalculatorPage = () => {
     setResult(null);
 
     try {
-      const [data, err] = await safeFetch<any>("/api/v1/matchmaking/guna-milan", {
-        method: "POST",
-        body: JSON.stringify({
-          girl: {
-            name: girl.name || "Girl",
-            datetime: `${girl.date}T${girl.time}:00Z`,
-            location: { lat: parseFloat(girl.lat), lon: parseFloat(girl.lon), tz: girl.tz }
-          },
-          boy: {
-            name: boy.name || "Boy",
-            datetime: `${boy.date}T${boy.time}:00Z`,
-            location: { lat: parseFloat(boy.lat), lon: parseFloat(boy.lon), tz: boy.tz }
-          }
-        }),
-      });
+      const [data, err] = await safeFetch<any>(
+        "/api/v1/matchmaking/guna-milan",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            girl: {
+              name: girl.name || "Girl",
+              datetime: `${girl.date}T${girl.time}:00Z`,
+              location: {
+                lat: parseFloat(girl.lat),
+                lon: parseFloat(girl.lon),
+                tz: girl.tz,
+              },
+            },
+            boy: {
+              name: boy.name || "Boy",
+              datetime: `${boy.date}T${boy.time}:00Z`,
+              location: {
+                lat: parseFloat(boy.lat),
+                lon: parseFloat(boy.lon),
+                tz: boy.tz,
+              },
+            },
+          }),
+        },
+      );
 
       if (err || !data) {
         toast.error(err?.message || t.form.errors.generic);
@@ -225,7 +240,10 @@ const LoveCalculatorPage = () => {
         setResult({ type: "advanced", data: data.data });
         toast.success(t.results.success.guna);
         setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }, 300);
         toast.error(data.message || t.form.errors.failedMatch);
       }
@@ -252,7 +270,10 @@ const LoveCalculatorPage = () => {
           <div className="absolute bottom-[20%] left-[8%] opacity-5 animate-spin-slow">
             <GiFlowerEmblem size={250} className="text-white font-thin" />
           </div>
-          <div className="absolute top-[40%] left-[15%] opacity-10 animate-float" style={{ animationDelay: "2s" }}>
+          <div
+            className="absolute top-[40%] left-[15%] opacity-10 animate-float"
+            style={{ animationDelay: "2s" }}
+          >
             <GiStarShuriken size={80} className="text-[#d4af37]" />
           </div>
         </div>
@@ -274,7 +295,10 @@ const LoveCalculatorPage = () => {
               {t.hero.badge}
             </span>
             <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-none overflow-visible py-2">
-              {t.hero.titleMain} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">{t.hero.titleAccent}</span>
+              {t.hero.titleMain}{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">
+                {t.hero.titleAccent}
+              </span>
             </h1>
             <p className="text-xl md:text-2xl text-orange-100/60 leading-relaxed font-light italic mb-12">
               {t.hero.paragraph}
@@ -284,22 +308,24 @@ const LoveCalculatorPage = () => {
             <div className="inline-flex p-2 bg-white/5 backdrop-blur-xl rounded-[2rem] border border-white/10 gap-2 mb-8">
               <button
                 onClick={() => setActiveMode("simple")}
-                style={{ borderRadius: '9999px' }}
-                className={`flex items-center gap-3 px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-500 ${activeMode === "simple"
-                  ? "bg-gradient-to-r from-[#fd6410] to-[#ff8c42] text-white shadow-xl scale-105"
-                  : "hover:bg-white/5 text-white/60"
-                  }`}
+                style={{ borderRadius: "9999px" }}
+                className={`flex items-center gap-3 px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-500 ${
+                  activeMode === "simple"
+                    ? "bg-gradient-to-r from-[#fd6410] to-[#ff8c42] text-white shadow-xl scale-105"
+                    : "hover:bg-white/5 text-white/60"
+                }`}
               >
                 <TbCrystalBall size={20} />
                 Simple Match
               </button>
               <button
                 onClick={() => setActiveMode("advanced")}
-                style={{ borderRadius: '9999px' }}
-                className={`flex items-center gap-3 px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-500 ${activeMode === "advanced"
-                  ? "bg-gradient-to-r from-[#fd6410] to-[#ff8c42] text-white shadow-xl scale-105"
-                  : "hover:bg-white/5 text-white/60"
-                  }`}
+                style={{ borderRadius: "9999px" }}
+                className={`flex items-center gap-3 px-8 py-4 text-sm font-black uppercase tracking-widest transition-all duration-500 ${
+                  activeMode === "advanced"
+                    ? "bg-gradient-to-r from-[#fd6410] to-[#ff8c42] text-white shadow-xl scale-105"
+                    : "hover:bg-white/5 text-white/60"
+                }`}
               >
                 <GiSparkles size={20} />
                 Advanced Guna
@@ -309,13 +335,20 @@ const LoveCalculatorPage = () => {
             <div className="flex items-center gap-6 mt-4">
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-12 h-12 rounded-full border-2 border-[#301118] bg-gray-200 overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i + 15}`} alt="User" />
+                  <div
+                    key={i}
+                    className="w-12 h-12 rounded-full border-2 border-[#301118] bg-gray-200 overflow-hidden"
+                  >
+                    <img
+                      src={`https://i.pravatar.cc/100?img=${i + 15}`}
+                      alt="User"
+                    />
                   </div>
                 ))}
               </div>
               <p className="text-sm font-bold text-orange-100/40">
-                <span className="text-white">10M+</span> {t.hero.connectionsCount.replace("{count}", "")}
+                <span className="text-white">10M+</span>{" "}
+                {t.hero.connectionsCount.replace("{count}", "")}
               </p>
             </div>
           </div>
@@ -334,7 +367,13 @@ const LoveCalculatorPage = () => {
             <div className="text-center mb-10">
               <h2 className="text-xl md:text-3xl font-black text-burgundy mb-2 tracking-tight">
                 {activeMode === "simple" ? (
-                  <>{t.form.simpleTitle.split("{percentage}")[0]} <span className="text-red-500 underline decoration-red-100 decoration-2 underline-offset-4">{t.form.percentage}</span> {t.form.simpleTitle.split("{percentage}")[1]}</>
+                  <>
+                    {t.form.simpleTitle.split("{percentage}")[0]}{" "}
+                    <span className="text-red-500 underline decoration-red-100 decoration-2 underline-offset-4">
+                      {t.form.percentage}
+                    </span>{" "}
+                    {t.form.simpleTitle.split("{percentage}")[1]}
+                  </>
                 ) : (
                   t.form.advancedTitle
                 )}
@@ -343,23 +382,29 @@ const LoveCalculatorPage = () => {
             </div>
 
             {activeMode === "simple" ? (
-              <form onSubmit={calculateSimpleLove} className="max-w-3xl mx-auto">
+              <form
+                onSubmit={calculateSimpleLove}
+                className="max-w-3xl mx-auto"
+              >
                 <div className="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-[0_15px_40px_rgba(48,17,24,0.08)] border border-burgundy/5 relative overflow-hidden bg-white">
                   <div className="flex flex-col md:flex-row items-center gap-0 md:gap-4 relative">
-
                     {/* Person 1 */}
                     <div className="flex-1 w-full space-y-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">{t.form.yourName}</label>
+                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
+                          {t.form.yourName}
+                        </label>
                         <div className="relative">
                           <input
                             type="text"
                             required
-                            style={{ borderRadius: '9999px' }}
+                            style={{ borderRadius: "9999px" }}
                             className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
                             placeholder={t.form.yourNamePlaceholder}
                             value={simpleData.p1Name}
-                            onChange={(e) => handleSimpleInputChange("p1Name", e.target.value)}
+                            onChange={(e) =>
+                              handleSimpleInputChange("p1Name", e.target.value)
+                            }
                           />
                         </div>
                       </div>
@@ -367,16 +412,20 @@ const LoveCalculatorPage = () => {
                       <div className="flex gap-3">
                         <button
                           type="button"
-                          onClick={() => handleSimpleInputChange("p1Gender", "male")}
-                          style={{ borderRadius: '9999px' }}
+                          onClick={() =>
+                            handleSimpleInputChange("p1Gender", "male")
+                          }
+                          style={{ borderRadius: "9999px" }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p1Gender === "male" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
                           {t.form.male}
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleSimpleInputChange("p1Gender", "female")}
-                          style={{ borderRadius: '9999px' }}
+                          onClick={() =>
+                            handleSimpleInputChange("p1Gender", "female")
+                          }
+                          style={{ borderRadius: "9999px" }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p1Gender === "female" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
                           {t.form.female}
@@ -404,16 +453,20 @@ const LoveCalculatorPage = () => {
                     {/* Person 2 */}
                     <div className="flex-1 w-full space-y-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">{t.form.partnerName}</label>
+                        <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
+                          {t.form.partnerName}
+                        </label>
                         <div className="relative">
                           <input
                             type="text"
                             required
-                            style={{ borderRadius: '9999px' }}
+                            style={{ borderRadius: "9999px" }}
                             className="w-full bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
                             placeholder={t.form.partnerNamePlaceholder}
                             value={simpleData.p2Name}
-                            onChange={(e) => handleSimpleInputChange("p2Name", e.target.value)}
+                            onChange={(e) =>
+                              handleSimpleInputChange("p2Name", e.target.value)
+                            }
                           />
                         </div>
                       </div>
@@ -421,30 +474,33 @@ const LoveCalculatorPage = () => {
                       <div className="flex gap-3">
                         <button
                           type="button"
-                          onClick={() => handleSimpleInputChange("p2Gender", "male")}
-                          style={{ borderRadius: '9999px' }}
+                          onClick={() =>
+                            handleSimpleInputChange("p2Gender", "male")
+                          }
+                          style={{ borderRadius: "9999px" }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p2Gender === "male" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
                           {t.form.male}
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleSimpleInputChange("p2Gender", "female")}
-                          style={{ borderRadius: '9999px' }}
+                          onClick={() =>
+                            handleSimpleInputChange("p2Gender", "female")
+                          }
+                          style={{ borderRadius: "9999px" }}
                           className={`flex-1 py-2.5 font-black uppercase tracking-widest text-[10px] transition-all shadow-sm ${simpleData.p2Gender === "female" ? "bg-red-500 text-white shadow-red-100" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                         >
                           {t.form.female}
                         </button>
                       </div>
                     </div>
-
                   </div>
 
                   <div className="text-center mt-10">
                     <button
                       type="submit"
                       disabled={loading}
-                      style={{ borderRadius: '9999px' }}
+                      style={{ borderRadius: "9999px" }}
                       className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
                     >
                       {loading ? (
@@ -462,7 +518,10 @@ const LoveCalculatorPage = () => {
                 </div>
               </form>
             ) : (
-              <form onSubmit={calculateAdvancedMatch} className="max-w-5xl mx-auto">
+              <form
+                onSubmit={calculateAdvancedMatch}
+                className="max-w-5xl mx-auto"
+              >
                 {/* Advanced Guna Milan Form (Vedic Style) */}
                 <div className="grid md:grid-cols-2 gap-12">
                   {/* Boy's Section */}
@@ -475,8 +534,12 @@ const LoveCalculatorPage = () => {
                         <FaMars size={28} />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black text-burgundy mb-1">{t.form.boyInfo}</h3>
-                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">{t.form.boySub}</p>
+                        <h3 className="text-2xl font-black text-burgundy mb-1">
+                          {t.form.boyInfo}
+                        </h3>
+                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">
+                          {t.form.boySub}
+                        </p>
                       </div>
                     </div>
 
@@ -488,7 +551,13 @@ const LoveCalculatorPage = () => {
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white focus:border-blue-500 outline-none transition-all"
                           placeholder={t.form.fullName}
                           value={advancedData.boy.name}
-                          onChange={(e) => handleAdvancedInputChange("boy", "name", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "boy",
+                              "name",
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
@@ -497,14 +566,26 @@ const LoveCalculatorPage = () => {
                           required
                           className="bg-white/50 border-2 border-burgundy/5 rounded-2xl px-4 py-4 text-burgundy font-bold focus:bg-white outline-none"
                           value={advancedData.boy.date}
-                          onChange={(e) => handleAdvancedInputChange("boy", "date", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "boy",
+                              "date",
+                              e.target.value,
+                            )
+                          }
                         />
                         <input
                           type="time"
                           required
                           className="bg-white/50 border-2 border-burgundy/5 rounded-2xl px-4 py-4 text-burgundy font-bold focus:bg-white outline-none"
                           value={advancedData.boy.time}
-                          onChange={(e) => handleAdvancedInputChange("boy", "time", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "boy",
+                              "time",
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="relative">
@@ -527,8 +608,12 @@ const LoveCalculatorPage = () => {
                         <FaVenus size={28} />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black text-burgundy mb-1">{t.form.girlInfo}</h3>
-                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">{t.form.girlSub}</p>
+                        <h3 className="text-2xl font-black text-burgundy mb-1">
+                          {t.form.girlInfo}
+                        </h3>
+                        <p className="text-[10px] text-[#fd6410] font-black uppercase tracking-widest">
+                          {t.form.girlSub}
+                        </p>
                       </div>
                     </div>
 
@@ -540,7 +625,13 @@ const LoveCalculatorPage = () => {
                           className="w-full bg-white/50 border-2 border-burgundy/5 rounded-2xl px-6 py-4 text-burgundy font-bold focus:bg-white focus:border-pink-500 outline-none transition-all"
                           placeholder={t.form.fullName}
                           value={advancedData.girl.name}
-                          onChange={(e) => handleAdvancedInputChange("girl", "name", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "girl",
+                              "name",
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
@@ -549,14 +640,26 @@ const LoveCalculatorPage = () => {
                           required
                           className="bg-white/50 border-2 border-burgundy/5 rounded-2xl px-4 py-4 text-burgundy font-bold focus:bg-white outline-none"
                           value={advancedData.girl.date}
-                          onChange={(e) => handleAdvancedInputChange("girl", "date", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "girl",
+                              "date",
+                              e.target.value,
+                            )
+                          }
                         />
                         <input
                           type="time"
                           required
                           className="bg-white/50 border-2 border-burgundy/5 rounded-2xl px-4 py-4 text-burgundy font-bold focus:bg-white outline-none"
                           value={advancedData.girl.time}
-                          onChange={(e) => handleAdvancedInputChange("girl", "time", e.target.value)}
+                          onChange={(e) =>
+                            handleAdvancedInputChange(
+                              "girl",
+                              "time",
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="relative">
@@ -610,7 +713,10 @@ const LoveCalculatorPage = () => {
                           {t.results.badge}
                         </span>
                         <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                          {t.results.title.split("{score}")[0]} <span className="text-[#fd6410]">{t.results.title.split("{score}")[1]}</span>
+                          {t.results.title.split("{score}")[0]}{" "}
+                          <span className="text-[#fd6410]">
+                            {t.results.title.split("{score}")[1]}
+                          </span>
                         </h2>
                         <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#fd6410] to-transparent mx-auto mb-16"></div>
                       </div>
@@ -622,7 +728,10 @@ const LoveCalculatorPage = () => {
                             <div className="absolute inset-0 rounded-full border-8 border-[#fd6410] border-t-transparent animate-spin-slow opacity-20"></div>
                             <div className="text-center">
                               <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
-                                {result.score}<span className="text-4xl text-[#fd6410]">%</span>
+                                {result.score}
+                                <span className="text-4xl text-[#fd6410]">
+                                  %
+                                </span>
                               </span>
                               <span className="text-[12px] font-black uppercase tracking-[4px] text-[#fd6410] mt-4 block">
                                 {t.results.cosmicBond}
@@ -651,7 +760,10 @@ const LoveCalculatorPage = () => {
                           {t.results.vedicBadge}
                         </span>
                         <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                          {t.results.gunaTitle.split("{score}")[0]} <span className="text-[#fd6410]">{t.results.gunaTitle.split("{score}")[1]}</span>
+                          {t.results.gunaTitle.split("{score}")[0]}{" "}
+                          <span className="text-[#fd6410]">
+                            {t.results.gunaTitle.split("{score}")[1]}
+                          </span>
                         </h2>
                       </div>
 
@@ -659,7 +771,15 @@ const LoveCalculatorPage = () => {
                         <div className="bg-white rounded-[4rem] p-12 shadow-sm border border-orange-50 text-center relative group">
                           <div className="relative inline-flex items-center justify-center mb-10 overflow-visible py-4">
                             <svg className="w-48 h-48 md:w-64 md:h-64 transform -rotate-90">
-                              <circle className="text-gray-100" strokeWidth="12" stroke="currentColor" fill="transparent" r="90" cx="128" cy="128" />
+                              <circle
+                                className="text-gray-100"
+                                strokeWidth="12"
+                                stroke="currentColor"
+                                fill="transparent"
+                                r="90"
+                                cx="128"
+                                cy="128"
+                              />
                               <circle
                                 className="text-[#fd6410] transition-all duration-1000 ease-out"
                                 strokeWidth="12"
@@ -673,13 +793,21 @@ const LoveCalculatorPage = () => {
                               />
                             </svg>
                             <div className="absolute flex flex-col items-center">
-                              <span className="text-6xl md:text-8xl font-black text-burgundy">{result.data.guna_milan.total_points}</span>
-                              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t.results.outOf36}</span>
+                              <span className="text-6xl md:text-8xl font-black text-burgundy">
+                                {result.data.guna_milan.total_points}
+                              </span>
+                              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                                {t.results.outOf36}
+                              </span>
                             </div>
                           </div>
                           <div>
-                            <div className={`inline-flex items-center gap-2 px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-widest ${result.data.guna_milan.total_points >= 18 ? "bg-green-500 text-white shadow-lg shadow-green-100" : "bg-burgundy text-white shadow-lg shadow-orange-100"}`}>
-                              {result.data.guna_milan.total_points >= 18 ? t.results.goodComp : t.results.moderateMatch}
+                            <div
+                              className={`inline-flex items-center gap-2 px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-widest ${result.data.guna_milan.total_points >= 18 ? "bg-green-500 text-white shadow-lg shadow-green-100" : "bg-burgundy text-white shadow-lg shadow-orange-100"}`}
+                            >
+                              {result.data.guna_milan.total_points >= 18
+                                ? t.results.goodComp
+                                : t.results.moderateMatch}
                             </div>
                           </div>
                         </div>
@@ -689,8 +817,15 @@ const LoveCalculatorPage = () => {
                             <GiLotus size={200} />
                           </div>
                           <div className="relative z-10">
-                            <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-6 block">{t.results.expertAnalysis}</span>
-                            <h3 className="text-3xl font-black mb-8 leading-tight">{t.results.matchSummary.split("{summary}")[0]} <span className="text-[#fd6410]">{t.results.matchSummary.split("{summary}")[1]}</span></h3>
+                            <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-6 block">
+                              {t.results.expertAnalysis}
+                            </span>
+                            <h3 className="text-3xl font-black mb-8 leading-tight">
+                              {t.results.matchSummary.split("{summary}")[0]}{" "}
+                              <span className="text-[#fd6410]">
+                                {t.results.matchSummary.split("{summary}")[1]}
+                              </span>
+                            </h3>
                             <p className="text-xl font-light italic text-orange-100/80 leading-relaxed mb-10 border-l-2 border-[#fd6410]/30 pl-8">
                               "{renderContent(result.data.message)}"
                             </p>
@@ -698,7 +833,9 @@ const LoveCalculatorPage = () => {
                               <div className="w-12 h-12 rounded-full bg-[#fd6410] flex items-center justify-center text-white shadow-xl">
                                 <FaSpinner className="animate-pulse" />
                               </div>
-                              <p className="text-sm font-bold text-orange-50/60 m-0">{t.results.processedBy}</p>
+                              <p className="text-sm font-bold text-orange-50/60 m-0">
+                                {t.results.processedBy}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -707,52 +844,89 @@ const LoveCalculatorPage = () => {
                       {/* Ashta Koot Breakdown Table (Premium Styling) */}
                       <div className="bg-[#fff9f6] rounded-[3rem] p-8 md:p-12 border border-orange-100">
                         <div className="flex items-center justify-between mb-12">
-                          <h4 className="text-xl font-black text-burgundy tracking-tight">{t.results.breakdownTitle}</h4>
+                          <h4 className="text-xl font-black text-burgundy tracking-tight">
+                            {t.results.breakdownTitle}
+                          </h4>
                           <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-50">
-                            <span className="text-xs font-bold text-gray-400">{t.results.accuracy.split(':')[0]}: </span>
-                            <span className="text-xs font-black text-[#fd6410]">{t.results.accuracy.split(':')[1]}</span>
+                            <span className="text-xs font-bold text-gray-400">
+                              {t.results.accuracy.split(":")[0]}:{" "}
+                            </span>
+                            <span className="text-xs font-black text-[#fd6410]">
+                              {t.results.accuracy.split(":")[1]}
+                            </span>
                           </div>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full text-left border-collapse">
                             <thead>
                               <tr className="border-b-2 border-burgundy/5">
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.component}</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.significance}</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">{t.results.table.score}</th>
-                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40 text-right">{t.results.table.interpretation}</th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
+                                  {t.results.table.component}
+                                </th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
+                                  {t.results.table.significance}
+                                </th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
+                                  {t.results.table.score}
+                                </th>
+                                <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40 text-right">
+                                  {t.results.table.interpretation}
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
-                              {Object.entries(result.data.guna_milan.ashta_koot).map(([key, val]: [string, any], idx) => (
-                                <tr key={key} className={`group hover:bg-white transition-all duration-300 ${idx === Object.entries(result.data.guna_milan.ashta_koot).length - 1 ? "" : "border-b border-burgundy/5"}`}>
+                              {Object.entries(
+                                result.data.guna_milan.ashta_koot,
+                              ).map(([key, val]: [string, any], idx) => (
+                                <tr
+                                  key={key}
+                                  className={`group hover:bg-white transition-all duration-300 ${idx === Object.entries(result.data.guna_milan.ashta_koot).length - 1 ? "" : "border-b border-burgundy/5"}`}
+                                >
                                   <td className="py-6 px-4">
                                     <div className="flex items-center gap-4">
                                       <div className="w-10 h-10 rounded-xl bg-orange-100/30 flex items-center justify-center text-burgundy group-hover:bg-[#fd6410] group-hover:text-white transition-all duration-500">
-                                        <span className="text-xs font-black italic">{idx + 1}</span>
+                                        <span className="text-xs font-black italic">
+                                          {idx + 1}
+                                        </span>
                                       </div>
-                                      <span className="font-black text-burgundy capitalize text-sm">{key}</span>
+                                      <span className="font-black text-burgundy capitalize text-sm">
+                                        {key}
+                                      </span>
                                     </div>
                                   </td>
                                   <td className="py-6 px-4 text-xs text-gray-500 font-medium italic">
-                                    {key === "varna" && "Personality & Ego Matching"}
-                                    {key === "vashya" && "Mutual Attraction & Power Balance"}
-                                    {key === "tara" && "Health, Longevity & Destiny"}
-                                    {key === "yoni" && "Physical & Emotional Intimacy"}
-                                    {key === "maitri" && "Friendship & Psychology"}
-                                    {key === "gana" && "Temperament & Social Affinity"}
-                                    {key === "bhakut" && "Family Harmony & Progeny"}
-                                    {key === "nadi" && "Biological & Genetic Sync"}
+                                    {key === "varna" &&
+                                      "Personality & Ego Matching"}
+                                    {key === "vashya" &&
+                                      "Mutual Attraction & Power Balance"}
+                                    {key === "tara" &&
+                                      "Health, Longevity & Destiny"}
+                                    {key === "yoni" &&
+                                      "Physical & Emotional Intimacy"}
+                                    {key === "maitri" &&
+                                      "Friendship & Psychology"}
+                                    {key === "gana" &&
+                                      "Temperament & Social Affinity"}
+                                    {key === "bhakut" &&
+                                      "Family Harmony & Progeny"}
+                                    {key === "nadi" &&
+                                      "Biological & Genetic Sync"}
                                   </td>
                                   <td className="py-6 px-4">
                                     <div className="flex items-center gap-2">
-                                      <span className="text-lg font-black text-burgundy">{val.received_points}</span>
+                                      <span className="text-lg font-black text-burgundy">
+                                        {val.received_points}
+                                      </span>
                                       <span className="text-gray-200">/</span>
-                                      <span className="text-xs font-bold text-gray-400">{val.maximum_points}</span>
+                                      <span className="text-xs font-bold text-gray-400">
+                                        {val.maximum_points}
+                                      </span>
                                     </div>
                                   </td>
                                   <td className="py-6 px-4 text-right">
-                                    <span className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${val.received_points > 0 ? "bg-green-100 text-green-700 shadow-sm shadow-green-100" : "bg-red-50 text-red-500"}`}>
+                                    <span
+                                      className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${val.received_points > 0 ? "bg-green-100 text-green-700 shadow-sm shadow-green-100" : "bg-red-50 text-red-500"}`}
+                                    >
                                       {val.description}
                                     </span>
                                   </td>
@@ -775,7 +949,10 @@ const LoveCalculatorPage = () => {
       <section className="py-32 bg-[#301118] text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#fd6410] rounded-full blur-[100px] -ml-64 -mt-64"></div>
-          <GiLotus className="absolute bottom-0 right-0 -mr-32 -mb-32 animate-spin-slow" size={600} />
+          <GiLotus
+            className="absolute bottom-0 right-0 -mr-32 -mb-32 animate-spin-slow"
+            size={600}
+          />
         </div>
 
         <div className="container relative z-10 px-6">
@@ -784,7 +961,10 @@ const LoveCalculatorPage = () => {
               {t.educational.badge}
             </span>
             <h2 className="text-3xl md:text-5xl font-black mb-8 tracking-tight">
-              {t.educational.title.split("{comp}")[0]} <span className="text-[#fd6410]">{t.educational.title.split("{comp}")[1]}</span>
+              {t.educational.title.split("{comp}")[0]}{" "}
+              <span className="text-[#fd6410]">
+                {t.educational.title.split("{comp}")[1]}
+              </span>
             </h2>
             <p className="text-lg text-orange-100/60 font-light italic leading-relaxed">
               {t.educational.desc}
@@ -797,19 +977,19 @@ const LoveCalculatorPage = () => {
                 title: t.educational.cards[0].title,
                 icon: <FaBullseye size={32} />,
                 desc: t.educational.cards[0].desc,
-                accent: "orange"
+                accent: "orange",
               },
               {
                 title: t.educational.cards[1].title,
                 icon: <FaStar size={32} />,
                 desc: t.educational.cards[1].desc,
-                accent: "gold"
+                accent: "gold",
               },
               {
                 title: t.educational.cards[2].title,
                 icon: <FaBalanceScale size={32} />,
                 desc: t.educational.cards[2].desc,
-                accent: "burgundy"
+                accent: "burgundy",
               },
             ].map((item, i) => (
               <div key={i} className="group relative">
@@ -833,12 +1013,20 @@ const LoveCalculatorPage = () => {
         <div className="container px-6">
           <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
             <div className="max-w-2xl">
-              <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-4 block">{t.moreServices.badge}</span>
+              <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-4 block">
+                {t.moreServices.badge}
+              </span>
               <h2 className="text-3xl md:text-5xl font-black text-burgundy tracking-tight">
-                {t.moreServices.title.split("{guidance}")[0]} <span className="text-[#fd6410]">{t.moreServices.title.split("{guidance}")[1]}</span>
+                {t.moreServices.title.split("{guidance}")[0]}{" "}
+                <span className="text-[#fd6410]">
+                  {t.moreServices.title.split("{guidance}")[1]}
+                </span>
               </h2>
             </div>
-            <a href="#" className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-burgundy hover:text-[#fd6410] transition-colors group">
+            <a
+              href="#"
+              className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-burgundy hover:text-[#fd6410] transition-colors group"
+            >
               {t.moreServices.viewAll}
               <div className="bg-white p-3 rounded-full shadow-md group-hover:translate-x-2 transition-transform">
                 <FaChevronRight size={14} />
@@ -852,19 +1040,19 @@ const LoveCalculatorPage = () => {
                 title: "Kundali Matching",
                 icon: <FaUserFriends size={28} />,
                 desc: "Full 36 Guna analysis for matrimonial success.",
-                path: "/kundali-matching"
+                path: "/kundali-matching",
               },
               {
                 title: "Wedding Muhurat",
                 icon: <FaRing size={28} />,
                 desc: "Find the most auspicious time for your union.",
-                path: "/wedding-muhurat"
+                path: "/wedding-muhurat",
               },
               {
                 title: "Life Report",
                 icon: <TbCrystalBall size={28} />,
                 desc: "Comprehensive 50-page life prediction report.",
-                path: "/life-report"
+                path: "/life-report",
               },
             ].map((s, i) => (
               <div key={i} className="group cursor-pointer">
@@ -875,8 +1063,12 @@ const LoveCalculatorPage = () => {
                   <div className="w-16 h-16 rounded-2xl bg-[#fd6410]/10 flex items-center justify-center text-[#fd6410] mb-8 group-hover:bg-[#fd6410] group-hover:text-white transition-all duration-500">
                     {s.icon}
                   </div>
-                  <h4 className="text-xl font-bold text-burgundy mb-4">{s.title}</h4>
-                  <p className="text-sm text-gray-500 leading-relaxed font-light italic mb-8">{s.desc}</p>
+                  <h4 className="text-xl font-bold text-burgundy mb-4">
+                    {s.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 leading-relaxed font-light italic mb-8">
+                    {s.desc}
+                  </p>
                   <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#fd6410]">
                     Learn More <FaChevronRight size={10} />
                   </div>
@@ -885,15 +1077,13 @@ const LoveCalculatorPage = () => {
             ))}
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Shared Components */}
-      < WhyChooseUs />
+      <WhyChooseUs />
       <CTA />
-    </div >
+    </div>
   );
 };
 
 export default LoveCalculatorPage;
-
-
