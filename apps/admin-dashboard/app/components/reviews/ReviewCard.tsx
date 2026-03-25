@@ -11,7 +11,7 @@ interface ReviewCardProps {
 
 const statusBadges = {
   approved: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  pending: "bg-yellow-600/10 text-yellow-700 border-yellow-600/20",
   flagged: "bg-red-100 text-red-700 border-red-200",
 };
 
@@ -45,7 +45,7 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
         <div className="flex gap-4 flex-1">
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
               {review.avatar}
             </div>
           </div>
@@ -55,7 +55,7 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h3 className="font-semibold text-gray-800">{review.user}</h3>
               <span className="text-gray-500 text-sm">reviewed</span>
-              <span className="font-medium text-orange-600">{review.astrologer}</span>
+              <span className="font-medium text-orange">{review.astrologer}</span>
             </div>
 
             {/* Rating */}
@@ -63,7 +63,7 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-4 h-4 ${i < review.rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
+                  className={`w-4 h-4 ${i < review.rating ? "text-yellow-600 fill-yellow-600" : "text-gray-300"
                     }`}
                 />
               ))}

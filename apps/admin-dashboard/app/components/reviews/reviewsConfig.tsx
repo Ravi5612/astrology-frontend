@@ -59,8 +59,8 @@ export const getStatsConfig = (reviews: Review[]) => [
     title: "Total Reviews",
     value: reviews.length,
     icon: MessageSquare,
-    iconColor: "text-orange-600",
-    iconBgColor: "bg-orange-100",
+    iconColor: "text-orange",
+    iconBgColor: "bg-orange/10",
     trend: { value: "+12%", isPositive: true, period: "this month" },
   },
   {
@@ -68,7 +68,7 @@ export const getStatsConfig = (reviews: Review[]) => [
     value: reviews.filter((r) => r.status === "pending").length,
     icon: Filter,
     iconColor: "text-yellow-600",
-    iconBgColor: "bg-yellow-100",
+    iconBgColor: "bg-yellow-600/10",
     trend: { value: "-5%", isPositive: false, period: "vs last week" },
   },
   {
