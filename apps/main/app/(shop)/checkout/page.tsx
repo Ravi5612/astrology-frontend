@@ -9,6 +9,7 @@ import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { Product, AddressDto } from "@/lib/types";
 import * as LucideIcons from "lucide-react";
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 const CheckoutContent = () => {
   const router = useRouter();
@@ -68,19 +69,16 @@ const CheckoutContent = () => {
   useEffect(() => {
     if (isOrder && buyNowInfo?.productId) {
       const fetchDirectProduct = async () => {
-        try {
-          setLoadingProduct(true);
-          const baseUrl = getBasePath();
-          const res = await fetch(`${baseUrl}/api/v1/products/${buyNowInfo.productId}`);
-          if (res.ok) {
-            const data = await res.json();
-            setDirectProduct(data.data || data);
-          }
-        } catch (error) {
-          console.error("Failed to fetch product for direct buy:", error);
-        } finally {
-          setLoadingProduct(false);
+        setLoadingProduct(true);
+        const baseUrl = getBasePath();
+        const [data, fetchError] = await safeFetch<any>(`${baseUrl}/api/v1/products/${buyNowInfo.productId}`);
+        
+        if (fetchError) {
+          console.error("Failed to fetch product for direct buy:", fetchError);
+        } else if (data) {
+          setDirectProduct(data.data || data);
         }
+        setLoadingProduct(false);
       };
       fetchDirectProduct();
     }

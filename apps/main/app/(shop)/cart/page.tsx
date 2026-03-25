@@ -5,6 +5,7 @@ import ProductCarousel from "@/components/features/shop/ProductCarousel";
 import { useCartStore } from "@/store/useCartStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
@@ -27,15 +28,14 @@ const CartPage: React.FC = () => {
 
     // Fetch products for "You may also like" section
     const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1"}/products`);
-        if (res.ok) {
-          const data = await res.json();
-          const products = Array.isArray(data) ? data : data.data || [];
-          setSuggestedProducts(products);
-        }
-      } catch (error) {
-        console.error("Failed to fetch suggested products:", error);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
+      const [data, fetchError] = await safeFetch<any>(`${apiUrl}/products`);
+      
+      if (fetchError) {
+        console.error("Failed to fetch suggested products:", fetchError);
+      } else if (data) {
+        const products = Array.isArray(data) ? data : data.data || [];
+        setSuggestedProducts(products);
       }
     };
 
