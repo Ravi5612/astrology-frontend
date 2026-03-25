@@ -10,6 +10,8 @@ import { getApiUrl } from "@/utils/api-config";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 
+import safeFetch from "@packages/safe-fetch/safeFetch";
+
 const API_ENDPOINT = `${getApiUrl()}/auth/forgot/password`;
 
 const ForgotPasswordContent: React.FC = () => {
@@ -31,7 +33,7 @@ const ForgotPasswordContent: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch(API_ENDPOINT, {
+            const [data, fetchError] = await safeFetch<any>(API_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -39,9 +41,9 @@ const ForgotPasswordContent: React.FC = () => {
                     origin: typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL
                 }),
             });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                toast.error(data?.message || t.forgotPassword.errors.failed);
+
+            if (fetchError) {
+                toast.error(fetchError.body?.message || fetchError.message || t.forgotPassword.errors.failed);
             } else {
                 toast.success(data?.message || t.forgotPassword.success);
                 setIsSent(true);

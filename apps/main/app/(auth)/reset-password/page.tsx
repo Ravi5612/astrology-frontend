@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 
+import safeFetch from "@packages/safe-fetch/safeFetch";
+
 const ResetPasswordContent: React.FC = () => {
     const { lang } = useLanguageStore();
     const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
@@ -52,14 +54,14 @@ const ResetPasswordContent: React.FC = () => {
 
         try {
             const API_URL = `${getApiUrl()}/auth/reset/password?token=${token}`;
-            const res = await fetch(API_URL, {
+            const [data, fetchError] = await safeFetch<any>(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ password }),
             });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                toast.error(data?.message || t.resetPassword.errors.failed);
+
+            if (fetchError) {
+                toast.error(fetchError.body?.message || fetchError.message || t.resetPassword.errors.failed);
             } else {
                 toast.success(data?.message || t.resetPassword.successMessage);
                 setIsSuccess(true);

@@ -8,6 +8,8 @@ import { getApiUrl } from "@/utils/api-config";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 
+import safeFetch from "@packages/safe-fetch/safeFetch";
+
 import { VerificationResponse } from "@/lib/types";
 
 // --- API ---
@@ -42,14 +44,14 @@ const VerifyEmailContent: React.FC = () => {
             }
 
             try {
-                const res = await fetch(`${API_ENDPOINT}?token=${token}`, {
+                const [data, fetchError] = await safeFetch<any>(`${API_ENDPOINT}?token=${token}`, {
                     headers: { "Content-Type": "application/json" },
                 });
-                const data = await res.json().catch(() => ({}));
 
-                if (!res.ok) {
-                    const status = res.status;
-                    const msg = data?.message || data?.error || `Server responded with status ${status}.`;
+                if (fetchError) {
+                    const status = fetchError.status;
+                    const msg = fetchError.body?.message || fetchError.body?.error || fetchError.message || `Server responded with status ${status}.`;
+                    
                     if (status === 400 || status === 404) {
                         setError(t.verifyEmail.failedMessage);
                     } else if (status >= 500) {
