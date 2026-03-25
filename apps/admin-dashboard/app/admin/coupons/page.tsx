@@ -155,7 +155,7 @@ export default function CouponsPage() {
             placeholder="Search coupon code or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-sm"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none text-sm"
           />
         </div>
 
@@ -165,7 +165,7 @@ export default function CouponsPage() {
               key={value}
               onClick={() => setStatusFilter(value)}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${statusFilter === value
-                ? "bg-orange-500 text-white shadow-md"
+                ? "bg-orange text-white shadow-md"
                 : "bg-gray-50 text-gray-500 hover:bg-gray-100"
                 }`}
             >
@@ -177,7 +177,7 @@ export default function CouponsPage() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <LoaderIcon className="animate-spin text-orange-500" size={40} />
+          <LoaderIcon className="animate-spin text-orange" size={40} />
           <p className="text-gray-400 font-medium">Loading coupons...</p>
         </div>
       ) : (

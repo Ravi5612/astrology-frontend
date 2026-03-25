@@ -69,7 +69,7 @@ export function CouponCard(props: any) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <div className="px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-lg rounded-lg shadow-md">
+            <div className="px-4 py-2 bg-gradient-to-r from-orange to-yellow-600 text-white font-bold text-lg rounded-lg shadow-md">
               {code || "N/A"}
             </div>
             {code && (
@@ -95,7 +95,7 @@ export function CouponCard(props: any) {
       <div className="grid grid-cols-2 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
         <div>
           <p className="text-xs text-gray-600 mb-1">Discount</p>
-          <p className="font-bold text-lg text-orange-600">
+          <p className="font-bold text-lg text-orange">
             {_type === "percentage"
               ? `${_value}%`
               : `₹${_value}`}
@@ -126,7 +126,7 @@ export function CouponCard(props: any) {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 h-2 rounded-full transition-all"
+              className="bg-gradient-to-r from-orange to-yellow-600 h-2 rounded-full transition-all"
               style={{ width: `${usagePercentage}%` }}
             ></div>
           </div>

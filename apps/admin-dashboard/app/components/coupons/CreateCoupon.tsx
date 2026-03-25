@@ -60,10 +60,10 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white">
+        <div className="flex items-center justify-between px-8 py-5 bg-gradient-to-r from-orange to-yellow-600 text-white">
           <div>
             <h2 className="text-xl font-bold">{isEditing ? "Edit Coupon" : "Create New Coupon"}</h2>
-            <p className="text-orange-100 text-xs mt-0.5">{isEditing ? "Modify existing coupon details" : "Define your discount offer parameters"}</p>
+            <p className="text-white/80 text-xs mt-0.5">{isEditing ? "Modify existing coupon details" : "Define your discount offer parameters"}</p>
           </div>
           <button
             onClick={onClose}
@@ -80,7 +80,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
             <div className="col-span-2 space-y-2">
               <label className="text-sm font-bold text-gray-700">Coupon Code *</label>
               <input
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-mono uppercase tracking-widest"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all font-mono uppercase tracking-widest"
                 placeholder="e.g. DIWALI2026"
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
@@ -92,7 +92,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700">Discount Type</label>
               <select
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none bg-white"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all appearance-none bg-white"
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
               >
@@ -107,7 +107,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
               <div className="relative">
                 <input
                   type="number"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                   placeholder={formData.type === 'percentage' ? "20" : "100"}
                   value={formData.value}
                   onChange={(e) => setFormData({ ...formData, value: e.target.value })}
@@ -123,7 +123,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
               <label className="text-sm font-bold text-gray-700">Min Order Value (₹)</label>
               <input
                 type="number"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-semibold"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all font-semibold"
                 placeholder="0"
                 value={formData.min_order_value}
                 onChange={(e) => setFormData({ ...formData, min_order_value: e.target.value })}
@@ -135,7 +135,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
               <label className="text-sm font-bold text-gray-700">Expiry Date</label>
               <input
                 type="date"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={formData.expiry_date}
                 onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
               />
@@ -155,7 +155,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
           </Button>
           <Button
             variant="primary"
-            className="px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-lg shadow-orange-200 disabled:opacity-70 flex items-center gap-2"
+            className="px-8 py-2.5 bg-orange hover:opacity-90 text-white rounded-xl shadow-lg shadow-orange/20 disabled:opacity-70 flex items-center gap-2"
             onClick={handleSubmit}
             disabled={loading}
           >
