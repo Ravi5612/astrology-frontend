@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
 import { VerificationPopup } from "@repo/ui";
 import { UserX } from "lucide-react";
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 import { Astrologer } from "@/lib/types";
 
@@ -76,34 +77,31 @@ export default function ConsultationPrep() {
 
     useEffect(() => {
         const fetchAstro = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/expert/details/${id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setAstrologer({
-                        id: data.id,
-                        userId: data.user?.id,
-                        name: data.user?.name || "Astrologer",
-                        image: data.user?.avatar || "/images/dummy-astrologer.jpg",
-                        expertise: data.specialization || "Vedic Astrology",
-                        experience: data.experience_in_years || 0,
-                        price: data.price || 0,
-                        chat_price: data.chat_price,
-                        call_price: data.call_price,
-                        video_call_price: data.video_call_price,
-                        language: data.languages?.join(", ") || "",
-                        ratings: data.rating || 5,
-                        is_available: data.isAvailable ?? data.is_available ?? false,
-                    });
-                } else {
-                    setAstrologer(null);
-                }
-            } catch (error) {
-                console.error("Failed to fetch astrologer for prep:", error);
+            const [data, fetchError] = await safeFetch<any>(`${API_BASE_URL}/expert/details/${id}`);
+            
+            if (fetchError) {
+                console.error("Failed to fetch astrologer for prep:", fetchError);
                 setAstrologer(null);
-            } finally {
-                setLoading(false);
+            } else if (data) {
+                setAstrologer({
+                    id: data.id,
+                    userId: data.user?.id,
+                    name: data.user?.name || "Astrologer",
+                    image: data.user?.avatar || "/images/dummy-astrologer.jpg",
+                    expertise: data.specialization || "Vedic Astrology",
+                    experience: data.experience_in_years || 0,
+                    price: data.price || 0,
+                    chat_price: data.chat_price,
+                    call_price: data.call_price,
+                    video_call_price: data.video_call_price,
+                    language: data.languages?.join(", ") || "",
+                    ratings: data.rating || 5,
+                    is_available: data.isAvailable ?? data.is_available ?? false,
+                });
+            } else {
+                setAstrologer(null);
             }
+            setLoading(false);
         };
         if (id) fetchAstro();
 

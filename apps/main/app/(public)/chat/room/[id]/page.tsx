@@ -10,6 +10,7 @@ import apiClient, { uploadClientDocument } from "@/libs/api-profile";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { toast } from "react-toastify";
 import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 import { ChatMessage, ChatSession, Astrologer } from "@/lib/types";
 
@@ -111,28 +112,26 @@ function ChatRoomContent() {
     // Fetch Expert Data
     useEffect(() => {
         const fetchExpertData = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/expert/details/${id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setExpertData({
-                        id: data.id,
-                        userId: data.user?.id,
-                        image: data.user?.avatar
-                            ? (data.user.avatar.startsWith("http") || data.user.avatar.startsWith("/") ? data.user.avatar : `/${data.user.avatar}`)
-                            : "/images/dummy-astrologer.jpg",
-                        name: data.user?.name || "Astrologer",
-                        expertise: data.specialization || "Vedic Astrology",
-                        experience: data.experience_in_years || 0,
-                        language: data.languages?.join(", ") || "Hindi",
-                        price: data.chat_price || data.price || 0,
-                        ratings: data.rating || 5,
-                        is_available: data.is_available || false,
-                        total_likes: data.total_likes || 0,
-                    });
-                }
-            } catch (error) {
-                console.error("Failed to fetch expert data:", error);
+            const [data, fetchError] = await safeFetch<any>(`${API_BASE_URL}/expert/details/${id}`);
+            
+            if (fetchError) {
+                console.error("Failed to fetch expert data:", fetchError);
+            } else if (data) {
+                setExpertData({
+                    id: data.id,
+                    userId: data.user?.id,
+                    image: data.user?.avatar
+                        ? (data.user.avatar.startsWith("http") || data.user.avatar.startsWith("/") ? data.user.avatar : `/${data.user.avatar}`)
+                        : "/images/dummy-astrologer.jpg",
+                    name: data.user?.name || "Astrologer",
+                    expertise: data.specialization || "Vedic Astrology",
+                    experience: data.experience_in_years || 0,
+                    language: data.languages?.join(", ") || "Hindi",
+                    price: data.chat_price || data.price || 0,
+                    ratings: data.rating || 5,
+                    is_available: data.is_available || false,
+                    total_likes: data.total_likes || 0,
+                });
             }
         };
         if (id) fetchExpertData();

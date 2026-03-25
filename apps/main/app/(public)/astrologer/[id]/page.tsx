@@ -3,7 +3,7 @@ import AstrologerDetailsClient from "@/components/features/astrologers/Astrologe
 import { notFound } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import { Product } from "@/lib/types";
-
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 const normalizeProduct = (raw: any): Product => {
   const images = Array.isArray(raw?.images) ? raw.images : [];
@@ -38,46 +38,46 @@ export default async function Page({
   }
 
   try {
-    // Fetch astrologer details + products in parallel
-    const [astrologerRes, productsRes] = await Promise.allSettled([
-      fetch(`${API_BASE_URL}/expert/details/${id}`, { cache: "no-store" }),
-      fetch(`${API_BASE_URL}/products`, { cache: "no-store" }),
+    // Fetch astrologer details + products in parallel using safeFetch
+    const [
+      [data, astroError],
+      [pData, productsError]
+    ] = await Promise.all([
+      safeFetch<any>(`${API_BASE_URL}/expert/details/${id}`, { cache: "no-store" }),
+      safeFetch<any>(`${API_BASE_URL}/products`, { cache: "no-store" }),
     ]);
 
-    if (astrologerRes.status === "rejected" || !astrologerRes.value.ok) {
-      if (astrologerRes.status === "fulfilled" && astrologerRes.value.status === 404)
-        return notFound();
-      throw new Error("Failed to fetch astrologer details");
+    if (astroError) {
+      if (astroError.status === 404) return notFound();
+      throw new Error(astroError.message || "Failed to fetch astrologer details");
     }
 
-    const result = await astrologerRes.value.json();
-    const data = result.data || result;
+    const astrologerData = data.data || data;
 
     // Normalize astrologer
     const astrologer = {
-      id: data.id,
-      name: data.user?.name || data.name || "Astrologer",
-      image: data.user?.avatar || data.avatar || data.image || "/images/dummy-astrologer.jpg",
-      expertise: data.specialization || data.expertise || "Vedic Astrology",
-      experience: data.experience_in_years !== undefined ? data.experience_in_years : (data.experience || 0),
-      language: Array.isArray(data.languages)
-        ? data.languages.join(", ")
-        : data.user?.language || data.language || "Hindi, English",
-      price: data.price || 0,
-      video: data.video || "https://www.youtube.com/embed/INoPh_oRooU",
-      ratings: data.rating !== undefined ? Math.round(data.rating) : (data.ratings ? Math.round(data.ratings) : 5),
-      bio: data.bio || "",
-      detailed_experience: data.detailed_experience || data.detailedExperience || [],
-      gallery: data.gallery || [],
-      videos: data.videos || [],
-      total_likes: data.total_likes || data.totalLikes || 0,
-      is_available: data.isAvailable ?? data.is_available ?? false,
+      id: astrologerData.id,
+      name: astrologerData.user?.name || astrologerData.name || "Astrologer",
+      image: astrologerData.user?.avatar || astrologerData.avatar || astrologerData.image || "/images/dummy-astrologer.jpg",
+      expertise: astrologerData.specialization || astrologerData.expertise || "Vedic Astrology",
+      experience: astrologerData.experience_in_years !== undefined ? astrologerData.experience_in_years : (astrologerData.experience || 0),
+      language: Array.isArray(astrologerData.languages)
+        ? astrologerData.languages.join(", ")
+        : astrologerData.user?.language || astrologerData.language || "Hindi, English",
+      price: astrologerData.price || 0,
+      video: astrologerData.video || "https://www.youtube.com/embed/INoPh_oRooU",
+      ratings: astrologerData.rating !== undefined ? Math.round(astrologerData.rating) : (astrologerData.ratings ? Math.round(astrologerData.ratings) : 5),
+      bio: astrologerData.bio || "",
+      detailed_experience: astrologerData.detailed_experience || astrologerData.detailedExperience || [],
+      gallery: astrologerData.gallery || [],
+      videos: astrologerData.videos || [],
+      total_likes: astrologerData.total_likes || astrologerData.totalLikes || 0,
+      is_available: astrologerData.isAvailable ?? astrologerData.is_available ?? false,
     };
 
     // Normalize products (empty array if fetch failed)
     let products: Product[] = [];
-    if (productsRes.status === "fulfilled" && productsRes.value.ok) {
-      const pData = await productsRes.value.json();
+    if (!productsError && pData) {
       const rawList = Array.isArray(pData) ? pData : (Array.isArray(pData?.data) ? pData.data : []);
       products = rawList.map(normalizeProduct).filter((p: Product) => p.name);
     }

@@ -9,6 +9,7 @@ import CTA from "@/components/layout/main/CTA";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import { FaLeaf, FaBriefcase, FaHeart, FaPlane } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
+import safeFetch from "@packages/safe-fetch/safeFetch";
 
 export default function ZodiacDetailsPage() {
   const params = useParams();
@@ -27,21 +28,18 @@ export default function ZodiacDetailsPage() {
     const fetchData = async () => {
       setLoading(true);
       setError(false);
-      try {
-        const res = await fetch(`/api/horoscope?sign=${slug}&lang=${lang}`);
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        if (json.data && json.data.daily_predictions) {
-          setHoroscope(json.data.daily_predictions[0]);
-        } else {
+      
+      const [data, fetchError] = await safeFetch<any>(`/api/horoscope?sign=${slug}&lang=${lang}`);
+      
+      if (fetchError) {
+          console.error("Error fetching data:", fetchError);
           setError(true);
-        }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
+      } else if (data && data.data && data.data.daily_predictions) {
+          setHoroscope(data.data.daily_predictions[0]);
+      } else {
+          setError(true);
       }
+      setLoading(false);
     };
 
     if (slug) fetchData();
