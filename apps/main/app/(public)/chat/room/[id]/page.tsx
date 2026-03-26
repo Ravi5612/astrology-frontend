@@ -58,7 +58,7 @@ function ChatRoomContent() {
         if (!isClientAuthenticated) return;
 
         const fetchData = async () => {
-            const [data, error] = await safeFetch<any>(`/api/v1/user/active-chat-sessions/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
+            const [data, error] = await safeFetch<any>(`/api/v1/chat/user-session/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
             if (error || !data?.success) {
                 toast.error(error?.message || "Failed to load chat session");
                 return;
@@ -75,12 +75,9 @@ function ChatRoomContent() {
 
             if (data.session.status === 'active') {
                 setMessages(data.session.messages || []);
-                const now = new Date().getTime();
-                const start = new Date(data.session.startedAt || data.session.started_at).getTime();
-                const end = new Date(data.session.expiresAt || data.session.expires_at).getTime();
-
-                setElapsedTime(Math.floor((now - start) / 1000));
-                setTimeLeft(Math.floor((end - now) / 1000));
+                // Use pre-computed values from backend to avoid NaN from null dates
+                setElapsedTime(data.session.elapsedSeconds ?? 0);
+                setTimeLeft(data.session.remainingSeconds ?? 0);
             }
 
             if (data.session.status === 'completed') {
@@ -96,9 +93,9 @@ function ChatRoomContent() {
         if (!sessionId) return;
 
         chatSocket.connect();
-        chatSocket.emit('join_chat', { sessionId: parseInt(sessionId) });
+        chatSocket.emit('join_room', { sessionId: parseInt(sessionId) });
 
-        chatSocket.on('receive_message', (message: ChatMessage) => {
+        chatSocket.on('new_message', (message: ChatMessage) => {
             setMessages(prev => [...prev, message]);
             setTypingStatus(null);
         });
@@ -109,9 +106,15 @@ function ChatRoomContent() {
 
         chatSocket.on('session_activated', (dataValue: any) => {
             setSessionStatus('active');
-            const now = new Date().getTime();
-            const end = new Date(dataValue.expiresAt || dataValue.expires_at).getTime();
-            setTimeLeft(Math.floor((end - now) / 1000));
+            // Backend sends remainingSeconds directly — use it to avoid NaN from missing expiresAt
+            if (dataValue.remainingSeconds !== undefined) {
+                setTimeLeft(dataValue.remainingSeconds);
+                setElapsedTime(dataValue.elapsedSeconds ?? 0);
+            } else {
+                const now = new Date().getTime();
+                const end = new Date(dataValue.expiresAt || dataValue.expires_at).getTime();
+                if (!isNaN(end)) setTimeLeft(Math.floor((end - now) / 1000));
+            }
         });
 
         chatSocket.on('session_ended', (summary: ChatSession) => {
@@ -130,14 +133,18 @@ function ChatRoomContent() {
         chatSocket.on('paid_continuation_confirmed', (data: any) => {
             setShowFreeEndPrompt(false);
             setIsFree(false);
-            const now = new Date().getTime();
-            const end = new Date(data.expiresAt || data.expires_at).getTime();
-            setTimeLeft(Math.floor((end - now) / 1000));
+            if (data.remainingSeconds !== undefined) {
+                setTimeLeft(data.remainingSeconds);
+            } else {
+                const now = new Date().getTime();
+                const end = new Date(data.expiresAt || data.expires_at).getTime();
+                if (!isNaN(end)) setTimeLeft(Math.floor((end - now) / 1000));
+            }
             toast.success("Consultation continued as paid session");
         });
 
         return () => {
-            chatSocket.off('receive_message');
+            chatSocket.off('new_message');
             chatSocket.off('typing_status');
             chatSocket.off('session_activated');
             chatSocket.off('session_ended');

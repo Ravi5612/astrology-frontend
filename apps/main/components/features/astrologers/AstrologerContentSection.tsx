@@ -4,7 +4,7 @@ import React from "react";
 import NextImage from "next/image";
 import { Review } from "@/libs/api-experts";
 import { Astrologer } from "@/lib/types";
-import { renderStars } from "./useAstrologerDetails";
+import { renderStars } from "./renderStars";
 
 const Image = NextImage as any;
 

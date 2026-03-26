@@ -25,7 +25,7 @@ const CTA = () => {
 
           <div className="w-full lg:w-1/3 flex justify-center lg:justify-end">
             <a
-              href="#"
+              href="/our-astrologers"
               className="inline-block py-4 px-10 bg-primary text-white rounded-full text-lg font-bold hover:bg-primary-hover hover:-translate-y-1 transition-all shadow-[0_4px_20px_rgba(255,107,0,0.4)] active:scale-95 no-underline"
             >
               {t.cta.btn}
