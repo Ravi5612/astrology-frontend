@@ -19,6 +19,8 @@ export interface Agent {
     city?: string;
     state?: string;
     pincode?: string;
+    aadhaar_no?: string;
+    pan_no?: string;
 
     // Bank / Payout
     bank_name?: string;
@@ -27,9 +29,10 @@ export interface Agent {
     upi_id?: string;
 
     // Commission rates (%)
-    commission_astrologer: number;   // % on each astrologer consultation
-    commission_mandir: number;       // % on each mandir booking
-    commission_puja_shop: number;    // % on each puja shop sale
+    commission_astrologer?: number;   // % on each astrologer consultation
+    commission_mandir?: number;       // % on each mandir booking
+    commission_puja_shop?: number;    // % on each puja shop sale
+    commission_rate?: number;         // Flat rate from backend
 
     // Aggregated stats
     total_listings: number;

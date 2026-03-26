@@ -41,7 +41,7 @@ export const getStatsConfig = (data: Agent[] | AgentStats) => {
         },
         {
             title: "Pending Payouts",
-            value: `₹${stats.pendingPayouts.toLocaleString("en-IN")}`,
+            value: `₹${(stats.pendingPayouts || 0).toLocaleString("en-IN")}`,
             icon: IndianRupee,
             iconColor: "text-orange-600",
             iconBgColor: "bg-orange-100",

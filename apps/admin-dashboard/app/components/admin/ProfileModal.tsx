@@ -261,7 +261,7 @@ export function ProfileModal({
                               )}
                             </div>
                           ) : (
-                            <p className="text-sm font-black text-gray-700 leading-relaxed">{item.value || "No data provided"}</p>
+                            <p className="text-sm font-black text-gray-700 leading-relaxed" suppressHydrationWarning>{item.value || "No data provided"}</p>
                           )}
                         </div>
                       </div>
@@ -286,7 +286,7 @@ export function ProfileModal({
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Order #{order.id}</p>
-                          <p className="text-xs font-bold text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                          <p className="text-xs font-bold text-gray-500" suppressHydrationWarning>{new Date(order.createdAt).toLocaleDateString()}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-black text-gray-900">₹{order.amount}</p>

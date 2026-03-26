@@ -60,7 +60,7 @@ const LISTING_COLUMNS = [
     },
     {
         key: "date", label: "Listed On", render: (l: AgentListing) => (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500" suppressHydrationWarning>
                 {new Date(l.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
             </p>
         )
@@ -70,9 +70,9 @@ const LISTING_COLUMNS = [
 
 // ── Add Agent Modal ───────────────────────────────────────────
 const EMPTY_FORM = {
-    name: "", email: "", phone: "", avatar: "",
+    name: "", email: "", phone: "", password: "",
     address: "", city: "", state: "",
-    aadhaar_no: "", pan_no: "", commission_rate: "",
+    aadhaar_no: "", pan_no: "",
     aadhaar_doc: null as File | null,
     pan_doc: null as File | null,
     profile_pic: null as File | null,
@@ -85,56 +85,15 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
 }) {
     const [form, setForm] = useState(EMPTY_FORM);
     const [loading, setLoading] = useState(false);
-
-    // OTP State
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [isOtpVerified, setIsOtpVerified] = useState(false);
-    const [otp, setOtp] = useState("");
-    const [otpLoading, setOtpLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     // Reset state when modal opens
     useEffect(() => {
         if (isOpen) {
             setForm(EMPTY_FORM);
-            setIsOtpSent(false);
-            setIsOtpVerified(false);
-            setOtp("");
+            setShowPassword(false);
         }
     }, [isOpen]);
-
-    const handleSendOtp = async () => {
-        if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-            toast.error("Please enter a valid email address");
-            return;
-        }
-        setOtpLoading(true);
-        try {
-            await sendAgentOtp(form.email);
-            setIsOtpSent(true);
-            toast.info("OTP sent to email");
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to send OTP");
-        } finally {
-            setOtpLoading(false);
-        }
-    };
-
-    const handleVerifyOtp = async () => {
-        if (!otp || otp.length < 4) {
-            toast.error("Please enter a valid OTP");
-            return;
-        }
-        setOtpLoading(true);
-        try {
-            await verifyAgentOtp(form.email, otp);
-            setIsOtpVerified(true);
-            toast.success("Email Verified Successfully!");
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Invalid OTP");
-        } finally {
-            setOtpLoading(false);
-        }
-    };
 
     const set = (key: keyof typeof EMPTY_FORM) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -146,8 +105,8 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.name.trim() || !form.email.trim()) {
-            toast.error("Please fill required fields (Name/Email)");
+        if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
+            toast.error("Please fill required fields (Name/Email/Password)");
             return;
         }
 
@@ -157,6 +116,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
             formData.append("name", form.name);
             formData.append("email", form.email);
             formData.append("phone", form.phone);
+            formData.append("password", form.password);
             formData.append("address", form.address);
             formData.append("city", form.city);
             formData.append("state", form.state);
@@ -200,7 +160,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
                         </div>
                         <div>
                             <h3 className="text-base font-bold text-gray-900">Add New Agent</h3>
-                            <p className="text-xs text-gray-400">Agent ID will be auto-generated after creation</p>
+                            <p className="text-xs text-gray-400">Agent credentials will be used for login</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -237,78 +197,64 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Name */}
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <label className={labelCls}>Full Name *</label>
                                         <div className="relative">
                                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                             <input required placeholder="e.g. Ramesh Kumar"
-                                                value={form.name} // Bind to form state
+                                                value={form.name}
                                                 onChange={set("name")}
                                                 className={inputCls}
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Email & OTP Verification */}
-                                    <div className="sm:col-span-2 space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                        <label className={labelCls}>Email Verification *</label>
-                                        <div className="flex gap-2 items-center">
-                                            <div className="relative flex-1">
-                                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="email"
-                                                    placeholder="agent@example.com"
-                                                    value={form.email}
-                                                    onChange={set("email")}
-                                                    className={`${inputCls} ${isOtpVerified ? "bg-green-50 border-green-200 text-green-700" : "bg-white"}`}
-                                                    readOnly={isOtpSent || isOtpVerified}
-                                                />
-                                                {isOtpVerified && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 font-bold text-xs bg-green-100 px-2 py-1 rounded">Verified</span>}
-                                            </div>
-                                            {!isOtpVerified && (
-                                                <Button
-                                                    type="button"
-                                                    disabled={otpLoading || isOtpSent || !form.email}
-                                                    onClick={handleSendOtp} // Correctly calling send func
-                                                    variant="primary"
-                                                    size="sm"
-                                                >
-                                                    {otpLoading && !isOtpSent ? "Sending..." : isOtpSent ? "OTP Sent" : "Send OTP"}
-                                                </Button>
-                                            )}
+                                    {/* Email */}
+                                    <div>
+                                        <label className={labelCls}>Email Address *</label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input
+                                                required
+                                                type="email"
+                                                placeholder="agent@example.com"
+                                                value={form.email}
+                                                onChange={set("email")}
+                                                className={inputCls}
+                                            />
                                         </div>
-
-                                        {isOtpSent && !isOtpVerified && (
-                                            <div className="flex gap-2 items-center animate-in fade-in slide-in-from-top-2 duration-300">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter 6-digit OTP"
-                                                    value={otp}
-                                                    onChange={(e) => setOtp(e.target.value)}
-                                                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-                                                    maxLength={6}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    disabled={otpLoading}
-                                                    onClick={handleVerifyOtp} // Correctly calling verify func
-                                                    variant="secondary"
-                                                    size="sm"
-                                                    className="whitespace-nowrap"
-                                                >
-                                                    {otpLoading ? "Verifying..." : "Verify OTP"}
-                                                </Button>
-                                            </div>
-                                        )}
                                     </div>
+
+                                    {/* Password */}
+                                    <div>
+                                        <label className={labelCls}>Login Password *</label>
+                                        <div className="relative">
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input
+                                                required
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder="••••••••"
+                                                value={form.password}
+                                                onChange={set("password")}
+                                                className={inputCls}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded text-gray-400"
+                                            >
+                                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     {/* Phone */}
                                     <div>
-                                        <label className={labelCls}>Phone Number *</label>
+                                        <label className={labelCls}>Phone Number</label>
                                         <div className="relative">
                                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                            <input required placeholder="10-digit mobile"
-                                                value={form.phone} // Bind to form state
+                                            <input placeholder="10-digit mobile"
+                                                value={form.phone}
                                                 onChange={set("phone")}
                                                 className={inputCls}
                                                 pattern="[0-9]{10}"
@@ -316,6 +262,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
                                             />
                                         </div>
                                     </div>
+
                                     {/* State */}
                                     <div>
                                         <label className={labelCls}>State</label>
@@ -330,6 +277,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
                                             </select>
                                         </div>
                                     </div>
+
                                     {/* City */}
                                     <div>
                                         <label className={labelCls}>City</label>
@@ -339,6 +287,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
                                                 onChange={set("city")} className={inputCls} />
                                         </div>
                                     </div>
+
                                     {/* Address — full width */}
                                     <div className="sm:col-span-2">
                                         <label className={labelCls}>Full Address</label>
@@ -374,15 +323,6 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
                                             <input placeholder="ABCDE1234F" value={form.pan_no}
                                                 onChange={set("pan_no")} className={inputCls}
                                                 maxLength={10} style={{ textTransform: "uppercase" }} />
-                                        </div>
-                                    </div>
-                                    {/* Commission Rate */}
-                                    <div>
-                                        <label className={labelCls}>Commission Rate (%)</label>
-                                        <div className="relative">
-                                            <Star className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                            <input type="number" placeholder="e.g. 10" value={form.commission_rate}
-                                                onChange={set("commission_rate")} className={inputCls} />
                                         </div>
                                     </div>
                                 </div>
@@ -424,7 +364,7 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
 
                 {/* ── Footer with buttons ── */}
                 <div className="flex gap-3 px-6 py-4 border-t border-gray-100 flex-shrink-0 bg-gray-50 rounded-b-2xl">
-                    <Button type="submit" form="add-agent-form" variant="primary" fullWidth loading={loading} icon={Plus} disabled={!isOtpVerified}>
+                    <Button type="submit" form="add-agent-form" variant="primary" fullWidth loading={loading} icon={Plus}>
                         Create Agent
                     </Button>
                     <Button type="button" variant="outline" onClick={onClose}>
@@ -435,6 +375,16 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
         </div>
     );
 }
+
+const Lock = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+);
+const Eye = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z" /><circle cx="12" cy="12" r="3" /></svg>
+);
+const EyeOff = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /></svg>
+);
 
 // ── Listing Stats ─────────────────────────────────────────────
 const getListingStats = (data: AgentListing[]) => [

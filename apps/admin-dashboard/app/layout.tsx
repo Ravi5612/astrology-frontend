@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased font-outfit">
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased font-outfit" suppressHydrationWarning>
         <ToastContainer position="bottom-right" autoClose={5000} style={{ zIndex: 99999 }} />
         <Suspense fallback={null}>
           <AuthInitializer>
