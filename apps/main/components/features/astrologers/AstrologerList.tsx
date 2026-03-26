@@ -1,552 +1,151 @@
 "use client";
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+
+import React from "react";
 import NextLink from "next/link";
-import NextImage from "next/image";
-const NextImageComp = NextImage as any;
 const Link = NextLink as any;
-import { useRouter, useSearchParams } from "next/navigation";
-import safeFetch from "@packages/safe-fetch/safeFetch";
-import { toast } from "react-toastify";
-import { SkeletonCard } from "./SkeletonCard";
-import AstrologerCard from "./AstrologerCard";
-import { socket } from "@/libs/socket";
-
-// Swiper imports
-import "swiper/css";
-import "swiper/css/navigation";
-import {
-    Swiper as SwiperComp,
-    SwiperSlide as SwiperSlideComp,
-} from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
-
-const Swiper = SwiperComp as any;
-const SwiperSlide = SwiperSlideComp as any;
-
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 import AstrologerListHeader from "./AstrologerListHeader";
 import AstrologerFilterModal from "./AstrologerFilterModal";
 import AstrologerSortModal from "./AstrologerSortModal";
-
-import { getApiUrl, getBasePath } from "@/utils/api-config";
-import { useLanguageStore } from "../../../store/languageStore";
-import { homeTranslations } from "../../../lib/translations/home";
-
-import { ExpertProfile, ClientExpertProfile } from "@/lib/types";
+import AstrologerSlider from "./AstrologerSlider";
+import AstrologerGrid from "./AstrologerGrid";
+import { useAstrologerListLogic } from "./useAstrologerListLogic";
+import { ExpertProfile } from "@/lib/types";
 
 interface AstrologerListProps {
-    initialExperts: ExpertProfile[];
-    initialPagination?: {
-        total: number;
-        hasMore: boolean;
-    };
-    initialError?: string;
-    layout?: 'slider' | 'grid';
-    title?: string;
+  initialExperts: ExpertProfile[];
+  initialPagination?: {
+    total: number;
+    hasMore: boolean;
+  };
+  initialError?: string;
+  layout?: "slider" | "grid";
+  title?: string;
 }
 
-// Map helper
-const getImageUrl = (path?: string) => {
-    if (!path) return "/images/dummy-astrologer.jpg";
-    if (path.startsWith("http") || path.startsWith("data:") || path.startsWith("/")) return path;
-    return `${getBasePath()}/uploads/${path}`;
-};
-
-const mapExpert = (item: any): ClientExpertProfile => {
-    // Robust field mapping to handle both backend conventions (snake_case/camelCase)
-    // and potential relation differences (nested user vs flattened fields)
-
-    const id = item.id;
-    const userId = item.user?.id || item.userId || item.user_id;
-    const name = item.user?.name || item.name || "Astrologer";
-    const avatar = item.user?.avatar || item.avatar || item.image;
-    const specialization = item.specialization || item.expertise || "Vedic Astrology";
-    const experience = item.experience_in_years !== undefined ? item.experience_in_years : (item.experience || 0);
-    const rating = item.rating !== undefined ? item.rating : (item.ratings || 0);
-    const isAvailable = item.is_available !== undefined ? item.is_available : (item.isAvailable || false);
-
-    return {
-        id: id,
-        userId: userId,
-        image: getImageUrl(avatar),
-        ratings: rating,
-        name: name,
-        expertise: specialization,
-        experience: experience,
-        language: Array.isArray(item.languages)
-            ? item.languages.join(", ")
-            : item.user?.language || item.language || "Hindi",
-        price: item.price || 0,
-        chat_price: item.call_price || item.callPrice, // NOTE: Wait, previous code had call_price mapped to chat_price?
-        call_price: item.call_price || item.callPrice,
-        video_call_price: item.video_call_price || item.videoCallPrice,
-        report_price: item.report_price || item.reportPrice,
-        horoscope_price: item.horoscope_price || item.horoscopePrice,
-        video: item.video || "",
-        modalId: `home-modal-${id}`,
-        is_available: isAvailable,
-        total_likes: item.total_likes || item.totalLikes || 0,
-        custom_services: Array.isArray(item.custom_services)
-            ? item.custom_services
-            : typeof item.custom_services === 'string'
-                ? (() => { try { return JSON.parse(item.custom_services); } catch { return []; } })()
-                : [],
-    };
-};
-
 const AstrologerList: React.FC<AstrologerListProps> = ({
+  initialExperts,
+  initialPagination,
+  initialError,
+  layout = "slider",
+  title,
+}) => {
+  const { lang } = useLanguageStore();
+  const t =
+    homeTranslations[lang as keyof typeof homeTranslations] ||
+    homeTranslations.en;
+
+  const {
+    astrologers,
+    loading,
+    hasMore,
+    searchQuery,
+    setSearchQuery,
+    selectedSpecialization,
+    setSelectedSpecialization,
+    filterState,
+    setFilterState,
+    localFilter,
+    setLocalFilter,
+    hasActiveFilters,
+    scrollTabs,
+    scrollContainerRef,
+    handleLoadMore,
+    applyFilters,
+    resetFilters,
+  } = useAstrologerListLogic(
     initialExperts,
     initialPagination,
     initialError,
-    layout = 'slider',
-    title,
-}) => {
-    const { lang } = useLanguageStore();
-    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    lang,
+    t,
+  );
 
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const filterModalId = "astrologerListFilterModal";
+  const sortModalId = "astrologerListSortModal";
 
-    // State
-    const [astrologers, setAstrologers] = useState<ClientExpertProfile[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [offset, setOffset] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
+  return (
+    <section
+      className="py-[50px] relative overflow-hidden"
+      style={{
+        backgroundColor: "#301118",
+        backgroundImage: "url(/images/bg-dark.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
+        <div className="relative mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            {title || t.astrologerSection.title}
+          </h2>
+          <div className="w-48 h-1 bg-orange"></div>
+        </div>
 
-    const limit = 20;
+        <AstrologerListHeader
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedSpecialization={selectedSpecialization}
+          setSelectedSpecialization={setSelectedSpecialization}
+          hasActiveFilters={hasActiveFilters}
+          filterModalId={filterModalId}
+          sortModalId={sortModalId}
+          resetFilters={resetFilters}
+          scrollTabs={scrollTabs}
+          scrollContainerRef={scrollContainerRef}
+        />
 
-    // Filter State from URL or local defaults
-    const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-    const [debouncedSearch, setDebouncedSearch] = useState(
-        searchParams.get("q") || ""
-    );
-    const [selectedSpecialization, setSelectedSpecialization] = useState(
-        searchParams.get("specializations") || searchParams.get("specialization") || ""
-    );
+        <AstrologerFilterModal
+          modalId={filterModalId}
+          localFilter={localFilter}
+          setLocalFilter={setLocalFilter}
+          applyFilters={applyFilters}
+          resetFilters={resetFilters}
+        />
 
-    const [filterState, setFilterState] = useState({
-        language: searchParams.get("languages") || "",
-        minPrice: Number(searchParams.get("minPrice")) || 0,
-        maxPrice: Number(searchParams.get("maxPrice")) || 1000,
-        addressState: searchParams.get("state") || "",
-        serviceType: searchParams.get("service") || "all",
-        minRating: Number(searchParams.get("rating")) || 0,
-        onlyOnline: searchParams.get("online") === "true",
-        sortBy: searchParams.get("sort") || "newest",
-    });
+        <AstrologerSortModal
+          modalId={sortModalId}
+          sortBy={filterState.sortBy}
+          setSortBy={(val) => setFilterState({ ...filterState, sortBy: val })}
+          applySort={() => {}}
+        />
 
-    const hasActiveFilters = useMemo(() => {
-        return (
-            filterState.language !== "" ||
-            filterState.minPrice !== 0 ||
-            filterState.maxPrice !== 1000 ||
-            filterState.addressState !== "" ||
-            filterState.serviceType !== "all" ||
-            filterState.minRating !== 0 ||
-            filterState.onlyOnline !== false ||
-            filterState.sortBy !== "newest"
-        );
-    }, [filterState]);
+        {layout === "slider" ? (
+          <AstrologerSlider
+            astrologers={astrologers}
+            loading={loading}
+            initialError={initialError}
+            lang={lang}
+          />
+        ) : (
+          <AstrologerGrid
+            astrologers={astrologers}
+            loading={loading}
+            hasMore={hasMore}
+            initialError={initialError}
+            lang={lang}
+            t={t}
+            handleLoadMore={handleLoadMore}
+          />
+        )}
 
-    const [localFilter, setLocalFilter] = useState({ ...filterState });
-
-    // WebSocket Listener for real-time status updates - RESTORED
-    useEffect(() => {
-        const handleStatusUpdate = (data: any) => {
-            console.log("[Socket] 🔔 Status Event Detected:", data);
-
-            // Map flexible payload formats from backend
-            const expertId = data.expert_id || data.userId || data.id;
-            const isAvailable = data.is_available !== undefined
-                ? data.is_available
-                : (data.status === 'online');
-
-            if (!expertId) return;
-
-            setAstrologers((prev) =>
-                prev.map((astro) => {
-                    const isMatch = String(astro.id) === String(expertId) || String(astro.userId) === String(expertId);
-                    if (isMatch) {
-                        console.log(`[Socket] 🔄 Updating Expert: ${astro.name} to ${isAvailable ? 'Online' : 'Offline'}`);
-                        return { ...astro, is_available: isAvailable };
-                    }
-                    return astro;
-                })
-            );
-        };
-
-        socket.on("expert_status_changed", handleStatusUpdate);
-
-        return () => {
-            socket.off("expert_status_changed", handleStatusUpdate);
-        };
-    }, []);
-
-    // Initialize from Server Data
-    useEffect(() => {
-        if (initialError) {
-            toast.error(
-                initialError === "server_unreachable"
-                    ? (lang === 'hi' ? "सर्वर तक नहीं पहुँचा जा सकता। कृपया अपना कनेक्शन जांचें।" : "Server is unreachable. Please check your connection.")
-                    : (lang === 'hi' ? "विशेषज्ञों को लोड करने में विफल" : "Failed to load experts")
-            );
-        }
-
-        if (initialExperts && offset === 0) {
-            setAstrologers(initialExperts.map(mapExpert));
-            // If server returned fewer items than limit, set hasMore false
-            if (initialExperts.length < limit) {
-                setHasMore(false);
-            } else if (initialPagination) {
-                setHasMore(initialPagination.hasMore);
-            }
-        }
-    }, [initialExperts, initialPagination, initialError, offset]);
-    // NOTE: We do not depend on `offset` here to avoid loop reset.
-    // We only set initial data when provided and we are at start.
-
-    // Debounce search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(searchQuery);
-        }, 1000);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
-
-
-    // Effect to sync state changes to URL
-    const isFirstRun = useRef(true);
-    useEffect(() => {
-        if (isFirstRun.current) {
-            isFirstRun.current = false;
-            return;
-        }
-
-        const updates = {
-            q: debouncedSearch,
-            specializations: selectedSpecialization,
-            sort: filterState.sortBy === "newest" ? undefined : filterState.sortBy,
-            languages: filterState.language,
-            minPrice: filterState.minPrice,
-            maxPrice: filterState.maxPrice === 1000 ? undefined : filterState.maxPrice,
-            state: filterState.addressState,
-            service: filterState.serviceType === "all" ? undefined : filterState.serviceType,
-            rating: filterState.minRating === 0 ? undefined : filterState.minRating,
-            online: filterState.onlyOnline ? "true" : undefined,
-        };
-
-        // Robust loop prevention: Compare final stringified params
-        const nextParams = new URLSearchParams(searchParams.toString());
-        Object.entries(updates).forEach(([key, value]) => {
-            if (value === "" || value === 0 || value === undefined || value === null) {
-                nextParams.delete(key);
-            } else {
-                nextParams.set(key, String(value));
-            }
-        });
-
-        if (nextParams.toString() !== searchParams.toString()) {
-            router.replace(`${window.location.pathname}?${nextParams.toString()}`, { scroll: false });
-            setOffset(0);
-        }
-    }, [
-        debouncedSearch,
-        selectedSpecialization,
-        filterState,
-        router,
-        searchParams
-    ]);
-
-    // Infinite Scroll Fetcher
-    const isFetchingRef = useRef(false);
-    const fetchMoreAstrologers = useCallback(
-        async (currentOffset: number) => {
-            if (isFetchingRef.current) return;
-            try {
-                isFetchingRef.current = true;
-                setLoading(true);
-
-                const queryString = new URLSearchParams(Object.entries({
-                    limit: String(limit),
-                    offset: String(currentOffset),
-                    ...(debouncedSearch && { q: debouncedSearch }),
-                    ...(selectedSpecialization && { specializations: selectedSpecialization }),
-                    sort: filterState.sortBy,
-                    ...(filterState.language && { languages: filterState.language }),
-                    minPrice: String(filterState.minPrice),
-                    ...(filterState.maxPrice < 1000 && { maxPrice: String(filterState.maxPrice) }),
-                    ...(filterState.addressState && { state: filterState.addressState }),
-                    ...(filterState.serviceType !== "all" && { service: filterState.serviceType }),
-                    ...(filterState.minRating > 0 && { rating: String(filterState.minRating) }),
-                    ...(filterState.onlyOnline && { online: "true" }),
-                }).filter(([, v]) => v !== undefined)).toString();
-
-                const [responseData, fetchErr] = await safeFetch<{ data: ExpertProfile[]; pagination: { hasMore: boolean } }>(
-                    `${getApiUrl()}/expert/list?${queryString}`
-                );
-                if (fetchErr || !responseData) throw fetchErr;
-                const { data, pagination } = responseData;
-                const mappedData = data.map(mapExpert);
-
-                setAstrologers((prev) => [...prev, ...mappedData]);
-                setHasMore(pagination.hasMore);
-            } catch (error) {
-                toast.error(lang === 'hi' ? "और ज्योतिषी लोड करने में विफल" : "Failed to load more astrologers");
-                console.error(error);
-            } finally {
-                setLoading(false);
-                isFetchingRef.current = false;
-            }
-        },
-        [debouncedSearch, selectedSpecialization, filterState]
-    );
-
-    const handleLoadMore = () => {
-        const nextOffset = offset + limit;
-        setOffset(nextOffset);
-        fetchMoreAstrologers(nextOffset);
-    };
-
-    // UI Handlers
-    const applyFilters = () => {
-        setFilterState(localFilter);
-    };
-
-    const resetFilters = () => {
-        const initialState = {
-            language: "",
-            minPrice: 0,
-            maxPrice: 1000,
-            addressState: "",
-            serviceType: "all",
-            minRating: 0,
-            onlyOnline: false,
-            sortBy: "newest",
-        };
-        setFilterState(initialState);
-        setLocalFilter(initialState);
-        setSelectedSpecialization("");
-        setSearchQuery("");
-    };
-
-    const scrollTabs = (direction: "left" | "right") => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-        const children = Array.from(container.children) as HTMLElement[];
-        if (children.length === 0) return;
-
-        const containerLeft = container.getBoundingClientRect().left;
-        const containerWidth = container.clientWidth;
-
-        if (direction === "right") {
-            // Find the first child that is partially or fully hidden on the right
-            for (const child of children) {
-                const childRight = child.getBoundingClientRect().right - containerLeft + container.scrollLeft;
-                if (childRight > container.scrollLeft + containerWidth + 1) {
-                    // Scroll so this child starts at the left edge
-                    const childLeft = child.getBoundingClientRect().left - containerLeft + container.scrollLeft;
-                    container.scrollTo({ left: childLeft, behavior: "smooth" });
-                    return;
-                }
-            }
-        } else {
-            // Find the first child that is partially or fully hidden on the left
-            for (let i = children.length - 1; i >= 0; i--) {
-                const child = children[i]!;
-                const childLeft = child.getBoundingClientRect().left - containerLeft + container.scrollLeft;
-                if (childLeft < container.scrollLeft - 1) {
-                    // Scroll so items end cleanly: position so this child's right edge aligns with container's right, but snap to child start
-                    const targetScroll = childLeft;
-                    container.scrollTo({ left: targetScroll, behavior: "smooth" });
-                    return;
-                }
-            }
-            // If no partially hidden item found on left, scroll to start
-            container.scrollTo({ left: 0, behavior: "smooth" });
-        }
-    };
-
-    const filterModalId = "astrologerListFilterModal";
-    const sortModalId = "astrologerListSortModal";
-
-    return (
-        <section
-            className="py-[50px] relative overflow-hidden"
-            style={{
-                backgroundColor: '#301118',
-                backgroundImage: 'url(/images/bg-dark.png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundAttachment: 'fixed',
-                backgroundRepeat: 'no-repeat'
-            }}
-        >
-            <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-                <div className="relative mb-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        {title || t.astrologerSection.title}
-                    </h2>
-                    <div className="w-48 h-1 bg-orange"></div>
-                </div>
-
-                {/* Header / Top Controls */}
-                <AstrologerListHeader
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    selectedSpecialization={selectedSpecialization}
-                    setSelectedSpecialization={setSelectedSpecialization}
-                    hasActiveFilters={hasActiveFilters}
-                    filterModalId={filterModalId}
-                    sortModalId={sortModalId}
-                    resetFilters={resetFilters}
-                    scrollTabs={scrollTabs}
-                    scrollContainerRef={scrollContainerRef}
-                />
-
-                {/* Filter Modal */}
-                <AstrologerFilterModal
-                    modalId={filterModalId}
-                    localFilter={localFilter}
-                    setLocalFilter={setLocalFilter}
-                    applyFilters={applyFilters}
-                    resetFilters={resetFilters}
-                />
-
-                {/* Sort Modal */}
-                <AstrologerSortModal
-                    modalId={sortModalId}
-                    sortBy={filterState.sortBy}
-                    setSortBy={(val) => setFilterState({ ...filterState, sortBy: val })}
-                    applySort={() => { }} // Logic is handled via setFilterState which triggers effect
-                />
-
-
-
-                {/* Astrologer List Content */}
-                {layout === 'slider' ? (
-                    <div className="relative astrologer-swiper-wrapper mt-4 px-12">
-                        <Swiper
-                            modules={[Navigation, Autoplay]}
-                            speed={800}
-                            spaceBetween={20}
-                            slidesPerView={1}
-                            navigation={{
-                                nextEl: ".astro-next",
-                                prevEl: ".astro-prev",
-                            }}
-                            breakpoints={{
-                                480: { slidesPerView: 1.2, spaceBetween: 15 },
-                                640: { slidesPerView: 2, spaceBetween: 20 },
-                                992: { slidesPerView: 3, spaceBetween: 20 },
-                                1200: { slidesPerView: 4, spaceBetween: 24 },
-                            }}
-                            className="astro-swiper !py-4"
-                        >
-                            {astrologers.length > 0 ? (
-                                astrologers.map((item) => (
-                                    <SwiperSlide key={item.id}>
-                                        <AstrologerCard
-                                            astrologerData={item}
-                                            cardClassName="h-full"
-                                        />
-                                    </SwiperSlide>
-                                ))
-                            ) : !loading && initialError ? (
-                                <div className="w-full text-center py-10 flex flex-col items-center justify-center">
-                                    <p className="text-red-500 font-semibold mb-2">{lang === 'hi' ? "ज्योतिषियों को लोड करने में विफल" : "Failed to load astrologers"}</p>
-                                    <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">{lang === 'hi' ? "पुन: प्रयास करें" : "Retry"}</button>
-                                </div>
-                            ) : !loading && astrologers.length === 0 ? (
-                                <div className="w-full text-center py-10">
-                                    <p className="text-gray-500 font-medium">{t.astrologerSection.noResults.title}</p>
-                                </div>
-                            ) : (
-                                Array.from({ length: 4 }).map((_, i) => (
-                                    <SwiperSlide key={i}>
-                                        <SkeletonCard />
-                                    </SwiperSlide>
-                                ))
-                            )}
-
-                            {loading && astrologers.length > 0 && (
-                                <SwiperSlide className="flex items-center justify-center">
-                                    <div className="spinner-border text-primary" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                </SwiperSlide>
-                            )}
-                        </Swiper>
-
-                        {/* Custom Navigation Arrows */}
-                        <button
-                            className="astro-prev absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0"
-                        >
-                            <i className="fa-solid fa-chevron-left fa-lg"></i>
-                        </button>
-                        <button
-                            className="astro-next absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0"
-                        >
-                            <i className="fa-solid fa-chevron-right fa-lg"></i>
-                        </button>
-                    </div>
-                ) : (
-                    <div className="mt-4">
-                        <div className="row g-4 justify-content-center">
-                            {astrologers.length > 0 ? (
-                                astrologers.map((item) => (
-                                    <div key={item.id} className="col-xl-3 col-lg-4 col-md-6">
-                                        <AstrologerCard astrologerData={item} />
-                                    </div>
-                                ))
-                            ) : !loading && initialError ? (
-                                <div className="col-12 text-center py-10">
-                                    <p className="text-red-500 font-semibold mb-2">{t.astrologerSection.failedToLoad}</p>
-                                    <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-full text-sm">{t.astrologerSection.retry}</button>
-                                </div>
-                            ) : !loading && astrologers.length === 0 ? (
-                                <div className="col-12 text-center py-10">
-                                    <p className="text-gray-500 font-medium">{t.astrologerSection.noResults.title}</p>
-                                </div>
-                            ) : (
-                                Array.from({ length: 8 }).map((_, i) => (
-                                    <div key={i} className="col-xl-3 col-lg-4 col-md-6">
-                                        <SkeletonCard />
-                                    </div>
-                                ))
-                            )}
-                        </div>
-
-                        {loading && astrologers.length > 0 && (
-                            <div className="text-center my-4">
-                                <div className="spinner-border text-primary" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        )}
-
-                        {hasMore && !loading && (
-                            <div className="flex justify-center mt-8 mb-8">
-                                <button
-                                    onClick={handleLoadMore}
-                                    className="bg-white border border-orange text-orange px-8 py-2.5 rounded-full font-bold hover:bg-orange hover:text-white transition-all duration-300 shadow-md mx-auto"
-                                >
-                                    {t.astrologerSection.loadMore}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {layout === 'slider' && (
-                    <div className="view-all mt-4">
-                        <Link href="/our-astrologers" className="no-underline bg-orange hover:opacity-90 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit">
-                            <i className="fa-regular fa-user"></i> {t.astrologerSection.viewAllAstrologers}
-                        </Link>
-                    </div>
-                )}
-            </div>
-        </section>
-    );
+        {layout === "slider" && (
+          <div className="view-all mt-4">
+            <Link
+              href="/our-astrologers"
+              className="no-underline bg-orange hover:opacity-90 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit"
+            >
+              <i className="fa-regular fa-user"></i>{" "}
+              {t.astrologerSection.viewAllAstrologers}
+            </Link>
+          </div>
+        )}
+      </div>
+    </section>
+  );
 };
 
 export default AstrologerList;
