@@ -1,93 +1,201 @@
 'use client'
-import React, { useState } from "react";
-import { Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, CalendarDays, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import apiClient from "@/lib/apiClient";
+import { useAuthStore } from "@/store/useAuthStore";
+import { format } from "date-fns";
 
+interface RecentAppointment {
+  id: number | string;
+  name: string;
+  email: string;
+  date: string;
+  status: string;
+  terminatedBy?: string;
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  pending:   "bg-yellow-100 text-yellow-700",
+  active:    "bg-blue-100 text-blue-700",
+  completed: "bg-green-100 text-green-700",
+  expired:   "bg-orange-100 text-orange-700",
+  cancelled: "bg-red-100 text-red-700",
+  confirmed: "bg-green-100 text-green-700",
+};
+
+function getStatusLabel(appt: RecentAppointment): string {
+  if (appt.terminatedBy === "admin") return "Terminated";
+  switch (appt.status) {
+    case "pending":   return "Waiting";
+    case "active":    return "Live";
+    case "completed": return "Completed";
+    case "expired":   return "Expired";
+    case "cancelled": return "Cancelled";
+    case "confirmed": return "Confirmed";
+    default:          return appt.status;
+  }
+}
 
 export const UpcomingAppointments: React.FC = () => {
+  const { user, isAuthenticated } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState("");
+  const [appointments, setAppointments] = useState<RecentAppointment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const users = [
-    { name: "Avni Pandit", email: "avni@gluxaan.com", date: "Aug 20, 2025", status: "Ongoing" },
-    { name: "Mahesh Joshi", email: "mahesh@ioshi.com", date: "Aug 18, 2025", status: "Completed" },
-    { name: "Vijay Sharma", email: "vijay@taug.com", date: "Aug 15, 2025", status: "Cancelled" },
-    { name: "Yash Bhagat", email: "yash@bhagat.com", date: "Aug 12, 2025", status: "Completed" },
-  ];
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      setLoading(false);
+      return;
+    }
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const fetchTodayAppointments = async () => {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+
+        const [chatPendingRes, chatCompletedRes, callPendingRes, callCompletedRes] =
+          await Promise.allSettled([
+            apiClient.get("/chat/sessions/appointments/pending"),
+            apiClient.get("/chat/sessions/appointments/completed"),
+            apiClient.get("/call/sessions/appointments/pending"),
+            apiClient.get("/call/sessions/appointments/completed"),
+          ]);
+
+        const getSessions = (res: PromiseSettledResult<any>) => {
+          if (res.status !== "fulfilled") return [];
+          const data = res.value?.data;
+          return Array.isArray(data) ? data : Array.isArray(res.value) ? res.value : [];
+        };
+
+        const allSessions = [
+          ...getSessions(chatPendingRes),
+          ...getSessions(chatCompletedRes),
+          ...getSessions(callPendingRes),
+          ...getSessions(callCompletedRes),
+        ];
+
+        // Deduplicate by id
+        const seen = new Set<string>();
+        const unique = allSessions.filter((s) => {
+          const key = String(s.id);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        // Filter to today only
+        const todayAppts: RecentAppointment[] = unique
+          .filter((s) => {
+            const sessionDate = (s.created_at || s.createdAt || "").split("T")[0];
+            return sessionDate === today;
+          })
+          .sort((a: any, b: any) => {
+            return (
+              new Date(b.created_at || b.createdAt || 0).getTime() -
+              new Date(a.created_at || a.createdAt || 0).getTime()
+            );
+          })
+          .map((s: any) => ({
+            id: s.id,
+            name: s.user?.name || "Client",
+            email: s.user?.email || "—",
+            date: s.created_at || s.createdAt || new Date().toISOString(),
+            status: s.status || "pending",
+            terminatedBy: s.terminated_by || s.terminatedBy,
+          }));
+
+        setAppointments(todayAppts);
+      } catch (err) {
+        console.error("[RecentAppointments] Fetch failed:", err);
+        setAppointments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTodayAppointments();
+  }, [isAuthenticated, user]);
+
+  const filtered = appointments.filter(
+    (appt) =>
+      appt.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appt.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 overflow-hidden">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Upcoming Appointments</h3>
-        <div className="flex items-center space-x-3 w-full sm:w-auto">
-          {/* Search Input */}
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none w-full sm:w-64 text-sm"
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          <CalendarDays className="w-5 h-5 text-purple-500" />
+          <h3 className="text-lg font-semibold text-gray-900">Recent Appointments</h3>
+          <span className="ml-1 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium">
+            Today
+          </span>
+        </div>
+        <div className="relative w-full sm:w-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none w-full sm:w-56 text-sm"
+          />
         </div>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="border-b border-gray-200 bg-gray-50">
-            <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">Name</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">Email</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">Registration Date</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-              {/* <th className="text-right py-3 px-4 font-medium text-gray-700">Action</th> */}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user, index) => (
-                <tr key={index} className="hover:bg-gray-50 text-sm">
-                  <td className="py-4 px-4 font-medium text-gray-900">{user.name}</td>
-                  <td className="py-4 px-4 text-gray-600">{user.email}</td>
-                  <td className="py-4 px-4 text-gray-600">{user.date}</td>
-                  <td className="py-4 px-4">
-                    <span
-                      className={cn(
-                        "px-2.5 py-0.5 rounded-xl text-xs font-medium",
-                        user.status === "Ongoing" && "bg-blue-100 text-blue-800",
-                        user.status === "Completed" && "bg-green-100 text-green-800",
-                        user.status === "Cancelled" && "bg-red-100 text-red-800"
-                      )}
-                    >
-                      {user.status}
-                    </span>
-                  </td>
-                  {/* <td className="py-4 px-4 text-right">
-                    <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-700 transition-colors">
-                      View Details
-                    </button>
-                  </td> */}
-                </tr>
-              ))
-            ) : (
+        {loading ? (
+          <div className="flex items-center justify-center py-10 text-gray-400 gap-2">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-sm">Loading appointments…</span>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
-                <td colSpan={5} className="py-6 text-center text-gray-500 text-sm">
-                  No users found.
-                </td>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Name</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Email</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Consultation Time</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filtered.length > 0 ? (
+                filtered.map((appt) => (
+                  <tr key={appt.id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 font-medium text-gray-900">{appt.name}</td>
+                    <td className="py-3 px-4 text-gray-500 truncate max-w-[160px]">{appt.email}</td>
+                    <td className="py-3 px-4 text-gray-600 whitespace-nowrap">
+                      {format(new Date(appt.date), "dd MMM yyyy, hh:mm a")}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={cn(
+                          "px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+                          appt.terminatedBy === "admin"
+                            ? "bg-red-100 text-red-700"
+                            : STATUS_STYLES[appt.status] || "bg-gray-100 text-gray-600"
+                        )}
+                      >
+                        {getStatusLabel(appt)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-gray-400 text-sm">
+                    {searchTerm ? "No appointments match your search." : "No appointments today."}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 };
-
-
