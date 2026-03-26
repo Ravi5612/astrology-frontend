@@ -1,0 +1,269 @@
+"use client";
+
+import React from "react";
+import NextImage from "next/image";
+import * as LucideIcons from "lucide-react";
+import { Astrologer } from "@/lib/types";
+
+const Image = NextImage as any;
+const { MessageSquare, MapPin } = LucideIcons as any;
+
+type Props = {
+  astrologer: Astrologer | null;
+  askSomeoneElse: boolean;
+  setAskSomeoneElse: (val: boolean) => void;
+  someoneElseData: any;
+  setSomeoneElseData: (val: any) => void;
+  handleStartConsultation: () => void;
+  actionLoading: boolean;
+};
+
+const ExpertPreview = ({
+  astrologer,
+  askSomeoneElse,
+  setAskSomeoneElse,
+  someoneElseData,
+  setSomeoneElseData,
+  handleStartConsultation,
+  actionLoading,
+}: Props) => {
+  return (
+    <div className="lg:col-span-5 relative">
+      <div className="sticky top-28">
+        <div className="p-2 bg-white rounded-[3.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.08)] relative overflow-hidden">
+          {/* Expert Image Section */}
+          <div className="relative h-[480px] rounded-[3rem] overflow-hidden group">
+            <Image
+              src={astrologer?.image || "/images/dummy-astrologer.jpg"}
+              alt={astrologer?.name || "Astrologer"}
+              fill
+              className="object-cover transition-transform duration-1000 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+            {/* Availability Badge */}
+            <div
+              className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border shadow-sm flex items-center gap-2 ${
+                astrologer?.is_available
+                  ? "bg-orange border-white/20"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  astrologer?.is_available
+                    ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]"
+                    : "bg-gray-400"
+                }`}
+              ></div>
+              <span
+                className={`${
+                  astrologer?.is_available ? "text-white" : "text-gray-400"
+                } text-[10px] font-black uppercase tracking-widest`}
+              >
+                {astrologer?.is_available ? "Available Now" : "Offline"}
+              </span>
+            </div>
+
+            {/* Price Badge */}
+            <div className="absolute top-6 right-6 px-4 py-2 bg-orange rounded-full shadow-lg flex items-center gap-2">
+              <span className="text-white text-xs font-black uppercase tracking-widest">
+                ₹{astrologer?.chat_price || astrologer?.price || 0} / min
+              </span>
+            </div>
+
+            {/* Bottom Info Overlay */}
+            <div className="absolute bottom-10 left-10 right-10">
+              <div className="flex items-center gap-6 mb-4">
+                <div className="flex flex-col">
+                  <span className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
+                    Experience
+                  </span>
+                  <span className="text-white font-bold">
+                    {astrologer?.experience}+ Years
+                  </span>
+                </div>
+                <div className="w-[1px] h-8 bg-white/20"></div>
+                <div className="flex flex-col">
+                  <span className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
+                    Expertise
+                  </span>
+                  <span className="text-white font-bold">
+                    {astrologer?.expertise}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-orange" />
+                <span className="text-white/80 text-xs font-medium">
+                  Verified Astro Expert • Bharat
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            {/* Option to toggle who is asking */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Consulting for
+                  </span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {askSomeoneElse ? "Myself" : "Someone Else"}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setAskSomeoneElse(!askSomeoneElse)}
+                  className="px-4 py-2 text-[10px] font-black text-orange uppercase tracking-widest hover:bg-orange/5 rounded-xl transition-colors"
+                >
+                  Change
+                </button>
+              </div>
+
+              {/* Someone Else Form */}
+              {!askSomeoneElse && (
+                <div className="p-6 rounded-[2rem] bg-orange/5 border border-orange/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter Name"
+                        value={someoneElseData.name}
+                        onChange={(e) =>
+                          setSomeoneElseData({
+                            ...someoneElseData,
+                            name: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">
+                          Gender
+                        </label>
+                        <select
+                          value={someoneElseData.gender}
+                          onChange={(e) =>
+                            setSomeoneElseData({
+                              ...someoneElseData,
+                              gender: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm appearance-none"
+                        >
+                          <option value="">Select</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">
+                          Birth Date
+                        </label>
+                        <input
+                          type="date"
+                          value={someoneElseData.dob}
+                          onChange={(e) =>
+                            setSomeoneElseData({
+                              ...someoneElseData,
+                              dob: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">
+                          Birth Time
+                        </label>
+                        <input
+                          type="time"
+                          value={someoneElseData.tob}
+                          onChange={(e) =>
+                            setSomeoneElseData({
+                              ...someoneElseData,
+                              tob: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-black text-orange/60 uppercase tracking-widest ml-1 mb-1.5 block">
+                          Birth Place
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="City, Country"
+                          value={someoneElseData.pob}
+                          onChange={(e) =>
+                            setSomeoneElseData({
+                              ...someoneElseData,
+                              pob: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 bg-white rounded-xl border border-orange/10 focus:border-orange/30 outline-none text-sm font-bold text-gray-900 shadow-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Big CTA */}
+            <div className="pt-6 relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-orange to-orange/80 rounded-[45px] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
+
+              <button
+                onClick={handleStartConsultation}
+                disabled={actionLoading}
+                className={`relative w-full py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2.5rem] font-black lg:text-xl text-l flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-orange/80 overflow-hidden ${
+                  actionLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+                <MessageSquare className="w-7 h-7 fill-white/20" />
+                <span>
+                  {actionLoading ? "CONNECTING..." : "START CONSULTATION"}
+                </span>
+              </button>
+
+              <div className="flex flex-col items-center gap-4 mt-8">
+                <div className="text-[10px] text-gray-400 font-black uppercase tracking-[0.4em] flex items-center gap-3">
+                  <div className="w-10 h-[1px] bg-gray-200"></div>
+                  Privacy Protected
+                  <div className="w-10 h-[1px] bg-gray-200"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trust Pill */}
+        <div className="mt-8 flex items-center justify-center gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="w-2 h-2 bg-orange/20 rounded-full"></div>
+          ))}
+          <span className="text-[9px] font-black text-gray-300 uppercase tracking-[0.5em]">
+            Trust & Integrity
+          </span>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="w-2 h-2 bg-orange/20 rounded-full"></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ExpertPreview;
