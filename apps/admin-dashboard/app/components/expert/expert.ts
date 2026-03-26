@@ -90,6 +90,7 @@ export interface Expert {
     languages?: string[];
     kycStatus?: "Verified" | "Pending" | "Rejected";
     kyc_status?: string;
+    rejection_reason?: string | null;
   };
 
   // UI-only fields

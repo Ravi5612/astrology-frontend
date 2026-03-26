@@ -1,4 +1,4 @@
-import { UserCheck, Clock } from "lucide-react";
+import { UserCheck, Clock, UserPlus, UserX } from "lucide-react";
 import type { Expert } from "@/app/components/expert/expert";
 
 import sampleData from "@/public/data/sample_data.json";
@@ -10,6 +10,8 @@ export interface ExpertStats {
   totalExperts: number;
   activeExperts: number;
   pendingExperts: number;
+  recentExperts: number;
+  blockedExperts: number;
   totalRevenue?: number;
 }
 
@@ -18,10 +20,15 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
 
   // Handle array input (legacy or client-side calculation)
   if (Array.isArray(data)) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     stats = {
       totalExperts: data.length,
-      activeExperts: data.filter((e) => e.email_verified_at || (e as any).emailVerified).length,
-      pendingExperts: data.filter((e) => !e.email_verified_at && !(e as any).emailVerified).length,
+      activeExperts: data.filter((e) => e.profile_expert?.kyc_status === 'approved').length,
+      pendingExperts: data.filter((e) => e.profile_expert?.kyc_status === 'pending').length,
+      recentExperts: data.filter((e) => e.created_at && new Date(e.created_at) >= today).length,
+      blockedExperts: data.filter((e) => e.is_blocked).length,
       totalRevenue: data.reduce((acc, curr) => acc + (curr.profile_expert?.total_earnings || (curr as any).totalEarnings || 0), 0),
     };
   } else {
@@ -30,6 +37,8 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
       totalExperts: data.totalExperts || 0,
       activeExperts: data.activeExperts || 0,
       pendingExperts: data.pendingExperts || 0,
+      recentExperts: data.recentExperts || 0,
+      blockedExperts: data.blockedExperts || 0,
     };
   }
 
@@ -56,6 +65,22 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
       iconColor: "text-yellow-600",
       iconBgColor: "bg-yellow-100",
       valueColor: "text-yellow-600",
+    },
+    {
+      title: "Recent Join",
+      value: stats.recentExperts,
+      icon: UserPlus,
+      iconColor: "text-purple-600",
+      iconBgColor: "bg-purple-100",
+      valueColor: "text-purple-600",
+    },
+    {
+      title: "Blocked Experts",
+      value: stats.blockedExperts,
+      icon: UserX,
+      iconColor: "text-red-600",
+      iconBgColor: "bg-red-100",
+      valueColor: "text-red-600",
     },
   ];
 };

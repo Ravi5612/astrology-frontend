@@ -17,7 +17,7 @@ export interface StatConfig {
 
 export interface StatsCardsProps {
     stats: StatConfig[];
-    columns?: 2 | 3 | 4;
+    columns?: 2 | 3 | 4 | 5;
 }
 
 export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
@@ -26,8 +26,8 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
 
     if (columns === 2) gridColsClass = "sm:grid-cols-2";
     if (columns === 3) gridColsClass = "md:grid-cols-3 lg:grid-cols-3";
-    // Force 4 columns on medium (md) screens and up, as requested
     if (columns === 4) gridColsClass = "sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4";
+    if (columns === 5) gridColsClass = "sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5";
 
     return (
         <div className={`grid grid-cols-1 ${gridColsClass} gap-6`}>

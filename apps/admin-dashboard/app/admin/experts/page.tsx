@@ -30,7 +30,13 @@ function ModalLoadingFallback() {
 export default function ExpertsPage() {
   // Application State
   const [experts, setExperts] = useState<Expert[]>([]);
-  const [stats, setStats] = useState<ExpertStats | Expert[]>({ totalExperts: 0, activeExperts: 0, pendingExperts: 0 });
+  const [stats, setStats] = useState<ExpertStats | Expert[]>({
+    totalExperts: 0,
+    activeExperts: 0,
+    pendingExperts: 0,
+    recentExperts: 0,
+    blockedExperts: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -124,7 +130,7 @@ export default function ExpertsPage() {
       intro_video_url: expert.intro_video_url || profile.intro_video_url,
       gallery: expert.gallery || profile.gallery,
       documents: expert.documents || profile.documents,
-      languages: expert.languages || profile.languages,
+      languages: expert.languages || (Array.isArray(profile.languages) ? (profile.languages as string[]).join(", ") : (profile.languages as string | undefined)),
       addresses: expert.addresses || profile.addresses,
     };
   };
@@ -164,7 +170,7 @@ export default function ExpertsPage() {
   return (
     <>
       <div className="mb-6 w-full">
-        <StatsCards stats={statsConfig} columns={3} />
+        <StatsCards stats={statsConfig} columns={5} />
       </div>
       <DataTable
         data={experts}
