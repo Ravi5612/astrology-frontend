@@ -21,6 +21,7 @@ const Page = () => {
   const { user } = useAuthStore();
   const [ratingStats, setRatingStats] = useState<ReviewStats | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +46,7 @@ const Page = () => {
       try {
         const [stats, reviewsData, dStats] = await Promise.all([
           getExpertReviewStats(user.profileId),
-          getExpertReviews(user.profileId, 1, 4), // Fetch 4 recent reviews
+          getExpertReviews(user.profileId, 1, 10), // Fetch first 10 reviews
           getDashboardStats('total').catch(err => {
             console.error("[Dashboard] Total stats fetch failed:", err);
             return null;
@@ -53,6 +54,7 @@ const Page = () => {
         ]);
         setRatingStats(stats);
         setReviews(reviewsData.data || []);
+        setReviewsTotal(reviewsData.total || 0);
         setDashboardStats(dStats);
       } catch (error) {
         console.error("Error fetching ratings/reviews:", error);
@@ -212,9 +214,13 @@ const Page = () => {
             loading={loading}
             onViewAllClick={() => setIsModalOpen(true)}
           />
-          {!loading && reviews.length > 0 && (
+          {!loading && reviews.length > 0 && user?.profileId && (
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <ReviewsList reviews={reviews} />
+              <ReviewsList
+                expertId={user.profileId}
+                initialReviews={reviews}
+                initialTotal={reviewsTotal}
+              />
             </div>
           )}
         </div>

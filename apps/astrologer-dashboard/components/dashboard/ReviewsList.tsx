@@ -1,18 +1,49 @@
 "use client";
 
-import React from "react";
-import { Star, User } from "lucide-react";
-import { Review } from "@/lib/reviews";
+import React, { useState, useCallback } from "react";
+import { Star, User, Loader2, ChevronDown } from "lucide-react";
+import { Review, getExpertReviews } from "@/lib/reviews";
+
+const PAGE_SIZE = 10;
 
 interface ReviewsListProps {
-    reviews: Review[];
-    loading?: boolean;
+    expertId: number;
+    initialReviews?: Review[];
+    initialTotal?: number;
 }
 
-export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, loading }) => {
-    if (loading) {
-        return <div className="p-4 text-center">Loading reviews...</div>;
-    }
+export const ReviewsList: React.FC<ReviewsListProps> = ({
+    expertId,
+    initialReviews = [],
+    initialTotal = 0,
+}) => {
+    const [reviews, setReviews] = useState<Review[]>(initialReviews);
+    const [total, setTotal] = useState(initialTotal);
+    const [page, setPage] = useState(1);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const hasMore = reviews.length < total;
+
+    const handleLoadMore = useCallback(async () => {
+        if (loadingMore) return;
+        setLoadingMore(true);
+        try {
+            const nextPage = page + 1;
+            const res = await getExpertReviews(expertId, nextPage, PAGE_SIZE);
+            const newReviews: Review[] = res?.data || [];
+            setReviews(prev => {
+                const existingIds = new Set(prev.map(r => r.id));
+                const unique = newReviews.filter(r => !existingIds.has(r.id));
+                return [...prev, ...unique];
+            });
+            setTotal(res?.total ?? total);
+            setPage(nextPage);
+        } catch (err) {
+            console.error("Failed to load more reviews", err);
+        } finally {
+            setLoadingMore(false);
+        }
+    }, [expertId, page, loadingMore]);
 
     if (reviews.length === 0) {
         return (
@@ -24,10 +55,18 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, loading }) =>
 
     return (
         <div className="space-y-4">
-            <h4 className="font-semibold text-gray-900 mb-2">Recent Reviews</h4>
+            <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-gray-900">Recent Reviews</h4>
+                {total > 0 && (
+                    <span className="text-xs text-gray-400 font-medium">
+                        Showing {reviews.length} of {total}
+                    </span>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {reviews.map((review) => (
-                    <div key={review.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <div key={review.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
                         <div className="flex justify-between items-start mb-2">
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
@@ -67,8 +106,28 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews, loading }) =>
                     </div>
                 ))}
             </div>
+
+            {hasMore && (
+                <div className="flex justify-center pt-2">
+                    <button
+                        onClick={handleLoadMore}
+                        disabled={loadingMore}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+                    >
+                        {loadingMore ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Loading...
+                            </>
+                        ) : (
+                            <>
+                                <ChevronDown className="w-4 h-4" />
+                                Load More Reviews
+                            </>
+                        )}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
-
-
