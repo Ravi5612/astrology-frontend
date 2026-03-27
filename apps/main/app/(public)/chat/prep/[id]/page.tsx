@@ -90,7 +90,7 @@ export default function ConsultationPrep() {
           userId: data.user?.id,
           name: data.user?.name || "Astrologer",
           image: data.user?.avatar || "/images/dummy-astrologer.jpg",
-          expertise: data.specialization || "Vedic Astrology",
+          expertise: data.specialization || "",
           experience: data.experience_in_years || 0,
           price: data.price || 0,
           chat_price: data.chat_price,

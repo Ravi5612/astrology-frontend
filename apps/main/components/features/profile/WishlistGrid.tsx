@@ -87,7 +87,7 @@ const WishlistGrid: React.FC = () => {
                                             userId: (expert as any)?.userId || expert?.id,
                                             image: getImageUrl(avatar),
                                             name: name,
-                                            expertise: (expert as any)?.specialization || (expert as any)?.expertise || "Vedic Astrology",
+                                            expertise: (expert as any)?.specialization || (expert as any)?.expertise || "",
                                             experience: (expert as any)?.experience_in_years || (expert as any)?.experience || 5,
                                             language: Array.isArray((expert as any)?.languages)
                                                 ? (expert as any).languages.join(", ")

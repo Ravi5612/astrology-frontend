@@ -19,7 +19,7 @@ const mapExpert = (item: any): ClientExpertProfile => {
   const userId = item.user?.id || item.userId || item.user_id;
   const name = item.user?.name || item.name || "Astrologer";
   const avatar = item.user?.avatar || item.avatar || item.image;
-  const specialization = item.specialization || item.expertise || "Vedic Astrology";
+  const specialization = item.specialization || item.expertise || "";
   const experience = item.experience_in_years !== undefined ? item.experience_in_years : (item.experience || 0);
   const rating = item.rating !== undefined ? item.rating : (item.ratings || 0);
   const isAvailable = item.is_available !== undefined ? item.is_available : (item.isAvailable || false);

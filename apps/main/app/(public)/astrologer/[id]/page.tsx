@@ -59,7 +59,7 @@ export default async function Page({
       id: astrologerData.id,
       name: astrologerData.user?.name || astrologerData.name || "Astrologer",
       image: astrologerData.user?.avatar || astrologerData.avatar || astrologerData.image || "/images/dummy-astrologer.jpg",
-      expertise: astrologerData.specialization || astrologerData.expertise || "Vedic Astrology",
+      expertise: astrologerData.specialization || astrologerData.expertise || "",
       experience: astrologerData.experience_in_years !== undefined ? astrologerData.experience_in_years : (astrologerData.experience || 0),
       language: Array.isArray(astrologerData.languages)
         ? astrologerData.languages.join(", ")
