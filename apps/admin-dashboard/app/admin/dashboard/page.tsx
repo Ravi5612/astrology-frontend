@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, Suspense } from "react";
 
 // Components
 import { StatsCards } from "@repo/ui";
