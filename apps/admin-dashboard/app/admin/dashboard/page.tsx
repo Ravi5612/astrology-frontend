@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, lazy, Suspense } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 // Components
 import { StatsCards } from "@repo/ui";
@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 
 import { getDashboardStats } from "@/src/services/admin.service";
-import dynamic from "next/dynamic";
-import { useEffect } from "react";
 import adminData from "@/public/data/admin_data.json";
 
 const MoreVerticalIcon = MoreVertical as any;
+
+import dynamic from "next/dynamic";
 
 const ChartSection = dynamic(() => import("@/app/components/analytics/ChartSection"), {
   loading: () => (
