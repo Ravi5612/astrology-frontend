@@ -74,7 +74,6 @@ export const useWishlist = () => {
             if (context?.previousState) {
                 useWishlistStore.setState(context.previousState);
             }
-            toast.error("Failed to update liked items");
         },
         onSettled: (data, error, variables) => {
             const queryKey = variables.type === "expert" ? ["wishlist", "experts"] : ["wishlist", "products"];

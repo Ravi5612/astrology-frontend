@@ -36,7 +36,7 @@ const mapExpert = (item: any): ClientExpertProfile => {
       ? item.languages.join(", ")
       : item.user?.language || item.language || "Hindi",
     price: item.price || 0,
-    chat_price: item.call_price || item.callPrice,
+    chat_price: item.chat_price || item.chatPrice,
     call_price: item.call_price || item.callPrice,
     video_call_price: item.video_call_price || item.videoCallPrice,
     report_price: item.report_price || item.reportPrice,
