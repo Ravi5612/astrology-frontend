@@ -1,5 +1,60 @@
 import type { NextConfig } from "next";
 
+// ─── Security Headers ──────────────────────────────────────────────────────────
+const securityHeaders = [
+  // Prevent clickjacking — page cannot be embedded in an iframe
+  { key: "X-Frame-Options", value: "DENY" },
+
+  // Prevent MIME-type sniffing
+  { key: "X-Content-Type-Options", value: "nosniff" },
+
+  // Referrer info — only send origin on cross-origin requests
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+
+  // Disable browser features we don't use
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+
+  // HSTS — force HTTPS for 1 year (production only)
+  ...(process.env.NODE_ENV === "production"
+    ? [
+        {
+          key: "Strict-Transport-Security",
+          value: "max-age=31536000; includeSubDomains",
+        },
+      ]
+    : []),
+
+  // ─── Content Security Policy ───────────────────────────────────────────────
+  {
+    key: "Content-Security-Policy",
+    value: [
+      // Default: only same origin
+      "default-src 'self'",
+
+      // Scripts: self + Razorpay + Google APIs + Bootstrap (inline eval for Next.js)
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://translate.googleapis.com",
+
+      // Styles: self + inline (Tailwind/Bootstrap) + Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+
+      // Fonts: self + Google Fonts + FontAwesome
+      "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
+
+      // Images: self + Cloudinary + Google OAuth + JD Magic Box + data URIs
+      "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com https://www.google.com",
+
+      // API & WebSocket connections
+      "connect-src 'self' https://api.prokerala.com https://checkout.razorpay.com https://translate.googleapis.com https://*.twilio.com wss: ws: wss://*.twilio.com",
+
+      // Frames: Razorpay checkout iframe
+      "frame-src https://api.razorpay.com https://checkout.razorpay.com",
+
+      // Media - Twilio video/audio
+      "media-src 'self' blob: https://*.twilio.com",
+    ].join("; "),
+  },
+];
+
 const nextConfig: NextConfig = {
   /* config options here */
   transpilePackages: ["@repo/ui", "@repo/routes", "swiper"],
@@ -68,6 +123,16 @@ const nextConfig: NextConfig = {
   },
 
   devIndicators: false,
+
+  async headers() {
+    return [
+      {
+        // Apply security headers to ALL routes
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
+import { prokeralaLimiter, rateLimitResponse } from "@/lib/rateLimit";
 
-const CLIENT_ID = "0997d99e-d015-4a29-9cbb-a802a37acef5";
-const CLIENT_SECRET = "QhRT3LPzVOhQQ5MMf3eOx8wdpJo164Djwadd3Uw9";
+const CLIENT_ID = process.env.PROKERALA_CLIENT_ID || "0997d99e-d015-4a29-9cbb-a802a37acef5";
+const CLIENT_SECRET = process.env.PROKERALA_CLIENT_SECRET || "QhRT3LPzVOhQQ5MMf3eOx8wdpJo164Djwadd3Uw9";
 
 export async function GET(request: Request) {
+  // ── Rate limiting: max 10 requests per minute per IP ──────────────────────
+  const limit = prokeralaLimiter(request);
+  if (!limit.success) return rateLimitResponse(limit);
+
   try {
     const { searchParams } = new URL(request.url);
     const dob = searchParams.get("dob");

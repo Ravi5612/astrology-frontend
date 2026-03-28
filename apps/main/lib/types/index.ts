@@ -7,3 +7,4 @@ export * from "./client";
 export * from "./chat";
 export * from "./support";
 export * from "./calculator";
+export * from "./rateLimit";
