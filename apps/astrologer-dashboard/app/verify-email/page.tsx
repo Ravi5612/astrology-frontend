@@ -3,10 +3,13 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import apiClient from "@/lib/apiClient";
 import { toast } from "react-toastify";
+import { astrologerVerifyEmailAction } from "@/src/actions/auth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const VerifyEmailContent = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { login } = useAuthStore();
     const token = searchParams.get("verification_token");
     const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
     const [message, setMessage] = useState("Verifying your email...");
@@ -20,18 +23,40 @@ const VerifyEmailContent = () => {
 
         const verifyEmail = async () => {
             try {
-                // Using the correct endpoint: GET /auth/email/verify?token=...
-                await apiClient.get(`/auth/email/verify?token=${encodeURIComponent(token)}`);
-                setStatus("success");
-                setMessage("Email verified successfully! Redirecting to login...");
-                toast.success("Email verified successfully!");
-                setTimeout(() => {
-                    router.push("/");
-                }, 3000);
+                // Using server action for Httponly cookies
+                const result = await astrologerVerifyEmailAction(token);
+
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                if (result.success) {
+                    if (result.user) {
+                        await login("", result.user);
+                    }
+                    setStatus("success");
+                    setMessage("Email verified successfully! Redirecting to your dashboard...");
+                    toast.success("Email verified successfully!");
+                    
+                    setTimeout(() => {
+                        const roles = result.user?.roles || [];
+                        const isExpert = roles.some((r: any) => 
+                            ["expert", "astrologer", "Expert", "Astrologer", "EXPERT"].includes(String(typeof r === 'object' ? r.name : r))
+                        );
+
+                        if (isExpert) {
+                            router.push("/dashboard");
+                        } else {
+                            // If they are not an expert but verified on this dashboard (rare but possible), send to main site profile
+                            const mainUrl = process.env.NEXT_PUBLIC_MAIN_APP_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin.replace('astrologer.', 'www.'));
+                            window.location.href = `${mainUrl}/profile`;
+                        }
+                    }, 3000);
+                }
             } catch (err: any) {
                 console.error("Verification error:", err);
                 setStatus("error");
-                const backendMsg = err.response?.data?.message || "Verification failed. The link may be expired or invalid.";
+                const backendMsg = err.message || "Verification failed. The link may be expired or invalid.";
                 setMessage(backendMsg);
                 toast.error(backendMsg);
             }

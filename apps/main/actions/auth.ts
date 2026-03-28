@@ -95,3 +95,51 @@ export async function registerAction(registerData: RegisterFormData): Promise<Au
       data?.message || "Registration successful! Please verify your email.",
   };
 }
+
+// ─────────────────────────────────────────────────────────
+// VERIFY EMAIL — Calls backend, sets cookies on success
+// ─────────────────────────────────────────────────────────
+export async function verifyEmailAction(token: string): Promise<AuthActionResponse> {
+  const [data, error] = await safeFetch<AuthResponse>(
+    `${API_CONFIG.AUTH.VERIFY_EMAIL.url}?token=${encodeURIComponent(token)}`,
+    {
+      method: API_CONFIG.AUTH.VERIFY_EMAIL.method,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+
+  if (error) {
+    return {
+      error:
+        error.body?.message ||
+        error.message ||
+        "Verification failed. The link might be expired.",
+    };
+  }
+
+  // Set HttpOnly cookies on the server
+  const cookieStore = await cookies();
+
+  if (data?.accessToken) {
+    cookieStore.set("accessToken", data.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+  }
+
+  if (data?.refreshToken) {
+    cookieStore.set("refreshToken", data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  }
+
+  return { success: true, user: data?.user, message: data?.message };
+}
+

@@ -83,3 +83,42 @@ export async function astrologerLogoutAction() {
     cookieStore.delete("refreshToken");
     return { success: true };
 }
+
+export async function astrologerVerifyEmailAction(token: string) {
+    const [data, error] = await safeFetch<any>(`${API_BASE_URL}/api/v1/auth/email/verify?token=${encodeURIComponent(token)}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (error) {
+        return { error: error.body?.message || error.message || "Verification failed" };
+    }
+
+    // Set HttpOnly cookies on the server
+    const cookieStore = await cookies();
+
+    if (data?.accessToken) {
+        cookieStore.set("accessToken", data.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+        });
+    }
+
+    if (data?.refreshToken) {
+        cookieStore.set("refreshToken", data.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+        });
+    }
+
+    return { success: true, user: data?.user, message: data?.message };
+}
+

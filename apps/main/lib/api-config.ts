@@ -15,6 +15,7 @@ export const API_CONFIG = {
         REFRESH: { get url() { return `${getBasePath()}/api/v1/auth/refresh` }, method: "POST" },
         ME: { url: "client/profile", method: "GET" },
         GOOGLE_LOGIN: { get url() { return `${getBasePath()}/api/v1/auth/google/login` }, method: "GET" },
+        VERIFY_EMAIL: { get url() { return `${getBasePath()}/api/v1/auth/email/verify` }, method: "GET" },
     },
     WALLET: {
         BALANCE: { url: "wallet/balance", method: "GET" },
