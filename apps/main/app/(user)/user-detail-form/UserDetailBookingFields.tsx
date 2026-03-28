@@ -1,17 +1,7 @@
 "use client";
 
 import React from "react";
-
-interface UserDetailBookingFieldsProps {
-  bookingDate: string;
-  bookingTime: string;
-  duration: string;
-  errors: Partial<Record<"bookingDate" | "bookingTime", string>>;
-  setBookingDate: (date: string) => void;
-  setBookingTime: (time: string) => void;
-  setDuration: (duration: string) => void;
-  clearError: (field: "bookingDate" | "bookingTime") => void;
-}
+import { UserDetailBookingFieldsProps } from "@/lib/types";
 
 const UserDetailBookingFields: React.FC<UserDetailBookingFieldsProps> = ({
   bookingDate,
@@ -23,68 +13,70 @@ const UserDetailBookingFields: React.FC<UserDetailBookingFieldsProps> = ({
   setDuration,
   clearError,
 }) => {
+  const [minDate, setMinDate] = React.useState<string>("");
+
+  React.useEffect(() => {
+    setMinDate(new Date().toISOString().split("T")[0] || "");
+  }, []);
+
   const minsOptions = ["5", "10", "15", "30", "45", "60"];
 
   return (
-    <div className="row g-3 g-md-4 mt-3">
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Appointment Date <span className="text-danger">*</span>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mt-6">
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Appointment Date <span className="text-red-500">*</span>
         </label>
         <input
           type="date"
-          className="form-control"
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.bookingDate ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
           value={bookingDate}
-          min={new Date().toISOString().split("T")[0]}
+          min={minDate}
           onChange={(e) => {
             setBookingDate(e.target.value);
             clearError("bookingDate");
           }}
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.bookingDate ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
         />
-        {errors.bookingDate && <div className="invalid-feedback d-block">{errors.bookingDate}</div>}
+        {errors.bookingDate && (
+          <p className="mt-1 text-sm text-red-500 font-medium">{errors.bookingDate}</p>
+        )}
       </div>
 
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Appointment Time <span className="text-danger">*</span>
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Appointment Time <span className="text-red-500">*</span>
         </label>
         <input
           type="time"
-          className="form-control"
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.bookingTime ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
           value={bookingTime}
           onChange={(e) => {
             setBookingTime(e.target.value);
             clearError("bookingTime");
           }}
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.bookingTime ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
         />
-        {errors.bookingTime && <div className="invalid-feedback d-block">{errors.bookingTime}</div>}
+        {errors.bookingTime && (
+          <p className="mt-1 text-sm text-red-500 font-medium">{errors.bookingTime}</p>
+        )}
       </div>
 
-      <div className="col-12">
-        <label className="form-label fw-semibold">Duration (Minutes)</label>
-        <div className="d-flex flex-wrap gap-2">
+      <div className="flex flex-col md:col-span-2">
+        <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (Minutes)</label>
+        <div className="flex flex-wrap gap-2">
           {minsOptions.map((mins) => (
             <button
               key={mins}
               type="button"
-              className={`btn ${duration === mins ? "btn-primary" : "btn-outline-primary"}`}
+              className={`px-4 py-2 rounded-lg border transition-all font-medium text-sm min-w-[80px] ${
+                duration === mins
+                  ? "bg-[#732882] border-[#732882] text-white shadow-md"
+                  : "bg-transparent border-[#732882] text-[#732882] hover:bg-[#732882]/5"
+              }`}
               onClick={() => setDuration(mins)}
-              style={{
-                backgroundColor: duration === mins ? "#732882" : "transparent",
-                borderColor: "#732882",
-                color: duration === mins ? "#fff" : "#732882",
-                minWidth: "80px",
-              }}
             >
               {mins} min
             </button>

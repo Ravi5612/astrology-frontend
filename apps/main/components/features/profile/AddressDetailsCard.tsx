@@ -25,19 +25,16 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
   handleSave,
 }) => {
   return (
-    <div className="card border-0 shadow-sm rounded-4 mb-4">
-      <div className="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+    <div className="bg-white border-0 shadow-premium rounded-2xl mb-6 overflow-hidden">
+      <div className="px-6 py-5 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h5
-          className="fw-bold mb-0"
+          className="text-lg font-bold text-gray-900 mb-0 flex items-center"
           style={{
             fontFamily:
               lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
           }}
         >
-          <span
-            className="me-2 p-2 rounded-circle"
-            style={{ backgroundColor: "#e2f8ff", color: "#00b4d8" }}
-          >
+          <span className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mr-3 flex-shrink-0">
             <i className="fa-solid fa-location-dot"></i>
           </span>
           {t.addressDetails.title}
@@ -47,21 +44,22 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
             variant="primary"
             size="md"
             onClick={() => setEditing(true)}
-            className="shadow-orange-200"
+            className="shadow-gold px-6"
             style={{
               fontFamily:
                 lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
             }}
           >
-            <i className="fa-solid fa-location-dot"></i>
+            <i className="fa-solid fa-pen-to-square mr-2"></i>
             {t.addressDetails.edit}
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
               variant="secondary"
               size="md"
               onClick={() => setEditing(false)}
+              className="px-6"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -76,7 +74,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               size="md"
               loading={saving}
               onClick={handleSave}
-              className="shadow-green-200"
+              className="px-6 shadow-md"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -89,12 +87,12 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
           </div>
         )}
       </div>
-      <div className="card-body p-4">
+      <div className="p-6 md:p-8">
         {editing ? (
-          <div className="row g-3">
-            <div className="col-md-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-12">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -106,7 +104,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.line1 || ""}
                 onChange={(e) => handleAddressChange(0, "line1", e.target.value)}
                 style={{
@@ -117,9 +115,9 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                 }}
               />
             </div>
-            <div className="col-md-12">
+            <div className="lg:col-span-12">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -131,7 +129,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.line2 || ""}
                 onChange={(e) => handleAddressChange(0, "line2", e.target.value)}
                 style={{
@@ -142,9 +140,9 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                 }}
               />
             </div>
-            <div className="col-md-6">
+            <div className="lg:col-span-6">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -156,7 +154,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.city || ""}
                 onChange={(e) => handleAddressChange(0, "city", e.target.value)}
                 style={{
@@ -167,9 +165,9 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                 }}
               />
             </div>
-            <div className="col-md-6">
+            <div className="lg:col-span-6">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -181,7 +179,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.state || ""}
                 onChange={(e) => handleAddressChange(0, "state", e.target.value)}
                 style={{
@@ -192,9 +190,9 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                 }}
               />
             </div>
-            <div className="col-md-4">
+            <div className="lg:col-span-6">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -206,7 +204,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.country || ""}
                 onChange={(e) =>
                   handleAddressChange(0, "country", e.target.value)
@@ -219,9 +217,9 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                 }}
               />
             </div>
-            <div className="col-md-4">
+            <div className="lg:col-span-6">
               <label
-                className="text-muted small fw-bold text-uppercase mb-1"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -233,7 +231,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.addresses?.[0]?.zip_code || ""}
                 onChange={(e) =>
                   handleAddressChange(0, "zip_code", e.target.value)
@@ -250,19 +248,21 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
         ) : (
           <div>
             {profileData.addresses && profileData.addresses.length > 0 ? (
-              <div className="d-flex align-items-start gap-3">
-                <i className="fa-solid fa-map-location-dot text-muted mt-1"></i>
+              <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 mt-1 flex-shrink-0">
+                  <i className="fa-solid fa-map-location-dot"></i>
+                </div>
                 <div>
-                  <p className="fw-bold mb-0">
+                  <p className="font-bold text-gray-900 mb-1">
                     {profileData.addresses[0]?.line1}
                   </p>
                   {profileData.addresses[0]?.line2 && (
-                    <p className="text-muted mb-0">
+                    <p className="text-gray-500 text-sm mb-1 font-medium">
                       {profileData.addresses[0]?.line2}
                     </p>
                   )}
                   <p
-                    className="text-muted mb-0"
+                    className="text-gray-600 font-medium text-sm m-0 leading-relaxed"
                     style={{
                       fontFamily:
                         lang === "hi"
@@ -279,7 +279,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               </div>
             ) : (
               <p
-                className="text-muted italic mb-0"
+                className="text-gray-500 italic m-0 bg-gray-50 p-6 rounded-2xl border border-dashed border-gray-200 text-center"
                 style={{
                   fontFamily:
                     lang === "hi"

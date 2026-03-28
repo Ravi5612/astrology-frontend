@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { apiClient } from "../../../lib/api-client";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -113,7 +114,13 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
             <div className="flex items-center gap-6 mb-9 max-sm:flex-col max-sm:text-center">
               <div className="relative w-[110px] h-[110px]">
                 {preview ? (
-                  <img src={preview} alt="User" className="w-full h-full rounded-full object-cover border-[3px] border-[#d09b3a]" />
+                  <Image
+                    src={preview}
+                    alt="User"
+                    width={110}
+                    height={110}
+                    className="w-full h-full rounded-full object-cover border-[3px] border-[#d09b3a]"
+                  />
                 ) : (
                   <div className="w-[110px] h-[110px] rounded-full bg-[#f0f0f0] flex justify-center items-center text-[38px] text-[#888] border-[2px] border-[#d09b3a]">
                     <i className="fa-solid fa-user"></i>

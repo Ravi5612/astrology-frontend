@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import safeFetch from "@packages/safe-fetch/safeFetch";
@@ -169,9 +170,11 @@ export default function QuotesLoader() {
 
       <span className="quote-symbol">”</span>
 
-      <img
+      <Image
         src="/images/logo.png"
-        className="quote-img"
+        width={100}
+        height={40}
+        className="quote-img object-contain"
         alt="Astrology in Bharat Logo"
       />
       <div className="loading-text">Loading...</div>

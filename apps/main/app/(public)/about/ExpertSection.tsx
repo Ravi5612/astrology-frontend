@@ -1,21 +1,12 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 
-interface TeamMember {
-  name: string;
-  role: string;
-  exp: string;
-  avatar: string;
-  specialty: string;
-}
+import { TeamMember, ExpertSectionProps } from "@/lib/types";
 
-interface ExportSectionProps {
-  team: TeamMember[];
-}
-
-const ExpertSection: React.FC<ExportSectionProps> = ({ team }) => {
+const ExpertSection: React.FC<ExpertSectionProps> = ({ team }) => {
   return (
     <section className="py-5" style={{ background: "#fafafa" }}>
       <div className="container py-4">
@@ -45,18 +36,15 @@ const ExpertSection: React.FC<ExportSectionProps> = ({ team }) => {
                 style={{ borderColor: "rgba(0,0,0,0.06) !important" }}
               >
                 <div className="position-relative d-inline-block mb-3">
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="rounded-circle border"
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      borderColor: "#fed7aa !important",
-                      borderWidth: "3px !important",
-                    }}
-                  />
+                  <div className="rounded-circle border overflow-hidden position-relative" style={{ width: 80, height: 80, borderColor: "#fed7aa", borderWidth: "3px" }}>
+                    <Image
+                      src={member.avatar}
+                      alt={member.name}
+                      width={80}
+                      height={80}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
                   <div
                     className="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center"
                     style={{

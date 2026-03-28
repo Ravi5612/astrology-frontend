@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { GiGoldBar, GiDiamonds, GiStarShuriken } from "react-icons/gi";
-
-interface DahejHeroProps {
-    lang: string;
-    toggleLang: () => void;
-    t: any;
-}
+import { DahejHeroProps } from "@/lib/types";
 
 const DahejHero: React.FC<DahejHeroProps> = ({ lang, toggleLang, t }) => {
+    const [flagSrc, setFlagSrc] = React.useState("");
+
+    React.useEffect(() => {
+        setFlagSrc(lang === "en" ? "https://flagcdn.com/w40/in.png" : "https://flagcdn.com/w40/us.png");
+    }, [lang]);
+
     return (
         <section className="relative pt-32 pb-20 bg-gradient-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -37,10 +39,12 @@ const DahejHero: React.FC<DahejHeroProps> = ({ lang, toggleLang, t }) => {
                             onClick={toggleLang}
                             className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 transition-all group"
                         >
-                            <img
-                                src={lang === "en" ? "https://flagcdn.com/w40/in.png" : "https://flagcdn.com/w40/us.png"}
+                            <Image
+                                src={flagSrc || "https://flagcdn.com/w40/in.png"}
                                 alt="flag"
-                                className="w-5 h-3.5 object-cover rounded-sm group-hover:scale-110 transition-transform"
+                                width={20}
+                                height={14}
+                                className="object-cover rounded-sm group-hover:scale-110 transition-transform"
                             />
                             <span className="text-xs font-black uppercase tracking-widest">
                                 {lang === "en" ? "हिन्दी" : "English"}

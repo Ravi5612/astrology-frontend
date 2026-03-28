@@ -26,6 +26,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ item }) => {
           src={item.image}
           alt={displayTitle}
           fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
           className="rounded-[6px] border border-[#daa23ea1] object-cover mb-2"
         />
       </div>

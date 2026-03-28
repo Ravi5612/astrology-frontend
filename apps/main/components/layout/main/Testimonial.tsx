@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import homepageData from "../../../public/data/homepage.json";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
@@ -26,9 +27,11 @@ const Testimonial = () => {
                 <div key={index} className="h-full">
                   <div className="bg-white rounded-[18px] p-6 transition-all duration-300 border border-gray-100 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-lg hover:-translate-y-1.5 flex flex-col h-full">
                     <div className="flex items-center mb-4">
-                      <img
+                      <Image
                         src={originalTesti.image}
                         alt={testi.name}
+                        width={56}
+                        height={56}
                         className="w-14 h-14 rounded-full object-cover border-2 border-orange p-0.5"
                       />
                       <div className="ml-4">

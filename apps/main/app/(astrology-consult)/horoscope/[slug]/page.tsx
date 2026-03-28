@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ZodiacSignsData } from "@/components/features/services/zodiac";
 import CTA from "@/components/layout/main/CTA";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
-import { FaLeaf, FaBriefcase, FaHeart, FaPlane } from "react-icons/fa";
+import { FaLeaf, FaBriefcase, FaHeart, FaPlane, FaChevronRight, FaArrowRight } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 import safeFetch from "@packages/safe-fetch/safeFetch";
 
@@ -19,6 +19,17 @@ export default function ZodiacDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [lang, setLang] = useState<"en" | "hi">("en");
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    setFormattedDate(
+      new Date().toLocaleDateString(lang === "hi" ? "hi-IN" : "en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    );
+  }, [lang]);
 
   const signData = ZodiacSignsData.find(
     (s) => s.title.toLowerCase() === slug?.toLowerCase(),
@@ -48,13 +59,13 @@ export default function ZodiacDetailsPage() {
   const getIcon = (type: string) => {
     switch (type) {
       case "Health":
-        return <FaLeaf className="text-green-500" />;
+        return <FaLeaf className="text-emerald-500" />;
       case "Career":
-        return <FaBriefcase className="text-blue-500" />;
+        return <FaBriefcase className="text-indigo-500" />;
       case "Love":
-        return <FaHeart className="text-danger" />;
+        return <FaHeart className="text-rose-500" />;
       default:
-        return <FaPlane className="text-primary" />;
+        return <FaPlane className="text-orange-500" />;
     }
   };
 
@@ -62,49 +73,58 @@ export default function ZodiacDetailsPage() {
     switch (type) {
       case "Health":
         return {
-          label: "Health & Wellbeing",
-          bg: "bg-green-50",
-          border: "border-green-100/50",
+          label: lang === "hi" ? "स्वास्थ्य और कल्याण" : "Health & Wellbeing",
+          gradient: "from-emerald-50/50 via-white to-white",
+          border: "border-emerald-100",
+          text: "text-emerald-600",
+          accent: "orange-500"
         };
       case "Career":
         return {
-          label: "Career & Finance",
-          bg: "bg-blue-50",
-          border: "border-blue-100/50",
+          label: lang === "hi" ? "कैरियर और वित्त" : "Career & Finance",
+          gradient: "from-indigo-50/50 via-white to-white",
+          border: "border-indigo-100",
+          text: "text-indigo-600",
+          accent: "orange-500"
         };
       case "Love":
         return {
-          label: "Love & Relations",
-          bg: "bg-danger/5",
-          border: "border-danger/10",
+          label: lang === "hi" ? "प्रेम और संबंध" : "Love & Relations",
+          gradient: "from-rose-50/50 via-white to-white",
+          border: "border-rose-100",
+          text: "text-rose-600",
+          accent: "orange-500"
         };
       default:
         return {
-          label: type + " Forecast",
-          bg: "bg-primary/5",
-          border: "border-primary/10",
+          label: lang === "hi" ? `${type} पूर्वानुमान` : `${type} Forecast`,
+          gradient: "from-orange-50/50 via-white to-white",
+          border: "border-orange-100",
+          text: "text-orange-600",
+          accent: "orange-500"
         };
     }
   };
 
   if (!signData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-bg-light p-6">
-        <div className="text-center p-12 bg-white rounded-3xl shadow-premium border border-primary/10 max-w-lg">
-          <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+      <div className="min-h-screen flex items-center justify-center bg-white p-6">
+        <div className="text-center p-12 bg-white rounded-[3rem] shadow-premium border border-gray-100 max-w-lg">
+          <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-sm border border-orange-100">
             🔮
           </div>
-          <h2 className="text-3xl font-black text-secondary leading-tight mb-4">
-            Zodiac Sign <span className="text-primary italic">Not Found</span>
+          <h2 className="text-4xl font-black text-slate-900 leading-tight mb-4 tracking-tight">
+            Zodiac Sign <span className="text-orange-500 italic underline underline-offset-8 decoration-orange-500/20">Not Found</span>
           </h2>
-          <p className="text-gray-500 mb-8 text-lg">
-            The destiny of this sign is still being written by the stars.
+          <p className="text-slate-500 mb-10 text-lg font-medium italic">
+            &quot;The destiny of this sign is still being written by the stars.&quot;
           </p>
           <Link
             href="/horoscope"
-            className="inline-block bg-primary text-white px-8 py-3 rounded-full font-bold no-underline transition-transform hover:scale-105"
+            className="inline-flex items-center gap-3 bg-slate-950 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] no-underline transition-all hover:bg-orange-600 hover:-translate-y-1 shadow-2xl"
           >
             Back to Horoscopes
+            <FaArrowRight size={10} />
           </Link>
         </div>
       </div>
@@ -112,67 +132,90 @@ export default function ZodiacDetailsPage() {
   }
 
   return (
-    <div className="main-wrapper bg-bg-light">
+    <div className="bg-white min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-28 bg-secondary text-white">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/15 to-transparent pointer-events-none"></div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+      <section className="relative overflow-hidden pt-28 pb-20 lg:pt-36 lg:pb-32 bg-slate-950 text-white">
+          {/* Celestial background elements */}
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0"></div>
 
         {/* Language Switcher */}
         <div className="absolute top-6 right-6 z-50">
           <button
             onClick={() => setLang(lang === "en" ? "hi" : "en")}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all backdrop-blur-md hover:scale-105 active:scale-95 shadow-2xl"
           >
             <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
             {lang === "en" ? "हिंदी" : "English"}
           </button>
         </div>
 
-        <div className="container relative z-10">
-          <div className="row align-items-center g-5">
-            <div className="col-lg-7">
-              <div className="max-w-2xl">
-                <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-bold text-xs mb-6 border border-primary/30 tracking-widest uppercase">
-                  {signData.date} • Daily Guide
-                </span>
-                <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-tight">
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center font-display">
+            <div className="lg:col-span-7 space-y-10 order-2 lg:order-1">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-4">
+                    <span className="inline-block px-5 py-1.5 rounded-full bg-orange-500/10 text-orange-500 font-black text-[10px] border border-orange-500/20 tracking-[0.3em] uppercase">
+                    {signData.date} • Daily Guide
+                    </span>
+                    <div className="w-12 h-[1px] bg-white/20"></div>
+                </div>
+                <h1 className="text-5xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}{" "}
-                  <span className="text-primary italic">Daily</span> Predictions
+                  <span className="text-orange-500 italic block lg:inline">{lang === "hi" ? "दैनिक" : "Daily"}</span> {lang === "hi" ? "भविष्यवाणी" : "Predictions"}
                 </h1>
-                <p className="text-lg text-white/70 mb-8 leading-relaxed font-medium">
+                <p className="text-xl text-gray-400 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-8" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}, the stars are aligning for you today.
                   Explore how planetary movements are influencing your personal
                   and professional life with our expert Vedic analysis.
                 </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-1 bg-primary rounded-full"></div>
-                  <span className="text-sm font-bold text-white/50 tracking-widest uppercase">
+              </div>
+
+                <div className="flex items-center gap-6 pt-4">
+                  <div className="flex -space-x-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center text-[10px] font-black italic text-white/50">
+                        {i}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase">
                     Ancient Wisdom • Modern Guidance
                   </span>
                 </div>
-              </div>
             </div>
 
-            <div className="col-lg-5">
+            <div className="lg:col-span-5 relative order-1 lg:order-2">
               <div className="relative group flex items-center justify-center">
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[80px] pointer-events-none group-hover:bg-primary/30 transition-all duration-700"></div>
-                <div className="relative w-72 h-72 md:w-96 md:h-96">
+                <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                
+                <div className="relative aspect-square max-w-md mx-auto p-12 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transform transition-transform duration-700 group-hover:-translate-y-4">
                   <Image
                     src="/images/horoscope-round2.png"
                     alt="Zodiac Wheel"
                     fill
-                    className="animate-[spin_40s_linear_infinite] opacity-30 object-contain p-4"
+                    className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
                   />
-                  <div className="absolute inset-x-0 bottom-0 top-0 flex items-center justify-center p-8">
+                  <div className="absolute inset-0 flex items-center justify-center p-16">
                     <Image
                       src={signData.image}
                       alt={signData.title}
-                      width={280}
-                      height={280}
-                      className="object-contain drop-shadow-[0_0_40px_rgba(255,107,0,0.4)] transform transition-transform duration-700 group-hover:scale-110"
+                      width={320}
+                      height={320}
+                      className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
+                      priority
                     />
                   </div>
+                </div>
+
+                {/* Status Badge */}
+                <div className="absolute -bottom-4 -right-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-2xl">
+                    <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">
+                        Live Vedic Forecast
+                    </span>
+                    </div>
                 </div>
               </div>
             </div>
@@ -181,140 +224,145 @@ export default function ZodiacDetailsPage() {
       </section>
 
       {/* Main Content & Predictions */}
-      <section className="py-20 relative z-20 -mt-10">
-        <div className="container">
+      <section className="py-24 relative z-20 -mt-20">
+        <div className="max-w-7xl mx-auto px-4">
           {loading ? (
-            <div className="bg-white rounded-3xl p-20 text-center shadow-premium border border-primary/5">
-              <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-8 shadow-sm"></div>
-              <h3 className="text-2xl font-black text-secondary animate-pulse tracking-tight">
+            <div className="bg-white rounded-[3rem] p-24 text-center shadow-premium border border-gray-100 max-w-5xl mx-auto">
+              <div className="relative w-24 h-24 mx-auto mb-10">
+                <div className="absolute inset-0 border-4 border-orange-100 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <h3 className="text-3xl font-black text-slate-900 animate-pulse tracking-tight uppercase">
                 Consulting the heavens for{" "}
-                <span className="text-primary">{signData.title}</span>...
+                <span className="text-orange-500">{signData.title}</span>...
               </h3>
-              <p className="text-gray-400 mt-2 font-medium italic">
+              <p className="text-slate-400 mt-4 font-bold tracking-widest uppercase text-xs italic">
                 Wait for the cosmic alignment
               </p>
             </div>
           ) : error ? (
-            <div className="bg-white rounded-3xl p-20 text-center shadow-premium border border-danger/10">
-              <div className="text-6x?l mb-6">✨</div>
-              <h3 className="text-xl font-bold text-secondary mb-3">
+            <div className="bg-white rounded-[3rem] p-24 text-center shadow-premium border border-rose-100 max-w-5xl mx-auto">
+              <div className="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-10 text-4xl shadow-sm border border-rose-100">
+                ✨
+              </div>
+              <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight uppercase">
                 The stars are currently veiled
               </h3>
-              <p className="text-gray-500 italic max-w-sm mx-auto">
-                Our connection with the cosmic data is momentarily disrupted.
-                Please check back soon.
+              <p className="text-slate-500 italic font-medium max-w-md mx-auto text-lg">
+                &quot;Our connection with the cosmic data is momentarily disrupted.
+                Please check back soon.&quot;
               </p>
             </div>
           ) : (
-            <div className="row g-4 justify-content-center">
-              <div className="col-lg-10">
-                <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-premium border border-primary/5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                    <HiOutlineSparkles className="text-9xl text-primary" />
-                  </div>
+            <div className="max-w-5xl mx-auto">
+              <div className="bg-white rounded-[3.5rem] p-10 lg:p-20 shadow-premium border border-gray-100 relative group overflow-hidden">
+                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
+                  <HiOutlineSparkles className="text-[12rem] text-orange-500" />
+                </div>
 
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 border-b border-gray-100 pb-8">
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center border border-primary/10">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-12 mb-20 pb-16 border-b border-gray-100">
+                  <div className="flex items-center gap-10">
+                    <div className="relative group/sign">
+                        <div className="absolute -inset-2 bg-orange-500/10 rounded-3xl blur-2xl opacity-0 group-hover/sign:opacity-100 transition-opacity"></div>
+                        <div className="relative w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-gray-100 shadow-sm transition-transform group-hover/sign:scale-105">
                         <Image
-                          src={signData.image}
-                          alt={signData.title}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 object-contain"
+                            src={signData.image}
+                            alt={signData.title}
+                            width={60}
+                            height={60}
+                            className="w-14 h-14 object-contain drop-shadow-xl"
                         />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl lg:text-3xl font-black text-secondary uppercase tracking-tight mb-1">
-                          {signData.title}{" "}
-                          <span className="text-primary">Horoscope</span>
-                        </h2>
-                        <div className="flex items-center gap-3">
-                          <p className="text-gray-500 text-sm font-bold m-0 tracking-widest uppercase">
-                            {new Date().toLocaleDateString("en-US", {
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </p>
                         </div>
-                      </div>
                     </div>
-
-                    <div className="flex items-center gap-3 bg-secondary text-white px-5 py-2.5 rounded-full shadow-lg shadow-secondary/20">
-                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                      <span className="text-xs font-black tracking-widest uppercase">
-                        Live Forecast
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Prediction Cards Grid */}
-                  <div className="row g-4 mb-16">
-                    {horoscope.predictions.map((p: any, idx: number) => {
-                      const cat = getPredictionCategory(p.type);
-                      return (
-                        <div key={idx} className="col-md-6">
-                          <div
-                            className={`p-10 rounded-3xl border border-gray-100 hover:border-primary/20 h-100 transition-all duration-500 hover:shadow-premium group flex flex-col relative overflow-hidden`}
-                          >
-                            <div
-                              className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${p.type === "Love" ? "from-danger" : p.type === "Career" ? "from-blue-500" : "from-primary"} to-transparent opacity-30`}
-                            ></div>
-
-                            <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500 group-hover:shadow-md">
-                              {getIcon(p.type)}
-                            </div>
-
-                            <h4 className="text-lg font-black text-secondary uppercase mb-4 tracking-tight flex items-center justify-between">
-                              {cat.label}
-                              <i className="fa-solid fa-chevron-right text-[10px] text-gray-200 group-hover:text-primary transition-colors"></i>
-                            </h4>
-
-                            <p className="text-gray-600 text-sm leading-relaxed mb-0 font-medium italic opacity-90 border-l-2 border-primary/10 pl-4 py-1">
-                              "{p.prediction}"
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Cosmic Tip Section */}
-                  <div className="relative rounded-[2.5rem] bg-secondary p-10 lg:p-14 shadow-2xl overflow-hidden group">
-                    {/* Decorative background glow */}
-                    <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/30 transition-all duration-700"></div>
-
-                    <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
-                      <div className="lg:w-2/3">
-                        <div className="flex items-center gap-4 mb-6">
-                          <div className="px-4 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
-                            Pro Tip
-                          </div>
-                          <h3 className="text-3xl font-black text-white mb-0 tracking-tight">
-                            Today's Spiritual{" "}
-                            <span className="text-primary italic">
-                              Alignment
-                            </span>
-                          </h3>
-                        </div>
-                        <p className="text-white/70 text-lg lg:text-xl font-medium leading-relaxed italic border-l-4 border-primary pl-8 py-2">
-                          "Patience will be your greatest ally. The cosmic
-                          energies favor thoughtful decisions. Wear colors that
-                          resonate with your spirit and meditate for 10 minutes
-                          to align your energy with the universe."
+                    <div>
+                      <h2 className="text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight uppercase">
+                        {signData.title}{" "}
+                        <span className="text-orange-500 italic block lg:inline">Horoscope</span>
+                      </h2>
+                      <div className="flex items-center gap-5 mt-2">
+                        <p className="text-slate-400 text-sm font-black uppercase tracking-[0.3em] italic">
+                          Forecast for {formattedDate}
                         </p>
                       </div>
+                    </div>
+                  </div>
 
-                      <div className="lg:w-1/3 w-full">
-                        <Link
-                          href="/our-astrologers"
-                          className="block w-full text-center bg-white hover:bg-primary text-secondary hover:text-white px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest no-underline transition-all shadow-xl hover:-translate-y-1"
+                    <div className="inline-flex items-center gap-4 bg-slate-950 text-white px-8 py-5 rounded-3xl shadow-2xl relative group/live overflow-hidden">
+                        <div className="absolute inset-0 bg-orange-600 translate-y-full group-hover/live:translate-y-0 transition-transform duration-500"></div>
+                        <div className="relative z-10 flex items-center gap-4">
+                            <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]"></span>
+                            <span className="text-[10px] font-black tracking-[0.2em] uppercase">
+                                Realtime Alignment
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Prediction Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-20">
+                  {horoscope.predictions.map((p: any, idx: number) => {
+                    const cat = getPredictionCategory(p.type);
+                    return (
+                      <div key={idx} className="group/pred">
+                        <div
+                          className={`p-12 rounded-[2.5rem] border border-gray-100 group-hover/pred:border-orange-500/20 bg-gradient-to-br ${cat.gradient} h-full transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 flex flex-col relative overflow-hidden`}
                         >
-                          Consult Astrologer
-                          <i className="fa-solid fa-arrow-right ml-3"></i>
-                        </Link>
+                            {/* Accent Line */}
+                            <div className={`absolute top-0 left-12 w-16 h-1.5 bg-orange-500 rounded-b-full opacity-20 group-hover/pred:opacity-100 group-hover/pred:w-24 transition-all duration-500`}></div>
+
+                            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-center justify-center text-4xl mb-8 group-hover/pred:scale-110 group-hover/pred:shadow-md transition-transform duration-500">
+                                {getIcon(p.type)}
+                            </div>
+
+                            <h4 className={`text-[11px] font-black ${cat.text} uppercase mb-4 tracking-[0.4em] flex items-center justify-between`}>
+                                {cat.label}
+                                <FaChevronRight className="opacity-0 group-hover/pred:opacity-20 -translate-x-4 group-hover/pred:translate-x-0 transition-all" />
+                            </h4>
+
+                            <p className="text-slate-700 text-[16px] leading-relaxed mb-0 font-bold italic opacity-90 border-l-4 border-orange-500/10 pl-6 py-2 group-hover/pred:text-slate-950 transition-colors">
+                                &quot;{p.prediction}&quot;
+                            </p>
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+
+                {/* Cosmic Tip Section */}
+                <div className="relative rounded-[3rem] bg-slate-950 p-12 lg:p-20 shadow-2xl overflow-hidden group/tip border border-white/5 shadow-black/30">
+                  {/* Decorative background glow */}
+                  <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover/tip:bg-orange-500/20 transition-all duration-1000"></div>
+                  <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+                  <div className="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
+                    <div className="lg:w-2/3 space-y-10">
+                      <div className="space-y-6 text-center lg:text-left">
+                        <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                          <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.4em]">Expert Insight</span>
+                        </div>
+                        <h3 className="text-4xl lg:text-5xl font-black text-white mb-0 tracking-tight leading-tight">
+                          Today&apos;s Spiritual{" "}
+                          <span className="text-orange-500 italic block lg:inline underline underline-offset-8 decoration-orange-500/20">Alignment</span>
+                        </h3>
+                      </div>
+                      <p className="text-white/70 text-xl lg:text-2xl font-bold font-display leading-relaxed italic border-l-8 border-orange-500 pl-10 py-4 max-w-2xl bg-white/5 rounded-r-3xl backdrop-blur-sm shadow-2xl">
+                        &quot;Patience will be your greatest ally. The cosmic
+                        energies favor thoughtful decisions. Wear colors that
+                        resonate with your spirit and meditate for 10 minutes
+                        to align your energy with the universe.&quot;
+                      </p>
+                    </div>
+
+                    <div className="lg:w-1/3 w-full">
+                      <Link
+                        href="/our-astrologers"
+                        className="group/btn relative w-full inline-flex items-center justify-center gap-6 bg-white hover:bg-orange-500 text-slate-950 hover:text-white px-10 py-8 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] no-underline transition-all shadow-2xl hover:-translate-y-2 overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
+                        <span className="relative z-10">Consult Astrologer</span>
+                        <FaArrowRight className="relative z-10 group-hover/btn:translate-x-2 transition-transform" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -325,43 +373,58 @@ export default function ZodiacDetailsPage() {
       </section>
 
       {/* Navigation for other Signs */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-black text-secondary uppercase tracking-tighter mb-4">
-              Explore Our <span className="text-primary italic">Zodiac</span>{" "}
-              Constellations
+      <section className="py-24 bg-white relative">
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-linear-to-r from-transparent via-gray-100 to-transparent"></div>
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-20 space-y-6">
+            <div className="inline-block px-5 py-1.5 bg-slate-50 border border-slate-100 rounded-full">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">The Zodiac Wheel</span>
+            </div>
+            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 leading-tight tracking-tight uppercase">
+              Explore Our <span className="text-orange-500 italic block lg:inline">Zodiac</span> Constellations
             </h2>
-            <div className="w-20 h-1.5 bg-primary/20 mx-auto rounded-full"></div>
+            <div className="w-24 h-2 bg-orange-500/10 mx-auto rounded-full overflow-hidden">
+                <div className="w-1/2 h-full bg-orange-500 animate-[shimmer_2s_infinite_linear]"></div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-4 lg:gap-6">
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-6">
             {ZodiacSignsData.map((sign) => (
               <Link
                 key={sign.id}
                 href={`/horoscope/${sign.title.toLowerCase()}`}
-                className={`p-4 rounded-[2rem] text-center border transition-all duration-500 no-underline flex flex-col items-center justify-center group ${
+                className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full ${
                   slug?.toLowerCase() === sign.title.toLowerCase()
-                    ? "border-primary bg-primary/5 shadow-premium scale-110 relative z-10"
-                    : "border-gray-50 hover:border-primary/20 hover:bg-primary/5 hover:-translate-y-2"
+                    ? "border-orange-500/30 bg-orange-500/5 shadow-2xl -translate-y-4 ring-2 ring-orange-500/10 ring-offset-4"
+                    : "border-gray-50 hover:border-orange-500/20 hover:bg-slate-50 hover:-translate-y-2"
                 }`}
               >
-                <div className="relative w-12 h-12 mb-3">
+                {/* Active Glow */}
+                {slug?.toLowerCase() === sign.title.toLowerCase() && (
+                    <div className="absolute top-0 inset-x-0 h-1.5 bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,1)]"></div>
+                )}
+
+                <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-lg">
                   <Image
                     src={sign.image}
                     alt={sign.title}
                     fill
-                    className="object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-sm"
+                    className="object-contain"
                   />
                 </div>
-                <span
-                  className={`text-[10px] font-black uppercase tracking-widest ${slug?.toLowerCase() === sign.title.toLowerCase() ? "text-primary" : "text-secondary opacity-60 group-hover:opacity-100"}`}
-                >
-                  {sign.title}
-                </span>
+                <div className="text-center">
+                    <span
+                    className={`block text-[11px] font-black uppercase tracking-widest leading-none mb-1 transition-colors ${slug?.toLowerCase() === sign.title.toLowerCase() ? "text-orange-600" : "text-slate-400 group-hover:text-slate-900"}`}
+                    >
+                    {sign.title}
+                    </span>
+                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                        {sign.id}th House
+                    </span>
+                </div>
 
                 {slug?.toLowerCase() === sign.title.toLowerCase() && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-white shadow-sm animate-pulse"></div>
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]"></div>
                 )}
               </Link>
             ))}
@@ -371,6 +434,13 @@ export default function ZodiacDetailsPage() {
 
       <WhyChooseUs />
       <CTA />
+      
+      <style jsx global>{`
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+      `}</style>
     </div>
   );
 }

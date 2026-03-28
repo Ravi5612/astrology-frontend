@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 
 interface ConsultationChatModalProps {
@@ -123,13 +124,15 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                 <div className="d-flex justify-content-between align-items-center p-4 border-bottom" style={{ backgroundColor: "#FF6B00" }}>
                     <div className="d-flex align-items-center gap-3">
                         <div
-                            className="rounded-circle overflow-hidden"
+                            className="rounded-circle overflow-hidden position-relative"
                             style={{ width: "48px", height: "48px", border: "3px solid white" }}
                         >
-                            <img
+                            <Image
                                 src={expertAvatar}
                                 alt={selectedSession.expert?.user?.name || selectedSession.expert?.name || "Expert"}
-                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                width={48}
+                                height={48}
+                                className="object-cover w-full h-full"
                             />
                         </div>
                         <div>
@@ -202,22 +205,24 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                                     >
                                         {!content.startsWith("[INTRO_CARD]") && (
                                             <div
-                                                className="rounded-circle overflow-hidden flex-shrink-0 shadow-sm"
+                                                className="rounded-circle overflow-hidden flex-shrink-0 shadow-sm position-relative"
                                                 style={{
                                                     width: "40px",
                                                     height: "40px",
                                                     border: `2px solid ${isUser ? '#FF6B00' : '#e0e0e0'}`
                                                 }}
                                             >
-                                                <img
+                                                <Image
                                                     src={isUser
                                                         ? (userAvatar || "https://avatar.iran.liara.run/public/boy?username=User")
                                                         : expertAvatar
                                                     }
                                                     alt={sType}
-                                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                    width={40}
+                                                    height={40}
+                                                    className="object-cover w-full h-full"
                                                     onError={(e) => {
-                                                        (e.target as HTMLImageElement).src = isUser
+                                                        (e.target as any).src = isUser
                                                             ? "https://avatar.iran.liara.run/public/boy?username=User"
                                                             : "/images/dummy-astrologer.jpg";
                                                     }}

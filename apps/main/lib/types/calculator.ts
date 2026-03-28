@@ -68,3 +68,29 @@ export interface CalculatorProgressBarProps {
     label: string;
     value: number;
 }
+
+export interface DahejFormProps {
+    t: any;
+    fullName: string;
+    setFullName: (val: string) => void;
+    job: string;
+    setJob: (val: string) => void;
+    dob: string;
+    setDob: (val: string) => void;
+    salary: string;
+    setSalary: (val: string) => void;
+    loading: boolean;
+    canCalculate: boolean;
+    handleCalculate: (e: React.FormEvent) => void;
+}
+
+export interface DahejHeroProps {
+    lang: string;
+    toggleLang: () => void;
+    t: any;
+}
+
+export interface DahejResultProps {
+    result: ResultData;
+    t: any;
+}

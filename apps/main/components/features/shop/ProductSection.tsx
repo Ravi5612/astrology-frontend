@@ -2,12 +2,7 @@
 
 import React, { useState } from "react";
 import ProductCarousel from "./ProductCarousel";
-import NextImage from "next/image";
 import { Search, X } from "lucide-react";
-
-const Image = NextImage as any;
-const SearchIcon = Search as any;
-const XIcon = X as any;
 
 import { Product } from "@/lib/types";
 import { useLanguageStore } from "../../../store/languageStore";
@@ -17,19 +12,17 @@ interface ProductSectionProps {
     products: Product[];
 }
 
-/* 🔹 Skeleton Card */
+/* 🔹 Premium Skeleton Card */
 const ProductSkeleton = () => {
     return (
-        <div className="col-lg-3 col-md-6 col-sm-12 mb-4">
-            <div className="bg-white rounded-2xl p-3 shadow-[0_10px_25px_rgba(0,0,0,0.08)] h-full animate-pulse flex flex-col">
-                <div className="mb-[15px] h-[200px] w-full bg-gray-200 rounded-xl"></div>
-                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-1"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
-                <div className="mt-auto">
-                    <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div className="h-10 bg-gray-200 rounded-full w-full"></div>
-                </div>
+        <div className="bg-white rounded-[2rem] p-6 shadow-premium h-full animate-pulse border border-gray-50 flex flex-col">
+            <div className="mb-6 h-[220px] w-full bg-slate-100 rounded-[1.5rem]"></div>
+            <div className="h-6 bg-slate-100 rounded-full w-3/4 mb-4"></div>
+            <div className="h-4 bg-slate-100 rounded-full w-full mb-2"></div>
+            <div className="h-4 bg-slate-100 rounded-full w-5/6 mb-6"></div>
+            <div className="mt-auto space-y-4">
+                <div className="h-6 bg-slate-100 rounded-full w-1/2"></div>
+                <div className="h-14 bg-slate-100 rounded-2xl w-full"></div>
             </div>
         </div>
     );
@@ -50,37 +43,39 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
     };
 
     return (
-        <>
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                <div className="max-w-2xl">
-                    <h2 className="text-[32px] font-semibold mb-[35px] relative pb-[15px] text-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#a9a9a92b] after:w-full inline-block md:block">
-                        <span className="relative after:content-[''] after:bg-orange after:w-full after:h-[2px] after:absolute after:left-0 after:bottom-[-15px]">
-                            {t.products.title}
-                        </span>
+        <div className="w-full">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
+                <div className="max-w-2xl space-y-4">
+                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-orange/10 rounded-full border border-orange/10">
+                        <div className="w-2 h-2 bg-orange rounded-full animate-pulse"></div>
+                        <span className="text-[10px] font-black text-orange-700 uppercase tracking-widest leading-none">Astro Shop Exclusive</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none uppercase">
+                        {t.products.title}
                     </h2>
-                    <p className="text-gray-700 m-0 font-medium">
+                    <p className="text-lg text-slate-500 font-bold italic leading-relaxed">
                         {t.products.subtitle}
                     </p>
                 </div>
-                <div className="w-full md:w-auto flex justify-start md:justify-end">
-                    <div className="w-full max-w-[300px]">
-                        {/* 🔹 Local Search Input Implementation */}
-                        <div className="relative w-full">
-                            <SearchIcon className="absolute top-1/2 -translate-y-1/2 left-3 w-5 h-5 text-gray-400" />
+                
+                <div className="w-full lg:w-auto shrink-0">
+                    <div className="relative group">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-orange to-slate-950 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition duration-500"></div>
+                        <div className="relative flex items-center bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm focus-within:shadow-xl focus-within:border-slate-950 transition-all duration-500 min-w-[320px]">
+                            <Search className="ml-5 w-5 h-5 text-slate-400" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t.products.searchPlaceholder}
-                                className="w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-10 text-base outline-none transition-all 
-                                    hover:border-orange focus:border-orange focus:ring-1 focus:ring-orange placeholder-gray-400 text-gray-700 bg-white"
+                                className="w-full py-5 px-4 text-sm font-bold text-slate-900 placeholder:text-slate-400 outline-none bg-transparent"
                             />
                             {searchQuery && (
                                 <button
                                     onClick={handleClear}
-                                    className="absolute top-1/2 -translate-y-1/2 right-3 p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="mr-3 p-2 bg-slate-50 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-950 transition-all active:scale-90"
                                 >
-                                    <XIcon className="w-4 h-4" />
+                                    <X className="w-4 h-4" />
                                 </button>
                             )}
                         </div>
@@ -91,16 +86,28 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
             <div>
                 {products.length === 0 ? (
                     /* 🔥 4 Skeleton Cards for empty initial state */
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                         {Array.from({ length: 4 }).map((_, index) => (
                             <ProductSkeleton key={index} />
                         ))}
                     </div>
                 ) : filteredProducts.length === 0 ? (
-                    <div className="w-full text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                        <p className="text-gray-500 font-medium text-lg">
-                            {t.products.noResults.replace("{query}", searchQuery)}
-                        </p>
+                    <div className="w-full text-center py-32 bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200 space-y-6">
+                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto text-slate-300 shadow-sm">
+                           <Search className="w-10 h-10" />
+                        </div>
+                        <div className="space-y-2">
+                           <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">No items found</h4>
+                           <p className="text-slate-400 font-bold italic">
+                               {t.products.noResults.replace("{query}", searchQuery)}
+                           </p>
+                        </div>
+                        <button 
+                            onClick={handleClear}
+                            className="px-8 py-3 bg-slate-950 text-white rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-orange transition-all"
+                        >
+                            Clear Filters
+                        </button>
                     </div>
                 ) : (
                     <div className="w-full">
@@ -108,10 +115,8 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                     </div>
                 )}
             </div>
-        </>
+        </div>
     );
 };
 
 export default ProductSection;
-
-

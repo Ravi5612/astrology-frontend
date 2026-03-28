@@ -95,44 +95,45 @@ const Page = () => {
   }, []);
 
   return (
-    <>
-      <div>
-        <div className="container py-5">
-          <div className="row g-5">
-            <Gallery images={product.images} />
-            <ProductInfo product={product} />
-          </div>
+    <div className="bg-white min-h-screen">
+      {/* Main Product Section */}
+      <div className="max-w-7xl mx-auto px-4 py-12 md:py-24">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
+          <Gallery images={product.images} />
+          <ProductInfo product={product} />
+        </div>
 
-          <FloatingBar
-            isSticky={isSticky}
-            title={product.title}
-            price={product.price}
-          />
+        <FloatingBar
+          isSticky={isSticky}
+          title={product.title}
+          price={product.price}
+        />
 
-          <hr className="my-5" />
+        <div className="my-24 h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
 
-          <Specifications details={product.details} />
+        <Specifications details={product.details} />
 
-          <hr className="my-5" />
+        <div className="my-24 h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
 
-          <FAQ faqs={product.faqs} />
+        <FAQ faqs={product.faqs} />
 
-          <hr className="my-5" />
+        <div className="my-24 h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
 
-          <Reviews
-            avgRating={product.avgRating}
-            totalRatings={product.totalRatings}
-            reviewStats={product.reviewStats}
-          />
+        <Reviews
+          avgRating={product.avgRating}
+          totalRatings={product.totalRatings}
+          reviewStats={product.reviewStats}
+        />
 
-          <hr className="my-5" />
+        <div className="my-24 h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
 
-          <ShopByPurpose />
+        <ShopByPurpose />
 
+        <div className="mt-24">
           <Features />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

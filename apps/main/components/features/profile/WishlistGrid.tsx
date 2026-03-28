@@ -5,6 +5,8 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { ProductCard } from "@/components/features/shop/ProductCard";
 import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
 import { getBasePath } from "@/utils/api-config";
+import { FaHeart, FaGift, FaUserAstronaut, FaSpinner } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 const WishlistGrid: React.FC = () => {
     const { wishlistItems, expertWishlistItems, isLoading } = useWishlistStore();
@@ -19,37 +21,54 @@ const WishlistGrid: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+            <div className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm animate-pulse">
+                <div className="relative">
+                    <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
+                    <div className="relative w-16 h-16 bg-white rounded-2xl shadow-lg border border-primary/10 flex items-center justify-center text-primary">
+                        <FaSpinner className="animate-spin text-2xl" />
+                    </div>
                 </div>
-                <p className="mt-2 text-muted">Loading your favorites...</p>
+                <p className="mt-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Finding your saved stars</p>
             </div>
         );
     }
 
     if (wishlistItems.length === 0 && expertWishlistItems.length === 0) {
         return (
-            <div className="text-center py-10 bg-orange-50 rounded-2xl border border-dashed border-primary/20 mx-4">
-                <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                    <i className="fa-regular fa-heart fa-2x text-primary/30"></i>
+            <div className="text-center py-32 bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200 px-6 max-w-4xl mx-auto">
+                <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 shadow-premium border border-slate-100 text-slate-200">
+                    <FaHeart size={40} className="animate-pulse" />
                 </div>
-                <h5 className="text-[#13070b] font-bold">Your wishlist is empty</h5>
-                <p className="small text-gray-500 mb-0">Start exploring and save your favorite items here!</p>
+                <h5 className="text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4">Your wishlist is silent</h5>
+                <p className="text-lg text-slate-400 font-bold italic mb-0 max-w-sm mx-auto">Start exploring and save your favorite experts and products to see them here.</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-24 pb-20">
             {wishlistItems.length > 0 && (
-                <section>
-                    <h5 className="flex items-center gap-2 mb-4 font-bold text-[#13070b]">
-                        <i className="fa-solid fa-gift text-primary"></i> Liked Products
-                    </h5>
-                    <div className="row g-4">
-                        {wishlistItems.map((item) => (
-                            <div key={item.id} className="col-md-6 col-lg-4">
+                <section className="space-y-12">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+                        <div className="space-y-2">
+                           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
+                              <FaGift className="text-primary text-[10px]" />
+                              <span className="text-[10px] font-black text-primary uppercase tracking-widest">Saved Items</span>
+                           </div>
+                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Liked Products</h2>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm">
+                           <span className="tabular-nums">{wishlistItems.length}</span> items saved
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {wishlistItems.map((item, idx) => (
+                            <div 
+                                key={item.id} 
+                                className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700"
+                                style={{ animationDelay: `${idx * 100}ms` }}
+                            >
                                 <ProductCard
                                     product={{
                                         id: String(item.product?.id || item.productId),
@@ -67,12 +86,22 @@ const WishlistGrid: React.FC = () => {
             )}
 
             {expertWishlistItems.length > 0 && (
-                <section>
-                    <h5 className="flex items-center gap-2 mb-4 font-bold text-[#13070b]">
-                        <i className="fa-solid fa-user-astronaut text-primary"></i> Liked Astrologers
-                    </h5>
-                    <div className="row g-4">
-                        {expertWishlistItems.map((item) => {
+                <section className="space-y-12">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+                        <div className="space-y-2">
+                           <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 rounded-full">
+                              <FaUserAstronaut className="text-indigo-500 text-[10px]" />
+                              <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Favorite Experts</span>
+                           </div>
+                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Liked Astrologers</h2>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm">
+                           <span className="tabular-nums">{expertWishlistItems.length}</span> experts saved
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {expertWishlistItems.map((item, idx) => {
                             const expert = item.expert;
 
                             // Handling response where user data might be flat on expert or nested
@@ -80,7 +109,11 @@ const WishlistGrid: React.FC = () => {
                             const avatar = (expert as any)?.avatar || (expert as any)?.user?.avatar;
 
                             return (
-                                <div key={item.id} className="col-md-6 col-lg-4">
+                                <div 
+                                    key={item.id} 
+                                    className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700"
+                                    style={{ animationDelay: `${idx * 100}ms` }}
+                                >
                                     <AstrologerCard
                                         astrologerData={{
                                             id: expert?.id || item.expertId,
@@ -108,6 +141,14 @@ const WishlistGrid: React.FC = () => {
                     </div>
                 </section>
             )}
+
+            {/* Premium Trust Banner */}
+            <div className="text-center pt-24 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+                <div className="inline-flex items-center gap-6 px-10 py-5 bg-white rounded-full border border-gray-100 shadow-sm">
+                    <HiOutlineSparkles className="text-orange" />
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.4em]">Your preferences are synced across all devices</span>
+                </div>
+            </div>
         </div>
     );
 };

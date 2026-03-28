@@ -2,18 +2,8 @@ const SERPER_API_KEY = "d8af18e43b74b92ebc1bd50f76849a84241133e7";
 const CACHE_KEY_PREFIX = "famous_places_cache_";
 const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
-export interface Place {
-  title: string;
-  address: string;
-  rating?: number;
-  ratingCount?: number;
-  category: string;
-  thumbnailUrl?: string;
-  cid?: string;
-  slug?: string;
-  position?: number;
-  images?: string[];
-}
+import { Place } from "@/lib/types";
+export type { Place };
 
 const BLOCKED_DOMAINS = [
   "facebook.com",

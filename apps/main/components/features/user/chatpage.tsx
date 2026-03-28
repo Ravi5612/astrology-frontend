@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 import { ChatMessage } from "@/lib/types";
 
@@ -83,12 +84,12 @@ const ChatPage = () => {
                         <i className="fa-solid fa-arrow-left"></i>
                     </a>
                     <div className="position-relative">
-                        <img
+                        <Image
                             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                             alt="Astro"
                             className="rounded-circle"
-                            width="50"
-                            height="50"
+                            width={50}
+                            height={50}
                             style={{
                                 border: "3px solid #ffc107",
                                 boxShadow: "0 4px 15px rgba(255, 193, 7, 0.3)"
@@ -162,10 +163,10 @@ const ChatPage = () => {
                                         animationFillMode: "both"
                                     }}>
                                     {msg.sender === 'astrologer' && (
-                                        <img
+                                        <Image
                                             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                                            width="38"
-                                            height="38"
+                                            width={38}
+                                            height={38}
                                             className="rounded-circle me-2 align-self-end"
                                             alt="Astro"
                                             style={{

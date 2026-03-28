@@ -41,3 +41,29 @@ export interface UserDetails {
     timeOfBirth: string;
     birthLocation: string;
 }
+export interface UserDetailPersonalFieldsProps {
+    formData: UserDetails;
+    errors: Partial<Record<keyof UserDetails, string>>;
+    handleChange: (e: any) => void;
+}
+
+export interface UserDetailBookingFieldsProps {
+    bookingDate: string;
+    bookingTime: string;
+    duration: string;
+    errors: Partial<Record<"bookingDate" | "bookingTime", string>>;
+    setBookingDate: (date: string) => void;
+    setBookingTime: (time: string) => void;
+    setDuration: (duration: string) => void;
+    clearError: (field: "bookingDate" | "bookingTime") => void;
+}
+
+export interface UserDetailFormHeroProps {
+    astrologerName: string;
+}
+
+export interface UserDetailSummaryBoxProps {
+    rate: string;
+    duration: string;
+    totalAmount: number;
+}

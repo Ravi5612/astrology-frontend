@@ -4,18 +4,7 @@ import React from "react";
 import { FaHeart, FaSpinner } from "react-icons/fa";
 import { GiLotus } from "react-icons/gi";
 
-type SimpleFormProps = {
-  t: any;
-  loading: boolean;
-  simpleData: {
-    p1Name: string;
-    p1Gender: string;
-    p2Name: string;
-    p2Gender: string;
-  };
-  handleSimpleInputChange: (field: string, value: string) => void;
-  calculateSimpleLove: (e: React.FormEvent) => Promise<void>;
-};
+import { SimpleFormProps } from "@/lib/types";
 
 const SimpleForm = ({
   t,

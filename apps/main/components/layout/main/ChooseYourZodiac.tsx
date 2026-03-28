@@ -53,6 +53,7 @@ const ChooseYourZodiac = () => {
                       src={sign.image}
                       alt={sign.title}
                       fill
+                      sizes="96px"
                       className="object-contain relative z-10 transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
                     />
                   </div>

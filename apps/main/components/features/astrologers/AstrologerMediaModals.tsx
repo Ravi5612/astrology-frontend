@@ -51,7 +51,7 @@ const AstrologerMediaModals: React.FC<AstrologerMediaModalsProps> = ({
               <span className="text-xs text-gray-500">Astrologer {astrologerName}</span>
             </div>
           </div>
-          <div className="absolute inset-0 -z-10" onClick={() => setSelectedVideo(null)}></div>
+          <div className="absolute inset-0 -z-10" onClick={() => setSelectedVideo(null)} aria-hidden="true"></div>
         </div>
       )}
 
@@ -65,10 +65,10 @@ const AstrologerMediaModals: React.FC<AstrologerMediaModalsProps> = ({
               <XIcon className="w-6 h-6" />
             </button>
             <div className="relative w-full h-[80vh] rounded-lg overflow-hidden">
-              <Image src={selectedImage} alt="Full view" fill className="object-contain" />
+              <Image src={selectedImage} alt="Full view" fill sizes="100vw" className="object-contain" />
             </div>
           </div>
-          <div className="absolute inset-0 -z-10" onClick={() => setSelectedImage(null)}></div>
+          <div className="absolute inset-0 -z-10" onClick={() => setSelectedImage(null)} aria-hidden="true"></div>
         </div>
       )}
     </>

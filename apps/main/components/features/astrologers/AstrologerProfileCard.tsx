@@ -33,6 +33,7 @@ const AstrologerProfileCard: React.FC<AstrologerProfileCardProps> = ({
                   src={astrologer.image}
                   alt={astrologer.name}
                   fill
+                  sizes="112px"
                   className="object-cover"
                 />
               </div>

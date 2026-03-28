@@ -119,6 +119,7 @@ const AstrologerContentSection: React.FC<AstrologerContentSectionProps> = ({
                             src={review.user.avatar || "/images/dummy-astrologer.jpg"}
                             alt={review.user.name}
                             fill
+                            sizes="40px"
                             className="object-cover"
                           />
                         </div>
@@ -163,7 +164,7 @@ const AstrologerContentSection: React.FC<AstrologerContentSectionProps> = ({
                     onClick={() => onImageClick(img)}
                     className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group cursor-pointer"
                   >
-                    <Image src={img} alt={`Gallery ${index + 1}`} fill className="object-cover transition-transform group-hover:scale-105" />
+                    <Image src={img} alt={`Gallery ${index + 1}`} fill sizes="(max-width: 768px) 33vw, 20vw" className="object-cover transition-transform group-hover:scale-105" />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <i className="fa-solid fa-magnifying-glass text-white text-xl"></i>
                     </div>

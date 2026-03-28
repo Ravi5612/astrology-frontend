@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import homepageData from "../../../public/data/homepage.json";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
@@ -47,18 +48,24 @@ const WhyChooseUs = () => {
           <div className="md:col-span-4 relative flex items-center justify-center min-h-[450px]">
             {/* 1. Background Rotating Wheel */}
             <div className="absolute inset-0 flex items-center justify-center -mt-32 ml-8">
-              <img
+              <Image
                 src="/images/horoscope-round2.png"
-                className="w-full max-w-[420px] animate-[spin_40s_linear_infinite] opacity-40 brightness-125"
+                width={420}
+                height={420}
+                className="animate-[spin_40s_linear_infinite] opacity-40 brightness-125"
+                style={{ width: '100%', maxWidth: '420px', height: 'auto' }}
                 alt="zodiac wheel"
               />
             </div>
 
             {/* 2. Middle: Astrologer Mascot */}
-            <img
+            <Image
               src="/images/astro.png"
               alt="astrologer mascot"
-              className="relative z-20 w-[85%] max-w-[320px] drop-shadow-[0_0_40px_rgba(255,107,0,0.2)]"
+              width={320}
+              height={320}
+              className="relative z-20 drop-shadow-[0_0_40px_rgba(255,107,0,0.2)]"
+              style={{ width: '85%', maxWidth: '320px', height: 'auto' }}
             />
 
             {/* 3. Foreground: Platform & Props (Assuming these are part of the image or can be layered) */}

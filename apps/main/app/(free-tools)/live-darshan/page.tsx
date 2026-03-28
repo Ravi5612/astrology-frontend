@@ -1,20 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
-import { useLanguageStore } from "@/store/languageStore";
 import { liveDarshanTranslations } from "@/lib/live-darshan-translations";
-
-interface DarshanSite {
-    id: number;
-    name: string;
-    location: string;
-    image: string;
-    status: string;
-    videoUrl: string;
-    description: string;
-}
+import { getYoutubeEmbedUrl } from "@/utils/video-utils";
+import { useLanguageStore } from "@/store/languageStore";
+import { DarshanSite } from "@/lib/types";
 
 const LiveDarshanPage = () => {
     const { lang, toggleLang } = useLanguageStore();
@@ -28,10 +21,9 @@ const LiveDarshanPage = () => {
     useEffect(() => {
         const fetchDarshanSites = async () => {
             try {
-                // Determine the base backend URL. (e.g., from environment variables)
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-                const response = await fetch(`${apiUrl}/api/v1/live-darshan`);
+                // Use the Next.js proxy rewrite (/api/v1 → backend) so the request
+                // stays on 'self' origin and doesn't violate CSP.
+                const response = await fetch(`/api/v1/live-darshan`);
 
                 if (!response.ok) {
                     throw new Error('Network response from backend was not ok');
@@ -169,12 +161,13 @@ const LiveDarshanPage = () => {
                                     className="group relative bg-white rounded-[32px] overflow-hidden shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]"
                                 >
                                     <div className="relative h-64 overflow-hidden">
-                                        <img
+                                        <Image
                                             src={site.image}
                                             alt={site.name}
+                                            fill
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                             onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
+                                                const target = e.target as any;
                                                 target.src = "/images/kashi.jpg";
                                             }}
                                         />
@@ -239,7 +232,7 @@ const LiveDarshanPage = () => {
 
                         <div className="aspect-video w-full bg-black">
                             <iframe
-                                src={`${selectedSite.videoUrl}?autoplay=1`}
+                                src={`${getYoutubeEmbedUrl(selectedSite.videoUrl)}?autoplay=1`}
                                 title={selectedSite.name}
                                 className="w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

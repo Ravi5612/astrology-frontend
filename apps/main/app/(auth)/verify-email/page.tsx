@@ -7,10 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
+import { FaSpinner, FaCheckCircle, FaExclamationCircle, FaEnvelopeOpenText } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 import safeFetch from "@packages/safe-fetch/safeFetch";
-
-import { VerificationResponse } from "@/lib/types";
 
 // --- API ---
 const API_ENDPOINT = `${getApiUrl()}/auth/email/verify`;
@@ -26,9 +26,6 @@ const VerifyEmailContent: React.FC = () => {
     const searchParams = useSearchParams();
     const token = searchParams.get('verification_token');
 
-    console.log("[VerifyEmail] Search Params:", searchParams.toString()); // Debug log
-    console.log("[VerifyEmail] Extracted Token:", token); // Debug log
-
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -37,7 +34,6 @@ const VerifyEmailContent: React.FC = () => {
     useEffect(() => {
         const verifyEmail = async () => {
             if (!token) {
-                console.warn("[VerifyEmail] Token missing from URL parameters");
                 setError(t.resetPassword.errors.invalidToken);
                 setIsLoading(false);
                 return;
@@ -63,7 +59,11 @@ const VerifyEmailContent: React.FC = () => {
                     setSuccessMessage(data?.message || t.verifyEmail.successMessage);
                     const countdownInterval = setInterval(() => {
                         setCountdown((prev) => {
-                            if (prev <= 1) { clearInterval(countdownInterval); router.push('/sign-in'); return 0; }
+                            if (prev <= 1) { 
+                                clearInterval(countdownInterval); 
+                                router.push('/sign-in'); 
+                                return 0; 
+                            }
                             return prev - 1;
                         });
                     }, 1000);
@@ -76,101 +76,136 @@ const VerifyEmailContent: React.FC = () => {
         };
 
         verifyEmail();
-    }, [token, router]);
+    }, [token, router, t.resetPassword.errors.invalidToken, t.verifyEmail.failedMessage, t.resetPassword.errors.failed, t.resetPassword.errors.unexpected, t.verifyEmail.successMessage]);
 
     return (
-        <section className="signin-part">
-            <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-lg-6 col-md-8">
-                        <div className="form-data shadow-sm p-5 rounded-xl bg-white text-center">
-                            <div className="mb-4">
-                                <Image
-                                    src="/images/dummy-astrologer.jpg"
-                                    alt="Astrology Bharat"
-                                    height={100}
-                                    width={100}
-                                    className="mx-auto"
-                                />
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center py-20 px-4 relative overflow-hidden">
+            {/* Celestial Background */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+            <div className="max-w-xl w-full relative z-10">
+                <div className="bg-white rounded-[3rem] shadow-premium border border-slate-100 p-8 md:p-16 text-center space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    
+                    {/* Brand/Status Icon */}
+                    <div className="relative inline-block">
+                        <div className="absolute -inset-4 bg-orange-500/10 rounded-full blur-xl animate-pulse"></div>
+                        <div className="relative w-24 h-24 bg-white rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center mx-auto overflow-hidden">
+                            {isLoading ? (
+                                <FaSpinner className="animate-spin text-orange text-3xl" />
+                            ) : error ? (
+                                <div className="w-full h-full bg-red-50 flex items-center justify-center text-red-500">
+                                    <FaExclamationCircle size={40} />
+                                </div>
+                            ) : (
+                                <div className="w-full h-full bg-green-50 flex items-center justify-center text-green-500 animate-in zoom-in duration-500">
+                                    <FaCheckCircle size={40} />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-50 rounded-full border border-slate-100">
+                             <HiOutlineSparkles className="text-orange text-xs" />
+                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">{t.verifyEmail.title}</span>
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 leading-none tracking-tighter uppercase">
+                             {isLoading ? t.verifyEmail.verifying : error ? "Verification Failed" : "Email Verified"}
+                        </h2>
+                    </div>
+
+                    {isLoading && (
+                        <div className="space-y-6">
+                            <p className="text-slate-400 font-bold italic text-lg leading-relaxed px-4">
+                                &quot;Just a moment while we align your profile with our stellar database.&quot;
+                            </p>
+                            <div className="w-32 h-1.5 bg-slate-100 rounded-full mx-auto overflow-hidden">
+                                <div className="h-full bg-orange animate-[loading_2s_infinite]"></div>
                             </div>
+                        </div>
+                    )}
 
-                            <h2
-                                className="mb-4"
-                                style={{ color: "var(--primary-color)", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                    {error && (
+                        <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100 space-y-4">
+                            <p className="text-red-950 font-black text-sm uppercase tracking-tight leading-relaxed">
+                                {error}
+                            </p>
+                            <p className="text-slate-500 text-xs font-bold leading-relaxed">
+                                Please ensure you are using the correct link from your email or try requesting a new one.
+                            </p>
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="p-10 bg-green-50/50 rounded-[2.5rem] border border-green-100 space-y-6">
+                            <div className="space-y-2">
+                                <h4 className="text-green-950 font-black text-xl uppercase tracking-tighter">Awesome!</h4>
+                                <p className="text-green-800 font-bold italic leading-relaxed">
+                                    {successMessage}
+                                </p>
+                            </div>
+                            <div className="inline-flex items-center gap-3 px-6 py-2 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-green-500/20">
+                                Redirecting in {countdown}s
+                            </div>
+                        </div>
+                    )}
+
+                    {!isLoading && (
+                        <div className="pt-4 flex flex-col gap-4">
+                            <Link
+                                href="/sign-in"
+                                className="group relative w-full py-6 bg-slate-950 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl hover:bg-orange transition-all duration-500 active:scale-95"
                             >
-                                {t.verifyEmail.title}
-                            </h2>
-
-                            {isLoading && (
-                                <div className="text-center py-4">
-                                    <div className="spinner-border text-primary mb-3" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                    <p className="text-muted" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
-                                        {t.verifyEmail.verifying}
-                                    </p>
-                                </div>
-                            )}
+                                <span className="relative z-10">{error ? t.verifyEmail.goToSignIn : t.resetPassword.goToSignIn}</span>
+                            </Link>
 
                             {error && (
-                                <div className="alert alert-danger mb-4" role="alert">
-                                    <i className="fa-solid fa-circle-exclamation me-2"></i>
-                                    <strong>Error:</strong> {error}
-                                </div>
-                            )}
-
-                            {successMessage && (
-                                <div className="alert alert-success mb-4" role="alert">
-                                    <i className="fa-solid fa-circle-check me-2"></i>
-                                    <strong style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
-                                        {t.resetPassword.successTitle}
-                                    </strong> {successMessage}
-                                    <div className="mt-3">
-                                        <p className="mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
-                                            {lang === "hi" ? `${countdown} सेकंड में साइन इन पेज पर पुनर्निर्देशित किया जा रहा है...` : `Redirecting to sign in page in ${countdown} seconds...`}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {!isLoading && (
-                                <div className="mt-4">
-                                    <Link
-                                        href="/sign-in"
-                                        className="btn w-100 py-2 fw-semibold bg-primary hover:bg-primary-hover text-white border-0 transition-all font-bold"
-                                        style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
-                                    >
-                                        {error ? t.verifyEmail.goToSignIn : t.resetPassword.goToSignIn}
-                                    </Link>
-                                </div>
-                            )}
-
-                            {error && (
-                                <div className="mt-3">
-                                    <p className="text-muted mb-0" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                                <div className="text-center">
+                                    <p className="text-slate-400 font-bold text-xs">
                                         {t.verifyEmail.resendTitle}{" "}
-                                        <Link href="/register" className="text-decoration-none">
+                                        <Link href="/register" className="text-orange hover:underline underline-offset-4">
                                             {t.verifyEmail.resendButton}
                                         </Link>
                                     </p>
                                 </div>
                             )}
                         </div>
-                    </div>
+                    )}
+                </div>
+
+                <div className="text-center mt-12 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+                   <div className="inline-flex items-center gap-4 px-8 py-3 bg-white rounded-full border border-slate-100 shadow-sm">
+                      <FaEnvelopeOpenText className="text-orange text-xs" />
+                      <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest leading-none">Celestial Auth Protocol v2.4</span>
+                   </div>
                 </div>
             </div>
-        </section>
+
+            <style jsx>{`
+                @keyframes loading {
+                    0% { width: 0%; transform: translateX(-100%); }
+                    50% { width: 40%; }
+                    100% { width: 0%; transform: translateX(400%); }
+                }
+            `}</style>
+        </div>
     );
 };
 
 const Page: React.FC = () => {
     return (
-        <Suspense fallback={<div className="text-center py-5">Loading...</div>}>
+        <Suspense fallback={
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <FaSpinner className="animate-spin text-orange text-3xl" />
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Warping Through Dimensions</p>
+                </div>
+            </div>
+        }>
             <VerifyEmailContent />
         </Suspense>
     );
 };
 
 export default Page;
-
-

@@ -5,6 +5,14 @@ export interface CustomService {
     unit: string;
 }
 
+export interface TeamMember {
+  name: string;
+  role: string;
+  exp: string;
+  avatar: string;
+  specialty: string;
+}
+
 export interface ExpertProfile {
     id: number;
     user: {
@@ -112,6 +120,10 @@ export interface AstrologerListWrapperProps {
     searchParams: Record<string, string | string[] | undefined>;
     layout?: 'slider' | 'grid';
     title?: string;
+}
+
+export interface ExpertSectionProps {
+    team: TeamMember[];
 }
 
 export interface AstrologerCardProps {

@@ -25,19 +25,16 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
   handleSave,
 }) => {
   return (
-    <div className="card border-0 shadow-sm rounded-4 mb-4">
-      <div className="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+    <div className="bg-white border-0 shadow-premium rounded-2xl mb-6 overflow-hidden">
+      <div className="px-6 py-5 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h5
-          className="fw-bold mb-0"
+          className="text-lg font-bold text-gray-900 mb-0 flex items-center"
           style={{
             fontFamily:
               lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
           }}
         >
-          <span
-            className="me-2 p-2 rounded-circle"
-            style={{ backgroundColor: "#f0f2f5", color: "#333" }}
-          >
+          <span className="w-10 h-10 rounded-full bg-orange/10 text-orange flex items-center justify-center mr-3 flex-shrink-0">
             <i className="fa-regular fa-calendar"></i>
           </span>
           {t.astroDetails.title}
@@ -47,21 +44,22 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
             variant="primary"
             size="md"
             onClick={() => setEditing(true)}
-            className="bg-purple-500 hover:bg-purple-600 shadow-purple-100"
+            className="shadow-gold px-6"
             style={{
               fontFamily:
                 lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
             }}
           >
-            <i className="fa-solid fa-moon"></i>
+            <i className="fa-solid fa-moon mr-2 text-sm"></i>
             {t.astroDetails.edit}
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
               variant="secondary"
               size="md"
               onClick={() => setEditing(false)}
+              className="px-6"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -76,7 +74,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               size="md"
               loading={saving}
               onClick={handleSave}
-              className="shadow-green-200"
+              className="px-6 shadow-md"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -89,11 +87,11 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
           </div>
         )}
       </div>
-      <div className="card-body p-4">
-        <div className="row g-4">
-          <div className="col-md-4">
+      <div className="p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div>
             <label
-              className="text-muted small fw-bold text-uppercase mb-1"
+              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -106,7 +104,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
             {editing ? (
               <input
                 type="date"
-                className="form-control fw-bold"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={
                   profileData.date_of_birth
                     ? profileData.date_of_birth.split("T")[0]
@@ -117,8 +115,8 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
                 }
               />
             ) : (
-              <p className="fw-bold mb-0 text-dark">
-                <i className="fa-regular fa-calendar me-2 text-warning"></i>
+              <p className="flex items-center font-bold text-gray-900 m-0">
+                <i className="fa-regular fa-calendar mr-2.5 text-orange/70"></i>
                 {profileData.date_of_birth
                   ? new Date(profileData.date_of_birth).toLocaleDateString(
                       "en-IN",
@@ -132,9 +130,9 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               </p>
             )}
           </div>
-          <div className="col-md-4">
+          <div>
             <label
-              className="text-muted small fw-bold text-uppercase mb-1"
+              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -147,22 +145,22 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
             {editing ? (
               <input
                 type="time"
-                className="form-control fw-bold"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.time_of_birth || ""}
                 onChange={(e) =>
                   handleInputChange("time_of_birth", e.target.value)
                 }
               />
             ) : (
-              <p className="fw-bold mb-0 text-dark">
-                <i className="fa-regular fa-clock me-2 text-warning"></i>
+              <p className="flex items-center font-bold text-gray-900 m-0">
+                <i className="fa-regular fa-clock mr-2.5 text-orange/70"></i>
                 {profileData.time_of_birth || t.astroDetails.notSet}
               </p>
             )}
           </div>
-          <div className="col-md-4">
+          <div>
             <label
-              className="text-muted small fw-bold text-uppercase mb-1"
+              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -175,7 +173,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
             {editing ? (
               <input
                 type="text"
-                className="form-control fw-bold"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
                 value={profileData.place_of_birth || ""}
                 onChange={(e) =>
                   handleInputChange("place_of_birth", e.target.value)
@@ -190,7 +188,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               />
             ) : (
               <p
-                className="fw-bold mb-0 text-dark"
+                className="flex items-center font-bold text-gray-900 m-0"
                 style={{
                   fontFamily:
                     lang === "hi"
@@ -198,7 +196,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
                       : "inherit",
                 }}
               >
-                <i className="fa-solid fa-location-dot me-2 text-warning"></i>
+                <i className="fa-solid fa-location-dot mr-2.5 text-orange/70"></i>
                 {profileData.place_of_birth || t.astroDetails.notSet}
               </p>
             )}

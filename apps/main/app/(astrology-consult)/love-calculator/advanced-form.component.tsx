@@ -5,14 +5,19 @@ import { FaMars, FaSpinner, FaVenus } from "react-icons/fa";
 import { GiLotus, GiSparkles, GiStarShuriken } from "react-icons/gi";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 
+import { ConsultPersonDetails } from "@/lib/types";
+
 type AdvancedFormProps = {
   t: any;
   loading: boolean;
-  advancedData: any;
+  advancedData: {
+    boy: ConsultPersonDetails;
+    girl: ConsultPersonDetails;
+  };
   handleAdvancedInputChange: (
     gender: "boy" | "girl",
-    field: string,
-    value: any,
+    field: keyof ConsultPersonDetails,
+    value: string | number,
   ) => void;
   handleLocationSelect: (
     gender: "boy" | "girl",

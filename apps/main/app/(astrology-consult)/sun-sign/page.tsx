@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
-import CTA from "@/components/layout/main/CTA";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import { CharacteristicsGrid } from "./characteristics-grid";
 import { SidebarStats } from "./sidebar-stats";
 import { TbCrystalBall } from "react-icons/tb";
+import HeroSection from "./hero.component";
+import SignSelector from "./sign-selector.component";
 
 const SunSignPage = () => {
   const [selectedSign, setSelectedSign] = useState(ZodiacSignsData[0]);
@@ -15,167 +15,93 @@ const SunSignPage = () => {
   if (!selectedSign) return null;
 
   return (
-    <div className="main-wrapper">
+    <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <section className="banner-part light-back">
-        <div className="overlay-hero">
-          <div className="container">
-            <div className="contant-hero">
-              <div className="row align-items-center">
-                <div className="col-lg-7 col-md-12">
-                  <div className="hero-card shine">
-                    <div className="card-z">
-                      <span className="aib-trust-badge">
-                        Zodiac Knowledge Base
-                      </span>
-                      <h1>Sun Sign Details</h1>
-                      <h4 className="card-title">
-                        Discover the Secrets of Your Personality
-                      </h4>
-                      <p>
-                        Explore the cosmic lens of your sun sign to understand
-                        your true self, your relationships, and your destiny.
-                        Each sign carries unique energies that shape who you
-                        are.
-                      </p>
-                      <div className="flex flex-wrap gap-3 mt-4">
-                        <ul className="list-check">
-                          <li>
-                            <i className="fa-solid fa-check"></i> Know Your
-                            Zodiac
-                          </li>
-                          <li>
-                            <i className="fa-solid fa-check"></i> Personality
-                            Traits
-                          </li>
-                          <li>
-                            <i className="fa-solid fa-check"></i> Love
-                            Compatibility
-                          </li>
-                          <li>
-                            <i className="fa-solid fa-check"></i> Career &
-                            Health
-                          </li>
-                        </ul>
-                        <button className="btn-link wfc mt-4 mb-4">
-                          Select Zodiac Sign
-                        </button>
+      <HeroSection selectedSign={selectedSign} />
+
+      {/* Zodiac Selection Slider */}
+      <SignSelector
+        selectedSign={selectedSign}
+        setSelectedSign={setSelectedSign}
+      />
+
+      {/* Main Details Section */}
+      <section className="py-24 bg-slate-50 relative overflow-hidden">
+        {/* Celestial Background */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            {/* Main Content Column */}
+            <div className="lg:col-span-8 space-y-12">
+              <div className="bg-white rounded-[3rem] shadow-premium border border-gray-100 overflow-hidden group">
+                <div className="p-10 md:p-16">
+                  <div className="flex flex-col md:flex-row items-center gap-10 mb-16 pb-12 border-b border-gray-100">
+                    <div className="relative group/img">
+                      <div className="absolute -inset-4 bg-yellow-500/20 rounded-full blur-2xl opacity-0 group-hover/img:opacity-100 transition-opacity duration-700"></div>
+                      <div className="relative w-32 h-32 bg-yellow-50 border border-yellow-100 p-6 rounded-[2rem] shadow-sm flex items-center justify-center group-hover/img:scale-105 group-hover/img:rotate-6 transition-all duration-700">
+                        <Image
+                          src={selectedSign.image}
+                          alt={selectedSign.title}
+                          width={120}
+                          height={120}
+                          className="w-full h-full object-contain drop-shadow-2xl"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="text-center md:text-left space-y-3">
+                      <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-yellow-50 rounded-full border border-yellow-100">
+                         <i className="fa-solid fa-sun-bright text-yellow-600 text-[10px]"></i>
+                         <span className="text-[10px] font-black text-yellow-800 uppercase tracking-widest">The {selectedSign.nature} Influence</span>
+                      </div>
+                      <h2 className="text-5xl md:text-6xl font-black text-gray-900 leading-none tracking-tighter">
+                        {selectedSign.title}
+                      </h2>
+                    </div>
+                  </div>
+
+                  {/* Characteristics Grid */}
+                  <CharacteristicsGrid />
+
+                  {/* Extra Details */}
+                  <div className="pt-10">
+                    <div className="bg-gray-950 rounded-[2.5rem] p-12 relative overflow-hidden group/card shadow-2xl">
+                      <div className="absolute bottom-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-[100px] translate-y-1/2 translate-x-1/2 group-hover/card:bg-yellow-500/20 transition-colors"></div>
+                      <TbCrystalBall className="absolute -right-8 -bottom-8 text-white/5 text-9xl group-hover/card:scale-125 group-hover/card:rotate-12 transition-transform duration-1000" />
+                      
+                      <div className="relative z-10 space-y-6">
+                        <h3 className="text-2xl font-black text-white italic flex items-center gap-4">
+                          <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)]"></div>
+                          Vedic Perspective
+                        </h3>
+                        <p className="text-xl font-bold text-gray-400 italic leading-relaxed max-w-2xl">
+                          &quot;In Vedic astrology, the Sun represents the Soul, the King, and the Father. Your sun sign placement determines the inner light and core vitality you bring to the world. Analysis of {selectedSign.title}&apos;s ruling planet and element provides deep insight into your spiritual purpose.&quot;
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-5 col-md-12 text-center">
-                  <div className="right-illus py-10">
-                    <Image
-                      src="/images/horoscope-round2.png"
-                      alt="Zodiac Wheel"
-                      width={500}
-                      height={500}
-                      className="w-[80%] mx-auto animate-[spin_20s_linear_infinite] absolute z-0 left-[10%] top-0 opacity-20"
-                    />
-                    <Image
-                      src={selectedSign.image}
-                      alt={selectedSign.title}
-                      width={200}
-                      height={200}
-                      className="relative z-10 w-[200px] h-[200px] object-contain mx-auto drop-shadow-2xl transition-all duration-500 hover:scale-110"
-                    />
-                  </div>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Zodiac Selection Slider - Matching ChooseYourZodiac style */}
-      <section className="bg-white border-y border-[#fd64102b] py-4 sticky top-[70px] z-40 shadow-sm">
-        <div className="container">
-          <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide snap-x items-center px-4">
-            {ZodiacSignsData.map((sign) => (
-              <button
-                key={sign.id}
-                onClick={() => setSelectedSign(sign)}
-                className={`snap-center shrink-0 flex flex-col items-center cursor-pointer transition-all duration-300 p-2 rounded-xl border bg-transparent ${
-                  selectedSign.id === sign.id
-                    ? "border-[#fd6410] bg-[#fff5ef] scale-105 shadow-md"
-                    : "border-transparent opacity-60 hover:opacity-100"
-                }`}
-                style={{ minWidth: "100px" }}
-              >
-                <Image
-                  src={sign.image}
-                  alt={sign.title}
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 object-contain mb-2"
-                />
-                <span className="text-[10px] font-bold uppercase tracking-wider">
-                  {sign.title}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Main Details Section */}
-      <section className="space-section light-back">
-        <div className="container">
-          <div className="row g-4">
-            <div className="col-lg-8">
-              <div className="light-card p-4 p-md-5 border border-[#fd64102b] shadow-xl">
-                <div className="flex items-center gap-6 mb-10 pb-6 border-b border-gray-100">
-                  <div className="bg-[#fd64101a] p-4 rounded-4">
-                    <Image
-                      src={selectedSign.image}
-                      alt={selectedSign.title}
-                      width={80}
-                      height={80}
-                      className="w-20 h-20 object-contain drop-shadow-lg"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-4xl font-black text-[#301118] uppercase tracking-tight mb-1">
-                      {selectedSign.title}
-                    </h2>
-                    <p className="text-[#fd6410] font-bold text-sm tracking-[0.2em] uppercase">
-                      The {selectedSign.nature} Sign
-                    </p>
-                  </div>
-                </div>
-
-                {/* Characteristics Grid */}
-                <CharacteristicsGrid />
-
-                {/* Extra Details */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 border border-gray-100 p-8 rounded-4 relative overflow-hidden">
-                    <TbCrystalBall className="absolute -right-4 -bottom-4 text-gray-200 text-9xl opacity-20" />
-                    <h3 className="text-xl font-bold mb-4 relative z-10 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-[#fd6410] rounded-full"></div>
-                      Vedic Perspective
-                    </h3>
-                    <p className="text-gray-500 italic relative z-10 leading-relaxed mb-0">
-                      In Vedic astrology, the Sun represents the Soul, the King,
-                      and the Father. Your sun sign placement determines the
-                      inner light and core vitality you bring to the world.
-                      Analysis of {selectedSign.title}&apos;s ruling planet and
-                      element provides deep insight into your spiritual purpose.
-                    </p>
-                  </div>
-                </div>
+              {/* Trust Footer */}
+              <div className="text-center py-6 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+                 <div className="inline-flex items-center gap-4 px-6 py-3 bg-white rounded-full border border-gray-100 shadow-sm">
+                   <i className="fa-solid fa-shield-halved text-indigo-500 text-xs"></i>
+                   <span className="text-[9px] font-black text-gray-900 uppercase tracking-[0.4em]">Proprietary Vedic Calculation System v4.2</span>
+                 </div>
               </div>
             </div>
 
-            {/* Sidebar Stats */}
-            <SidebarStats />
+            {/* Sidebar Stats Column */}
+            <div className="lg:col-span-4 self-start sticky top-[180px]">
+              <SidebarStats />
+            </div>
+            
           </div>
         </div>
       </section>
-
-      <WhyChooseUs />
-      <CTA />
     </div>
   );
 };
