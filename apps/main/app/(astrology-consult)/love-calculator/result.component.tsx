@@ -6,12 +6,9 @@ import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 import { renderContent } from "./utils";
 
-type ResultProps = {
-  result: any;
-  t: any;
-};
+import { LoveCalculatorResultProps } from "@/lib/types";
 
-const Result = ({ result, t }: ResultProps) => {
+const Result = ({ result, t }: LoveCalculatorResultProps) => {
   if (!result) return null;
 
   return (

@@ -1,25 +1,20 @@
 "use client";
 
 import React from "react";
-
-interface UserDetailFormHeroProps {
-  astrologerName: string;
-}
+import { UserDetailFormHeroProps } from "@/lib/types";
 
 const UserDetailFormHero: React.FC<UserDetailFormHeroProps> = ({ astrologerName }) => {
   return (
     <section className="banner-part">
-      <div className="overlay-hero">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-12 text-center">
-              <h1 className="mb-3">
-                Book Your <span style={{ color: "#daa23e" }}>Consultation</span>
-              </h1>
-              <p className="text-white" style={{ fontSize: "18px" }}>
-                Share your details and schedule a session with {astrologerName}
-              </p>
-            </div>
+      <div className="overlay-hero py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              Book Your <span className="text-[#daa23e]">Consultation</span>
+            </h1>
+            <p className="text-white/90 text-lg md:text-xl max-w-2xl">
+              Share your details and schedule a session with {astrologerName}
+            </p>
           </div>
         </div>
       </div>

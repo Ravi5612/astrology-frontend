@@ -2,6 +2,7 @@
 
 import { loveCalculatorTranslations } from "@/lib/translations/calculators/love-calculator";
 import { useLanguageStore } from "@/store/languageStore";
+import NextImage from "next/image";
 import React from "react";
 import {
   GiFlowerEmblem,
@@ -106,9 +107,12 @@ const HeroComponent = (props: HeroComponentProps) => {
                   key={i}
                   className="w-12 h-12 rounded-full border-2 border-[#301118] bg-gray-200 overflow-hidden"
                 >
-                  <img
+                  <NextImage
                     src={`https://i.pravatar.cc/100?img=${i + 15}`}
                     alt="User"
+                    width={48}
+                    height={48}
+                    className="object-cover"
                   />
                 </div>
               ))}

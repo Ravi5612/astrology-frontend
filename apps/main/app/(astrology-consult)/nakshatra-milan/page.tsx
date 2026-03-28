@@ -9,8 +9,10 @@ import InputForm from "./input-form.component";
 import ResultsSection from "./results.component";
 import EducationalContent from "./educational-content.component";
 
+import { ConsultPersonDetails, MatchResults } from "@/lib/types";
+
 const NakshatraMilanPage = () => {
-  const [boyDetails, setBoyDetails] = useState({
+  const [boyDetails, setBoyDetails] = useState<ConsultPersonDetails>({
     name: "",
     date: "",
     time: "",
@@ -19,7 +21,7 @@ const NakshatraMilanPage = () => {
     locationName: "",
   });
 
-  const [girlDetails, setGirlDetails] = useState({
+  const [girlDetails, setGirlDetails] = useState<ConsultPersonDetails>({
     name: "",
     date: "",
     time: "",
@@ -29,18 +31,14 @@ const NakshatraMilanPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<{
-    boy: any;
-    girl: any;
-    match: any;
-  } | null>(null);
+  const [results, setResults] = useState<MatchResults | null>(null);
   const [error, setError] = useState<string | null>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
   const handleInputChange = (
     gender: "boy" | "girl",
-    field: string,
-    value: any,
+    field: keyof ConsultPersonDetails,
+    value: string,
   ) => {
     if (gender === "boy") {
       setBoyDetails((prev) => ({ ...prev, [field]: value }));
@@ -134,7 +132,7 @@ const NakshatraMilanPage = () => {
   };
 
   return (
-    <div className="main-wrapper">
+    <div className="bg-white">
       <HeroSection />
 
       <InputForm

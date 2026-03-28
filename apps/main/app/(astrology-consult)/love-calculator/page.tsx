@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useRef } from "react";
 
-import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
-import CTA from "@/components/layout/main/CTA";
 import safeFetch from "@packages/safe-fetch/safeFetch";
 import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
@@ -15,6 +13,11 @@ import Result from "./result.component";
 import Educational from "./educational.component";
 import MoreServices from "./more-services.component";
 import { premiumStyles } from "./utils";
+import {
+  ConsultPersonDetails,
+  LoveCalculatorResult,
+  LoveCalculatorSimpleData,
+} from "@/lib/types";
 
 const LoveCalculatorPage = () => {
   const { lang } = useLanguageStore();
@@ -25,11 +28,11 @@ const LoveCalculatorPage = () => {
 
   const [activeMode, setActiveMode] = useState<"simple" | "advanced">("simple");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<LoveCalculatorResult | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Simple Mode State
-  const [simpleData, setSimpleData] = useState({
+  const [simpleData, setSimpleData] = useState<LoveCalculatorSimpleData>({
     p1Name: "",
     p1Gender: "male",
     p2Name: "",
@@ -37,7 +40,10 @@ const LoveCalculatorPage = () => {
   });
 
   // Advanced Mode State
-  const [advancedData, setAdvancedData] = useState({
+  const [advancedData, setAdvancedData] = useState<{
+    boy: ConsultPersonDetails;
+    girl: ConsultPersonDetails;
+  }>({
     boy: {
       name: "",
       date: "",
@@ -58,14 +64,17 @@ const LoveCalculatorPage = () => {
     },
   });
 
-  const handleSimpleInputChange = (field: string, value: string) => {
+  const handleSimpleInputChange = (
+    field: keyof LoveCalculatorSimpleData,
+    value: string,
+  ) => {
     setSimpleData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAdvancedInputChange = (
     gender: "boy" | "girl",
-    field: string,
-    value: any,
+    field: keyof ConsultPersonDetails,
+    value: string | number,
   ) => {
     setAdvancedData((prev) => ({
       ...prev,
@@ -224,9 +233,6 @@ const LoveCalculatorPage = () => {
 
       <Educational t={t} />
       <MoreServices t={t} />
-
-      <WhyChooseUs />
-      <CTA />
     </div>
   );
 };

@@ -11,40 +11,41 @@ interface FloatingBarProps {
 const FloatingBar: React.FC<FloatingBarProps> = ({ isSticky, title, price }) => {
   return (
     <div
-      className="d-none d-md-block"
-      style={{
-        position: "fixed",
-        bottom: isSticky ? "0" : "-150px",
-        left: 0,
-        width: "100%",
-        background: "rgba(252, 252, 251, 0.95)",
-        borderTop: "1px solid #eee",
-        padding: "1rem",
-        boxShadow: "0 -4px 15px rgba(0,0,0,0.1)",
-        zIndex: 1000,
-        transition: "bottom 0.4s ease-in-out",
-      }}
+      className={`fixed bottom-0 left-0 w-full z-50 transition-all duration-700 ease-in-out hidden md:block ${
+        isSticky ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+      }`}
     >
-      <div className="container d-flex justify-content-between align-items-center">
-        <div className="d-flex align-items-center">
-          <h5 className="mb-0 fw-bold me-3 text-dark">{title}</h5>
-          <h5 className="mb-0 fw-bold" style={{ color: "#d9a03d" }}>
-            ₹{price}
-          </h5>
-        </div>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-lg fw-bold px-4"
-            style={{ background: "#d9a03d", color: "#fff" }}
-          >
-            <i className="fas fa-shopping-cart me-2"></i>Add to Cart
-          </button>
-          <button
-            className="btn btn-lg fw-bold px-4"
-            style={{ background: "#732882", color: "#fff" }}
-          >
-            Buy It Now
-          </button>
+      <div className="bg-white/80 backdrop-blur-2xl border-t border-gray-100 shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.1)] rounded-t-[3rem] px-12 py-8">
+        <div className="container mx-auto flex justify-between items-center gap-12">
+          <div className="flex items-center gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-orange/10 text-orange flex items-center justify-center text-2xl shadow-inner italic font-black">
+              <i className="fa-solid fa-sparkles"></i>
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-orange uppercase tracking-[0.2em] mb-1">You are viewing</p>
+              <h5 className="text-xl font-black text-gray-900 leading-none">{title}</h5>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-8">
+            <div className="text-right">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-right">Special Price</p>
+              <h5 className="text-3xl font-black text-gray-900 leading-none italic">
+                ₹{price}
+              </h5>
+            </div>
+            
+            <div className="flex gap-4">
+              <button className="px-8 py-4 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all flex items-center gap-3 group">
+                <i className="fa-solid fa-cart-plus group-hover:scale-110 transition-transform"></i>
+                Add to Cart
+              </button>
+              <button className="px-10 py-4 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center gap-3">
+                <i className="fa-solid fa-bolt"></i>
+                Buy Now
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

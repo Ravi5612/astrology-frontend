@@ -5,12 +5,7 @@ import { FaCar, FaGem, FaHome, FaStar, FaBalanceScale } from "react-icons/fa";
 import { GiGoldBar, GiDiamonds, GiSparkles } from "react-icons/gi";
 import { ProgressBar } from "./ProgressBar";
 import { IncludedItemCard } from "./IncludedItemCard";
-import { ResultData } from "@/lib/types";
-
-interface DahejResultProps {
-    result: ResultData;
-    t: any;
-}
+import { ResultData, DahejResultProps } from "@/lib/types";
 
 const DahejResult: React.FC<DahejResultProps> = ({ result, t }) => {
     return (

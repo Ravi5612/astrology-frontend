@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { X, Send, Paperclip, Image as ImageIcon, FileText, Download, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import { getNotificationSocket, getSupportSocket } from "@packages/ui/src/utils/socket";
@@ -268,13 +269,15 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                                 <div key={`summary-${idx}`} className={`flex flex-col !w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
                                     <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[95%]`}>
                                         <div className="flex-shrink-0">
-                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm">
-                                                <img
+                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
+                                                <Image
                                                     src={isMe
                                                         ? "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128"
                                                         : "https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff&size=128"
                                                     }
                                                     alt={isMe ? "You" : "Admin"}
+                                                    width={32}
+                                                    height={32}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
@@ -307,13 +310,15 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                             <div key={msgKey} className={`flex flex-col !w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
                                 <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[85%]`}>
                                     <div className="flex-shrink-0">
-                                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm">
-                                            <img
+                                        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
+                                            <Image
                                                 src={isMe
                                                     ? "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128"
                                                     : "https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff&size=128"
                                                 }
                                                 alt={isMe ? "You" : "Admin"}
+                                                width={32}
+                                                height={32}
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
@@ -327,7 +332,13 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                                             {msg.attachmentUrl && (
                                                 <div className="mb-2">
                                                     {msg.attachmentType === "image" ? (
-                                                        <img src={msg.attachmentUrl} className="rounded-lg max-h-48 object-cover" alt="Attachment" />
+                                                        <Image
+                                                            src={msg.attachmentUrl}
+                                                            width={400}
+                                                            height={300}
+                                                            className="rounded-lg max-h-48 object-cover"
+                                                            alt="Attachment"
+                                                        />
                                                     ) : (
                                                         <div className="flex items-center gap-2 bg-black/10 p-2 rounded">
                                                             <FileTextIcon className="w-4 h-4" /> Document

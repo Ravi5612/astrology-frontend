@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { useLanguageStore } from '@/store/languageStore';
 import { profileTranslations } from '@/lib/translations/profile';
 
@@ -41,55 +42,37 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     ];
 
     return (
-        <div>
-            <div className="card border-0 rounded-top-4 mb-0 p-3 shadow-lg" style={{ backgroundColor: "white" }}>
-                <div className="card-body p-0 d-flex align-items-center gap-3">
-                    <div className="position-relative d-inline-block shrink-0">
-                        <div style={{
-                            width: "60px",
-                            height: "60px",
-                            borderRadius: "50%",
-                            overflow: "hidden",
-                            border: "3px solid #fff",
-                            boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-                        }}>
+        <div className="flex flex-col gap-0 sticky top-24">
+            <div className="bg-white rounded-t-2xl p-4 shadow-premium border-b border-gray-100">
+                <div className="flex items-center gap-4">
+                    <div className="relative flex-shrink-0">
+                        <div className="w-[64px] h-[64px] rounded-full overflow-hidden border-2 border-white shadow-md">
                             {savingSections.personal ? (
-                                <div className="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                                    <div className="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                                 </div>
                             ) : (
-                                <img
+                                <Image
                                     src={imagePreview}
                                     alt="Profile"
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    width={64}
+                                    height={64}
+                                    className="object-cover w-full h-full text-[0]"
                                 />
                             )}
                         </div>
                         <label
                             htmlFor="profile-upload"
-                            className="position-absolute bottom-0 end-0 bg-white rounded-circle shadow-sm cursor-pointer mb-0"
-                            style={{
-                                width: "24px",
-                                height: "24px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                color: "#301118",
-                                border: "1px solid #fff",
-                                transition: "all 0.3s ease",
-                                transform: "translate(20%, 20%)"
-                            }}
+                            className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer border border-gray-100 hover:bg-gray-50 transition-colors"
                             title={t.sidebar.updatePhoto}
                         >
-                            <i className="fa-solid fa-camera" style={{ fontSize: "10px" }}></i>
+                            <i className="fa-solid fa-camera text-[10px] text-brown"></i>
                             <input
                                 id="profile-upload"
                                 type="file"
-                                className="d-none"
+                                className="hidden"
                                 accept="image/*"
                                 onChange={(e) => {
-                                    console.log("📁 File input onChange triggered!");
                                     if (e.target.files && e.target.files[0]) {
                                         handleImageChange(e.target.files[0]);
                                     }
@@ -98,70 +81,50 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                         </label>
                     </div>
 
-                    <div className="text-start">
-                        <h6 className="fw-bold mb-0 text-dark d-flex align-items-center gap-1">
+                    <div className="flex-1 min-w-0">
+                        <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0">
                             {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
-                            <i className="fa-solid fa-check-circle text-brown" style={{ fontSize: "12px" }}></i>
+                            <i className="fa-solid fa-check-circle text-orange/80 text-[12px]"></i>
                         </h6>
+                        <p className="text-xs text-gray-500 mt-0.5 truncate">User Account</p>
                     </div>
                 </div>
             </div>
 
             {/* Navigation Menu - Scrollable */}
             <div
-                className="card border-0 rounded-bottom-4 overflow-y-auto shadow-lg bg-brown"
+                className="bg-brown rounded-b-2xl shadow-premium overflow-y-auto custom-scrollbar"
                 style={{
-                    maxHeight: "calc(100vh - 120px)",
-                    scrollbarWidth: "thin",
-                    scrollbarColor: "rgba(255, 255, 255, 0.5) transparent"
+                    maxHeight: "calc(100vh - 160px)",
                 }}
                 data-lenis-prevent
             >
-                <div className="border-0 pt-3 px-3">
+                <div className="pt-4 px-4 pb-2">
                     <small
-                        className="text-uppercase fw-bold"
-                        style={{ fontSize: "11px", letterSpacing: "1px", color: "white", fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
+                        className="text-[10px] uppercase font-bold tracking-wider text-white/50"
+                        style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
                     >
                         {t.sidebar.accountMenu}
                     </small>
                 </div>
-                <div className=" p-2">
+                <div className="p-2 space-y-1">
                     {menuItems.map((item, index) => {
-                        const baseStyle = activeTab === item.id
-                            ? { backgroundColor: "#FF6B00", color: "white" }
-                            : { color: "white" };
-
+                        const isActive = activeTab === item.id;
                         return (
-                            <a
+                            <button
                                 key={index}
-                                href="#"
-                                className={`border-0 rounded-3 d-flex align-items-center px-3 py-3 mb-1 transition-all text-decoration-none ${activeTab === item.id
-                                    ? 'fw-bold shadow-sm'
-                                    : ''
-                                    }`}
-                                style={
-                                    lang === "hi" ? { ...baseStyle, fontFamily: "'Noto Sans Devanagari', sans-serif" } : baseStyle
-                                }
-                                onMouseEnter={(e) => {
-                                    if (activeTab !== item.id) {
-                                        e.currentTarget.style.backgroundColor = "#FF6B00";
-                                        e.currentTarget.style.color = "white";
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (activeTab !== item.id) {
-                                        e.currentTarget.style.backgroundColor = "transparent";
-                                        e.currentTarget.style.color = "white";
-                                    }
-                                }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setActiveTab(item.id);
-                                }}
+                                type="button"
+                                className={`w-full text-left border-0 rounded-xl flex items-center px-4 py-3 transition-all duration-200 group ${
+                                    isActive
+                                        ? 'bg-orange text-white shadow-gold font-bold'
+                                        : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white'
+                                }`}
+                                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
+                                onClick={() => setActiveTab(item.id)}
                             >
-                                <i className={`${item.icon} me-3`} style={{ width: "20px" }}></i>
-                                {item.label}
-                            </a>
+                                <i className={`${item.icon} w-5 mr-3 text-lg transition-transform group-hover:scale-110`}></i>
+                                <span className="text-sm">{item.label}</span>
+                            </button>
                         );
                     })}
                 </div>

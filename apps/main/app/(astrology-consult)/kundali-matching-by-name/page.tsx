@@ -8,8 +8,10 @@ import MatchingForm from "./matching-form.component";
 import ResultComponent from "./result.component";
 import EducationalContent from "./educational-content.component";
 
+import { ConsultPersonDetails, AdvancedMatchResults } from "@/lib/types";
+
 const KundaliMatchingByNamePage = () => {
-  const [boyDetails, setBoyDetails] = useState({
+  const [boyDetails, setBoyDetails] = useState<ConsultPersonDetails>({
     name: "",
     date: "",
     time: "",
@@ -18,7 +20,7 @@ const KundaliMatchingByNamePage = () => {
     locationName: "",
   });
 
-  const [girlDetails, setGirlDetails] = useState({
+  const [girlDetails, setGirlDetails] = useState<ConsultPersonDetails>({
     name: "",
     date: "",
     time: "",
@@ -28,14 +30,14 @@ const KundaliMatchingByNamePage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [matchingResult, setMatchingResult] = useState<any>(null);
+  const [matchingResult, setMatchingResult] = useState<AdvancedMatchResults | null>(null);
   const [error, setError] = useState<string | null>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
   const handleInputChange = (
     gender: "boy" | "girl",
-    field: string,
-    value: any,
+    field: keyof ConsultPersonDetails,
+    value: string,
   ) => {
     if (gender === "boy") {
       setBoyDetails((prev) => ({ ...prev, [field]: value }));
@@ -119,7 +121,7 @@ const KundaliMatchingByNamePage = () => {
   };
 
   return (
-    <div className="main-wrapper">
+    <div className="bg-white">
       <HeroComponent />
 
       <MatchingForm

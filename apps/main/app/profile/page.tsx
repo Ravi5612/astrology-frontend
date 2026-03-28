@@ -72,12 +72,12 @@ const ProfileContent: React.FC = () => {
   // Only show full-page loader if we are doing initial load and have no data yet
   if ((loading || clientLoading) && !profileData?.id) {
     return (
-      <div className="min-vh-100 d-flex justify-content-center align-items-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
         <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">{t.loading.spinner}</span>
-          </div>
-          <p className="mt-3" style={fontStyle}>{t.loading.title}</p>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium" style={fontStyle}>
+            {t.loading.title}
+          </p>
         </div>
       </div>
     );
@@ -93,14 +93,12 @@ const ProfileContent: React.FC = () => {
   };
 
   return (
-    <div className="min-vh-100 bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden relative">
-      <div className="relative z-10">
-
-
-        <div className="container py-5">
-          <div className="row g-4 align-items-start">
+    <div className="min-h-screen bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden relative">
+      <div className="relative z-10 font-outfit">
+        <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             {/* Sidebar Column */}
-            <div className="col-lg-3">
+            <div className="lg:col-span-1">
               <ProfileSidebar
                 profileData={profileData}
                 activeTab={activeTab}
@@ -112,16 +110,24 @@ const ProfileContent: React.FC = () => {
             </div>
 
             {/* Main Content Column */}
-            <div className="col-lg-9">
+            <div className="lg:col-span-3">
               {/* Feedback Messages */}
               {successMessage && (
-                <div className="alert alert-success border-0 shadow-sm rounded-3 mb-4" role="alert">
-                  <i className="fa-solid fa-check-circle me-2"></i> {successMessage}
+                <div
+                  className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-sm mb-6 flex items-center"
+                  role="alert"
+                >
+                  <i className="fa-solid fa-check-circle mr-3"></i>
+                  <span className="font-medium">{successMessage}</span>
                 </div>
               )}
               {errorMessage && (
-                <div className="alert alert-danger border-0 shadow-sm rounded-3 mb-4" role="alert">
-                  <i className="fa-solid fa-exclamation-circle me-2"></i> {errorMessage}
+                <div
+                  className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm mb-6 flex items-center"
+                  role="alert"
+                >
+                  <i className="fa-solid fa-exclamation-circle mr-3"></i>
+                  <span className="font-medium">{errorMessage}</span>
                 </div>
               )}
 
@@ -141,16 +147,19 @@ const ProfileContent: React.FC = () => {
               )}
 
               {activeTab === "wishlist" && (
-                <div className="card border-0 shadow-sm rounded-4 mb-4">
-                  <div className="card-header bg-white border-0 pt-4 px-4 mb-3">
-                    <h5 className="fw-bold mb-0" style={fontStyle}>
-                      <span className="me-2 p-2 rounded-circle" style={{ backgroundColor: "#ffebee", color: "#e53935" }}>
-                        <i className="fa-solid fa-heart"></i>
-                      </span>
+                <div className="bg-white border-0 shadow-sm rounded-2xl mb-6 overflow-hidden">
+                  <div className="bg-white px-6 pt-6 pb-2 mb-2 flex items-center">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                      style={{ backgroundColor: "#ffebee", color: "#e53935" }}
+                    >
+                      <i className="fa-solid fa-heart"></i>
+                    </div>
+                    <h5 className="text-xl font-bold text-gray-900 m-0" style={fontStyle}>
                       {t.wishlist.title}
                     </h5>
                   </div>
-                  <div className="card-body p-4 pt-0">
+                  <div className="px-6 pb-6 pt-0">
                     <WishlistGrid />
                   </div>
                 </div>
@@ -174,10 +183,7 @@ const ProfileContent: React.FC = () => {
               )}
 
               {activeTab === "rewards" && (
-                <RewardsTab
-                  loadingRewards={loadingRewards}
-                  rewards={rewards}
-                />
+                <RewardsTab loadingRewards={loadingRewards} rewards={rewards} />
               )}
 
               {activeTab === "history" && (
@@ -188,13 +194,12 @@ const ProfileContent: React.FC = () => {
                   toggleSession={toggleSession}
                   onViewDetails={handleViewChat}
                   onReportIssue={(session) => {
-                    setReportItemType('consultation');
+                    setReportItemType("consultation");
                     setReportItemDetails(session);
                     setReportModalOpen(true);
                   }}
                 />
               )}
-
 
               {activeTab === "orders" && (
                 <OrdersTab
@@ -208,7 +213,7 @@ const ProfileContent: React.FC = () => {
                     setShowDisputeChat(true);
                   }}
                   onReportIssue={(order) => {
-                    setReportItemType('order');
+                    setReportItemType("order");
                     setReportItemDetails(order);
                     setReportModalOpen(true);
                   }}
@@ -217,9 +222,7 @@ const ProfileContent: React.FC = () => {
                 />
               )}
 
-              {activeTab === "reports" && (
-                <ReportsTab />
-              )}
+              {activeTab === "reports" && <ReportsTab />}
 
               {activeTab === "disputes" && (
                 <DisputesTab
@@ -241,10 +244,7 @@ const ProfileContent: React.FC = () => {
                 />
               )}
 
-              {activeTab === "support" && (
-                <SupportTab supportSettings={supportSettings} />
-              )}
-
+              {activeTab === "support" && <SupportTab supportSettings={supportSettings} />}
             </div>
           </div>
 
@@ -278,20 +278,22 @@ const ProfileContent: React.FC = () => {
             />
           )}
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
-import { Suspense } from 'react';
+import { Suspense } from "react";
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={<div className="min-vh-100 d-flex justify-content-center align-items-center">
-      <div className="spinner-border text-primary" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </div>
-    </div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }
+    >
       <ProfileContent />
     </Suspense>
   );

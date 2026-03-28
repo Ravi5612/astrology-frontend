@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as LucideIcons from "lucide-react";
 import { useCallLogic } from "./useCallLogic";
@@ -95,7 +96,14 @@ export default function CallRoomPage() {
             <div className={`relative w-36 h-36 rounded-full border-4 border-primary/30 p-1 ${status === "ringing" ? "animate-bounce" : ""}`}>
               <div className="w-full h-full rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden">
                 {sessionData?.expert?.user?.avatar ? (
-                  <img src={sessionData.expert.user.avatar} alt="Expert" className="w-full h-full object-cover" />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={sessionData.expert.user.avatar}
+                      alt="Expert"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 ) : (
                   <User className="w-16 h-16 text-neutral-600" />
                 )}

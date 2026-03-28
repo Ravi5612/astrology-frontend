@@ -27,35 +27,23 @@ const UserDetailFormContent = () => {
   } = useUserDetailForm();
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <UserDetailFormHero astrologerName={astrologerName} />
 
-      <section className="py-5" style={{ background: "#ffe3b852" }}>
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-lg-8 col-md-10">
-              <div
-                className="card border-0 shadow-sm mb-4"
-                style={{ borderRadius: "15px", border: "solid 1px #daa23e73" }}
-              >
-                <div className="card-body p-4 text-center">
-                  <div className="d-flex align-items-center justify-content-center mb-3">
-                    <i
-                      className="fa-solid fa-star"
-                      style={{
-                        color: "#daa23e",
-                        fontSize: "24px",
-                        marginRight: "10px",
-                      }}
-                    ></i>
-                    <h5
-                      className="mb-0"
-                      style={{ color: "#732882", fontWeight: "600" }}
-                    >
+      <section className="py-12 md:py-16 bg-[#ffe3b852]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center">
+            <div className="w-full max-w-4xl">
+              {/* Info Card */}
+              <div className="bg-white border border-[#daa23e73] rounded-2xl shadow-sm mb-8 overflow-hidden">
+                <div className="p-6 md:p-8 text-center flex flex-col items-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <i className="fa-solid fa-star text-[#daa23e] text-2xl mr-3"></i>
+                    <h5 className="text-xl font-semibold text-[#732882] m-0">
                       Why We Need Your Birth Details
                     </h5>
                   </div>
-                  <p className="mb-0 text-muted">
+                  <p className="text-gray-600 leading-relaxed max-w-2xl">
                     Your birth details help our expert astrologers create an
                     accurate birth chart and provide personalized predictions
                     based on planetary positions at your birth time.
@@ -63,18 +51,14 @@ const UserDetailFormContent = () => {
                 </div>
               </div>
 
-              <div
-                className="leftcard border-0 shadow-lg"
-                style={{ borderRadius: "15px" }}
-              >
-                <div className="card-body p-4 p-md-5">
-                  <h4 className="mb-4 text-center">
-                    <strong style={{ color: "#732882" }}>
-                      Personal Details
-                    </strong>
+              {/* Form Card */}
+              <div className="bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+                <div className="p-6 md:p-10">
+                  <h4 className="text-2xl font-bold text-center mb-8 text-[#732882]">
+                    Personal Details
                   </h4>
 
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <UserDetailPersonalFields
                       formData={formData}
                       errors={errors}
@@ -100,41 +84,18 @@ const UserDetailFormContent = () => {
                       totalAmount={totalAmount}
                     />
 
-                    <div className="text-center mt-4 mt-md-5">
+                    <div className="text-center pt-8">
                       <button
                         type="submit"
-                        className="submit-button px-5 py-3 text-white fw-semibold"
-                        style={{
-                          background:
-                            "linear-gradient(45deg, #732882, #8a3399)",
-                          border: "none",
-                          borderRadius: "50px",
-                          fontSize: "18px",
-                          boxShadow: "0 4px 15px rgba(115, 40, 130, 0.3)",
-                          minWidth: "250px",
-                          transition: "all 0.3s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = "translateY(-2px)";
-                          e.currentTarget.style.boxShadow =
-                            "0 6px 20px rgba(115, 40, 130, 0.4)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = "translateY(0)";
-                          e.currentTarget.style.boxShadow =
-                            "0 4px 15px rgba(115, 40, 130, 0.3)";
-                        }}
+                        className="group relative inline-flex items-center justify-center px-10 py-4 text-white font-bold text-lg rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl bg-gradient-to-r from-[#732882] to-[#8a3399] min-w-[280px]"
                       >
-                        Proceed to Pay{" "}
-                        <i className="fa-solid fa-arrow-right ms-2"></i>
+                        Proceed to Pay
+                        <i className="fa-solid fa-arrow-right ml-3 transition-transform group-hover:translate-x-1"></i>
                       </button>
                     </div>
 
-                    <p
-                      className="text-center text-muted mt-4 mb-0"
-                      style={{ fontSize: "14px" }}
-                    >
-                      <i className="fa-solid fa-lock me-1"></i>
+                    <p className="text-center text-gray-500 text-sm mt-6 flex items-center justify-center">
+                      <i className="fa-solid fa-lock mr-2"></i>
                       Your information is secure and will only be used for
                       astrological consultation
                     </p>
@@ -145,7 +106,7 @@ const UserDetailFormContent = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
@@ -153,13 +114,8 @@ const UserDetailForm = () => {
   return (
     <Suspense
       fallback={
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "100vh" }}
-        >
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+        <div className="flex items-center justify-center min-h-screen bg-white">
+          <div className="w-12 h-12 border-4 border-[#732882] border-t-transparent rounded-full animate-spin"></div>
         </div>
       }
     >

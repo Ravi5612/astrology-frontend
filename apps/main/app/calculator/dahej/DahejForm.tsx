@@ -4,21 +4,7 @@ import React from "react";
 import { FaUser, FaBriefcase, FaBirthdayCake, FaMoneyBillWave, FaSpinner, FaArrowRight } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiGoldBar } from "react-icons/gi";
-
-interface DahejFormProps {
-    t: any;
-    fullName: string;
-    setFullName: (val: string) => void;
-    job: string;
-    setJob: (val: string) => void;
-    dob: string;
-    setDob: (val: string) => void;
-    salary: string;
-    setSalary: (val: string) => void;
-    loading: boolean;
-    canCalculate: boolean;
-    handleCalculate: (e: React.FormEvent) => void;
-}
+import { DahejFormProps } from "@/lib/types";
 
 const DahejForm: React.FC<DahejFormProps> = ({
     t, fullName, setFullName, job, setJob, dob, setDob, salary, setSalary,

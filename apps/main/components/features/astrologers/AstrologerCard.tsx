@@ -1,16 +1,16 @@
 "use client";
 
 import NextLink from "next/link";
-const Link = NextLink as any;
-
+import Image from "next/image";
 import React, { useState, useRef } from "react";
 import { Button } from "@repo/ui";
 import { useRouter } from "next/navigation";
-import { useWishlistStore } from "@/store/useWishlistStore"; // Changed import
-import { useAuthStore } from "@/store/useAuthStore"; // Changed import
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { getYoutubeId, getYoutubeEmbedUrl } from "@/utils/video-utils";
+import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { useWishlist } from "@/hooks/useWishlist";
-import { Astrologer, AstrologerCardProps } from "@/lib/types";
+import { AstrologerCardProps } from "@/lib/types";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
 
@@ -57,14 +57,8 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
     setCurrentLikes(total_likes);
   }, [total_likes]);
 
-  const getYoutubeId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2] && match[2].length === 11 ? match[2] : null;
-  };
-
   const videoId = video ? getYoutubeId(video) : null;
-  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : video;
+  const embedUrl = video ? getYoutubeEmbedUrl(video) : video;
 
   // For wishlist, we use userId (user table ID)
   const wishlistTargetId = userId ? Number(userId) : Number(id);
@@ -127,7 +121,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
   return (
     <div className="w-full">
       <div className={`bg-white rounded-xl shadow-sm border border-[#daa23e] p-3 text-center transition-transform duration-300 hover:-translate-y-1.5 ${cardClassName}`}>
-        <Link href={createDetailsUrl()} className="no-underline hover:no-underline block">
+        <NextLink href={createDetailsUrl()} className="no-underline hover:no-underline block">
           {/* IMAGE SECTION */}
           <div className="relative flex justify-center pt-8">
             {/* ❤️ LIKE & COUNT — TOP LEFT (OUTSIDE IMAGE) */}
@@ -171,30 +165,37 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
 
             {/* PROFILE IMAGE */}
             <div className="relative">
-              <img
+              <Image
                 src={image}
                 alt={name}
-                className="w-[120px] h-[120px] object-cover rounded-full mb-2 border border-[#daa23e]"
+                width={120}
+                height={120}
+                className="object-cover rounded-full mb-2 border border-[#daa23e]"
               />
 
               {/* ▶ PLAY VIDEO */}
-              <span
+              <button
+                type="button"
+                aria-label={`Play video of ${name}`}
                 className="
-    absolute 
-    top-[85%] 
-    left-[60%] 
-    -translate-x-1/2 
-    -translate-y-1/2 
-    text-white 
-    text-5xl 
-    cursor-pointer 
-    z-10 
-    drop-shadow-lg
-    transition-all
-    duration-300
-    hover:text-primary
-    hover:scale-110
-  "
+                  absolute 
+                  top-[85%] 
+                  left-[60%] 
+                  -translate-x-1/2 
+                  -translate-y-1/2 
+                  text-white 
+                  text-5xl 
+                  cursor-pointer 
+                  z-10 
+                  drop-shadow-lg
+                  transition-all
+                  duration-300
+                  hover:text-primary
+                  hover:scale-110
+                  bg-transparent
+                  border-0
+                  p-0
+                "
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -202,7 +203,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
                 }}
               >
                 <i className="fa-solid fa-circle-play" />
-              </span>
+              </button>
 
 
             </div>
@@ -277,7 +278,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
               {language}
             </span>
           </div>
-        </Link>
+        </NextLink>
 
         {/* ACTION BUTTONS WITH PRICES POINTER */}
         <div className="px-3 pb-4 space-y-2.5">
@@ -330,6 +331,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setShow(false)}
+          aria-hidden="true"
         >
           <div
             className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden"

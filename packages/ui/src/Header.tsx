@@ -643,8 +643,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     height={60}
                     loading="eager"
                     priority
-                    style={{ height: 'auto' }}
-                    className="w-[180px] object-contain"
+                    className="object-contain"
                   />
                 </Link>
 

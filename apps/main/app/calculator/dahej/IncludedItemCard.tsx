@@ -1,5 +1,5 @@
 import React from "react";
-import { IncludedItemCardProps } from "./types";
+import { IncludedItemCardProps } from "@/lib/types";
 
 export const IncludedItemCard = ({ icon, title, items, description }: IncludedItemCardProps) => (
     <div className="glass-card rounded-3xl p-6 border border-[#301118]/5 hover:border-[#d4af37]/30 transition-all duration-300 group hover:shadow-lg">

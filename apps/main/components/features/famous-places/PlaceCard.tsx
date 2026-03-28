@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import NextImage from "next/image";
-const Image = NextImage as any;
+import Image from "next/image";
 import Link from "next/link";
-import { fetchPlaceImages, Place } from "@/libs/serp-api";
+import { fetchPlaceImages } from "@/libs/serp-api";
+import { Place } from "@/lib/types";
 import { useLanguageStore } from "../../../store/languageStore";
 import { famousPlacesTranslations } from "../../../lib/famous-places-translations";
 
@@ -39,10 +39,12 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       <div className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-orange/20 transition-all duration-500 flex flex-col h-full shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(255,107,0,0.12)] hover:-translate-y-1">
         {/* Image Section */}
         <div className="relative h-60 w-full overflow-hidden bg-slate-100">
-          <img
+          <Image
             src={displayImage}
             alt={place.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brown/60 via-transparent to-transparent opacity-60"></div>
 

@@ -40,24 +40,24 @@ export const CharacteristicsGrid = () => {
 
 
     return (
-           <div className="row g-4 mb-10">
-                  {menuOptions.map((feat, i) => (
-                    <div key={i} className="col-md-6">
-                      <div
-                        className={`${feat.bg} p-6 rounded-4 border border-white h-100 flex gap-4`}
-                      >
-                        <div className="text-2xl mt-1">{feat.icon}</div>
-                        <div>
-                          <h4 className="text-sm font-bold text-[#301118] uppercase mb-1">
-                            {feat.label}
-                          </h4>
-                          <p className="text-gray-500 text-xs leading-relaxed italic m-0">
-                            {feat.text}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            {menuOptions.map((feat, i) => (
+              <div key={i} className="group">
+                <div className="h-full bg-white rounded-[2.5rem] p-8 shadow-premium border border-gray-100 transition-all duration-500 hover:shadow-2xl hover:border-yellow-500/20 flex gap-6 items-start">
+                   <div className={`w-14 h-14 rounded-2xl ${feat.bg} flex items-center justify-center text-2xl shrink-0 shadow-sm border border-white group-hover:scale-110 transition-transform duration-500`}>
+                      {feat.icon}
+                   </div>
+                   <div className="space-y-2">
+                      <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] group-hover:text-yellow-600 transition-colors">
+                        {feat.label}
+                      </h4>
+                      <p className="text-sm font-bold text-gray-900 leading-relaxed italic">
+                        &quot;{feat.text}&quot;
+                      </p>
+                   </div>
+                </div>
+              </div>
+            ))}
         </div>
     )
 }

@@ -5,24 +5,7 @@ import { FaMars, FaVenus, FaSpinner, FaChevronRight } from "react-icons/fa";
 import { MdOutlineSecurity } from "react-icons/md";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 
-type DetailType = {
-  name: string;
-  date: string;
-  time: string;
-  lat: string;
-  lon: string;
-  locationName: string;
-};
-
-type Props = {
-  boyDetails: DetailType;
-  girlDetails: DetailType;
-  handleInputChange: (gender: "boy" | "girl", field: string, value: any) => void;
-  handleLocationSelect: (gender: "boy" | "girl", location: any) => void;
-  handleMatch: () => void;
-  loading: boolean;
-  error: string | null;
-};
+import { MatchFormProps } from "@/lib/types";
 
 const MatchingForm = ({
   boyDetails,
@@ -32,69 +15,65 @@ const MatchingForm = ({
   handleMatch,
   loading,
   error,
-}: Props) => {
+}: MatchFormProps) => {
   return (
-    <section className="space-section light-back">
-      <div className="container">
-        <div className="row g-4">
+    <section className="py-20 bg-gray-50/50">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Boy's Details */}
-          <div className="col-lg-6">
-            <div className="light-card border rounded-4 border-[#fd64102b] p-8 h-100 shadow-xl group transition-all duration-300 hover:shadow-2xl hover:border-[#fd641055]">
-              <div className="flex items-center gap-4 mb-8 border-b border-[#fd64101a] pb-4">
-                <div className="bg-blue-500/10 p-3 rounded-2xl text-blue-600 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                  <FaMars size={24} />
+          <div className="group">
+            <div className="h-full bg-white rounded-[2.5rem] shadow-premium border border-gray-100 p-8 md:p-12 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+              <div className="flex items-center gap-6 mb-10 border-b border-gray-50 pb-8">
+                <div className="w-16 h-16 rounded-[1.5rem] bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-sm border border-blue-100/50 italic font-black text-2xl">
+                  <FaMars />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#301118] mb-0">
+                  <h3 className="text-2xl font-black text-gray-900 leading-none">
                     Boy&apos;s Details
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2">
                     The Groom&apos;s Profile
                   </p>
                 </div>
               </div>
 
-              <div className="row g-4">
-                <div className="col-12">
-                  <div className="relative group/input">
-                    <input
-                      type="text"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
-                      placeholder="Boy's Full Name"
-                      value={boyDetails.name}
-                      onChange={(e) =>
-                        handleInputChange("boy", "name", e.target.value)
-                      }
-                    />
-                  </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300"
+                    placeholder="Enter boy's name"
+                    value={boyDetails.name}
+                    onChange={(e) => handleInputChange("boy", "name", e.target.value)}
+                  />
                 </div>
-                <div className="col-md-6">
-                  <div className="relative group/input">
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Date</label>
                     <input
                       type="date"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
                       value={boyDetails.date}
-                      onChange={(e) =>
-                        handleInputChange("boy", "date", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("boy", "date", e.target.value)}
                     />
                   </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="relative group/input">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Time</label>
                     <input
                       type="time"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
                       value={boyDetails.time}
-                      onChange={(e) =>
-                        handleInputChange("boy", "time", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("boy", "time", e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="col-12">
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Place</label>
                   <LocationAutocomplete
-                    placeholder="Boy's Birth Place (City, State)"
+                    placeholder="Search city or location"
                     onSelect={(val) => handleLocationSelect("boy", val)}
                   />
                 </div>
@@ -103,63 +82,59 @@ const MatchingForm = ({
           </div>
 
           {/* Girl's Details */}
-          <div className="col-lg-6">
-            <div className="light-card border rounded-4 border-[#fd64102b] p-8 h-100 shadow-xl group transition-all duration-300 hover:shadow-2xl hover:border-[#fd641055]">
-              <div className="flex items-center gap-4 mb-8 border-b border-[#fd64101a] pb-4">
-                <div className="bg-pink-500/10 p-3 rounded-2xl text-pink-600 group-hover:scale-110 group-hover:bg-pink-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                  <FaVenus size={24} />
+          <div className="group">
+            <div className="h-full bg-white rounded-[2.5rem] shadow-premium border border-gray-100 p-8 md:p-12 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+              <div className="flex items-center gap-6 mb-10 border-b border-gray-50 pb-8">
+                <div className="w-16 h-16 rounded-[1.5rem] bg-rose-50 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all duration-500 shadow-sm border border-rose-100/50 italic font-black text-2xl">
+                  <FaVenus />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#301118] mb-0">
+                  <h3 className="text-2xl font-black text-gray-900 leading-none">
                     Girl&apos;s Details
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2">
                     The Bride&apos;s Profile
                   </p>
                 </div>
               </div>
 
-              <div className="row g-4">
-                <div className="col-12">
-                  <div className="relative group/input">
-                    <input
-                      type="text"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
-                      placeholder="Girl's Full Name"
-                      value={girlDetails.name}
-                      onChange={(e) =>
-                        handleInputChange("girl", "name", e.target.value)
-                      }
-                    />
-                  </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300"
+                    placeholder="Enter girl's name"
+                    value={girlDetails.name}
+                    onChange={(e) => handleInputChange("girl", "name", e.target.value)}
+                  />
                 </div>
-                <div className="col-md-6">
-                  <div className="relative group/input">
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Date</label>
                     <input
                       type="date"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
                       value={girlDetails.date}
-                      onChange={(e) =>
-                        handleInputChange("girl", "date", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("girl", "date", e.target.value)}
                     />
                   </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="relative group/input">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Time</label>
                     <input
                       type="time"
-                      className="form-control rounded-3 py-3 pl-4 border bg-gray-50 text-sm shadow-sm focus:bg-white focus:ring-2 focus:ring-[#fd641022] transition-all"
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
                       value={girlDetails.time}
-                      onChange={(e) =>
-                        handleInputChange("girl", "time", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("girl", "time", e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="col-12">
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Place</label>
                   <LocationAutocomplete
-                    placeholder="Girl's Birth Place (City, State)"
+                    placeholder="Search city or location"
                     onSelect={(val) => handleLocationSelect("girl", val)}
                   />
                 </div>
@@ -168,31 +143,46 @@ const MatchingForm = ({
           </div>
         </div>
 
-        <div className="text-center mt-12">
+        <div className="mt-16 flex flex-col items-center">
           {error && (
-            <p className="text-red-500 font-bold mb-4 animate-bounce">
-              {error}
-            </p>
+            <div className="mb-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+               <i className="fa-solid fa-circle-exclamation text-red-500"></i>
+               <p className="text-sm font-black text-red-600 uppercase tracking-widest">{error}</p>
+            </div>
           )}
+
           <button
             disabled={loading}
             onClick={handleMatch}
-            className="btn-link py-3 px-4 wfc mx-auto uppercase tracking-[3px] text-sm font-black shadow-2xl hover:scale-105 transition-transform flex items-center justify-center gap-3 border-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group relative px-12 py-6 bg-gray-900 text-white rounded-3xl font-black text-xs uppercase tracking-[0.4em] shadow-premium hover:shadow-2xl hover:bg-orange transition-all duration-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
           >
-            {loading ? (
-              <>
-                Analyzing Advanced Data <FaSpinner className="animate-spin" />
-              </>
-            ) : (
-              <>
-                Generate Advanced Report <FaChevronRight className="animate-pulse" />
-              </>
-            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <div className="relative flex items-center justify-center gap-4">
+              {loading ? (
+                <>
+                  <span>Analyzing Astral Alignment</span>
+                  <FaSpinner className="animate-spin text-orange" />
+                </>
+              ) : (
+                <>
+                  <span>Generate Compatibility Report</span>
+                  <i className="fa-solid fa-sparkles text-orange animate-pulse"></i>
+                </>
+              )}
+            </div>
           </button>
-          <p className="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-            <MdOutlineSecurity size={14} className="text-[#fd6410]" /> 100%
-            Private & Secure Analysis
-          </p>
+
+          <div className="mt-8 flex items-center gap-6 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+             <div className="flex items-center gap-2">
+               <MdOutlineSecurity size={16} className="text-orange" />
+               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">100% Private & Secure Analysis</span>
+             </div>
+             <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+             <div className="flex items-center gap-2">
+               <i className="fa-solid fa-user-shield text-orange text-xs"></i>
+               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">Data Encrypted</span>
+             </div>
+          </div>
         </div>
       </div>
     </section>

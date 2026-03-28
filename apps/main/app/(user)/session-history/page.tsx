@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { FaComments, FaPhone, FaVideo, FaStar, FaArrowRight, FaCalendarXmark, FaCircle } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 // Mock Data for Sessions
 const MOCK_SESSIONS = [
@@ -63,336 +66,178 @@ const SessionHistory = () => {
             ? MOCK_SESSIONS
             : MOCK_SESSIONS.filter((session) => session.status === activeTab);
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case "Completed":
-                return "text-success";
-            case "Scheduled":
-                return "text-warning"; // Goldish/Orange
-            case "Cancelled":
-                return "text-danger";
-            default:
-                return "text-muted";
-        }
-    };
-
     const getTypeIcon = (type: string) => {
         switch (type) {
             case "Chat":
-                return "fa-comments";
+                return <FaComments />;
             case "Call":
-                return "fa-phone";
+                return <FaPhone />;
             case "Video":
-                return "fa-video";
+                return <FaVideo />;
             default:
-                return "fa-star";
+                return <FaStar />;
         }
     };
 
     return (
-        <>
-            <section className="banner-part">
-                <div className="overlay-hero">
-                    <div className="container">
-                        <div className="row align-items-center">
-                            <div className="col-lg-12 text-center">
-                                <h1 className="mb-3">
-                                    My <span style={{ color: "#daa23e" }}>Sessions</span>
-                                </h1>
-                                <p className="text-white" style={{ fontSize: "18px" }}>
-                                    View your past and upcoming consultations
-                                </p>
-                            </div>
-                        </div>
+        <div className="bg-[#fcfafc] min-h-screen font-display">
+            {/* Header / Hero Section */}
+            <section className="relative pt-32 pb-48 overflow-hidden bg-slate-950 text-white">
+                {/* Celestial Background Elements */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0 opacity-50"></div>
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0 opacity-30"></div>
+                
+                <div className="max-w-7xl mx-auto px-4 relative z-10 text-center space-y-8">
+                    <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-700">
+                        <HiOutlineSparkles className="text-orange-500 text-xs" />
+                        <span className="text-[10px] font-black text-white/80 uppercase tracking-[.3em]">User Service History</span>
                     </div>
+                    
+                    <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+                        My <span className="text-orange-500 italic underline underline-offset-[12px] decoration-orange-500/20">Sessions</span>
+                    </h1>
+                    <p className="text-xl font-bold text-gray-400 max-w-xl mx-auto italic border-l-4 border-orange-500/20 pl-8 lg:border-l-0 lg:pl-0">
+                        &quot;Explore your journey through past and upcoming consultations with the world&apos;s finest astral experts.&quot;
+                    </p>
                 </div>
             </section>
 
-            <section className="py-5 bg-cream" style={{ minHeight: "80vh" }}>
-                <div className="container">
-                    {/* Tabs */}
-                    <div className="row mb-4">
-                        <div className="col-12 d-flex justify-content-center">
-                            <div className="session-tabs">
-                                {["All", "Scheduled", "Completed", "Cancelled"].map((tab) => (
-                                    <button
-                                        key={tab}
-                                        className={`tab-btn ${activeTab === tab ? "active" : ""}`}
-                                        onClick={() => setActiveTab(tab)}
-                                    >
-                                        {tab}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+            {/* Main Content Area */}
+            <main className="max-w-7xl mx-auto px-4 -mt-24 pb-32 relative z-10">
+                {/* Premium Tabs Navigation */}
+                <div className="flex justify-center mb-12">
+                    <div className="inline-flex flex-wrap items-center justify-center gap-2 bg-white/80 backdrop-blur-2xl p-2 rounded-[2.5rem] shadow-premium border border-white/50 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                        {["All", "Scheduled", "Completed", "Cancelled"].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-10 py-5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${
+                                    activeTab === tab 
+                                    ? "bg-slate-950 text-white shadow-2xl scale-105" 
+                                    : "text-slate-400 hover:text-slate-950"
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
                     </div>
+                </div>
 
-                    {/* Session List */}
-                    <div className="row justify-content-center">
-                        <div className="col-lg-10 col-md-12">
-                            {filteredSessions.length > 0 ? (
-                                filteredSessions.map((session) => (
-                                    <div key={session.id} className="session-card row align-items-center vert-move mb-3">
-
-                                        {/* Left: Astrologer Info */}
-                                        <div className="col-12 col-md-4 d-flex align-items-center mb-3 mb-md-0">
-                                            <div className="astro-img-wrapper me-3">
-                                                <img
+                {/* Session List */}
+                <div className="grid grid-cols-1 gap-8 max-w-5xl mx-auto">
+                    {filteredSessions.length > 0 ? (
+                        filteredSessions.map((session, idx) => (
+                            <div 
+                                key={session.id} 
+                                className="group relative bg-white rounded-[2.5rem] border border-gray-100 p-8 md:p-12 shadow-premium hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 animate-in fade-in slide-in-from-bottom-6"
+                                style={{ animationDelay: `${idx * 100}ms` }}
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+                                    {/* Astrologer Info */}
+                                    <div className="md:col-span-5 flex items-center gap-8">
+                                        <div className="relative w-24 h-24 shrink-0 group-hover:scale-110 transition-transform duration-700">
+                                            <div className="absolute -inset-1.5 bg-gradient-to-r from-orange-500 to-indigo-500 rounded-full blur-[5px] group-hover:blur-[8px] transition-all duration-700 opacity-20 group-hover:opacity-40"></div>
+                                            <div className="relative w-full h-full rounded-full border-2 border-white overflow-hidden shadow-2xl">
+                                                <Image
                                                     src={session.astrologerImage}
                                                     alt={session.astrologerName}
+                                                    fill
+                                                    className="object-cover"
                                                 />
-                                                <span className="type-badge">
-                                                    <i className={`fa-solid ${getTypeIcon(session.type)}`}></i>
-                                                </span>
                                             </div>
-                                            <div>
-                                                <h5 className="mb-1 text-purple fw-bold">{session.astrologerName}</h5>
-                                                <p className="mb-0 text-muted fs-6">
-                                                    {session.date} | {session.time}
+                                            {/* Type Badge */}
+                                            <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-slate-950 text-white rounded-2xl flex items-center justify-center text-sm shadow-2xl border-2 border-white group-hover:bg-orange-600 transition-colors">
+                                                {getTypeIcon(session.type)}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-black text-slate-950 mb-1 group-hover:text-orange-600 transition-colors uppercase tracking-tight">
+                                                {session.astrologerName}
+                                            </h3>
+                                            <div className="flex items-center gap-3 mt-1">
+                                                <span className="w-1.5 h-1.5 bg-orange-500 rounded-full opacity-50"></span>
+                                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                                    {session.date} <span className="text-slate-200">|</span> {session.time}
                                                 </p>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        {/* Middle: Session Details */}
-                                        <div className="col-6 col-md-3 text-start text-md-center mb-3 mb-md-0">
-                                            <p className="mb-1 text-muted small-label">Duration</p>
-                                            <h6 className="fw-semi-bold">{session.duration}</h6>
+                                    {/* Stats Middle */}
+                                    <div className="md:col-span-4 grid grid-cols-2 gap-8 border-y border-gray-50 md:border-y-0 md:border-x py-8 md:py-0">
+                                        <div className="text-center md:text-left space-y-1">
+                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Duration</p>
+                                            <h6 className="text-lg font-black text-slate-950 tabular-nums uppercase">{session.duration}</h6>
+                                        </div>
+                                        <div className="text-center md:text-left space-y-1">
+                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Paid Amount</p>
+                                            <h6 className="text-lg font-black text-orange-600 tabular-nums uppercase">{session.amount}</h6>
+                                        </div>
+                                    </div>
+
+                                    {/* Status & Action */}
+                                    <div className="md:col-span-3 flex flex-col md:items-end gap-6">
+                                        <div className={`inline-flex items-center gap-3 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-500 ${
+                                            session.status === "Completed" ? "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-500 group-hover:text-white" :
+                                            session.status === "Scheduled" ? "bg-amber-50 text-amber-600 border-amber-100 group-hover:bg-amber-500 group-hover:text-white" :
+                                            "bg-rose-50 text-rose-600 border-rose-100 group-hover:bg-rose-500 group-hover:text-white"
+                                        }`}>
+                                            <FaCircle className={`text-[6px] animate-pulse ${session.status === "Completed" ? "text-emerald-500 group-hover:text-white" : session.status === "Scheduled" ? "text-amber-500 group-hover:text-white" : "text-rose-500 group-hover:text-white"}`} />
+                                            {session.status}
                                         </div>
 
-                                        <div className="col-6 col-md-2 text-start text-md-center mb-3 mb-md-0">
-                                            <p className="mb-1 text-muted small-label">Amount</p>
-                                            <h6 className="fw-semi-bold">{session.amount}</h6>
-                                        </div>
-
-
-                                        {/* Right: Status & Action */}
-                                        <div className="col-12 col-md-3 d-flex flex-column align-items-md-end align-items-start gap-2">
-                                            <div className={`status-badge ${session.status.toLowerCase()}`}>
-                                                <i className="fa-solid fa-circle me-1" style={{ fontSize: "8px" }}></i>
-                                                {session.status}
-                                            </div>
-
+                                        <div className="w-full md:w-auto">
                                             {session.status === "Completed" && (
-                                                <Link href={`/astrologer-details?id=${session.id}`} className="btn-action">
-                                                    Rebook <i className="fa-solid fa-arrow-right ms-1"></i>
+                                                <Link 
+                                                    href={`/astrologer-details?id=${session.id}`} 
+                                                    className="group/btn relative w-full inline-flex items-center justify-center gap-4 bg-slate-950 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all overflow-hidden"
+                                                >
+                                                    <span className="relative z-10">Rebook Expert</span>
+                                                    <FaArrowRight className="relative z-10 text-[10px] group-hover/btn:translate-x-1 transition-transform" />
                                                 </Link>
                                             )}
                                             {session.status === "Scheduled" && (
-                                                <button className="btn-action primary">
-                                                    Join Now
+                                                <button className="group/btn relative w-full inline-flex items-center justify-center gap-4 bg-orange-600 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:-translate-y-1 active:scale-95 transition-all overflow-hidden shadow-orange-500/20">
+                                                    <span className="relative z-10 font-black">Join Consultation</span>
+                                                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
                                                 </button>
                                             )}
                                         </div>
-
                                     </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-5">
-                                    <div className="empty-state-icon mb-3">
-                                        <i className="fa-solid fa-calendar-xmark"></i>
-                                    </div>
-                                    <h4 className="text-muted">No sessions found</h4>
-                                    <p className="text-muted">You haven't booked any consultations in this category yet.</p>
-                                    <Link href="/our-astrologers" className="btn-global btn-primary mt-3">
-                                        Book a Consultation
-                                    </Link>
                                 </div>
-                            )}
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-32 bg-white rounded-[4rem] border-2 border-dashed border-gray-100">
+                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-10 text-slate-200">
+                                <FaCalendarXmark size={48} />
+                            </div>
+                            <h4 className="text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4">No sessions found</h4>
+                            <p className="text-lg text-slate-400 font-bold italic mb-12 max-w-sm mx-auto">You haven&apos;t booked any consultations in this category yet.</p>
+                            <Link 
+                                href="/our-astrologers" 
+                                className="inline-flex items-center gap-6 bg-slate-950 text-white px-12 py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all"
+                            >
+                                Book a Consultation <FaArrowRight />
+                            </Link>
                         </div>
+                    )}
+                </div>
+
+                {/* Secure Badge Footer */}
+                <div className="text-center mt-24 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+                    <div className="inline-flex items-center gap-6 px-10 py-4 bg-white rounded-full border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <HiOutlineSparkles className="text-orange-500" />
+                            <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">End-to-End Encrypted Logs</span>
+                        </div>
+                        <div className="w-1.5 h-6 bg-gray-100 rounded-full"></div>
+                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">ISO 27001 Certified System</span>
                     </div>
                 </div>
-            </section>
-
-            <style jsx>{`
-        /* Reuse Variables from variables.css ideally, but defining local scope for specifics */
-        .bg-cream {
-            background-color: #ffe3b852;
-        }
-        .text-purple {
-            color: #732882;
-        }
-
-        /* Tabs Styling */
-        .session-tabs {
-            background: #fff;
-            padding: 5px;
-            border-radius: 50px;
-            display: inline-flex;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            flex-wrap: wrap;
-            justify-content: center;
-            border: 1px solid #daa23e40;
-        }
-        
-        .tab-btn {
-            border: none;
-            background: transparent;
-            padding: 8px 24px;
-            border-radius: 50px;
-            font-weight: 500;
-            color: #555;
-            transition: all 0.3s ease;
-            font-size: 15px;
-        }
-
-        .tab-btn.active {
-            background: #732882;
-            color: #fff;
-            box-shadow: 0 2px 5px rgba(115, 40, 130, 0.3);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: #f0f0f0;
-            color: #732882;
-        }
-
-        /* Card Styling */
-        .session-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .session-card:hover {
-            border-color: #daa23e;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        }
-
-        /* Astrologer Image Area */
-        .astro-img-wrapper {
-            position: relative;
-            width: 60px;
-            height: 60px;
-        }
-
-        .astro-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #daa23e;
-        }
-
-        .type-badge {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background: #732882;
-            color: #fff;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            border: 2px solid #fff;
-        }
-
-        .small-label {
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .status-badge.completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .status-badge.scheduled {
-            background: #fff8e1;
-            color: #ff8f00;
-        }
-
-        .status-badge.cancelled {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid #732882;
-            color: #732882;
-            background: transparent;
-            white-space: nowrap;
-        }
-
-        .btn-action.primary {
-            background: #732882;
-            color: #fff;
-        }
-
-        .btn-action:hover {
-            background: #732882;
-            color: #fff;
-        }
-
-        .btn-action.primary:hover {
-            background: #5a1f6b;
-             border-color: #5a1f6b;
-        }
-
-        /* Empty State */
-        .empty-state-icon {
-            font-size: 60px;
-            color: #ddd;
-        }
-
-        /* Mobile Adjustments */
-        @media (max-width: 576px) {
-            .session-tabs {
-                width: 100%;
-                justify-content: space-between;
-                border-radius: 12px;
-            }
-            .tab-btn {
-                flex: 1;
-                padding: 10px 0;
-                font-size: 13px;
-                border-radius: 10px;
-            }
-            
-            .astro-img-wrapper {
-                width: 50px;
-                height: 50px;
-            }
-
-            .session-card {
-                padding: 15px;
-            }
-            
-            .btn-action {
-                width: 100%;
-                text-align: center;
-            }
-        }
-      `}</style>
-        </>
+            </main>
+        </div>
     );
 };
 
 export default SessionHistory;
-
-

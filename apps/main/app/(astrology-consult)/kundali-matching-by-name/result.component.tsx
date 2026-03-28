@@ -1,479 +1,331 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { FaHeart, FaMars, FaVenus, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 import { MdOutlineSecurity } from "react-icons/md";
 import { renderContent } from "./utils";
 
-type Props = {
-  resultsRef: React.RefObject<HTMLDivElement | null>;
-  matchingResult: any;
-  boyDetails: any;
-  girlDetails: any;
-};
+import { AdvancedResultsComponentProps } from "@/lib/types";
 
 const ResultComponent = ({
   resultsRef,
   matchingResult,
   boyDetails,
   girlDetails,
-}: Props) => {
+}: AdvancedResultsComponentProps) => {
   return (
-    <section ref={resultsRef} className="space-section bg-white pt-5">
-      <div className="container">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-[#fff9f6] rounded-[3rem] shadow-[0_20px_50px_rgba(253,100,16,0.1)] border border-orange-100 overflow-hidden">
-            <div className="p-8 md:p-16">
-              {/* Result Header */}
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 bg-[#fd641012] text-[#fd6410] px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                  Advanced Compatibility Analysis
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black text-[#301118] mb-8 leading-tight">
-                  Relationship <span className="text-[#fd6410]">Scorecard</span>
-                </h2>
-
-                <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
-                  <div className="text-center group">
-                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-4 border-2 border-blue-100 group-hover:scale-110 transition-transform duration-500">
-                      <FaMars className="text-blue-500 text-3xl" />
-                    </div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                      Groom
-                    </p>
-                    <h4 className="text-xl font-bold text-[#301118]">
-                      {boyDetails.name || "Boy"}
-                    </h4>
-                  </div>
-
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#fd6410] shadow-xl border border-orange-50 z-10 relative animate-pulse">
-                      <FaHeart size={24} />
-                    </div>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-[2px] bg-gradient-to-r from-transparent via-orange-200 to-transparent hidden md:block"></div>
-                  </div>
-
-                  <div className="text-center group">
-                    <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center mb-4 border-2 border-pink-100 group-hover:scale-110 transition-transform duration-500">
-                      <FaVenus className="text-pink-500 text-3xl" />
-                    </div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                      Bride
-                    </p>
-                    <h4 className="text-xl font-bold text-[#301118]">
-                      {girlDetails.name || "Girl"}
-                    </h4>
-                  </div>
-                </div>
+    <section ref={resultsRef} className="py-24 bg-white relative overflow-hidden">
+      {/* Decorative Background */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <div className="bg-white rounded-[3rem] shadow-premium border border-gray-100 overflow-hidden">
+          <div className="p-8 md:p-16 lg:p-24">
+            {/* Result Header */}
+            <div className="text-center mb-20 space-y-8">
+              <div className="inline-flex items-center gap-2 px-6 py-2 bg-orange/10 rounded-full border border-orange/20">
+                 <i className="fa-solid fa-sparkles text-orange text-xs"></i>
+                 <span className="text-[12px] font-black text-orange uppercase tracking-[.2em]">Comprehensive Compatibility Audit</span>
               </div>
+              <h2 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight">
+                Relationship <span className="text-orange italic">Scorecard</span>
+              </h2>
 
-              {/* Detailed Kundali Data */}
-              <div className="row g-4 mb-12">
-                {/* Boy's Kundali Card */}
-                <div className="col-lg-6">
-                  <div className="bg-white rounded-[2rem] p-8 border border-blue-50 h-100 shadow-sm">
-                    <h4 className="text-[11px] font-black text-blue-600 uppercase tracking-[3px] mb-6 flex items-center gap-2">
-                      <FaMars /> Groom&apos;s Kundali
+              <div className="flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-24 pt-8">
+                {/* Groom */}
+                <div className="group text-center space-y-4">
+                  <div className="relative w-28 h-28 mx-auto">
+                    <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:bg-blue-500/30 transition-all"></div>
+                    <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-blue-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                      <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=boy" alt="Groom" fill className="p-4" />
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
+                       <FaMars className="text-sm" />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Groom Details</span>
+                    <h4 className="text-2xl font-black text-gray-900 tracking-tight italic">
+                      {boyDetails.name || "The Groom"}
                     </h4>
-                    <div className="space-y-4">
-                      <div className="flex justify-between border-b border-gray-50 pb-2 gap-4">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">
-                          Nakshatra
-                        </span>
-                        <span className="text-sm font-bold text-[#301118] text-right">
-                          {renderContent(
-                            matchingResult.boy_info?.nakshatra?.name,
-                          )}{" "}
-                          (
-                          {renderContent(
-                            matchingResult.boy_info?.nakshatra?.lord?.name,
-                          )}
-                          , Pada{" "}
-                          {renderContent(
-                            matchingResult.boy_info?.nakshatra?.pada,
-                          )}
-                          )
-                        </span>
-                      </div>
-                      <div className="flex justify-between border-b border-gray-50 pb-2 gap-4">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">
-                          Rasi (Moon Sign)
-                        </span>
-                        <span className="text-sm font-bold text-[#301118] text-right">
-                          {renderContent(
-                            matchingResult.boy_info?.rasi?.name,
-                          )}{" "}
-                          (
-                          {renderContent(
-                            matchingResult.boy_info?.rasi?.lord?.name,
-                          )}
-                          )
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-3 pt-2">
-                        {matchingResult.boy_info?.koot &&
-                          Object.entries(matchingResult.boy_info.koot).map(
-                            ([key, value]) => (
-                              <div
-                                key={key}
-                                className="flex justify-between items-center border-b border-gray-50 pb-1"
-                              >
-                                <span className="text-[9px] font-bold text-gray-300 uppercase">
-                                  {key}
-                                </span>
-                                <span className="text-[11px] font-bold text-[#301118] uppercase">
-                                  {renderContent(value)}
-                                </span>
-                              </div>
-                            ),
-                          )}
-                      </div>
-                    </div>
                   </div>
                 </div>
 
-                {/* Girl's Kundali Card */}
-                <div className="col-lg-6">
-                  <div className="bg-white rounded-[2rem] p-8 border border-pink-50 h-100 shadow-sm">
-                    <h4 className="text-[11px] font-black text-pink-600 uppercase tracking-[3px] mb-6 flex items-center gap-2">
-                      <FaVenus /> Bride&apos;s Kundali
+                {/* Heart Link */}
+                <div className="relative">
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-rose-500 shadow-premium border border-rose-50 z-10 relative animate-pulse group hover:scale-125 transition-transform duration-500 cursor-default">
+                    <FaHeart size={28} />
+                  </div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-[1px] bg-gradient-to-r from-transparent via-rose-200 to-transparent hidden md:block"></div>
+                </div>
+
+                {/* Bride */}
+                <div className="group text-center space-y-4">
+                  <div className="relative w-28 h-28 mx-auto">
+                    <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-xl group-hover:bg-rose-500/30 transition-all"></div>
+                    <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-rose-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                      <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=girl" alt="Bride" fill className="p-4" />
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
+                       <FaVenus className="text-sm" />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Bride Details</span>
+                    <h4 className="text-2xl font-black text-gray-900 tracking-tight italic">
+                      {girlDetails.name || "The Bride"}
                     </h4>
-                    <div className="space-y-4">
-                      <div className="flex justify-between border-b border-gray-50 pb-2 gap-4">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">
-                          Nakshatra
-                        </span>
-                        <span className="text-sm font-bold text-[#301118] text-right">
-                          {renderContent(
-                            matchingResult.girl_info?.nakshatra?.name,
-                          )}{" "}
-                          (
-                          {renderContent(
-                            matchingResult.girl_info?.nakshatra?.lord?.name,
-                          )}
-                          , Pada{" "}
-                          {renderContent(
-                            matchingResult.girl_info?.nakshatra?.pada,
-                          )}
-                          )
-                        </span>
-                      </div>
-                      <div className="flex justify-between border-b border-gray-50 pb-2 gap-4">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">
-                          Rasi (Moon Sign)
-                        </span>
-                        <span className="text-sm font-bold text-[#301118] text-right">
-                          {renderContent(
-                            matchingResult.girl_info?.rasi?.name,
-                          )}{" "}
-                          (
-                          {renderContent(
-                            matchingResult.girl_info?.rasi?.lord?.name,
-                          )}
-                          )
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-3 pt-2">
-                        {matchingResult.girl_info?.koot &&
-                          Object.entries(matchingResult.girl_info.koot).map(
-                            ([key, value]) => (
-                              <div
-                                key={key}
-                                className="flex justify-between items-center border-b border-gray-50 pb-1"
-                              >
-                                <span className="text-[9px] font-bold text-gray-300 uppercase">
-                                  {key}
-                                </span>
-                                <span className="text-[11px] font-bold text-[#301118] uppercase">
-                                  {renderContent(value)}
-                                </span>
-                              </div>
-                            ),
-                          )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Main Data Grid */}
-              <div className="row g-5">
-                {/* Score Card */}
-                <div className="col-lg-5">
-                  <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-orange-50 text-center h-100 flex flex-col items-center justify-center">
-                    <h3 className="text-[11px] font-black text-[#301118] uppercase tracking-[3px] mb-8">
-                      Final Guna Score
-                    </h3>
-
-                    <div className="relative inline-flex items-center justify-center">
-                      <svg className="w-48 h-48 transform -rotate-90">
-                        <circle
-                          className="text-gray-100"
-                          strokeWidth="12"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="80"
-                          cx="96"
-                          cy="96"
-                        />
-                        <circle
-                          className="text-[#fd6410]"
-                          strokeWidth="12"
-                          strokeDasharray={
-                            (
-                              ((matchingResult.guna_milan?.total_points ??
-                                matchingResult.guna_milan?.total?.score ??
-                                matchingResult.total?.score ??
-                                matchingResult.total_score ??
-                                0) /
-                                (matchingResult.guna_milan
-                                  ?.maximum_points ?? 36)) *
-                              (2 * Math.PI * 80)
-                            ).toString() +
-                            " " +
-                            2 * Math.PI * 80
-                          }
-                          strokeLinecap="round"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="80"
-                          cx="96"
-                          cy="96"
-                          style={{
-                            transition: "stroke-dasharray 1s ease-in-out",
-                          }}
-                        />
-                      </svg>
-                      <div className="absolute flex flex-col items-center">
-                        <span className="text-6xl font-black text-[#301118] leading-none mb-1">
-                          {matchingResult.guna_milan?.total_points ??
-                            matchingResult.guna_milan?.total?.score ??
-                            matchingResult.total?.score ??
-                            matchingResult.total_score ??
-                            0}
-                        </span>
-                        <span className="text-sm font-black text-gray-300 uppercase tracking-tighter">
-                          out of{" "}
-                          {matchingResult.guna_milan?.maximum_points ?? 36}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-10">
-                      <div
-                        className={`inline-flex items-center gap-2 px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-widest ${
-                          (matchingResult.guna_milan?.total_points ??
-                            matchingResult.guna_milan?.total?.score ??
-                            matchingResult.total?.score ??
-                            matchingResult.total_score ??
-                            0) >=
-                          (matchingResult.guna_milan?.maximum_points ??
-                            36) /
-                            2
-                            ? "bg-green-500 text-white shadow-lg shadow-green-100"
-                            : "bg-[#301118] text-white shadow-lg shadow-orange-100"
-                        }`}
-                      >
-                        {(matchingResult.guna_milan?.total_points ??
-                          matchingResult.guna_milan?.total?.score ??
-                          matchingResult.total?.score ??
-                          matchingResult.total_score ??
-                          0) >=
-                        (matchingResult.guna_milan?.maximum_points ?? 36) /
-                          2
-                          ? "High Compatibility"
-                          : "Moderate Match"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Breakdown Grid */}
-                <div className="col-lg-7">
-                  <div className="bg-white rounded-[3rem] p-10 h-100 shadow-sm border border-orange-50">
-                    <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
-                      <h3 className="text-[11px] font-black text-[#301118] uppercase tracking-[3px]">
-                        Ashtakoot Breakdown
-                      </h3>
-                      <span className="text-[10px] font-bold text-[#fd6410] bg-[#fd641010] px-3 py-1 rounded-full uppercase tracking-widest">
-                        8 Koot Milan
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                      {(
-                        matchingResult.guna_milan?.guna ||
-                        Object.entries(
-                          (matchingResult.guna_milan?.ashtakoot ||
-                            matchingResult.ashtakoot ||
-                            matchingResult.ashtakoot_points ||
-                            {}) as Record<
-                            string,
-                            { score: number; maximum_score: number }
-                          >,
-                        ).map(([key, value]) => ({
-                          name: key,
-                          obtained_points: value.score,
-                          maximum_points: value.maximum_score,
-                        }))
-                      ).map((item: any, idx: number) => (
-                        <div key={idx} className="space-y-2 group">
-                          <div className="flex justify-between items-end">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-[#301118] opacity-70 group-hover:opacity-100 transition-opacity">
-                              {item.name}
-                            </span>
-                            <span className="text-[11px] font-black text-[#fd6410]">
-                              {item.obtained_points}{" "}
-                              <span className="text-gray-300 font-bold">
-                                /
-                              </span>{" "}
-                              {item.maximum_points}
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-50 h-2 rounded-full overflow-hidden border border-gray-100">
-                            <div
-                              className="bg-linear-to-r from-[#fd6410] to-[#ff8c4a] h-full rounded-full transition-all duration-1000"
-                              style={{
-                                width: `${(item.obtained_points / (item.maximum_points || 1)) * 100}%`,
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mangal Dosha Section (NEW) */}
-                {(matchingResult.girl_mangal_dosha_details ||
-                  matchingResult.boy_mangal_dosha_details) && (
-                  <div className="col-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      {/* Boy Dosha */}
-                      <div
-                        className={`p-8 rounded-[2rem] border ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100"}`}
-                      >
-                        <div className="flex items-center gap-4 mb-4">
-                          <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-500" : "bg-green-500"}`}
-                          >
-                            {matchingResult.boy_mangal_dosha_details
-                              ?.has_dosha ? (
-                              <FaExclamationTriangle />
-                            ) : (
-                              <FaCheckCircle />
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold text-[#301118]">
-                              Groom Mangal Dosha
-                            </h4>
-                            <p className="text-xs font-bold uppercase tracking-wider opacity-60">
-                              Status Check
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-sm font-medium opacity-80 leading-relaxed">
-                          {renderContent(
-                            matchingResult.boy_mangal_dosha_details
-                              ?.description,
-                          ) || "No specific details available."}
-                        </p>
-                        {matchingResult.boy_mangal_dosha_details
-                          ?.has_exception && (
-                          <div className="mt-3 text-xs bg-white/50 p-2 rounded-lg font-bold text-[#301118]">
-                            Exception Applied: True
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Girl Dosha */}
-                      <div
-                        className={`p-8 rounded-[2rem] border ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100"}`}
-                      >
-                        <div className="flex items-center gap-4 mb-4">
-                          <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-500" : "bg-green-500"}`}
-                          >
-                            {matchingResult.girl_mangal_dosha_details
-                              ?.has_dosha ? (
-                              <FaExclamationTriangle />
-                            ) : (
-                              <FaCheckCircle />
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold text-[#301118]">
-                              Bride Mangal Dosha
-                            </h4>
-                            <p className="text-xs font-bold uppercase tracking-wider opacity-60">
-                              Status Check
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-sm font-medium opacity-80 leading-relaxed">
-                          {renderContent(
-                            matchingResult.girl_mangal_dosha_details
-                              ?.description,
-                          ) || "No specific details available."}
-                        </p>
-                        {matchingResult.girl_mangal_dosha_details
-                          ?.has_exception && (
-                          <div className="mt-3 text-xs bg-white/50 p-2 rounded-lg font-bold text-[#301118]">
-                            Exception Applied: True
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Conclusion Card */}
-                <div className="col-12">
-                  <div className="bg-gradient-to-br from-[#301118] to-[#4a1c26] rounded-[3rem] p-10 md:p-14 text-white relative overflow-hidden shadow-2xl">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#fd641008] rounded-full -mr-16 -mt-16"></div>
-                    <div className="relative z-10 text-center md:text-left">
-                      <div className="flex flex-col md:flex-row items-center gap-8">
-                        <div className="bg-[#fd6410] w-20 h-20 rounded-3xl flex items-center justify-center shrink-0 shadow-2xl rotate-3">
-                          <MdOutlineSecurity size={40} />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="text-[12px] font-black uppercase tracking-[4px] mb-4 text-[#fd6410]">
-                            Astro-Expert Conclusion
-                          </h4>
-                          <p className="text-lg italic opacity-95 leading-relaxed m-0 font-display">
-                            &quot;
-                            {renderContent(
-                              matchingResult.message?.description ||
-                                matchingResult.guna_milan?.conclusion
-                                  ?.report ||
-                                matchingResult.conclusion?.report ||
-                                matchingResult.conclusion ||
-                                "Our analysis suggests consulting with a professional astrologer for a truly personalized compatibility reading.",
-                            )}
-                            &quot;
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-10 pt-10 border-t border-white/5 flex flex-wrap justify-center md:justify-start gap-4">
-                        <button
-                          className="bg-white text-[#301118] px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
-                          onClick={() => window.print()}
-                        >
-                          Print Report
-                        </button>
-                        <button className="bg-white/10 text-white border border-white/10 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all">
-                          Download PDF
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Detailed Kundali Data */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+              {/* Groom's Kundali Card */}
+              <div className="bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
+                   <FaMars size={120} />
+                </div>
+                <h4 className="text-[11px] font-black text-blue-500 uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Groom&apos;s Astral Profile
+                </h4>
+                <div className="space-y-6 relative z-10">
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-blue-100/50 shadow-sm">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nakshatra</span>
+                    <span className="text-sm font-black text-gray-900 text-right">
+                      {renderContent(matchingResult.boy_info?.nakshatra?.name)}{" "}
+                      <span className="text-gray-400 italic">({renderContent(matchingResult.boy_info?.nakshatra?.lord?.name)}, P{renderContent(matchingResult.boy_info?.nakshatra?.pada)})</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-blue-100/50 shadow-sm">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Rasi (Moon Sign)</span>
+                    <span className="text-sm font-black text-gray-900 text-right">
+                      {renderContent(matchingResult.boy_info?.rasi?.name)}{" "}
+                      <span className="text-gray-400 italic">({renderContent(matchingResult.boy_info?.rasi?.lord?.name)})</span>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 pt-4">
+                    {matchingResult.boy_info?.koot && Object.entries(matchingResult.boy_info.koot).map(([key, value]) => (
+                      <div key={key} className="flex flex-col gap-1 p-4 bg-white/50 rounded-xl border border-gray-100">
+                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{key}</span>
+                        <span className="text-xs font-black text-gray-900 uppercase">{renderContent(value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bride's Kundali Card */}
+              <div className="bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
+                   <FaVenus size={120} />
+                </div>
+                <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full"></div>
+                  Bride&apos;s Astral Profile
+                </h4>
+                <div className="space-y-6 relative z-10">
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nakshatra</span>
+                    <span className="text-sm font-black text-gray-900 text-right">
+                      {renderContent(matchingResult.girl_info?.nakshatra?.name)}{" "}
+                      <span className="text-gray-400 italic">({renderContent(matchingResult.girl_info?.nakshatra?.lord?.name)}, P{renderContent(matchingResult.girl_info?.nakshatra?.pada)})</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Rasi (Moon Sign)</span>
+                    <span className="text-sm font-black text-gray-900 text-right">
+                      {renderContent(matchingResult.girl_info?.rasi?.name)}{" "}
+                      <span className="text-gray-400 italic">({renderContent(matchingResult.girl_info?.rasi?.lord?.name)})</span>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 pt-4">
+                    {matchingResult.girl_info?.koot && Object.entries(matchingResult.girl_info.koot).map(([key, value]) => (
+                      <div key={key} className="flex flex-col gap-1 p-4 bg-white/50 rounded-xl border border-gray-100">
+                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{key}</span>
+                        <span className="text-xs font-black text-gray-900 uppercase">{renderContent(value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Data Dashboard */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
+              {/* Score Gauge */}
+              <div className="lg:col-span-5 h-full">
+                <div className="bg-gray-900 rounded-[3rem] p-12 shadow-2xl text-center h-full flex flex-col items-center justify-center relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-orange/20 to-transparent opacity-30"></div>
+                  <h3 className="text-[12px] font-black text-orange uppercase tracking-[0.4em] mb-12 relative z-10">Final Compatibility Score</h3>
+                  
+                  <div className="relative inline-flex items-center justify-center z-10">
+                    <svg className="w-56 h-56 transform -rotate-90">
+                      <circle
+                        className="text-white/10"
+                        strokeWidth="16"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="90"
+                        cx="112"
+                        cy="112"
+                      />
+                      <circle
+                        className="text-orange"
+                        strokeWidth="16"
+                        strokeDasharray={`${(((matchingResult.guna_milan?.total_points ?? matchingResult.total?.score ?? 0) / (matchingResult.guna_milan?.maximum_points ?? 36)) * (2 * Math.PI * 90))} ${2 * Math.PI * 90}`}
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="90"
+                        cx="112"
+                        cy="112"
+                        style={{ transition: "stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1)" }}
+                      />
+                    </svg>
+                    <div className="absolute flex flex-col items-center">
+                      <span className="text-7xl font-black text-white leading-none">
+                        {matchingResult.guna_milan?.total_points ?? matchingResult.total?.score ?? 0}
+                      </span>
+                      <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mt-2">Maximum 36</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-12 relative z-10">
+                    <div className={`inline-flex items-center gap-3 px-10 py-4 rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all duration-500 scale-110 ${
+                      (matchingResult.guna_milan?.total_points ?? matchingResult.total?.score ?? 0) >= 18 
+                        ? "bg-emerald-500 text-white shadow-emerald-500/20" 
+                        : "bg-red-500 text-white shadow-red-500/20"
+                    }`}>
+                      <i className={`fa-solid ${(matchingResult.guna_milan?.total_points ?? matchingResult.total?.score ?? 0) >= 18 ? "fa-circle-check" : "fa-circle-exclamation"}`}></i>
+                      {(matchingResult.guna_milan?.total_points ?? matchingResult.total?.score ?? 0) >= 18 ? "Excellent Union" : "Moderate Harmony"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ashtakoot Progress Breakdown */}
+              <div className="lg:col-span-7">
+                <div className="bg-white rounded-[3rem] p-12 h-full shadow-premium border border-gray-100 flex flex-col">
+                  <div className="flex items-center justify-between mb-12 border-b border-gray-50 pb-8">
+                    <h3 className="text-2xl font-black text-gray-900 leading-none">Ashtakoot Analysis</h3>
+                    <span className="text-[10px] font-black text-orange bg-orange/10 px-4 py-2 rounded-xl uppercase tracking-widest border border-orange/20">Metric Breakdown</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                    {(matchingResult.guna_milan?.guna || []).map((item: any, idx: number) => (
+                      <div key={idx} className="space-y-4 group">
+                        <div className="flex justify-between items-end">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">
+                            {item.name}
+                          </span>
+                          <span className="text-sm font-black text-gray-900">
+                            {item.obtained_points} <span className="text-gray-300">/ {item.maximum_points}</span>
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-50 h-3 rounded-full overflow-hidden border border-gray-50 p-0.5">
+                          <div
+                            className="bg-orange h-full rounded-full transition-all duration-1000 shadow-sm"
+                            style={{ width: `${(item.obtained_points / (item.maximum_points || 1)) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dosha Status Section */}
+            {(matchingResult.girl_mangal_dosha_details || matchingResult.boy_mangal_dosha_details) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                {/* Groom Dosha */}
+                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-50/50 border-red-100" : "bg-emerald-50/50 border-emerald-100"}`}>
+                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                    {matchingResult.boy_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={80} /> : <FaCheckCircle size={80} />}
+                  </div>
+                  <div className="flex items-center gap-6 mb-8 relative z-10">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-500" : "bg-emerald-500"}`}>
+                      {matchingResult.boy_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={20} /> : <FaCheckCircle size={20} />}
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-black text-gray-900 italic">Groom Mangal Dosha</h4>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Planetary Status</p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-bold text-gray-600 leading-bold relative z-10 leading-relaxed italic">
+                    &quot;{renderContent(matchingResult.boy_mangal_dosha_details?.description) || "No malefic planetary influence detected."}&quot;
+                  </p>
+                </div>
+
+                {/* Bride Dosha */}
+                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-50/50 border-red-100" : "bg-emerald-50/50 border-emerald-100"}`}>
+                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                    {matchingResult.girl_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={80} /> : <FaCheckCircle size={80} />}
+                  </div>
+                  <div className="flex items-center gap-6 mb-8 relative z-10">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-500" : "bg-emerald-500"}`}>
+                      {matchingResult.girl_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={20} /> : <FaCheckCircle size={20} />}
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-black text-gray-900 italic">Bride Mangal Dosha</h4>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Planetary Status</p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-bold text-gray-600 leading-bold relative z-10 leading-relaxed italic">
+                    &quot;{renderContent(matchingResult.girl_mangal_dosha_details?.description) || "No malefic planetary influence detected."}&quot;
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Conclusion CTA */}
+            <div className="bg-gray-900 rounded-[3.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl group">
+               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+               <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
+               
+               <div className="relative z-10 space-y-10">
+                  <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 group-hover:scale-105 transition-transform duration-500">
+                     <i className="fa-solid fa-user-robot text-orange"></i>
+                     <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Astro-Expert Synthesis</span>
+                  </div>
+                  
+                  <div className="max-w-3xl mx-auto space-y-8">
+                    <h4 className="text-3xl md:text-5xl font-black text-white italic leading-tight">&quot;The stars suggest a path of <span className="text-orange">harmony</span> & growth.&quot;</h4>
+                    <p className="text-gray-400 font-bold text-lg leading-relaxed">
+                      {renderContent(matchingResult.message?.description || matchingResult.guna_milan?.conclusion?.report || matchingResult.conclusion?.report || "Personalized Compatibility Summary will appear here.")}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center gap-6 pt-6">
+                    <button onClick={() => window.print()} className="group/btn relative px-10 py-5 bg-white text-gray-900 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-xl hover:scale-105 transition-all duration-300">
+                       <span className="relative z-10 flex items-center gap-3">
+                          <i className="fa-solid fa-print text-sm group-hover/btn:text-orange"></i>
+                          Print Expert Report
+                       </span>
+                    </button>
+                    <button className="group/btn relative px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                       <span className="relative z-10 flex items-center gap-3">
+                          <i className="fa-solid fa-arrow-down-to-bracket text-sm group-hover/btn:text-orange"></i>
+                          Download as PDF
+                       </span>
+                    </button>
+                  </div>
+               </div>
+            </div>
           </div>
+        </div>
+
+        <div className="mt-12 text-center opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-opacity duration-700">
+           <div className="flex items-center justify-center gap-3">
+              <i className="fa-solid fa-shield-check text-orange"></i>
+              <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.5em]">CERTIFIED ACCURATE ANALYSIS BY ASTROLOGY IN BHARAT</span>
+           </div>
         </div>
       </div>
     </section>

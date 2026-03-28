@@ -13,20 +13,27 @@ interface StatsBarProps {
 
 const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
   return (
-    <section style={{ background: "#fff7f0", borderBottom: "1px solid #ffe8d6" }}>
-      <div className="container py-4">
-        <div className="row g-3 text-center">
+    <section className="bg-orange-50/50 border-b border-orange-100 overflow-hidden relative">
+       {/* Background subtle texture/pattern could go here */}
+       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange/20 to-transparent"></div>
+       
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center items-center">
           {stats.map((s, i) => (
-            <div key={i} className="col-6 col-md-3">
-              <div className="py-3">
-                <div
-                  className="fw-black mb-1"
-                  style={{ fontSize: "2rem", color: "#f97316", lineHeight: 1 }}
-                >
-                  {s.value}
-                </div>
-                <div className="text-muted small fw-semibold">{s.label}</div>
-              </div>
+            <div key={i} className="group relative">
+               {/* Vertical Divider for Desktop */}
+               {i < stats.length - 1 && (
+                 <div className="hidden md:block absolute -right-6 top-1/2 -translate-y-1/2 h-8 w-px bg-orange-200/50"></div>
+               )}
+               
+               <div className="space-y-1 transition-transform duration-500 hover:-translate-y-1">
+                 <div className="text-3xl md:text-5xl font-black text-orange tabular-nums leading-none tracking-tighter decoration-orange/20 group-hover:scale-110 transition-transform">
+                   {s.value}
+                 </div>
+                 <div className="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                   {s.label}
+                 </div>
+               </div>
             </div>
           ))}
         </div>

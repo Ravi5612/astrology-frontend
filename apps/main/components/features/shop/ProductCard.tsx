@@ -76,97 +76,100 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
     };
 
     return (
-        <div className={`group relative bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col border border-gray-100 ${className || ""}`}>
-            {/* 🔥 Top Header: Offer Tag (Left) & Heart Icon (Right) */}
-            {percentageOff > 0 && (
-                <div className="absolute top-3 left-3 z-10">
-                    <div className="bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 animate-pulse">
-                        <i className="fa-solid fa-tag text-[10px]"></i>
-                        {percentageOff}% {t.products.off}
-                    </div>
-                </div>
-            )}
-
-            <button
-                onClick={handleLike}
-                className={`absolute top-3 right-3 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full transition-colors shadow-sm w-9 h-9 flex items-center justify-center ${isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
-            >
-                <i className={`${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-lg`}></i>
-            </button>
-
-            {/* 🖼️ Image Area with Glow */}
-            <div className="relative w-full aspect-square bg-[#f9f9f9] flex items-center justify-center overflow-hidden shrink-0">
-                <div className="absolute w-32 h-32 bg-orange/10 rounded-full blur-3xl opacity-60"></div>
-                <div className="relative w-full h-full">
-                    <Image
-                        src={imageUrl}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 33vw"
-                        className="object-cover transform group-hover:scale-105 transition-transform duration-500 mix-blend-normal"
-                    />
-                </div>
-            </div>
-
-            {/* 📄 Content Area */}
-            <div className="p-3 flex flex-col gap-2 flex-grow">
-                <div>
-                    <div className="flex justify-between items-start mb-0.5">
-                        <h3 className="text-lg font-bold text-[#111827] line-clamp-1" title={product.name}>
-                            {product.name}
-                        </h3>
-                        <div className="flex items-center gap-1 text-yellow-400 text-xs font-medium bg-yellow-50 px-1.5 py-0.5 rounded">
-                            <i className="fa-solid fa-star text-[10px]"></i>
-                            <span className="text-gray-600">4.8</span>
-                        </div>
-                    </div>
-                    <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">
-                        {product.description}
-                    </p>
-                </div>
-
-                {/* 💰 Price Section */}
-                <div className="flex items-end gap-2 mt-auto pt-2">
-                    <span className="text-2xl font-bold text-orange">
-                        ₹{price}
-                    </span>
-                    {originalPrice > price && (
-                        <span className="text-base text-gray-400 line-through mb-1 ml-3">
-                            ₹{originalPrice}
-                        </span>
-                    )}
-                </div>
-
-                {/* 🔘 Action Buttons */}
-                <div className="flex gap-2 mt-2">
-                    <Button
-                        variant="outline"
-                        size="md"
-                        onClick={handleAddToCart}
-                        className="flex-1 !rounded-full border-orange text-orange hover:bg-orange/5 h-10 text-[13px] px-3 font-semibold"
-                    >
-                        {t.products.addToCart}
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="md"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setIsBuyLoading(true);
-                            const id = product.id || product._id;
-                            // Store in sessionStorage for a clean URL
-                            sessionStorage.setItem('buyNowItem', JSON.stringify({ productId: id, quantity: 1 }));
-                            router.push(`/checkout?type=order`);
-                        }}
-                        loading={isBuyLoading}
-                        className="flex-1 rounded-full h-10 text-[13px] px-3 font-semibold !bg-orange hover:!opacity-90"
-                    >
-                        {t.products.buyNow}
-                    </Button>
-                </div>
-            </div>
+    <div className={`group relative bg-white rounded-[2rem] shadow-premium hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col border border-gray-100/50 ${className || ""}`}>
+      {/* 🔥 Top Header: Offer Tag (Left) & Heart Icon (Right) */}
+      {percentageOff > 0 && (
+        <div className="absolute top-4 left-4 z-10 animate-in fade-in slide-in-from-left-4 duration-500">
+          <div className="bg-orange text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-orange/20 flex items-center gap-1.5 uppercase tracking-wider">
+            <i className="fa-solid fa-fire text-[10px]"></i>
+            {percentageOff}% Off
+          </div>
         </div>
+      )}
+
+      <button
+        onClick={handleLike}
+        className={`absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-xl transition-all duration-300 shadow-sm border border-gray-100 group-hover:shadow-md ${isLiked ? 'text-red-500 bg-red-50/50 border-red-100' : 'text-gray-400 hover:text-red-500'}`}
+      >
+        <i className={`${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-lg transition-transform active:scale-125`}></i>
+      </button>
+
+      {/* 🖼️ Image Area with Glow */}
+      <div className="relative w-full aspect-square bg-gray-50/50 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-white transition-colors duration-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange/5 via-transparent to-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="relative w-[80%] h-[80%] transition-transform duration-700 ease-out group-hover:scale-110">
+          <Image
+            src={imageUrl}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 33vw"
+            className="object-contain mix-blend-multiply drop-shadow-2xl"
+          />
+        </div>
+      </div>
+
+      {/* 📄 Content Area */}
+      <div className="p-6 flex flex-col gap-4 flex-grow relative bg-white">
+        <div className="space-y-1">
+          <div className="flex justify-between items-start gap-2">
+            <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-orange transition-colors duration-300" title={product.name}>
+              {product.name}
+            </h3>
+            <div className="flex items-center gap-1 text-orange font-black bg-orange/5 px-2 py-1 rounded-lg text-xs shrink-0 border border-orange/10">
+              <i className="fa-solid fa-star text-[10px]"></i>
+              <span>4.8</span>
+            </div>
+          </div>
+          <p className="text-sm font-bold text-gray-400 line-clamp-2 leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+
+        {/* 💰 Price Section */}
+        <div className="flex items-baseline gap-3 mt-auto">
+          <span className="text-2xl font-black text-gray-900">
+            ₹{price}
+          </span>
+          {originalPrice > price && (
+            <span className="text-sm font-bold text-gray-300 line-through">
+              ₹{originalPrice}
+            </span>
+          )}
+        </div>
+
+        {/* 🔘 Action Buttons */}
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={handleAddToCart}
+            className="flex-1 h-12 rounded-2xl border-2 border-gray-100 text-gray-400 font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+          >
+            <i className="fa-solid fa-cart-plus translate-y-[-1px] group-hover/btn:scale-110 transition-transform"></i>
+            {t.products.addToCart}
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsBuyLoading(true);
+              const id = product.id || product._id;
+              sessionStorage.setItem('buyNowItem', JSON.stringify({ productId: id, quantity: 1 }));
+              router.push(`/checkout?type=order`);
+            }}
+            disabled={isBuyLoading}
+            className="flex-1 h-12 rounded-2xl bg-orange text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-orange/40 hover:bg-orange/90 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            {isBuyLoading ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              <>
+                <i className="fa-solid fa-bolt"></i>
+                {t.products.buyNow}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
     );
 };
 

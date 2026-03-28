@@ -108,7 +108,7 @@ const HeroSection = () => {
                       src="/images/Astrologer-h.png"
                       alt="Astrologer background"
                       fill
-                      unoptimized
+                      sizes="(max-width: 1024px) 100vw, 42vw"
                       className="animate-[spin_30s_linear_infinite] object-contain scale-[1.0]"
                       style={{ transformOrigin: "center center" }}
                     />
@@ -118,7 +118,7 @@ const HeroSection = () => {
                     src="/images/Astrologer.png"
                     alt="Astrologer"
                     fill
-                    unoptimized
+                    sizes="(max-width: 1024px) 100vw, 42vw"
                     priority
                     className="object-contain scale-[1.4] origin-bottom translate-y-16 -translate-x-2 pointer-events-none"
                     style={{ zIndex: 6 }}

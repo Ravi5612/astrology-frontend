@@ -100,7 +100,7 @@ const MangalDoshaPage = () => {
   };
 
   return (
-    <div className="main-wrapper">
+    <div className="bg-white">
       <HeroSection />
 
       <InputForm

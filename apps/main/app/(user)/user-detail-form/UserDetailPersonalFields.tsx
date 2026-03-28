@@ -1,121 +1,108 @@
 "use client";
 
 import React from "react";
-import { UserDetails } from "@/lib/types";
-
-interface UserDetailPersonalFieldsProps {
-  formData: UserDetails;
-  errors: Partial<Record<keyof UserDetails, string>>;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-}
+import { UserDetails, UserDetailPersonalFieldsProps } from "@/lib/types";
 
 const UserDetailPersonalFields: React.FC<UserDetailPersonalFieldsProps> = ({
   formData,
   errors,
   handleChange,
 }) => {
+  const [maxDate, setMaxDate] = React.useState("");
+
+  React.useEffect(() => {
+    setMaxDate(new Date().toISOString().split("T")[0] || "");
+  }, []);
+
   return (
-    <div className="row g-3 g-md-4">
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Full Name <span className="text-danger">*</span>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Full Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className={`form-control ${errors.name ? "is-invalid" : ""}`}
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.name ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
           placeholder="Enter Your Full Name"
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.name ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
         />
-        {errors.name && <div className="invalid-feedback d-block">{errors.name}</div>}
+        {errors.name && <p className="mt-1 text-sm text-red-500 font-medium">{errors.name}</p>}
       </div>
 
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Gender <span className="text-danger">*</span>
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Gender <span className="text-red-500">*</span>
         </label>
         <select
           name="gender"
           value={formData.gender}
           onChange={handleChange}
-          className={`form-select ${errors.gender ? "is-invalid" : ""}`}
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.gender ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
+          className={`w-full px-4 py-3 rounded-lg border bg-white transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.gender ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
         >
           <option value="">Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
-        {errors.gender && <div className="invalid-feedback d-block">{errors.gender}</div>}
+        {errors.gender && <p className="mt-1 text-sm text-red-500 font-medium">{errors.gender}</p>}
       </div>
 
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Date of Birth <span className="text-danger">*</span>
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Date of Birth <span className="text-red-500">*</span>
         </label>
         <input
           type="date"
           name="dateOfBirth"
           value={formData.dateOfBirth}
           onChange={handleChange}
-          max={new Date().toISOString().split("T")[0]}
-          className={`form-control ${errors.dateOfBirth ? "is-invalid" : ""}`}
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.dateOfBirth ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
+          max={maxDate}
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.dateOfBirth ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
         />
-        {errors.dateOfBirth && <div className="invalid-feedback d-block">{errors.dateOfBirth}</div>}
+        {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500 font-medium">{errors.dateOfBirth}</p>}
       </div>
 
-      <div className="col-md-6">
-        <label className="form-label fw-semibold">
-          Time of Birth <span className="text-danger">*</span>
+      <div className="flex flex-col">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Time of Birth <span className="text-red-500">*</span>
         </label>
         <input
           type="time"
           name="timeOfBirth"
           value={formData.timeOfBirth}
           onChange={handleChange}
-          className={`form-control ${errors.timeOfBirth ? "is-invalid" : ""}`}
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.timeOfBirth ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.timeOfBirth ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
         />
-        {errors.timeOfBirth && <div className="invalid-feedback d-block">{errors.timeOfBirth}</div>}
+        {errors.timeOfBirth && <p className="mt-1 text-sm text-red-500 font-medium">{errors.timeOfBirth}</p>}
       </div>
 
-      <div className="col-12">
-        <label className="form-label fw-semibold">
-          Birth Location <span className="text-danger">*</span>
+      <div className="flex flex-col md:col-span-2">
+        <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          Birth Location <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           name="birthLocation"
           value={formData.birthLocation}
           onChange={handleChange}
-          className={`form-control ${errors.birthLocation ? "is-invalid" : ""}`}
+          className={`w-full px-4 py-3 rounded-lg border transition-all outline-none focus:ring-2 focus:ring-primary/10 ${
+            errors.birthLocation ? "border-red-500 bg-red-50/30" : "border-[#daa23e73] focus:border-primary"
+          }`}
           placeholder="City, State, Country"
-          style={{
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: errors.birthLocation ? "1px solid #dc3545" : "1px solid #daa23e73",
-          }}
         />
-        {errors.birthLocation && <div className="invalid-feedback d-block">{errors.birthLocation}</div>}
+        {errors.birthLocation && (
+          <p className="mt-1 text-sm text-red-500 font-medium">{errors.birthLocation}</p>
+        )}
       </div>
     </div>
   );

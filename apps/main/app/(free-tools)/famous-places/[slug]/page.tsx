@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchPlaceImages, getPlaceBySlug, Place } from "@/libs/serp-api";
+import { fetchPlaceImages, getPlaceBySlug } from "@/libs/serp-api";
+import { Place } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguageStore } from "@/store/languageStore";
@@ -67,10 +68,12 @@ const PlaceDetailPage = () => {
     <div className="min-h-screen bg-[#FDFCFB]">
       {/* 1. Full-Width Hero Section */}
       <section className="relative h-[45vh] md:h-[55vh] w-full overflow-hidden">
-        <img
+        <Image
           src={mainImage}
           alt={place.title}
+          fill
           className="w-full h-full object-cover"
+          priority
         />
         {/* Black Overlay to darken image */}
         <div className="absolute inset-0 bg-black/30"></div>
@@ -192,9 +195,10 @@ const PlaceDetailPage = () => {
                     key={i}
                     className="relative aspect-square rounded-xl overflow-hidden border border-slate-100 shadow-sm"
                   >
-                    <img
+                    <Image
                       src={img}
                       alt={`${place.title} visual ${i + 1}`}
+                      fill
                       className="w-full h-full object-cover"
                     />
                   </div>
