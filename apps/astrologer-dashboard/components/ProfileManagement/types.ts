@@ -62,7 +62,25 @@ export interface Profile {
     video?: string; // Main introduction video
     detailed_experience: ExperienceItem[];
     custom_services?: CustomService[];
+    pujas: PujaService[];
     documents?: DocumentItem[]; // KYC Documents
+}
+
+export interface PujaService {
+    id?: number;
+    type: 'online' | 'home_visit';
+    name: string;
+    min_duration_hours: number;
+    max_duration_hours: number;
+    cost: number;
+    description: string;
+    districts?: string[];
+    samagri_list: SamagriItem[];
+}
+
+export interface SamagriItem {
+    name: string;
+    quantity: string;
 }
 
 export interface ExperienceItem {

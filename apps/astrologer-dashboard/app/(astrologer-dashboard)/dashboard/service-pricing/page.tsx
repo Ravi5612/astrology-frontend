@@ -2,10 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { Star, Edit3, Gift, Loader2, Trash2, Plus, MessageSquare, Phone, Video, Sparkles } from "lucide-react";
-import { getProfile, updateProfile } from "@/lib/profile";
-import { Profile } from "@/components/ProfileManagement/types";
+import { getProfile, updateProfile, deletePujaApi } from "@/lib/profile";
+import { Profile, PujaService } from "@/components/ProfileManagement/types";
+import { PujaModal } from "@/components/shared/PujaModal";
 import { toast } from "react-toastify";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
+import { ChevronDown } from "lucide-react";
+
+// ---- Static suggested pujas ----
+const SUGGESTED_PUJAS = [
+  "Griha Pravesh Puja", "Satyanarayan Katha", "Ganesh Puja", "Laxmi-Kuber Puja",
+  "Vastu Shanti Puja", "Navagraha Shanti Puja", "Maha Mrityunjaya Jaap",
+  "Kaal Sarp Dosh Nivaran", "Shani Shanti Puja", "Vivah Puja", "Namkaran Sanskar",
+  "Annaprashan", "Mundan Sanskar", "Bhoomi Pujan", "Saraswati Puja",
+  "Durga Saptashati Path", "Rudrabhishek", "Mangal Dosh Puja", "Hanuman Chalisa Path"
+];
 
 // ---- Static standard services ----
 const buildServices = (profile: Profile | null) => [
@@ -60,11 +71,71 @@ const buildServices = (profile: Profile | null) => [
   }))
 ];
 
+const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: any) => void, onDelete: (id: string) => void }) => (
+  <div
+    className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-yellow-200' : 'border-gray-200'} group flex flex-col`}
+  >
+    {/* Icon Badge */}
+    <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform bg-linear-to-tr from-yellow-500 to-yellow-600`}>
+      <service.icon className="w-4 h-4 text-white" />
+    </div>
+
+    {/* Title */}
+    <h2 className="text-xl font-bold text-gray-900 mb-2">{service.name}</h2>
+
+    {/* Description */}
+    <p className="text-gray-600 text-sm mb-4 leading-relaxed min-h-[40px]">
+      {service.description}
+    </p>
+
+    {/* Price */}
+    <div className="mb-4">
+      <div className="flex items-baseline gap-1">
+        <span className="text-2xl font-black text-yellow-700">
+          ₹{service.price}
+        </span>
+        <span className="text-gray-500 text-sm font-medium">{service.unit}</span>
+      </div>
+    </div>
+
+    {/* Offer */}
+    {service.offer && (
+      <div className="inline-flex items-center px-3 py-1 mb-6 text-xs font-bold text-green-700 bg-green-50 rounded-full border border-green-100 w-fit">
+        <Gift className="w-3.5 h-3.5 mr-1" /> {service.offer}
+      </div>
+    )}
+
+    {/* Actions */}
+    <div className="flex gap-2 mt-auto">
+      <button
+        onClick={() => onEdit(service)}
+        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
+      >
+        <Edit3 className="w-4 h-4" />
+        Edit Pricing
+      </button>
+
+      {service.isCustom && (
+        <button
+          onClick={() => onDelete(service.id)}
+          className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors"
+          aria-label="Delete service"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  </div>
+);
+
 const ServicePricingPage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState<"add" | "edit" | null>(null);
-  const [editTarget, setEditTarget] = useState<ServiceModalService | undefined>();
+  const [editTarget, setEditTarget] = useState<any>();
+  
+  const [pujaModalMode, setPujaModalMode] = useState<"add" | "edit" | null>(null);
+  const [pujaEditTarget, setPujaEditTarget] = useState<PujaService | undefined>();
 
   useEffect(() => {
     fetchProfile();
@@ -96,6 +167,7 @@ const ServicePricingPage = () => {
   const handleSaved = (updated: Profile) => {
     setProfile(updated);
     setModalMode(null);
+    setPujaModalMode(null);
   };
 
   const handleDeleteService = async (id: string) => {
@@ -110,6 +182,34 @@ const ServicePricingPage = () => {
       console.error("Failed to delete service:", error);
       toast.error("Failed to remove service.");
     }
+  };
+
+  const handleDeletePuja = async (id: number) => {
+    if (!profile) return;
+    if (!window.confirm("Are you sure you want to remove this Puja service?")) return;
+    try {
+      await deletePujaApi(id);
+      const updatedPujas = (profile.pujas || []).filter(p => p.id !== id);
+      setProfile({ ...profile, pujas: updatedPujas });
+      toast.success("Puja service removed successfully!");
+    } catch (error) {
+      console.error("Failed to delete puja:", error);
+      toast.error("Failed to remove puja service.");
+    }
+  };
+
+  const openPujaAdd = (name?: string) => {
+    if (name) {
+      setPujaEditTarget({ name } as any);
+    } else {
+      setPujaEditTarget(undefined);
+    }
+    setPujaModalMode("add");
+  };
+
+  const openPujaEdit = (puja: PujaService) => {
+    setPujaEditTarget(puja);
+    setPujaModalMode("edit");
   };
 
   if (loading) {
@@ -141,76 +241,141 @@ const ServicePricingPage = () => {
         </button>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-        {services.map((service: any) => (
-          <div
-            key={service.key}
-            className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-yellow-200' : 'border-gray-200'} group flex flex-col`}
-          >
-            {/* Icon Badge */}
-            <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform ${service.isCustom ? 'bg-gradient-to-tr from-yellow-500 to-yellow-600' : 'bg-gradient-to-tr from-yellow-500 to-yellow-600'}`}>
-              <service.icon className="w-4 h-4 text-white" />
+      {/* Consultation Services Section */}
+      <div className="max-w-6xl mx-auto mb-10">
+        <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <MessageSquare className="w-5 h-5 text-yellow-600" />
+          Consultation Services
+        </h2>
+        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {services.filter(s => !s.key.includes('puja') && !s.isCustom).map((service: any) => (
+            <ServiceCard key={service.key} service={service} onEdit={openEdit} onDelete={handleDeleteService} />
+          ))}
+        </div>
+      </div>
+
+      {/* Puja Services Section */}
+      <div className="max-w-6xl mx-auto mb-14">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-orange-50/50 p-6 rounded-3xl border border-orange-100/50 shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-orange-100 rounded-2xl">
+              <Sparkles className="w-6 h-6 text-orange-600" />
             </div>
-
-            {/* Title */}
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{service.name}</h2>
-
-            {/* Description */}
-            <p className="text-gray-600 text-sm mb-4 leading-relaxed min-h-[40px]">
-              {service.description}
-            </p>
-
-            {/* Price */}
-            <div className="mb-4">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-yellow-700">
-                  ₹{service.price}
-                </span>
-                <span className="text-gray-500 text-sm font-medium">{service.unit}</span>
-              </div>
-            </div>
-
-            {/* Offer */}
-            {service.offer && (
-              <div className="inline-flex items-center px-3 py-1 mb-6 text-xs font-bold text-green-700 bg-green-50 rounded-full border border-green-100 w-fit">
-                <Gift className="w-3.5 h-3.5 mr-1" /> {service.offer}
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-2 mt-auto">
-              <button
-                onClick={() =>
-                  openEdit({
-                    key: service.key,
-                    name: service.name,
-                    price: service.price,
-                    unit: service.unit,
-                    description: service.description,
-                    isCustom: service.isCustom,
-                    id: service.id,
-                  })
-                }
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
-              >
-                <Edit3 className="w-4 h-4" />
-                Edit Pricing
-              </button>
-
-              {service.isCustom && (
-                <button
-                  onClick={() => handleDeleteService(service.id)}
-                  className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors"
-                  aria-label="Delete service"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-gray-800 tracking-tight">
+                Puja Services
+              </h2>
+              <p className="text-sm text-gray-500 font-medium mt-0.5">Manage your sacred ritual offerings</p>
             </div>
           </div>
-        ))}
+          <div className="flex items-center gap-3">
+            <div className="relative group/dropdown">
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-orange-200 text-orange-600 font-bold rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95"
+              >
+                Choose Suggested
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-100 rounded-2xl shadow-xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-50 max-h-80 overflow-y-auto py-2">
+                <div className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 border-b border-gray-50 mb-1">
+                  Common Rituals
+                </div>
+                {SUGGESTED_PUJAS.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => openPujaAdd(p)}
+                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => openPujaAdd()}
+              className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px]"
+            >
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+              Add Custom Puja
+            </button>
+          </div>
+        </div>
+
+        {(!profile?.pujas || profile.pujas.length === 0) ? (
+          <div className="text-center py-16 bg-white rounded-3xl border-2 border-dashed border-gray-100">
+             <div className="bg-orange-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-orange-400" />
+             </div>
+             <h3 className="text-lg font-bold text-gray-700 mb-1">No Puja Services Added</h3>
+             <p className="text-gray-500 text-sm max-w-xs mx-auto">Click the button above to add your first ritual service.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {profile.pujas.map((puja) => (
+              <div 
+                key={puja.id}
+                className="relative bg-white p-7 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-all hover:translate-y-[-4px] group flex flex-col"
+              >
+                <div className={`absolute top-6 right-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${puja.type === 'online' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-green-50 text-green-600 border border-green-100'}`}>
+                  {puja.type.replace('_', ' ')}
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 mt-2">{puja.name}</h3>
+                  <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed h-[40px]">
+                    {puja.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="flex-1 p-3 bg-gray-50 rounded-2xl">
+                    <p className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Price</p>
+                    <p className="text-lg font-black text-orange-600">₹{puja.cost}</p>
+                  </div>
+                  <div className="flex-1 p-3 bg-gray-50 rounded-2xl">
+                    <p className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Duration</p>
+                    <p className="text-lg font-black text-gray-700">{puja.min_duration_hours}-{puja.max_duration_hours}h</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 mt-auto">
+                  <button
+                    onClick={() => openPujaEdit(puja)}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-gray-800 transition-all active:scale-95"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    Manage
+                  </button>
+                  <button
+                    onClick={() => handleDeletePuja(puja.id!)}
+                    className="p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Custom Services Section */}
+      {services.some(s => s.isCustom) && (
+        <div className="max-w-6xl mx-auto mb-10">
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+            <Plus className="w-5 h-5 text-yellow-600" />
+            Custom Services
+          </h2>
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {services.filter(s => s.isCustom).map((service: any) => (
+              <ServiceCard key={service.key} service={service} onEdit={openEdit} onDelete={handleDeleteService} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Shared Service Modal */}
       {modalMode && (
@@ -219,6 +384,16 @@ const ServicePricingPage = () => {
           service={editTarget}
           profile={profile}
           onClose={() => setModalMode(null)}
+          onSaved={handleSaved}
+        />
+      )}
+
+      {/* Puja Modal */}
+      {pujaModalMode && (
+        <PujaModal
+          mode={pujaModalMode}
+          puja={pujaEditTarget}
+          onClose={() => setPujaModalMode(null)}
           onSaved={handleSaved}
         />
       )}

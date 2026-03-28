@@ -8,5 +8,7 @@ export const API_ROUTES = {
     WALLET: {
         BALANCE: '/wallet/balance',
     },
-    // Add other routes as discovered
+    EXPERT: {
+        GET_ALL_PUJAS: '/expert/pujas/all',
+    },
 } as const;

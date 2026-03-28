@@ -96,3 +96,14 @@ export const updateTodo = async (id: number, updates: Partial<Todo>): Promise<To
 export const deleteTodoApi = async (id: number) => {
     return apiClient.delete<any>(`/expert/todos/${id}`);
 };
+
+// Puja APIs
+export const upsertPujaApi = async (data: any, id?: number) => {
+    const url = id ? `/expert/puja?id=${id}` : '/expert/puja';
+    const response: any = await apiClient.post(url, data);
+    return response?.data ?? response;
+};
+
+export const deletePujaApi = async (id: number) => {
+    return apiClient.delete<any>(`/expert/puja/${id}`);
+};

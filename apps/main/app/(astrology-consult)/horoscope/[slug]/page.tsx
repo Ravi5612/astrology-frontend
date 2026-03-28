@@ -10,6 +10,7 @@ import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import { FaLeaf, FaBriefcase, FaHeart, FaPlane, FaChevronRight, FaArrowRight } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import { API_CONFIG } from "@/lib/api-config";
 
 export default function ZodiacDetailsPage() {
   const params = useParams();
@@ -40,7 +41,7 @@ export default function ZodiacDetailsPage() {
       setLoading(true);
       setError(false);
       
-      const [data, fetchError] = await safeFetch<any>(`/api/horoscope?sign=${slug}&lang=${lang}`);
+      const [data, fetchError] = await safeFetch<any>(`${API_CONFIG.ASTROLOGY.HOROSCOPE_DAILY.url}?sign=${slug}&lang=${lang}`);
       
       if (fetchError) {
           console.error("Error fetching data:", fetchError);
@@ -150,7 +151,7 @@ export default function ZodiacDetailsPage() {
           </button>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center font-display">
             <div className="lg:col-span-7 space-y-10 order-2 lg:order-1">
               <div className="space-y-6">
@@ -196,15 +197,16 @@ export default function ZodiacDetailsPage() {
                     fill
                     className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center p-16">
-                    <Image
-                      src={signData.image}
-                      alt={signData.title}
-                      width={320}
-                      height={320}
-                      className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
-                      priority
-                    />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="relative w-4/5 h-4/5">
+                      <Image
+                        src={signData.image}
+                        alt={signData.title}
+                        fill
+                        className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
+                        priority
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -225,7 +227,7 @@ export default function ZodiacDetailsPage() {
 
       {/* Main Content & Predictions */}
       <section className="py-24 relative z-20 -mt-20">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           {loading ? (
             <div className="bg-white rounded-[3rem] p-24 text-center shadow-premium border border-gray-100 max-w-5xl mx-auto">
               <div className="relative w-24 h-24 mx-auto mb-10">
@@ -254,7 +256,7 @@ export default function ZodiacDetailsPage() {
               </p>
             </div>
           ) : (
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-[1400px] mx-auto">
               <div className="bg-white rounded-[3.5rem] p-10 lg:p-20 shadow-premium border border-gray-100 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
                   <HiOutlineSparkles className="text-[12rem] text-orange-500" />
@@ -375,7 +377,7 @@ export default function ZodiacDetailsPage() {
       {/* Navigation for other Signs */}
       <section className="py-24 bg-white relative">
           <div className="absolute top-0 inset-x-0 h-[1px] bg-linear-to-r from-transparent via-gray-100 to-transparent"></div>
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-20 space-y-6">
             <div className="inline-block px-5 py-1.5 bg-slate-50 border border-slate-100 rounded-full">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">The Zodiac Wheel</span>
@@ -388,7 +390,7 @@ export default function ZodiacDetailsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-6">
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6 gap-6">
             {ZodiacSignsData.map((sign) => (
               <Link
                 key={sign.id}
