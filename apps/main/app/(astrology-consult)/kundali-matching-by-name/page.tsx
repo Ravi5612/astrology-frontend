@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import { API_CONFIG } from "@/lib/api-config";
 import HeroComponent from "./hero.component";
 import MatchingForm from "./matching-form.component";
 import ResultComponent from "./result.component";
@@ -90,7 +91,7 @@ const KundaliMatchingByNamePage = () => {
       }).toString();
 
       const [rawData, fetchErr] = await safeFetch<any>(
-        `/api/kundali-matching-advanced?${query}`,
+        `${API_CONFIG.ASTROLOGY.KUNDLI_MATCHING.url}?${query}`,
       );
 
       if (fetchErr) {

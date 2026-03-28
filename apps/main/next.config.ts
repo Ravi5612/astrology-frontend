@@ -32,7 +32,7 @@ const securityHeaders = [
       "default-src 'self'",
 
       // Scripts: self + Razorpay + Google APIs + Bootstrap (inline eval for Next.js)
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://translate.googleapis.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com",
 
       // Styles: self + inline (Tailwind/Bootstrap) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
@@ -44,7 +44,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com https://www.google.com",
 
       // API & WebSocket connections
-      "connect-src 'self' https://api.prokerala.com https://checkout.razorpay.com https://translate.googleapis.com https://*.twilio.com wss: ws: wss://*.twilio.com",
+      "connect-src 'self' https://checkout.razorpay.com https://*.twilio.com wss: ws: wss://*.twilio.com",
 
       // Frames: Razorpay checkout iframe
       "frame-src https://api.razorpay.com https://checkout.razorpay.com",

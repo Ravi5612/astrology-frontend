@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import { API_CONFIG } from "@/lib/api-config";
 
 import HeroSection from "./hero.component";
 import InputForm from "./input-form.component";
@@ -60,13 +61,13 @@ const MangalDoshaPage = () => {
     setLoading(true);
     try {
       const query = new URLSearchParams({
-        dob: `${details.date}T${details.time}:00+05:30`,
+        datetime: `${details.date}T${details.time}:00+05:30`,
         lat: details.lat,
         lon: details.lon,
       }).toString();
 
       const [rawData, fetchErr] = await safeFetch<any>(
-        `/api/mangal-dosha?${query}`,
+        `${API_CONFIG.ASTROLOGY.MANGAL_DOSHA.url}?${query}`,
       );
 
       if (fetchErr || !rawData) {

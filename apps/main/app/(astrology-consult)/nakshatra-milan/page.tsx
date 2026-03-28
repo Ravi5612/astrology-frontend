@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import { API_CONFIG } from "@/lib/api-config";
 
 import HeroSection from "./hero.component";
 import InputForm from "./input-form.component";
@@ -107,9 +108,9 @@ const NakshatraMilanPage = () => {
 
       const [[boyData, boyErr], [girlData, girlErr], [matchData, matchErr]] =
         await Promise.all([
-          safeFetch<any>(`/api/birth-details?${boyQuery}`),
-          safeFetch<any>(`/api/birth-details?${girlQuery}`),
-          safeFetch<any>(`/api/kundali-matching?${matchQuery}`),
+          safeFetch<any>(`${API_CONFIG.ASTROLOGY.BIRTH_DETAILS.url}?${boyQuery}`),
+          safeFetch<any>(`${API_CONFIG.ASTROLOGY.BIRTH_DETAILS.url}?${girlQuery}`),
+          safeFetch<any>(`${API_CONFIG.ASTROLOGY.KUNDLI_MATCHING.url}?${matchQuery}`),
         ]);
 
       if (boyErr || girlErr || matchErr) {

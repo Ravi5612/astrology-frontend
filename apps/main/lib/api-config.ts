@@ -44,6 +44,13 @@ export const API_CONFIG = {
     EXPERT: {
         TOP_RATED: { url: "expert/top-rated", method: "GET" },
     },
+    ASTROLOGY: {
+        HOROSCOPE_DAILY: { get url() { return `${getBasePath()}/api/v1/astrology/horoscope-daily` }, method: "GET" },
+        MANGAL_DOSHA: { get url() { return `${getBasePath()}/api/v1/astrology/mangal-dosha` }, method: "GET" },
+        BIRTH_DETAILS: { get url() { return `${getBasePath()}/api/v1/astrology/birth-details` }, method: "GET" },
+        KUNDLI_MATCHING: { get url() { return `${getBasePath()}/api/v1/astrology/kundli-matching` }, method: "GET" },
+        GUNA_MILAN: { get url() { return `${getBasePath()}/api/v1/astrology/guna-milan` }, method: "GET" },
+    },
 } as const;
 
 // Keep backward-compat alias for existing imports

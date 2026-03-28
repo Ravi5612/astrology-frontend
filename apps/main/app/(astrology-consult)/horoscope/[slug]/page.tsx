@@ -10,6 +10,7 @@ import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import { FaLeaf, FaBriefcase, FaHeart, FaPlane } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 import safeFetch from "@packages/safe-fetch/safeFetch";
+import { API_CONFIG } from "@/lib/api-config";
 
 export default function ZodiacDetailsPage() {
   const params = useParams();
@@ -29,7 +30,7 @@ export default function ZodiacDetailsPage() {
       setLoading(true);
       setError(false);
       
-      const [data, fetchError] = await safeFetch<any>(`/api/horoscope?sign=${slug}&lang=${lang}`);
+      const [data, fetchError] = await safeFetch<any>(`${API_CONFIG.ASTROLOGY.HOROSCOPE_DAILY.url}?sign=${slug}&lang=${lang}`);
       
       if (fetchError) {
           console.error("Error fetching data:", fetchError);
