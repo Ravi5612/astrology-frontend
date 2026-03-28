@@ -45,6 +45,30 @@ const buildServices = (profile: Profile | null) => [
     iconColor: "text-purple-500",
     isCustom: false,
   },
+  {
+    key: "online_puja_price",
+    name: "Online Puja",
+    price: profile?.online_puja_price ?? 0,
+    unit: "/ puja",
+    description: "Perform sacred Vedic rituals remotely through live streaming.",
+    offer: "Best for distant devotees",
+    icon: Sparkles,
+    iconBg: "bg-orange-50",
+    iconColor: "text-orange-500",
+    isCustom: false,
+  },
+  {
+    key: "home_visit_puja_price",
+    name: "Home Visit Puja",
+    price: profile?.home_visit_puja_price ?? 0,
+    unit: "/ visit",
+    description: "In-person sacred rituals at your home premises.",
+    offer: "Premium experience",
+    icon: Sparkles,
+    iconBg: "bg-red-50",
+    iconColor: "text-red-500",
+    isCustom: false,
+  },
   ...(profile?.custom_services || []).map(s => ({
     key: `custom-${s.id}`,
     name: s.name,
@@ -59,6 +83,63 @@ const buildServices = (profile: Profile | null) => [
     id: s.id,
   }))
 ];
+
+const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: any) => void, onDelete: (id: string) => void }) => (
+  <div
+    className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-yellow-200' : 'border-gray-200'} group flex flex-col`}
+  >
+    {/* Icon Badge */}
+    <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform bg-linear-to-tr from-yellow-500 to-yellow-600`}>
+      <service.icon className="w-4 h-4 text-white" />
+    </div>
+
+    {/* Title */}
+    <h2 className="text-xl font-bold text-gray-900 mb-2">{service.name}</h2>
+
+    {/* Description */}
+    <p className="text-gray-600 text-sm mb-4 leading-relaxed min-h-[40px]">
+      {service.description}
+    </p>
+
+    {/* Price */}
+    <div className="mb-4">
+      <div className="flex items-baseline gap-1">
+        <span className="text-2xl font-black text-yellow-700">
+          ₹{service.price}
+        </span>
+        <span className="text-gray-500 text-sm font-medium">{service.unit}</span>
+      </div>
+    </div>
+
+    {/* Offer */}
+    {service.offer && (
+      <div className="inline-flex items-center px-3 py-1 mb-6 text-xs font-bold text-green-700 bg-green-50 rounded-full border border-green-100 w-fit">
+        <Gift className="w-3.5 h-3.5 mr-1" /> {service.offer}
+      </div>
+    )}
+
+    {/* Actions */}
+    <div className="flex gap-2 mt-auto">
+      <button
+        onClick={() => onEdit(service)}
+        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
+      >
+        <Edit3 className="w-4 h-4" />
+        Edit Pricing
+      </button>
+
+      {service.isCustom && (
+        <button
+          onClick={() => onDelete(service.id)}
+          className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors"
+          aria-label="Delete service"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  </div>
+);
 
 const ServicePricingPage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -141,76 +222,46 @@ const ServicePricingPage = () => {
         </button>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-        {services.map((service: any) => (
-          <div
-            key={service.key}
-            className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-yellow-200' : 'border-gray-200'} group flex flex-col`}
-          >
-            {/* Icon Badge */}
-            <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform ${service.isCustom ? 'bg-gradient-to-tr from-yellow-500 to-yellow-600' : 'bg-gradient-to-tr from-yellow-500 to-yellow-600'}`}>
-              <service.icon className="w-4 h-4 text-white" />
-            </div>
-
-            {/* Title */}
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{service.name}</h2>
-
-            {/* Description */}
-            <p className="text-gray-600 text-sm mb-4 leading-relaxed min-h-[40px]">
-              {service.description}
-            </p>
-
-            {/* Price */}
-            <div className="mb-4">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-yellow-700">
-                  ₹{service.price}
-                </span>
-                <span className="text-gray-500 text-sm font-medium">{service.unit}</span>
-              </div>
-            </div>
-
-            {/* Offer */}
-            {service.offer && (
-              <div className="inline-flex items-center px-3 py-1 mb-6 text-xs font-bold text-green-700 bg-green-50 rounded-full border border-green-100 w-fit">
-                <Gift className="w-3.5 h-3.5 mr-1" /> {service.offer}
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-2 mt-auto">
-              <button
-                onClick={() =>
-                  openEdit({
-                    key: service.key,
-                    name: service.name,
-                    price: service.price,
-                    unit: service.unit,
-                    description: service.description,
-                    isCustom: service.isCustom,
-                    id: service.id,
-                  })
-                }
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
-              >
-                <Edit3 className="w-4 h-4" />
-                Edit Pricing
-              </button>
-
-              {service.isCustom && (
-                <button
-                  onClick={() => handleDeleteService(service.id)}
-                  className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors"
-                  aria-label="Delete service"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+      {/* Consultation Services Section */}
+      <div className="max-w-6xl mx-auto mb-10">
+        <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <MessageSquare className="w-5 h-5 text-yellow-600" />
+          Consultation Services
+        </h2>
+        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {services.filter(s => !s.key.includes('puja') && !s.isCustom).map((service: any) => (
+            <ServiceCard key={service.key} service={service} onEdit={openEdit} onDelete={handleDeleteService} />
+          ))}
+        </div>
       </div>
+
+      {/* Puja Services Section */}
+      <div className="max-w-6xl mx-auto mb-10">
+        <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <Sparkles className="w-5 h-5 text-yellow-600" />
+          Puja Services
+        </h2>
+        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {services.filter(s => s.key.includes('puja')).map((service: any) => (
+            <ServiceCard key={service.key} service={service} onEdit={openEdit} onDelete={handleDeleteService} />
+          ))}
+        </div>
+      </div>
+
+      {/* Custom Services Section */}
+      {services.some(s => s.isCustom) && (
+        <div className="max-w-6xl mx-auto mb-10">
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+            <Plus className="w-5 h-5 text-yellow-600" />
+            Custom Services
+          </h2>
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {services.filter(s => s.isCustom).map((service: any) => (
+              <ServiceCard key={service.key} service={service} onEdit={openEdit} onDelete={handleDeleteService} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Shared Service Modal */}
       {modalMode && (

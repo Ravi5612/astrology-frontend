@@ -43,6 +43,8 @@ export interface Profile {
     video_call_price?: number;
     report_price?: number;
     horoscope_price?: number;
+    online_puja_price?: number;
+    home_visit_puja_price?: number;
     bank_details: string;
     is_available: boolean;
     profilePic?: string;
