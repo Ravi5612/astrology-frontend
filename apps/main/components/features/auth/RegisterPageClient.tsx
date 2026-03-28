@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
-import SignUpForm from "./SignUpForm";
+import SignUpForm from "./SignUpForm.component";
 import TopExpertsSection from "./TopExpertsSection";
 import authContent from "@/public/data/auth-content.json";
 import { useLanguageStore } from "@/store/languageStore";
