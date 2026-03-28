@@ -70,7 +70,8 @@ export interface PujaService {
     id?: number;
     type: 'online' | 'home_visit';
     name: string;
-    duration_hours: number;
+    min_duration_hours: number;
+    max_duration_hours: number;
     cost: number;
     description: string;
     districts?: string[];

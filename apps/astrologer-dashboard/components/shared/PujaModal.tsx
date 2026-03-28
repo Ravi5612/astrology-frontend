@@ -18,7 +18,8 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
   const [formData, setFormData] = useState<Partial<PujaService>>({
     type: 'online',
     name: '',
-    duration_hours: 1,
+    min_duration_hours: 1,
+    max_duration_hours: 2,
     cost: 0,
     description: '',
     districts: [],
@@ -29,20 +30,41 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
   const [newDistrict, setNewDistrict] = useState('');
 
   useEffect(() => {
-    if (mode === 'edit' && puja) {
-      setFormData({
+    if (puja) {
+      setFormData(prev => ({
+        ...prev,
         ...puja,
-        samagri_list: puja.samagri_list || [],
-        districts: puja.districts || [],
-      });
+        min_duration_hours: puja.min_duration_hours || prev.min_duration_hours || 1,
+        max_duration_hours: puja.max_duration_hours || prev.max_duration_hours || 2,
+        samagri_list: puja.samagri_list || prev.samagri_list || [],
+        districts: puja.districts || prev.districts || [],
+      }));
     }
   }, [mode, puja]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if ((formData.min_duration_hours || 0) > (formData.max_duration_hours || 0)) {
+      toast.error('Minimum duration cannot be greater than maximum duration.');
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await upsertPujaApi(formData, puja?.id);
+      
+      const payload = {
+        type: formData.type,
+        name: formData.name,
+        min_duration_hours: formData.min_duration_hours,
+        max_duration_hours: formData.max_duration_hours,
+        cost: formData.cost,
+        description: formData.description,
+        districts: formData.districts,
+        samagri_list: formData.samagri_list,
+      };
+
+      const data = await upsertPujaApi(payload, puja?.id);
       toast.success(`Puja service ${mode === 'add' ? 'added' : 'updated'} successfully!`);
       onSaved(data);
       onClose();
@@ -146,14 +168,27 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Duration (Hours)</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Min Duration (Hours)</label>
               <input
                 type="number"
                 required
                 step="0.5"
                 min="0.5"
-                value={formData.duration_hours}
-                onChange={(e) => setFormData({ ...formData, duration_hours: Number(e.target.value) })}
+                value={formData.min_duration_hours}
+                onChange={(e) => setFormData({ ...formData, min_duration_hours: Number(e.target.value) })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none"
+                placeholder="e.g. 1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Max Duration (Hours)</label>
+              <input
+                type="number"
+                required
+                step="0.5"
+                min="0.5"
+                value={formData.max_duration_hours}
+                onChange={(e) => setFormData({ ...formData, max_duration_hours: Number(e.target.value) })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none"
                 placeholder="e.g. 2.5"
               />

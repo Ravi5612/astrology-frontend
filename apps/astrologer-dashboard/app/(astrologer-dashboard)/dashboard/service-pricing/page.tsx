@@ -7,6 +7,16 @@ import { Profile, PujaService } from "@/components/ProfileManagement/types";
 import { PujaModal } from "@/components/shared/PujaModal";
 import { toast } from "react-toastify";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
+import { ChevronDown } from "lucide-react";
+
+// ---- Static suggested pujas ----
+const SUGGESTED_PUJAS = [
+  "Griha Pravesh Puja", "Satyanarayan Katha", "Ganesh Puja", "Laxmi-Kuber Puja",
+  "Vastu Shanti Puja", "Navagraha Shanti Puja", "Maha Mrityunjaya Jaap",
+  "Kaal Sarp Dosh Nivaran", "Shani Shanti Puja", "Vivah Puja", "Namkaran Sanskar",
+  "Annaprashan", "Mundan Sanskar", "Bhoomi Pujan", "Saraswati Puja",
+  "Durga Saptashati Path", "Rudrabhishek", "Mangal Dosh Puja", "Hanuman Chalisa Path"
+];
 
 // ---- Static standard services ----
 const buildServices = (profile: Profile | null) => [
@@ -157,6 +167,7 @@ const ServicePricingPage = () => {
   const handleSaved = (updated: Profile) => {
     setProfile(updated);
     setModalMode(null);
+    setPujaModalMode(null);
   };
 
   const handleDeleteService = async (id: string) => {
@@ -187,8 +198,12 @@ const ServicePricingPage = () => {
     }
   };
 
-  const openPujaAdd = () => {
-    setPujaEditTarget(undefined);
+  const openPujaAdd = (name?: string) => {
+    if (name) {
+      setPujaEditTarget({ name } as any);
+    } else {
+      setPujaEditTarget(undefined);
+    }
     setPujaModalMode("add");
   };
 
@@ -253,13 +268,40 @@ const ServicePricingPage = () => {
               <p className="text-sm text-gray-500 font-medium mt-0.5">Manage your sacred ritual offerings</p>
             </div>
           </div>
-          <button
-            onClick={openPujaAdd}
-            className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px]"
-          >
-            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
-            Add Custom Puja
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="relative group/dropdown">
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-orange-200 text-orange-600 font-bold rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95"
+              >
+                Choose Suggested
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-100 rounded-2xl shadow-xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-50 max-h-80 overflow-y-auto py-2">
+                <div className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 border-b border-gray-50 mb-1">
+                  Common Rituals
+                </div>
+                {SUGGESTED_PUJAS.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => openPujaAdd(p)}
+                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => openPujaAdd()}
+              className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px]"
+            >
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+              Add Custom Puja
+            </button>
+          </div>
         </div>
 
         {(!profile?.pujas || profile.pujas.length === 0) ? (
@@ -295,7 +337,7 @@ const ServicePricingPage = () => {
                   </div>
                   <div className="flex-1 p-3 bg-gray-50 rounded-2xl">
                     <p className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Duration</p>
-                    <p className="text-lg font-black text-gray-700">{puja.duration_hours}h</p>
+                    <p className="text-lg font-black text-gray-700">{puja.min_duration_hours}-{puja.max_duration_hours}h</p>
                   </div>
                 </div>
 
