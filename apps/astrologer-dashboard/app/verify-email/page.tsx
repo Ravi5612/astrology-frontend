@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const VerifyEmailContent = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+    const token = searchParams.get("verification_token");
     const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
     const [message, setMessage] = useState("Verifying your email...");
 
@@ -20,8 +20,8 @@ const VerifyEmailContent = () => {
 
         const verifyEmail = async () => {
             try {
-                // Using the specific endpoint provided: POST /auth/email/confirm
-                await apiClient.post("/auth/email/confirm", { token });
+                // Using the correct endpoint: GET /auth/email/verify?token=...
+                await apiClient.get(`/auth/email/verify?token=${encodeURIComponent(token)}`);
                 setStatus("success");
                 setMessage("Email verified successfully! Redirecting to login...");
                 toast.success("Email verified successfully!");

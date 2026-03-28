@@ -24,7 +24,7 @@ const VerifyEmailContent: React.FC = () => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get('token');
+    const token = searchParams.get('verification_token');
 
     console.log("[VerifyEmail] Search Params:", searchParams.toString()); // Debug log
     console.log("[VerifyEmail] Extracted Token:", token); // Debug log
@@ -44,7 +44,7 @@ const VerifyEmailContent: React.FC = () => {
             }
 
             try {
-                const [data, fetchError] = await safeFetch<any>(`${API_ENDPOINT}?token=${token}`, {
+                const [data, fetchError] = await safeFetch<any>(`${API_ENDPOINT}?token=${encodeURIComponent(token)}`, {
                     headers: { "Content-Type": "application/json" },
                 });
 

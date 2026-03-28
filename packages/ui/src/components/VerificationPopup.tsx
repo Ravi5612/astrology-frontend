@@ -43,7 +43,7 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -67,8 +67,8 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
         </button>
 
         <div className="flex flex-col items-center text-center">
-          <div className="w-20 h-20 mb-6 bg-orange-50 rounded-full flex items-center justify-center animate-pulse">
-            {icon || <CheckCircle className="w-10 h-10 text-orange-500" />}
+          <div className="w-20 h-20 mb-6 bg-orange/10 rounded-full flex items-center justify-center animate-pulse">
+            {icon || <CheckCircle className="w-10 h-10 text-orange" />}
           </div>
 
           <h3 className="text-2xl font-black text-gray-900 mb-2">
@@ -88,7 +88,7 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
 
           <button
             onClick={onClose}
-            className="w-full py-3.5 px-6 rounded-2xl bg-orange-500 text-white font-bold text-base shadow-[0_8px_20px_rgba(249,115,22,0.25)] hover:shadow-[0_10px_25px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            className="w-full py-3.5 px-6 rounded-2xl bg-orange text-white font-bold text-base shadow-[0_8px_20px_rgba(249,115,22,0.25)] hover:shadow-[0_10px_25px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
           >
             {buttonText}
           </button>

@@ -79,7 +79,7 @@ const RegisterPage: React.FC = () => {
 
                 {/* Left Side: Visual Section */}
                 <div className="relative hidden lg:block h-[600px]">
-                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-80 flex flex-col items-center justify-center text-white p-8 z-10 text-center">
+                    <div className="absolute inset-0 bg-yellow-600 bg-opacity-80 flex flex-col items-center justify-center text-white p-8 text-center">
                         <img
                             src="/images/Astrologer.png"
                             alt="Logo"
