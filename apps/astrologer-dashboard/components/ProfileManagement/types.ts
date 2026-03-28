@@ -43,8 +43,6 @@ export interface Profile {
     video_call_price?: number;
     report_price?: number;
     horoscope_price?: number;
-    online_puja_price?: number;
-    home_visit_puja_price?: number;
     bank_details: string;
     is_available: boolean;
     profilePic?: string;
@@ -64,7 +62,24 @@ export interface Profile {
     video?: string; // Main introduction video
     detailed_experience: ExperienceItem[];
     custom_services?: CustomService[];
+    pujas: PujaService[];
     documents?: DocumentItem[]; // KYC Documents
+}
+
+export interface PujaService {
+    id?: number;
+    type: 'online' | 'home_visit';
+    name: string;
+    duration_hours: number;
+    cost: number;
+    description: string;
+    districts?: string[];
+    samagri_list: SamagriItem[];
+}
+
+export interface SamagriItem {
+    name: string;
+    quantity: string;
 }
 
 export interface ExperienceItem {
