@@ -3,10 +3,44 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguageStore } from "@/store/languageStore";
+import { aboutTranslations } from "@/lib/translations/about";
 
-import { TeamMember, ExpertSectionProps } from "@/lib/types";
+const ExpertSection: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = aboutTranslations[lang as keyof typeof aboutTranslations] || aboutTranslations.en;
 
-const ExpertSection: React.FC<ExpertSectionProps> = ({ team }) => {
+  const team = [
+    {
+      name: "Pandit Rajesh Sharma",
+      role: "Head of Vedic Astrology",
+      exp: "22 Years Experience",
+      avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+      specialty: "Kundli, Marriage, Career",
+    },
+    {
+      name: "Jyotishi Sunita Devi",
+      role: "Numerology & Tarot Expert",
+      exp: "15 Years Experience",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      specialty: "Tarot, Numerology, Vastu",
+    },
+    {
+      name: "Acharya Vinod Kumar",
+      role: "KP & Lal Kitab Specialist",
+      exp: "18 Years Experience",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      specialty: "KP System, Lal Kitab",
+    },
+    {
+      name: "Pandit Meera Joshi",
+      role: "Nakshatra & Gemstone Expert",
+      exp: "12 Years Experience",
+      avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+      specialty: "Gemstones, Nakshatra, Puja",
+    },
+  ];
+
   return (
     <section className="py-5" style={{ background: "#fafafa" }}>
       <div className="container py-4">
@@ -15,17 +49,16 @@ const ExpertSection: React.FC<ExpertSectionProps> = ({ team }) => {
             className="text-uppercase fw-bold small"
             style={{ color: "#f97316", letterSpacing: "2px" }}
           >
-            Meet Our Experts
+            {t.expertTag}
           </span>
           <h2
             className="fw-bold mt-2"
             style={{ fontSize: "2rem", color: "#1a0a00" }}
           >
-            Trusted Astrologers
+            {t.expertTitle}
           </h2>
           <p className="text-muted mx-auto mt-2" style={{ maxWidth: 500 }}>
-            Each astrologer on our platform goes through rigorous verification
-            to ensure authentic and accurate guidance.
+            {t.expertDesc}
           </p>
         </div>
         <div className="row g-4 justify-content-center">
@@ -90,7 +123,7 @@ const ExpertSection: React.FC<ExpertSectionProps> = ({ team }) => {
               border: "none",
             }}
           >
-            View All Astrologers <i className="fa-solid fa-arrow-right ms-2" />
+            {t.expertBtn} <i className="fa-solid fa-arrow-right ms-2" />
           </Link>
         </div>
       </div>

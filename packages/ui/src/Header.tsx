@@ -643,6 +643,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     height={60}
                     loading="eager"
                     priority
+                    style={{ width: 'auto', height: 'auto' }}
                     className="object-contain"
                   />
                 </Link>
@@ -778,7 +779,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               <li key={item.href}>
                                 <Link
                                   href={item.href}
-                                  className="block px-6 py-2.5 text-sm text-white/90 no-underline hover:bg-orange/20 hover:text-orange transition-all border-b border-white/5 last:border-0 hover:translate-x-1"
+                                  className="block px-6 py-2.5 text-sm text-white/90 no-underline hover:text-orange transition-all border-b border-white/5 last:border-0 hover:translate-x-1"
                                 >
                                   {item.label}
                                 </Link>

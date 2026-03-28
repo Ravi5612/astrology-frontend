@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
               {/* Free Calculator */}
               <div className="flex-1 min-w-[160px]">
                 <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.freeCalculator}</h4>
-                <ul className="flex flex-col gap-2.5">
+                <ul className="flex flex-col gap-2.5 pl-0">
                   {[
                     { label: t.marriageAge, href: PATHS.MARRIAGE_AGE_CALCULATOR },
                     { label: t.dahejCalculator, href: PATHS.DAHEJ_CALCULATOR },
@@ -61,7 +61,8 @@ const Footer: React.FC = () => {
                     { label: t.nakshatraFinder, href: PATHS.NAKSHATRA_FINDER },
                   ].map((link, idx) => (
                     <li key={idx}>
-                      <Link href={link.href} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">
+                      <Link href={link.href} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group">
+                        <i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />
                         {link.label}
                       </Link>
                     </li>
@@ -72,39 +73,39 @@ const Footer: React.FC = () => {
               {/* Astrology Services */}
               <div className="flex-1 min-w-[160px]">
                 <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.astrologyServices}</h4>
-                <ul className="flex flex-col gap-2.5">
-                  <li><Link href={PATHS.ONLINE_PUJA} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.onlinePuja}</Link></li>
-                  <li><a href="/our-astrologers" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.talkToAstrologer}</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.videoConsultation}</a></li>
-                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.kundliMatching}</Link></li>
-                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.kundliPrediction}</Link></li>
-                  <li><a href="/calculator/name-numerology" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.numerologyReport}</a></li>
+                <ul className="flex flex-col gap-2.5 pl-0">
+                  <li><Link href={PATHS.ONLINE_PUJA} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.onlinePuja}</Link></li>
+                  <li><a href="/our-astrologers" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.talkToAstrologer}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.videoConsultation}</a></li>
+                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.kundliMatching}</Link></li>
+                  <li><Link href={PATHS.KUNDALI_MATCHING} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.kundliPrediction}</Link></li>
+                  <li><a href="/calculator/name-numerology" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.numerologyReport}</a></li>
                 </ul>
               </div>
 
               {/* Important Links */}
               <div className="flex-1 min-w-[160px]">
                 <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.importantLinks}</h4>
-                <ul className="flex flex-col gap-2.5">
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.astrologerLogin}</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.astrologerRegistration}</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.shubhMuhurat}</a></li>
-                  <li><Link href={PATHS.BUY_PRODUCTS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.shopProducts}</Link></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.aboutUs}</a></li>
-                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.contactUs}</a></li>
+                <ul className="flex flex-col gap-2.5 pl-0">
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.astrologerLogin}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.astrologerRegistration}</a></li>
+                  <li><a href="#" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.shubhMuhurat}</a></li>
+                  <li><Link href={PATHS.BUY_PRODUCTS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.shopProducts}</Link></li>
+                  <li><Link href="/about" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.aboutUs}</Link></li>
+                  <li><Link href="/contact" className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.contactUs}</Link></li>
                 </ul>
               </div>
 
               {/* Helpful Info */}
               <div className="flex-1 min-w-[160px]">
                 <h4 className="text-[18px] font-semibold text-[#ff6b00] mb-[15px] whitespace-nowrap">{t.helpfulInfo}</h4>
-                <ul className="flex flex-col gap-2.5">
-                  <li><Link href={PATHS.REFUND_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.refundPolicy}</Link></li>
-                  <li><Link href={PATHS.PRIVACY_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.privacyPolicy}</Link></li>
-                  <li><Link href={PATHS.TERMS_AND_CONDITIONS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.termsConditions}</Link></li>
-                  <li><Link href={PATHS.COPYRIGHT} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.copyrightNotice}</Link></li>
-                  <li><Link href={PATHS.HELP} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.helpSupport}</Link></li>
-                  <li><Link href={PATHS.SESSION_HISTORY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline">{t.sessionHistory}</Link></li>
+                <ul className="flex flex-col gap-2.5 pl-0">
+                  <li><Link href={PATHS.REFUND_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.refundPolicy}</Link></li>
+                  <li><Link href={PATHS.PRIVACY_POLICY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.privacyPolicy}</Link></li>
+                  <li><Link href={PATHS.TERMS_AND_CONDITIONS} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.termsConditions}</Link></li>
+                  <li><Link href={PATHS.COPYRIGHT} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.copyrightNotice}</Link></li>
+                  <li><Link href={PATHS.HELP} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.helpSupport}</Link></li>
+                  <li><Link href={PATHS.SESSION_HISTORY} className="text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform" />{t.sessionHistory}</Link></li>
                 </ul>
               </div>
             </div>

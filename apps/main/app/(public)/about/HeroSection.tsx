@@ -2,8 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
+import { useLanguageStore } from "@/store/languageStore";
+import { aboutTranslations } from "@/lib/translations/about";
 
 const HeroSection: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = aboutTranslations[lang as keyof typeof aboutTranslations] || aboutTranslations.en;
+
   return (
     <section
       className="position-relative overflow-hidden py-5"
@@ -47,21 +52,19 @@ const HeroSection: React.FC = () => {
           }}
         >
           <i className="fa-solid fa-om me-2" />
-          India&apos;s Trusted Astrology Platform
+          {t.badgeText}
         </span>
         <h1
           className="display-4 fw-bold mb-4"
           style={{ letterSpacing: "-0.5px" }}
         >
-          About <span style={{ color: "#fb923c" }}>Astrology in Bharat</span>
+          {t.titleStart} <span style={{ color: "#fb923c" }}>{t.titleHighlight}</span>
         </h1>
         <p
           className="mx-auto mb-5 text-white/80"
           style={{ maxWidth: 640, fontSize: "1.1rem", lineHeight: 1.8 }}
         >
-          We bring the ancient wisdom of Indian astrology to your fingertips —
-          connecting you with verified, experienced astrologers for life&apos;s
-          most meaningful questions.
+          {t.heroDesc}
         </p>
         <div className="d-flex justify-content-center gap-3 flex-wrap">
           <Link
@@ -75,7 +78,7 @@ const HeroSection: React.FC = () => {
             }}
           >
             <i className="fa-solid fa-user-astronaut me-2" />
-            Consult an Astrologer
+            {t.btnConsult}
           </Link>
           <Link
             href="/contact"
@@ -88,7 +91,7 @@ const HeroSection: React.FC = () => {
             }}
           >
             <i className="fa-solid fa-envelope me-2" />
-            Contact Us
+            {t.btnContact}
           </Link>
         </div>
       </div>

@@ -98,6 +98,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                   src="/images/horoscope-round2.png"
                   alt="Zodiac Wheel"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
                 />
                 <div className="absolute inset-0 flex items-center justify-center p-16">

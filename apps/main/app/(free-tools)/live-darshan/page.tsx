@@ -50,12 +50,12 @@ const LiveDarshanPage = () => {
                     fallbackImg
                 ];
                 const vids = [
-                    "https://www.youtube.com/embed/UXB0unZtVbs",
-                    "https://www.youtube.com/embed/BEPUQyrgbF0",
-                    "https://www.youtube.com/embed/fopdU7c3mu4",
-                    "https://www.youtube.com/embed/XFg_Gcs2-kc",
-                    "https://www.youtube.com/embed/WQNTX3Cgc9I",
-                    "https://www.youtube.com/embed/TSs6sUyIjqo"
+                    "https://www.youtube.com/embed/live?channel=UCdMj2twWfMHXrWgX5oVdoyA", // Kashi Vishwanath
+                    "https://www.youtube.com/embed/live?channel=UCW6GqPknjYIgrgPBx1L9yKQ", // Mahakaleshwar
+                    "https://www.youtube.com/embed/live?channel=UCT1egsvA08YcdMLiEu1DTRg", // Somnath
+                    "https://www.youtube.com/embed/live?channel=UCA99DrZabMr0ZncelhO6TkQ", // Siddhivinayak
+                    "https://www.youtube.com/embed/live?channel=UCKGvJDh7g_Kzocbwy7aKicA", // Shirdi Sai Baba
+                    "https://www.youtube.com/embed/live?channel=UCAA6IsLVfbHrP1I_lzxv09Q"  // ISKCON Vrindavan
                 ];
 
                 const localizedSites: DarshanSite[] = t.sites.map((site, index) => ({
@@ -165,6 +165,7 @@ const LiveDarshanPage = () => {
                                             src={site.image}
                                             alt={site.name}
                                             fill
+                                            unoptimized
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                             onError={(e) => {
                                                 const target = e.target as any;

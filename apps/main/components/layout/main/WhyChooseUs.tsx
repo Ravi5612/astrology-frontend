@@ -52,8 +52,7 @@ const WhyChooseUs = () => {
                 src="/images/horoscope-round2.png"
                 width={420}
                 height={420}
-                className="animate-[spin_40s_linear_infinite] opacity-40 brightness-125"
-                style={{ width: '100%', maxWidth: '420px', height: 'auto' }}
+                className="w-full max-w-[420px] h-auto animate-[spin_40s_linear_infinite] opacity-40 brightness-125"
                 alt="zodiac wheel"
               />
             </div>
@@ -64,8 +63,8 @@ const WhyChooseUs = () => {
               alt="astrologer mascot"
               width={320}
               height={320}
-              className="relative z-20 drop-shadow-[0_0_40px_rgba(255,107,0,0.2)]"
-              style={{ width: '85%', maxWidth: '320px', height: 'auto' }}
+              style={{ height: "auto" }}
+              className="relative z-20 w-[85%] max-w-[320px] drop-shadow-[0_0_40px_rgba(255,107,0,0.2)]"
             />
 
             {/* 3. Foreground: Platform & Props (Assuming these are part of the image or can be layered) */}

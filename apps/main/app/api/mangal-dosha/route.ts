@@ -72,38 +72,14 @@ export async function GET(request: Request) {
       },
     });
 
-    // const result = await dataResponse.json();  <-- For live data
-    const result = {
-      status: "ok",
-      data: {
-        has_dosha: true,
-        description:
-          "The person is Manglik. Mars is positioned in the 2nd house, it is mild Manglik Dosha",
-        has_exception: true,
-        type: "Mild",
-        exceptions: [
-          "Mars is said to have a maturity age of 28. The malefic effects of Mars reduce after the age of 28.",
-          "If a Manglik is born on a Tuesday, the negative effect of Manglik Dosha gets cancelled.",
-        ],
-        remedies: [
-          "It is considered that if a manglik person marries to another manglik person then the manglik dosha gets cancelled and has no effect.",
-          "Worship Lord Hanuman by reciting Hanuman Chalisa daily & visit the temple of Lord Hanuman on Tuesdays.",
-          'The ill effects of Manglik Dosha can be cancelled by performing a "Kumbh Vivah" in which the manglik marries a banana tree, a peepal tree, or a statue of God Vishnu before the actual wedding.',
-          "The ill effects of Manglik Dosha can be reduced with the application of Special Pooja, Mantras, Gemstones and Charities.",
-          "Donate blood on a Tuesday in every three months, if health permits.",
-          "Feed birds with something sweet.",
-          "Worship banyan tree with milk mixed with something sweet.",
-          "Start a fast in a rising moon period on a Tuesday.",
-        ],
-      },
-    };
+    const result = await dataResponse.json();
 
     console.log("Prokerala API Response Status:", dataResponse.status);
 
     if (!dataResponse.ok) {
       console.error("Prokerala Mangal Dosha Error Result:", result);
       return NextResponse.json(
-        { error: (result as any).errors?.[0]?.detail || "API request failed" },
+        { error: result.errors?.[0]?.detail || "API request failed" },
         { status: dataResponse.status }
       );
     }

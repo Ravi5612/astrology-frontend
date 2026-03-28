@@ -62,7 +62,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${outfit.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${poppins.variable}`} data-scroll-behavior="smooth">
 
       <body className="min-h-screen bg-white text-black" suppressHydrationWarning>
         <QueryProvider>

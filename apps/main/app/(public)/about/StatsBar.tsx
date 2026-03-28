@@ -1,17 +1,20 @@
 "use client";
 
 import React from "react";
+import { useLanguageStore } from "@/store/languageStore";
+import { aboutTranslations } from "@/lib/translations/about";
 
-interface StatItem {
-  value: string;
-  label: string;
-}
+const StatsBar: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = aboutTranslations[lang as keyof typeof aboutTranslations] || aboutTranslations.en;
 
-interface StatsBarProps {
-  stats: StatItem[];
-}
+  const stats = [
+    { value: "1,00,000+", label: t.statUsers },
+    { value: "500+", label: t.statAstrologers },
+    { value: "10+", label: t.statServices },
+    { value: "4.8★", label: t.statRating },
+  ];
 
-const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
   return (
     <section className="bg-orange-50/50 border-b border-orange-100 overflow-hidden relative">
        {/* Background subtle texture/pattern could go here */}

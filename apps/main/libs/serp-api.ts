@@ -1,8 +1,8 @@
-const SERPER_API_KEY = "d8af18e43b74b92ebc1bd50f76849a84241133e7";
 const CACHE_KEY_PREFIX = "famous_places_cache_";
 const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 import { Place } from "@/lib/types";
+import { API_BASE_URL } from "@/utils/api-config";
 export type { Place };
 
 const BLOCKED_DOMAINS = [
@@ -60,18 +60,22 @@ export async function fetchPlaces(
   if (cached) return cached;
 
   try {
-    const response = await fetch("https://google.serper.dev/places", {
-      method: "POST",
+    const searchParams = new URLSearchParams({
+      q: query,
+      location: location
+    });
+
+    const response = await fetch(`${API_BASE_URL}/places/search?${searchParams.toString()}`, {
+      method: "GET",
       headers: {
-        "X-API-KEY": SERPER_API_KEY,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        q: query,
-        location: location,
-        gl: "in",
-      }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Backend API error: ${response.statusText}`);
+    }
+
     const data = await response.json();
     const places = (data.places || []).map((p: Place) => ({
       ...p,
@@ -95,17 +99,21 @@ export async function fetchPlaceImages(placeTitle: string): Promise<string[]> {
   if (cached) return cached;
 
   try {
-    const response = await fetch("https://google.serper.dev/images", {
-      method: "POST",
+    const searchParams = new URLSearchParams({
+      q: placeTitle
+    });
+
+    const response = await fetch(`${API_BASE_URL}/places/images?${searchParams.toString()}`, {
+      method: "GET",
       headers: {
-        "X-API-KEY": SERPER_API_KEY,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        q: placeTitle + " exterior real photo",
-        num: 5,
-      }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Backend API error: ${response.statusText}`);
+    }
+
     const data = await response.json();
     const images = (data.images || [])
       .map((img: { imageUrl: string }) => img.imageUrl)

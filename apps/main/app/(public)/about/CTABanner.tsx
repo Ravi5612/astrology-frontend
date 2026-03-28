@@ -2,8 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
+import { useLanguageStore } from "@/store/languageStore";
+import { aboutTranslations } from "@/lib/translations/about";
 
 const CTABanner: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = aboutTranslations[lang as keyof typeof aboutTranslations] || aboutTranslations.en;
+
   return (
     <section
       className="py-5 text-center text-white"
@@ -25,14 +30,13 @@ const CTABanner: React.FC = () => {
           🌟
         </div>
         <h2 className="fw-bold mb-3" style={{ fontSize: "2rem" }}>
-          Start Your Cosmic Journey Today
+          {t.ctaTitle}
         </h2>
         <p
           className="mb-4 mx-auto"
           style={{ maxWidth: 500, color: "rgba(255,255,255,0.7)", lineHeight: 1.8 }}
         >
-          Connect with a verified astrologer right now and get personalized
-          guidance for life&apos;s most important questions.
+          {t.ctaDesc}
         </p>
         <div className="d-flex justify-content-center gap-3 flex-wrap">
           <Link
@@ -46,7 +50,7 @@ const CTABanner: React.FC = () => {
             }}
           >
             <i className="fa-solid fa-star me-2" />
-            Talk to an Astrologer
+            {t.ctaBtn1}
           </Link>
           <Link
             href="/calculator"
@@ -58,7 +62,7 @@ const CTABanner: React.FC = () => {
             }}
           >
             <i className="fa-solid fa-calculator me-2" />
-            Free Calculators
+            {t.ctaBtn2}
           </Link>
         </div>
       </div>

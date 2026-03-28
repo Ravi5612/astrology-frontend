@@ -1,25 +1,29 @@
 "use client";
 
 import React from "react";
+import { useLanguageStore } from "@/store/languageStore";
+import { aboutTranslations } from "@/lib/translations/about";
 
 const StorySection: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = aboutTranslations[lang as keyof typeof aboutTranslations] || aboutTranslations.en;
+
   const milestones = [
     {
       year: "2022",
-      event: "Platform founded with 20 hand-verified astrologers.",
+      event: t.milestone1,
     },
     {
       year: "2023",
-      event:
-        "Launched real-time chat & call consultations. Crossed 10,000 users.",
+      event: t.milestone2,
     },
     {
       year: "2024",
-      event: "Added Kundli matching, gemstone shop & online puja services.",
+      event: t.milestone3,
     },
     {
       year: "2025",
-      event: "Crossed 1 lakh happy users. Expanded to 500+ astrologers.",
+      event: t.milestone4,
     },
   ];
 
@@ -32,36 +36,26 @@ const StorySection: React.FC = () => {
               className="text-uppercase fw-bold small"
               style={{ color: "#f97316", letterSpacing: "2px" }}
             >
-              Our Story
+              {t.storyTag}
             </span>
             <h2
               className="fw-bold mt-2 mb-4"
               style={{ fontSize: "2rem", color: "#1a0a00" }}
             >
-              How It All Began
+              {t.storyTitle}
             </h2>
           </div>
         </div>
         <div className="row align-items-start g-5">
           <div className="col-lg-6">
             <p className="text-muted mb-4" style={{ lineHeight: 1.9 }}>
-              Astrology in Bharat was born from a simple frustration — finding a
-              trustworthy astrologer in India was hard. Between fake gurus,
-              overpriced pujas, and one-size-fits-all predictions, millions of
-              people were left without genuine guidance.
+              {t.storyDesc1}
             </p>
             <p className="text-muted mb-4" style={{ lineHeight: 1.9 }}>
-              Our founders, passionate about both technology and Indian
-              spiritual traditions, decided to build a platform that would
-              change this. A platform where every astrologer is verified, every
-              consultation is personal, and every user feels heard and
-              respected.
+              {t.storyDesc2}
             </p>
             <p className="text-muted" style={{ lineHeight: 1.9 }}>
-              Since our launch, we have helped over a lakh Indians find clarity
-              on questions about marriage, career, health, finances, and more —
-              through the time-tested lens of Vedic, KP, Lal Kitab, and
-              Numerological astrology.
+              {t.storyDesc3}
             </p>
           </div>
           <div className="col-lg-6">

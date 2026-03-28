@@ -91,99 +91,13 @@ export async function GET(request: Request) {
       },
     });
 
-    // const result = await dataResponse.json(); <--for live data
-    const result = {
-      status: "ok",
-      data: {
-        girl_info: {
-          koot: {
-            varna: "Brahmin",
-            vasya: "Jalachara",
-            tara: "Janma",
-            yoni: "Gau",
-            graha_maitri: "Jupiter",
-            gana: "Manushya",
-            bhakoot: "Meena",
-            nadi: "Madhya",
-          },
-          nakshatra: {
-            id: 25,
-            name: "Uttara Bhadrapada",
-            lord: {
-              id: 6,
-              name: "Saturn",
-              vedic_name: "Shani",
-            },
-            pada: 3,
-          },
-          rasi: {
-            id: 11,
-            name: "Meena",
-            lord: {
-              id: 2,
-              name: "Mercury",
-              vedic_name: "Budha",
-            },
-          },
-        },
-        boy_info: {
-          koot: {
-            varna: "Brahmin",
-            vasya: "Jalachara",
-            tara: "Janma",
-            yoni: "Gau",
-            graha_maitri: "Jupiter",
-            gana: "Manushya",
-            bhakoot: "Meena",
-            nadi: "Madhya",
-          },
-          nakshatra: {
-            id: 25,
-            name: "Uttara Bhadrapada",
-            lord: {
-              id: 6,
-              name: "Saturn",
-              vedic_name: "Shani",
-            },
-            pada: 3,
-          },
-          rasi: {
-            id: 11,
-            name: "Meena",
-            lord: {
-              id: 2,
-              name: "Mercury",
-              vedic_name: "Budha",
-            },
-          },
-        },
-        message: {
-          type: "bad",
-          description:
-            "Union is not recommended due to the presence of Nadi Maha Dosha.  Since Gun Milan Nadi Koot is given supreme priority during match making. The Boy and Girl are not affected by Mangal Dosha",
-        },
-        guna_milan: {
-          total_points: 28,
-          maximum_points: 36,
-          ashtakoot: {
-            varna: { score: 1, maximum_score: 1 },
-            vasya: { score: 2, maximum_score: 2 },
-            tara: { score: 1.5, maximum_score: 3 },
-            yoni: { score: 4, maximum_score: 4 },
-            graha_maitri: { score: 5, maximum_score: 5 },
-            gana: { score: 1, maximum_score: 6 },
-            bhakoot: { score: 7, maximum_score: 7 },
-            nadi: { score: 6.5, maximum_score: 8 },
-          },
-        },
-      },
-    };
+    const result = await dataResponse.json();
     console.log("Prokerala API Response Status:", dataResponse.status);
 
     if (!dataResponse.ok) {
       console.error("Prokerala Matching Error Result:", result);
       return NextResponse.json(
-        { error: (result as any).errors?.[0]?.detail || "API request failed" },
+        { error: result.errors?.[0]?.detail || "API request failed" },
         { status: dataResponse.status }
       );
     }
