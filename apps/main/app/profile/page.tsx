@@ -2,7 +2,7 @@
 
 import React from "react";
 import ProfileSidebar from "@/components/features/profile/ProfileSidebar";
-import ProfileForm from "@/components/features/profile/ProfileForm";
+import ProfileForm from "@/components/features/profile/ProfileForm.component";
 import WishlistGrid from "@/components/features/profile/WishlistGrid";
 import ReportIssueModal from "@/components/features/user/ReportIssueModal";
 import OrdersTab from "@/components/features/profile/OrdersTab";

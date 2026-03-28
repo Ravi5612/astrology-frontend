@@ -2,14 +2,10 @@
 
 import React from "react";
 import {
-  GiLotus as GiL,
-  GiFlowerEmblem as GiFe,
-  GiStarShuriken as GiSs,
+  GiLotus,
+  GiFlowerEmblem,
+  GiStarShuriken,
 } from "react-icons/gi";
-
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiFlowerEmblem = GiFe as unknown as React.FC<{ size?: number; className?: string }>;
-const GiStarShuriken = GiSs as unknown as React.FC<{ size?: number; className?: string }>;
 
 type CalculatorHeroProps = {
   badgeText: string;
@@ -44,7 +40,7 @@ const CalculatorHero: React.FC<CalculatorHeroProps> = ({
   paragraph,
 }) => {
   return (
-    <section className="relative pt-32 pb-20 bg-gradient-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
+    <section className="relative pt-32 pb-20 bg-linear-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: premiumStyles }} />
 
       {/* Background Decorative Elements */}
@@ -77,7 +73,7 @@ const CalculatorHero: React.FC<CalculatorHeroProps> = ({
 
           <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-none overflow-visible py-2">
             {titleMain}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">
               {titleAccent}
             </span>
           </h1>

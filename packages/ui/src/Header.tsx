@@ -744,8 +744,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                           )}
                         </>
                       ) : (
-                        /* Desktop hover dropdown — no Bootstrap JS needed */
                         <>
+                          {/* Desktop hover dropdown — no Bootstrap JS needed */}
                           <a
                             className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium flex items-center gap-1 cursor-pointer hover:text-orange-600 transition-colors"
                             href="#"
@@ -755,7 +755,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                           </a>
                           {/* Dropdown — visible on group hover */}
                           <ul
-                            className="absolute top-full left-0 bg-brown shadow-xl rounded-xl border border-brown py-2 z-[1001] min-w-[220px] list-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-[5px] [&::-webkit-scrollbar-track]:bg-brown [&::-webkit-scrollbar-thumb]:bg-orange [&::-webkit-scrollbar-thumb]:rounded-full"
+                            data-lenis-prevent
+                            className="absolute top-full left-0 bg-brown shadow-xl rounded-xl border border-brown py-3 z-[1001] min-w-[280px] list-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 max-h-[450px] overflow-y-auto overflow-x-hidden overscroll-contain [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-brown [&::-webkit-scrollbar-thumb]:bg-orange [&::-webkit-scrollbar-thumb]:rounded-full"
                           >
                             {[
                               { label: t.dropHoroscope, href: PATHS.HOROSCOPE },
@@ -777,7 +778,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               <li key={item.href}>
                                 <Link
                                   href={item.href}
-                                  className="block px-4 py-2 text-sm text-white/80 no-underline hover:bg-orange hover:text-white transition-colors border-b border-white/10 last:border-0"
+                                  className="block px-6 py-2.5 text-sm text-white/90 no-underline hover:bg-orange/20 hover:text-orange transition-all border-b border-white/5 last:border-0 hover:translate-x-1"
                                 >
                                   {item.label}
                                 </Link>

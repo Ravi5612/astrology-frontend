@@ -4,16 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getApiUrl } from "@/utils/api-config";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 import { FaSpinner, FaCheckCircle, FaExclamationCircle, FaEnvelopeOpenText } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
-
-import safeFetch from "@packages/safe-fetch/safeFetch";
-
-// --- API ---
-const API_ENDPOINT = `${getApiUrl()}/auth/email/verify`;
+import { verifyEmailAction } from "@/actions/auth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // Disable static generation for this page
 export const dynamic = 'force-dynamic';
@@ -21,6 +17,7 @@ export const dynamic = 'force-dynamic';
 const VerifyEmailContent: React.FC = () => {
     const { lang } = useLanguageStore();
     const t = authTranslations[lang as keyof typeof authTranslations] || authTranslations.en;
+    const { clientLogin } = useAuthStore();
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -40,28 +37,35 @@ const VerifyEmailContent: React.FC = () => {
             }
 
             try {
-                const [data, fetchError] = await safeFetch<any>(`${API_ENDPOINT}?token=${encodeURIComponent(token)}`, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const result = await verifyEmailAction(token);
 
-                if (fetchError) {
-                    const status = fetchError.status;
-                    const msg = fetchError.body?.message || fetchError.body?.error || fetchError.message || `Server responded with status ${status}.`;
+                if (result.error) {
+                    setError(result.error);
+                } else if (result.success) {
+                    setSuccessMessage(result.message || t.verifyEmail.successMessage);
                     
-                    if (status === 400 || status === 404) {
-                        setError(t.verifyEmail.failedMessage);
-                    } else if (status >= 500) {
-                        setError(t.resetPassword.errors.failed);
-                    } else {
-                        setError(msg);
+                    // Handle automatic login
+                    if (result.user) {
+                        clientLogin(result.user);
                     }
-                } else {
-                    setSuccessMessage(data?.message || t.verifyEmail.successMessage);
+
                     const countdownInterval = setInterval(() => {
                         setCountdown((prev) => {
                             if (prev <= 1) { 
                                 clearInterval(countdownInterval); 
-                                router.push('/sign-in'); 
+                                
+                                // Role-based Redirection
+                                const roles = result.user?.roles || [];
+                                const isExpert = roles.some((r: unknown) => 
+                                    ["expert", "astrologer", "Expert", "Astrologer", "EXPERT"].includes(String(r))
+                                );
+
+                                if (isExpert) {
+                                    const dashboardUrl = process.env.NEXT_PUBLIC_ASTROLOGER_DASHBOARD_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3003' : window.location.origin.replace('www.', 'astrologer.'));
+                                    window.location.href = `${dashboardUrl}/dashboard`;
+                                } else {
+                                    router.push('/profile'); 
+                                }
                                 return 0; 
                             }
                             return prev - 1;
