@@ -2,29 +2,18 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import {
-  FaHeart as FaH,
-  FaArrowRight as FaAr,
-  FaSpinner as FaSp,
-  FaUser as FaU,
-  FaRegCalendarAlt as FaCal,
-  FaShieldAlt as FaShield,
+  FaHeart,
+  FaArrowRight,
+  FaSpinner,
+  FaUser,
+  FaRegCalendarAlt as FaCalendar,
+  FaShieldAlt,
 } from "react-icons/fa";
 
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-import { GiLotus as GiL, GiSparkles as GiSpark } from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
-
-const FaHeart = FaH as unknown as React.FC<{ size?: number; className?: string }>;
-const FaArrowRight = FaAr as unknown as React.FC<{ size?: number; className?: string }>;
-const FaSpinner = FaSp as unknown as React.FC<{ size?: number; className?: string }>;
-const FaUser = FaU as unknown as React.FC<{ size?: number; className?: string }>;
-const FaCalendar = FaCal as unknown as React.FC<{ size?: number; className?: string }>;
-const FaShieldAlt = FaShield as unknown as React.FC<{ size?: number; className?: string }>;
-
-const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: string }>;
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
 type LoyaltyResult = {
   loyalty: number; // 50–100

@@ -2,14 +2,10 @@
 
 import React from "react";
 import {
-  GiLotus as GiL,
-  GiFlowerEmblem as GiFe,
-  GiStarShuriken as GiSs,
+  GiLotus,
+  GiFlowerEmblem,
+  GiStarShuriken,
 } from "react-icons/gi";
-
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiFlowerEmblem = GiFe as unknown as React.FC<{ size?: number; className?: string }>;
-const GiStarShuriken = GiSs as unknown as React.FC<{ size?: number; className?: string }>;
 
 type CalculatorHeroProps = {
   badgeText: string;

@@ -2,27 +2,17 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import {
-  FaHeartBroken as FaHB,
-  FaHeart as FaH,
-  FaArrowRight as FaAr,
-  FaSpinner as FaSp,
-  FaUser as FaU,
+  FaHeartBroken,
+  FaHeart,
+  FaArrowRight,
+  FaSpinner,
+  FaUser,
 } from "react-icons/fa";
 
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-import { GiLotus as GiL, GiSparkles as GiSpark } from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
-
-const FaHeartBroken = FaHB as unknown as React.FC<{ size?: number; className?: string }>;
-const FaHeart = FaH as unknown as React.FC<{ size?: number; className?: string }>;
-const FaArrowRight = FaAr as unknown as React.FC<{ size?: number; className?: string }>;
-const FaSpinner = FaSp as unknown as React.FC<{ size?: number; className?: string }>;
-const FaUser = FaU as unknown as React.FC<{ size?: number; className?: string }>;
-
-const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: string }>;
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
 import { BreakupPatchupResult } from "@/lib/types";
 

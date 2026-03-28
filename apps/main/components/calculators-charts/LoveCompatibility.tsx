@@ -2,29 +2,18 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import {
-  FaHeart as FaH,
-  FaUser as FaU,
-  FaArrowRight as FaAr,
-  FaStar as FaS,
-  FaBalanceScale as FaBs,
-  FaSpinner as FaSp,
+  FaHeart,
+  FaUser,
+  FaArrowRight,
+  FaStar,
+  FaBalanceScale,
+  FaSpinner,
 } from "react-icons/fa";
 
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-import { GiLotus as GiL, GiSparkles as GiSpark } from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
-
-const FaHeart = FaH as unknown as React.FC<{ size?: number; className?: string }>;
-const FaUser = FaU as unknown as React.FC<{ size?: number; className?: string }>;
-const FaArrowRight = FaAr as unknown as React.FC<{ size?: number; className?: string }>;
-const FaStar = FaS as unknown as React.FC<{ size?: number; className?: string }>;
-const FaBalanceScale = FaBs as unknown as React.FC<{ size?: number; className?: string }>;
-const FaSpinner = FaSp as unknown as React.FC<{ size?: number; className?: string }>;
-
-const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: string }>;
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
 import { useLanguageStore } from "@/store/languageStore";
 import { loveCompatibilityTranslations } from "@/lib/translations/calculators/love-compatibility";

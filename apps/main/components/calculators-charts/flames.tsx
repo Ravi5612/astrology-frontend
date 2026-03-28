@@ -2,27 +2,17 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import {
-  FaHeart as FaH,
-  FaUser as FaU,
-  FaArrowRight as FaAr,
-  FaSpinner as FaSp,
-  FaFire as FaFi,
+  FaHeart,
+  FaUser,
+  FaArrowRight,
+  FaSpinner,
+  FaFire,
 } from "react-icons/fa";
 
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-import { GiLotus as GiL, GiSparkles as GiSpark } from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
-
-const FaHeart = FaH as unknown as React.FC<{ size?: number; className?: string }>;
-const FaUser = FaU as unknown as React.FC<{ size?: number; className?: string }>;
-const FaArrowRight = FaAr as unknown as React.FC<{ size?: number; className?: string }>;
-const FaSpinner = FaSp as unknown as React.FC<{ size?: number; className?: string }>;
-const FaFire = FaFi as unknown as React.FC<{ size?: number; className?: string }>;
-
-const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: string }>;
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
 type FlamesLetter = "F" | "L" | "A" | "M" | "E" | "S";
 

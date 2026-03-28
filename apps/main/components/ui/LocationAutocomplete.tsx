@@ -2,14 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import {
-  FaMapMarkerAlt as FaMa,
-  FaSpinner as FaSp,
-  FaSearch as FaSe,
+  FaMapMarkerAlt,
+  FaSpinner,
+  FaSearch,
 } from "react-icons/fa";
-
-const FaMapMarkerAlt = FaMa as any;
-const FaSpinner = FaSp as any;
-const FaSearch = FaSe as any;
 
 interface LocationAutocompleteProps {
   placeholder?: string;

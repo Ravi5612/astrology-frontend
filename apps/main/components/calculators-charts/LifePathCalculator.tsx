@@ -2,25 +2,16 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import {
-  FaArrowRight as FaAr,
-  FaSpinner as FaSp,
-  FaRegCalendarAlt as FaCal,
-  FaStar as FaS,
+  FaArrowRight,
+  FaSpinner,
+  FaRegCalendarAlt as FaCalendar,
+  FaStar,
 } from "react-icons/fa";
 
-import { TbCrystalBall as TbCb } from "react-icons/tb";
-import { GiLotus as GiL, GiSparkles as GiSpark } from "react-icons/gi";
+import { TbCrystalBall } from "react-icons/tb";
+import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
-
-const FaArrowRight = FaAr as unknown as React.FC<{ size?: number; className?: string }>;
-const FaSpinner = FaSp as unknown as React.FC<{ size?: number; className?: string }>;
-const FaCalendar = FaCal as unknown as React.FC<{ size?: number; className?: string }>;
-const FaStar = FaS as unknown as React.FC<{ size?: number; className?: string }>;
-
-const TbCrystalBall = TbCb as unknown as React.FC<{ size?: number; className?: string }>;
-const GiLotus = GiL as unknown as React.FC<{ size?: number; className?: string }>;
-const GiSparkles = GiSpark as unknown as React.FC<{ size?: number; className?: string }>;
 
 import { LifePathNumber, LifePathResult } from "@/lib/types";
 
