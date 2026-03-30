@@ -2,7 +2,7 @@
  * 📂 Centralized API Config (Sushant Sir's Standard)
  * All API endpoints with their URL and HTTP method defined here.
  * NO magic strings anywhere else in the codebase.
- * Usage: apiClient.request(API_CONFIG.AUTH.LOGIN)
+ * Usage: apiClientSafe.request(API_CONFIG.AUTH.LOGIN)
  */
 
 import { getApiUrl, getBasePath } from "@/utils/api-config";

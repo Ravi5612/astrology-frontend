@@ -81,7 +81,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
           </div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order: any, idx: number) => (
+            {orders.filter(Boolean).map((order: any, idx: number) => (
               <div
                 key={order.id || idx}
                 className="group border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white"
@@ -165,7 +165,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                 {expandedOrders[order.id] && (
                   <div className="p-6 md:p-8 animate-in fade-in slide-in-from-top-4 duration-300">
                     <div className="space-y-4">
-                      {(order.items || order.OrderItems || []).map(
+                      {(order.items || order.OrderItems || []).filter(Boolean).map(
                         (item: any, itemIdx: number) => {
                           const product = item.product || item.Product;
                           const productImg =

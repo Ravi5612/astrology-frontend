@@ -1,5 +1,5 @@
 /**
- * 📂 api-client.ts (Agent Dashboard)
+ * 📂 apiClientSafe.ts (Agent Dashboard)
  * A safeFetch-based HTTP client.
  * Uses the Next.js rewrite proxy (/api/v1/...) so cookies are sent automatically
  * and credentials are never exposed in the browser Network tab.
@@ -38,7 +38,7 @@ function buildUrl(path: string, params?: Record<string, any>): string {
     return query ? `${fullUrl}?${query}` : fullUrl;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(path: string, options: RequestOptions = {}): Promise<[T | null, ApiError | null]> {
     const { method = "GET", body, params, timeoutMs } = options;
 
     const headers: Record<string, string> = {};
@@ -54,23 +54,17 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
     const url = buildUrl(path, params);
 
-    const [data, error] = await safeFetch<T>(url, {
+    return await safeFetch<T>(url, {
         method,
         headers,
         body: fetchBody,
         credentials: "include",
         ...(timeoutMs ? { timeoutMs } : {}),
     });
-
-    if (error) {
-        throw error;
-    }
-
-    return data as T;
 }
 
 // ── Convenience helpers ─────────────────────────────────────────
-export const apiClient = {
+export const apiClientSafe = {
     get: <T>(path: string, params?: Record<string, any>) =>
         request<T>(path, { method: "GET", params }),
 
@@ -88,4 +82,5 @@ export const apiClient = {
 };
 
 export { ApiError };
-export default apiClient;
+export default apiClientSafe;
+

@@ -67,8 +67,8 @@ export const useCartStore = create<CartState>((set, get) => ({
             // Response structure is { id, items: [...], ... }
             const rawItems = res?.items || (Array.isArray(res) ? res : []);
 
-            // Map items to ensure productId is present
-            const items = rawItems.map((item: any) => ({
+            // Filter out null/undefined items (can happen with orphaned cart entries)
+            const items = rawItems.filter(Boolean).map((item: any) => ({
                 ...item,
                 productId: item.productId || item.product?.id
             }));

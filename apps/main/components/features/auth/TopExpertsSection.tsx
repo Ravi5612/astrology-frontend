@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { apiClient } from "../../../lib/api-client";
+import http from "../../../lib/fetch-handler";
 
 interface ExpertUser {
     name: string;
@@ -24,15 +24,14 @@ const TopExpertsSection: React.FC = () => {
     useEffect(() => {
         const fetchTopExperts = async () => {
             setExpertsLoading(true);
-            try {
-                const response = await apiClient.get<TopExpert[]>('/expert/top-rated?limit=3');
-                setTopExperts(Array.isArray(response) ? response : []);
-            } catch (err) {
-                // console.error("Failed to fetch top experts");
+            const [res, error] = await http.get<TopExpert[]>('/expert/top-rated?limit=3');
+            
+            if (error) {
                 setTopExperts([]);
-            } finally {
-                setExpertsLoading(false);
+            } else {
+                setTopExperts(Array.isArray(res) ? res : []);
             }
+            setExpertsLoading(false);
         };
 
         fetchTopExperts();

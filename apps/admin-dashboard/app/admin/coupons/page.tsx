@@ -22,42 +22,45 @@ export default function CouponsPage() {
   const [showCreateCoupon, setShowCreateCoupon] = useState(false);
 
   const fetchStats = async () => {
-    try {
-      const stats = await getCouponStats();
+    const [stats, error] = await getCouponStats();
+    if (!error) {
       setRealStats(stats);
-    } catch (error) {
-      console.error("Failed to fetch coupon stats:", error);
     }
   };
 
   const fetchCoupons = async () => {
     setLoading(true);
-    try {
-      const [couponsData] = await Promise.all([
-        getCoupons(),
-        fetchStats()
-      ]);
-      const rawCoupons = Array.isArray(couponsData) ? couponsData : (couponsData.data || []);
+    
+    // Fetch stats first or in parallel
+    fetchStats();
 
-      // Map backend snake_case to frontend camelCase expected by CouponCard
-      const mappedCoupons = rawCoupons.map((c: any) => ({
-        ...c,
-        minOrderValue: c.min_order_value ?? c.minOrderValue,
-        maxDiscount: c.max_discount ?? c.maxDiscount,
-        maxUsageLimit: c.max_usage_limit ?? c.maxUsageLimit,
-        redemptionsCount: c.usage_count ?? c.redemptionsCount,
-        expiryDate: c.expiry_date ?? c.expiryDate,
-        isActive: c.is_active ?? c.isActive
-      }));
-
-      setCoupons(mappedCoupons);
-    } catch (error) {
+    const [data, error] = await getCoupons();
+    
+    if (error) {
       console.error("Failed to fetch coupons:", error);
+      toast.error("Failed to load coupons");
       setCoupons([]);
-    } finally {
       setLoading(false);
+      return;
     }
+
+    const rawCoupons = Array.isArray(data) ? data : ((data as any)?.data || []);
+
+    // Map backend snake_case to frontend camelCase expected by CouponCard
+    const mappedCoupons = rawCoupons.map((c: any) => ({
+      ...c,
+      minOrderValue: c.min_order_value ?? c.minOrderValue,
+      maxDiscount: c.max_discount ?? c.maxDiscount,
+      maxUsageLimit: c.max_usage_limit ?? c.maxUsageLimit,
+      redemptionsCount: c.usage_count ?? c.redemptionsCount,
+      expiryDate: c.expiry_date ?? c.expiryDate,
+      isActive: c.is_active ?? c.isActive
+    }));
+
+    setCoupons(mappedCoupons);
+    setLoading(false);
   };
+
 
   useEffect(() => {
     fetchCoupons();
@@ -99,33 +102,40 @@ export default function CouponsPage() {
   // Delete Dialog/Logic
   const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this coupon?")) return;
-    try {
-      await import("@/src/services/admin.service").then(m => m.deleteCoupon(id));
-      toast.success("Coupon deleted successfully");
-      fetchCoupons();
-    } catch (error) {
+    
+    const { deleteCoupon } = await import("@/src/services/admin.service");
+    const [_, error] = await deleteCoupon(id);
+    
+    if (error) {
       toast.error("Failed to delete coupon");
+      return;
     }
+    
+    toast.success("Coupon deleted successfully");
+    fetchCoupons();
   };
 
   const handleToggleStatus = async (id: number, coupon: any) => {
-    try {
-      // Use isActive as source of truth if available, otherwise check status
-      const currentlyActive = typeof coupon.isActive === 'boolean' ? coupon.isActive : (coupon.status?.toLowerCase() === 'active' || !coupon.status);
-      const nextActive = !currentlyActive;
-      const nextStatus = nextActive ? "active" : "inactive";
+    // Use isActive as source of truth if available, otherwise check status
+    const currentlyActive = typeof coupon.isActive === 'boolean' ? coupon.isActive : (coupon.status?.toLowerCase() === 'active' || !coupon.status);
+    const nextActive = !currentlyActive;
+    const nextStatus = nextActive ? "active" : "inactive";
 
-      await import("@/src/services/admin.service").then(m => m.updateCoupon(id.toString(), {
-        status: nextStatus,
-        isActive: nextActive
-      }));
+    const { updateCoupon } = await import("@/src/services/admin.service");
+    const [_, error] = await updateCoupon(id.toString(), {
+      status: nextStatus,
+      isActive: nextActive
+    });
 
-      toast.success(`Coupon ${nextActive ? 'activated' : 'deactivated'} successfully`);
-      fetchCoupons();
-    } catch (error) {
+    if (error) {
       toast.error("Failed to update status");
+      return;
     }
+
+    toast.success(`Coupon ${nextActive ? 'activated' : 'deactivated'} successfully`);
+    fetchCoupons();
   };
+
 
   const [editingCoupon, setEditingCoupon] = useState<any>(null);
 

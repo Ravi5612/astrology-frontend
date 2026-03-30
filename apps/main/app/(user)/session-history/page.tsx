@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaComments, FaPhone, FaVideo, FaStar, FaArrowRight, FaCalendarXmark, FaCircle } from "react-icons/fa";
+import { FaComments, FaPhone, FaVideo, FaStar, FaArrowRight, FaCalendarTimes, FaCircle } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 
 // Mock Data for Sessions
@@ -210,7 +210,7 @@ const SessionHistory = () => {
                     ) : (
                         <div className="text-center py-32 bg-white rounded-[4rem] border-2 border-dashed border-gray-100">
                             <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-10 text-slate-200">
-                                <FaCalendarXmark size={48} />
+                                <FaCalendarTimes size={48} />
                             </div>
                             <h4 className="text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4">No sessions found</h4>
                             <p className="text-lg text-slate-400 font-bold italic mb-12 max-w-sm mx-auto">You haven&apos;t booked any consultations in this category yet.</p>

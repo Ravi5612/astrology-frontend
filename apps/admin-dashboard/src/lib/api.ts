@@ -30,7 +30,7 @@ function isOnLoginPage(): boolean {
     return ADMIN_LOGIN_PATHS.includes(window.location.pathname);
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(path: string, options: RequestOptions = {}): Promise<[T | null, any | null]> {
     const { method = "GET", body = null, headers = {}, timeoutMs = 30000, params } = options;
 
     const normalizePath = (inputPath: string) => {
@@ -71,11 +71,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
                 window.location.href = "/";
             }
         }
-        throw error;
+        return [null, error];
     }
 
-    return { data: data as T, status: 200 } as any;
+    return [data as T, null];
 }
+
 
 export const api = {
     get: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>

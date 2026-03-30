@@ -157,8 +157,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   // API functions for notifications
   const fetchNotifications = useCallback(async () => {
     try {
-      const { apiClient } = require("./context/ClientAuthContext");
-      const res = await apiClient.get('/notifications');
+      const { apiClientSafe } = require("./context/ClientAuthContext");
+      const [res, error] = await apiClientSafe.get('/notifications');
+      if (error) throw error;
       const payload = unwrapResponse(res);
       const rawList = Array.isArray(payload) ? payload : (payload?.items || payload?.data || []);
       setNotifications(rawList.map(normalizeNotification));
@@ -169,8 +170,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   const fetchUnreadCount = useCallback(async () => {
     try {
-      const { apiClient } = require("./context/ClientAuthContext");
-      const res = await apiClient.get('/notifications/unread-count');
+      const { apiClientSafe } = require("./context/ClientAuthContext");
+      const [res, error] = await apiClientSafe.get('/notifications/unread-count');
+      if (error) throw error;
       const payload = unwrapResponse(res);
       const count = payload?.count ?? payload?.unreadCount ?? payload?.unread_count ?? 0;
       setUnreadCount(Number(count) || 0);
@@ -181,12 +183,25 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   const markAsRead = async (id: number) => {
     try {
-      const { apiClient } = require("./context/ClientAuthContext");
-      await apiClient.patch(`/notifications/${id}/read`);
+      const { apiClientSafe } = require("./context/ClientAuthContext");
+      const [_, error] = await apiClientSafe.patch(`/notifications/${id}/read`);
+      if (error) throw error;
       fetchUnreadCount();
       fetchNotifications();
     } catch (err) {
       console.error('Failed to mark as read', err);
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      const { apiClientSafe } = require("./context/ClientAuthContext");
+      const [_, error] = await apiClientSafe.delete('/notifications/all');
+      if (error) throw error;
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Failed to clear notifications in header', err);
     }
   };
 
@@ -424,18 +439,26 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               <p className="mb-0 font-bold text-gray-900 text-lg">Notifications</p>
                               {notifications.length > 0 && (
                                 <button
-                                  onClick={() => setNotifications([])}
-                                  className="text-gray-500 text-sm hover:text-gray-700 transition"
+                                  onClick={handleClearAll}
+                                  className="text-red-500 text-sm font-bold hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1.5"
                                 >
+                                  <i className="fa-solid fa-trash-can text-xs"></i>
                                   Clear All
                                 </button>
                               )}
                             </div>
                             <div className="overflow-auto" style={{ maxHeight: '400px' }}>
                               {notifications.length === 0 ? (
-                                <div className="px-3 py-10 text-center">
-                                  <i className="fa-solid fa-bell-slash text-gray-400 mb-3 block text-4xl" />
-                                  <p className="mb-0 text-gray-500 text-sm">No new notifications</p>
+                                <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+                                  <div className="w-16 h-16 bg-orange/5 rounded-full flex items-center justify-center mb-4 border border-orange/10 shadow-inner">
+                                    <i className="fa-solid fa-bell-slash text-2xl text-orange/60"></i>
+                                  </div>
+                                  <h6 className="font-bold text-gray-900 text-base mb-2">
+                                    No Notifications Yet
+                                  </h6>
+                                  <p className="text-gray-500 text-sm max-w-[250px] m-0 mx-auto leading-relaxed">
+                                    You'll see alerts about your orders and consultations here.
+                                  </p>
                                 </div>
                               ) : (
                                 notifications.map((notif: any, idx: number) => (

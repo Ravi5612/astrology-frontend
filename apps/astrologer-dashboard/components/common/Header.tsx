@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FiBell, FiMenu } from "react-icons/fi";
 import Link from "next/link";
-import apiClient from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 
@@ -150,49 +150,42 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   };
 
   const handleToggle = async () => {
-    if (loading) return;
-    try {
-      setLoading(true);
-      const newStatus = !isOnline;
+    setLoading(true);
+    const newStatus = !isOnline;
 
-      console.log("[Presence] Updating expert availability to:", newStatus);
-      await apiClient.patch('/expert/status', { is_available: newStatus });
-      setIsOnline(newStatus);
+    console.log("[Presence] Updating expert availability to:", newStatus);
+    const [res, error] = await apiClientSafe.patch<{ is_available: boolean }>('/expert/status', { is_available: newStatus });
 
-      // Sync presence with backend socket mapping
-      const actualUserId = user?.userId || user?.id;
-      if (actualUserId) {
-        if (newStatus) {
-          socket.emit("expert_online", { userId: actualUserId });
-        } else {
-          socket.emit("expert_offline", { userId: actualUserId });
-        }
-      }
-
-      toast.success(`You are now ${newStatus ? 'Online' : 'Offline'}`);
-    } catch (err: any) {
-      console.error("Failed to update status:", err);
-
+    if (error) {
+      console.error("Failed to update status:", error);
       // Extract backend error message robustly
       let errorMessage = "Failed to update status";
-      if (err.response?.data?.message) {
-        errorMessage = Array.isArray(err.response.data.message)
-          ? err.response.data.message.join(", ")
-          : err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
+      const errBody = (error as any)?.body || (error as any)?.data;
+      if (errBody?.message) {
+        errorMessage = Array.isArray(errBody.message)
+          ? errBody.message.join(", ")
+          : errBody.message;
       }
-
-      // Detailed error log for development
-      if (err.response) {
-        console.error("[AuthDebug] Response Data:", err.response.data);
-        console.error("[AuthDebug] Response Status:", err.response.status);
-      }
-
       toast.error(errorMessage);
-    } finally {
       setLoading(false);
+      return;
     }
+
+    setIsOnline(newStatus);
+
+    // Sync presence with backend socket mapping
+    const actualUserId = user?.userId || user?.id;
+    if (actualUserId) {
+      if (newStatus) {
+        socket.emit("expert_online", { userId: actualUserId });
+      } else {
+        socket.emit("expert_offline", { userId: actualUserId });
+      }
+    }
+
+    toast.success(`You are now ${newStatus ? 'Online' : 'Offline'}`);
+    setLoading(false);
+
   };
 
   return (

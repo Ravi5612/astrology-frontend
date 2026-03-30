@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useClientAuth, apiClient } from "@repo/ui";
+import { useClientAuth, apiClientSafe } from "@repo/ui";
 
 export interface CartItem {
   id: number;
@@ -62,13 +62,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Sync with backend if authenticated
     if (isClientAuthenticated) {
-      try {
-        await apiClient.post("/cart/add", {
-          product_id: item.id,
-          quantity: 1,
-        });
-      } catch (err) {
-        console.error("Failed to sync cart with backend", err);
+      const [_, error] = await apiClientSafe.post("/cart/add", {
+        product_id: item.id,
+        quantity: 1,
+      });
+      if (error) {
+        console.error("Failed to sync cart with backend", error);
       }
     }
   };

@@ -117,24 +117,28 @@ const NotificationPage = () => {
     const [isMounted, setIsMounted] = useState(false);
 
     const fetchNotifications = async () => {
-        try {
-            setIsLoading(true);
-            const data = await getNotifications();
-            const mapped: Notification[] = data.map((n: ApiNotification) => ({
-                id: n.id,
-                title: n.title,
-                description: n.message,
-                createdAt: (n as any).created_at || n.createdAt,
-                read: n.isRead,
-                type: n.type === 'error' ? 'error' : n.type === 'success' ? 'success' : 'info'
-            }));
-            setNotifications(mapped);
-        } catch (error) {
+        setIsLoading(true);
+        const [data, error] = await getNotifications();
+        
+        if (error) {
             console.error("Failed to fetch notifications:", error);
             toast.error("Failed to load notifications");
-        } finally {
+            setNotifications([]);
             setIsLoading(false);
+            return;
         }
+
+        const mapped: Notification[] = (data || []).map((n: ApiNotification) => ({
+            id: n.id,
+            title: n.title,
+            description: n.message,
+            createdAt: n.created_at,
+            read: n.read,
+            type: n.type === 'error' ? 'error' : n.type === 'success' ? 'success' : 'info'
+        }));
+
+        setNotifications(mapped);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -143,26 +147,27 @@ const NotificationPage = () => {
     }, []);
 
     const handleMarkRead = async (id: string) => {
-        try {
-            await markAsRead(id);
-            setNotifications((prev) =>
-                prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
-            );
-        } catch (error) {
+        const [_, error] = await markAsRead(id);
+        if (error) {
             toast.error("Failed to mark as read");
+            return;
         }
+        setNotifications((prev) =>
+            prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
+        );
     };
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this notification?")) return;
-        try {
-            await deleteNotification(id);
-            setNotifications((prev) => prev.filter((n) => n.id !== id));
-            toast.success("Notification deleted");
-        } catch (error) {
+        const [_, error] = await deleteNotification(id);
+        if (error) {
             toast.error("Failed to delete notification");
+            return;
         }
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        toast.success("Notification deleted");
     };
+
 
     if (!isMounted) {
         return null;

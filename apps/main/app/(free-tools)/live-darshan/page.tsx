@@ -1,5 +1,7 @@
 "use client";
 
+import apiClientSafe from "@/lib/fetch-handler";
+
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
@@ -23,15 +25,13 @@ const LiveDarshanPage = () => {
             try {
                 // Use the Next.js proxy rewrite (/api/v1 → backend) so the request
                 // stays on 'self' origin and doesn't violate CSP.
-                const response = await fetch(`/api/v1/live-darshan`);
+                const [result, fetchError] = await apiClientSafe.get<any>(`/live-darshan`);
 
-                if (!response.ok) {
+                if (fetchError) {
                     throw new Error('Network response from backend was not ok');
                 }
 
-                const result = await response.json();
-
-                if (result.success && result.data) {
+                if (result?.success && result?.data) {
                     setDarshanSites(result.data);
                 } else {
                     console.error("Invalid response format from backend API", result);

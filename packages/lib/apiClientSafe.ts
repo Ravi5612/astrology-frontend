@@ -1,5 +1,5 @@
 /**
- * packages/lib/apiClient.ts — safeFetch-based API client
+ * packages/lib/apiClientSafe.ts — safeFetch-based API client
  *
  * Architecture:
  * - Client-side: uses relative /api/v1/... proxied by Next.js rewrites.
@@ -55,13 +55,19 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 interface RequestOptions {
     method?: HttpMethod;
-    body?: Record<string, unknown> | FormData | null;
+    body?: any;
     headers?: Record<string, string>;
     params?: Record<string, string | number>;
     _retry?: boolean;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<{ data: T; status: number }> {
+export interface ApiError {
+    message: string;
+    status: number;
+    errors?: Record<string, string[]>;
+}
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<[T | null, ApiError | null]> {
     const { method = "GET", body = null, headers = {}, params, _retry = false } = options;
 
     let url = buildUrl(path);
@@ -82,51 +88,63 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<{
         ...(body ? { body: body instanceof FormData ? body : JSON.stringify(body) } : {}),
     };
 
-    const res = await fetch(url, fetchInit);
+    try {
+        const res = await fetch(url, fetchInit);
 
-    // ── 401 handling with refresh + retry ────────────────────────────────────
-    if (res.status === 401 && !_retry) {
-        if (isRefreshing) {
-            // Queue this request until the ongoing refresh resolves
+        // ── 401 handling with refresh + retry ────────────────────────────────────
+        if (res.status === 401 && !_retry) {
+            if (isRefreshing) {
+                try {
+                    await waitForRefresh();
+                    return request<T>(path, { ...options, _retry: true });
+                } catch (err) {
+                    if (typeof window !== "undefined") window.location.href = "/sign-in";
+                    return [null, { message: "Session expired", status: 401 }];
+                }
+            }
+
+            isRefreshing = true;
             try {
-                await waitForRefresh();
+                await doRefresh();
+                processQueue(null);
                 return request<T>(path, { ...options, _retry: true });
-            } catch (err) {
+            } catch (refreshError) {
+                processQueue(refreshError);
                 if (typeof window !== "undefined") window.location.href = "/sign-in";
-                throw err;
+                return [null, { message: "Session expired", status: 401 }];
+            } finally {
+                isRefreshing = false;
             }
         }
 
-        isRefreshing = true;
-        try {
-            await doRefresh();
-            processQueue(null);
-            return request<T>(path, { ...options, _retry: true });
-        } catch (refreshError) {
-            processQueue(refreshError);
-            if (typeof window !== "undefined") window.location.href = "/sign-in";
-            throw refreshError;
-        } finally {
-            isRefreshing = false;
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok) {
+            return [null, { 
+                message: data?.message || "An error occurred", 
+                status: res.status, 
+                errors: data?.errors 
+            }];
         }
-    }
 
-    const data = await res.json().catch(() => null) as T;
-    return { data, status: res.status };
+        return [data as T, null];
+    } catch (err: any) {
+        return [null, { message: err.message || "Network error", status: 0 }];
+    }
 }
 
 // ─── Convenience API ──────────────────────────────────────────────────────────
-export const apiClient = {
+export const apiClientSafe = {
     get: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>
         request<T>(path, { ...opts, method: "GET" }),
 
-    post: <T>(path: string, body?: Record<string, unknown>, opts?: Omit<RequestOptions, "method">) =>
+    post: <T>(path: string, body?: any, opts?: Omit<RequestOptions, "method">) =>
         request<T>(path, { ...opts, method: "POST", body }),
 
-    put: <T>(path: string, body?: Record<string, unknown>, opts?: Omit<RequestOptions, "method">) =>
+    put: <T>(path: string, body?: any, opts?: Omit<RequestOptions, "method">) =>
         request<T>(path, { ...opts, method: "PUT", body }),
 
-    patch: <T>(path: string, body?: Record<string, unknown>, opts?: Omit<RequestOptions, "method">) =>
+    patch: <T>(path: string, body?: any, opts?: Omit<RequestOptions, "method">) =>
         request<T>(path, { ...opts, method: "PATCH", body }),
 
     delete: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>
@@ -136,4 +154,5 @@ export const apiClient = {
         request<T>(path, { ...opts, method: "POST", body: formData }),
 };
 
-export default apiClient;
+export default apiClientSafe;
+

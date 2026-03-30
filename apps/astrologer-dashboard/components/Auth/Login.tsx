@@ -5,7 +5,7 @@ import { Lock, User, Eye, EyeOff } from "lucide-react";
 import NextImage from "next/image";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import apiClient from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@repo/ui";
 import { toast } from "react-toastify";

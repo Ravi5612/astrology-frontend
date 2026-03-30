@@ -1,4 +1,6 @@
 import { getApiUrl } from '../utils/api-config';
+import apiClientSafe from '@/lib/fetch-handler';
+
 
 export interface ExpertProfile {
   id: number;
@@ -66,19 +68,17 @@ export const getExperts = async (
       }
     });
 
-    const url = `${getApiUrl()}/expert/list?${queryParams.toString()}`;
+    const url = `/expert/list?${queryParams.toString()}`;
 
-    const response = await fetch(url, {
+    const [result, fetchError] = await apiClientSafe.get<any>(url, {
       cache: 'no-store',
-    });
+    } as any);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    if (fetchError) {
+      throw new Error(`API Error: ${fetchError.message}`);
     }
 
-    const result = await response.json();
-    console.log(`🔍 [API Experts] List response keys:`, Object.keys(result));
+    console.log(`🔍 [API Experts] List response keys:`, Object.keys(result || {}));
 
     const finalData = Array.isArray(result) ? result : (result.data || result.experts || []);
     if (finalData.length > 0) {
@@ -129,14 +129,14 @@ export const getExpertReviews = async (
   limit: number = 10
 ): Promise<FetchReviewsResponse> => {
   try {
-    const url = `${getApiUrl()}/reviews/expert/${expertId}?page=${page}&limit=${limit}`;
-    const response = await fetch(url, { cache: 'no-store' });
+    const url = `/reviews/expert/${expertId}?page=${page}&limit=${limit}`;
+    const [data, error] = await apiClientSafe.get<any>(url, { cache: 'no-store' } as any);
 
-    if (!response.ok) throw new Error("Failed to fetch reviews");
+    if (error) throw new Error("Failed to fetch reviews");
 
-    return await response.json();
+    return data;
   } catch {
-    return { data: [], total: 0, page, limit };
+    return { data: [], total: 0, page, limit } as any;
   }
 };
 

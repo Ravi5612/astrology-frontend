@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { getApiUrl } from "@/utils/api-config";
 import { toast } from "react-toastify";
-import apiClient from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
 import { CallStatus, CallSession } from "@/lib/types";
 
 export const useCallLogic = () => {
@@ -60,20 +60,21 @@ export const useCallLogic = () => {
     let pollTimer: NodeJS.Timeout | null = null;
     const checkAndStartLocalVideo = async () => {
       if (hasAcceptedRef.current) return;
-      try {
-        const res: any = await apiClient.get(`/call/session/${sessionId}`);
-        const session = res.data || res;
-        if (session) {
-          setCallType(session.type);
-          setSessionData(session);
-          if (session.type === "video") startLocalVideoPreview();
-          if (session.status === "active" || session.status === "ongoing") {
-            if (pollTimer) clearInterval(pollTimer);
-            handleCallAccepted(session);
-          }
-        }
-      } catch (err) {
+      const [res, err] = await http.get<any>(`/call/session/${sessionId}`);
+      if (err) {
         console.error("Failed to pre-fetch session", err);
+        return;
+      }
+
+      const session = res?.data || res;
+      if (session) {
+        setCallType(session.type);
+        setSessionData(session);
+        if (session.type === "video") startLocalVideoPreview();
+        if (session.status === "active" || session.status === "ongoing") {
+          if (pollTimer) clearInterval(pollTimer);
+          handleCallAccepted(session);
+        }
       }
     };
 
@@ -85,19 +86,30 @@ export const useCallLogic = () => {
       hasAcceptedRef.current = true;
       if (pollTimer) clearInterval(pollTimer);
       setStatus("connecting");
+
+      const [tokenResponse, tokenError] = await http.get<any>(`/call/token/${sessionId}`);
+      
+      if (tokenError) {
+        if (!cancelledRef.current) {
+          toast.error("Could not connect call.");
+          setStatus("ended");
+        }
+        return;
+      }
+
+      const tokenData = tokenResponse?.data || tokenResponse;
+      const myToken = tokenData?.token || data?.token;
+      const roomName = tokenData?.roomName || data?.roomName;
+      const sessionPayload = tokenData?.session || data?.session;
+      setSessionData(sessionPayload);
+      setCallType(sessionPayload?.type || "audio");
+
       try {
-        const tokenResponse: any = await apiClient.get(`/call/token/${sessionId}`);
-        const tokenData = tokenResponse?.data || tokenResponse;
-        const myToken = tokenData?.token || data?.token;
-        const roomName = tokenData?.roomName || data?.roomName;
-        const sessionPayload = tokenData?.session || data?.session;
-        setSessionData(sessionPayload);
-        setCallType(sessionPayload?.type || "audio");
         if (sessionPayload?.type === "video") await initVideoCall(myToken, roomName);
         else await initAudioCall(myToken);
       } catch (err) {
         if (!cancelledRef.current) {
-          toast.error("Could not connect call.");
+          toast.error("Twilio Initialization failed.");
           setStatus("ended");
         }
       }
@@ -197,7 +209,13 @@ export const useCallLogic = () => {
   const handleEndCall = async () => {
     deviceRef.current?.disconnectAll?.();
     if (callRef.current?.disconnect) callRef.current.disconnect();
-    try { await apiClient.post(`/call/end`, { sessionId: parseInt(sessionId) }); } catch (err) {}
+    
+    // Explicitly call end API without try-catch
+    const [_, endError] = await http.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
+    if (endError) {
+      console.error("Failed to end call via API:", endError);
+    }
+    
     socketRef.current?.emit("end_call", { sessionId: parseInt(sessionId) });
     handleCallEnded();
   };
@@ -225,16 +243,24 @@ export const useCallLogic = () => {
   const handleSubmitReview = async () => {
     if (reviewRating === 0) { toast.warning("Please select a rating"); return; }
     setReviewSubmitting(true);
-    try {
-      const expertData = (sessionData as any)?.expert;
-      const expertIdVal = expertData?.id || (sessionData as any).expertId;
-      await apiClient.post("/reviews", { sessionId: parseInt(sessionId), expertId: expertIdVal, rating: reviewRating, comment: reviewComment.trim() });
+    
+    const expertData = (sessionData as any)?.expert;
+    const expertIdVal = expertData?.id || (sessionData as any).expertId;
+    
+    const [res, error] = await http.post<any>("/reviews", { 
+      sessionId: parseInt(sessionId), 
+      expertId: expertIdVal, 
+      rating: reviewRating, 
+      comment: reviewComment.trim() 
+    });
+
+    if (error) {
+      toast.error(error.message || "Could not submit review.");
+      setReviewSubmitting(false);
+    } else {
       setReviewSubmitted(true);
       toast.success("Thank you! ⭐");
       setTimeout(() => router.push("/"), 1500);
-    } catch (err) {
-      toast.error("Could not submit review.");
-      setReviewSubmitting(false);
     }
   };
 

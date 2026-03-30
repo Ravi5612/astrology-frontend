@@ -66,7 +66,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
           </div>
         ) : (
           <div className="space-y-4">
-            {notifications.map((notif: any) => (
+            {notifications.filter(Boolean).map((notif: any) => (
               <div
                 key={notif.id}
                 className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer group ${

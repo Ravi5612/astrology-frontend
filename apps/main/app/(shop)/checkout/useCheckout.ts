@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { getBasePath } from "@/utils/api-config";
-import safeFetch from "@packages/safe-fetch/safeFetch";
-import apiClient, { getClientProfile, applyCoupon } from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
+import { getClientProfile, applyCoupon } from "@/libs/api-profile";
 import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
@@ -74,10 +74,7 @@ export const useCheckout = () => {
     if (isOrder && buyNowInfo?.productId) {
       const fetchDirectProduct = async () => {
         setLoadingProduct(true);
-        const baseUrl = getBasePath();
-        const [data, fetchError] = await safeFetch<any>(
-          `${baseUrl}/api/v1/products/${buyNowInfo.productId}`,
-        );
+        const [data, fetchError] = await http.get<any>(`/products/${buyNowInfo.productId}`);
 
         if (fetchError) {
           console.error("Failed to fetch product for direct buy:", fetchError);
@@ -97,38 +94,37 @@ export const useCheckout = () => {
     }
 
     setIsApplying(true);
-    try {
-      const sType = searchParams.get("type") || (isOrder ? "product" : "chat");
+    const sType = searchParams.get("type") || (isOrder ? "product" : "chat");
 
-      const res = await applyCoupon(couponCode.trim(), baseTotal, sType);
+    const [res, error] = await applyCoupon(couponCode.trim(), baseTotal, sType);
 
-      const data = res.data || res;
-      const disc =
-        data.discountAmount ??
-        data.discount_amount ??
-        data.discount ??
-        data.value;
-      const isSuccess =
-        data.success ?? data.is_valid ?? data.isValid ?? disc !== undefined;
-
-      if (isSuccess && disc !== undefined) {
-        setDiscountAmount(Number(disc));
-        setAppliedCoupon(data.coupon || { code: couponCode });
-        toast.success(data.message || `Coupon applied! You saved ₹${disc}`);
-      } else {
-        toast.error(
-          data.message ||
-            "This coupon cannot be applied to this order. Check minimum order value or expiry.",
-        );
-      }
-    } catch (error: any) {
+    if (error) {
       console.error("Coupon Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to apply coupon",
-      );
-    } finally {
+      toast.error(error.message || "Failed to apply coupon");
       setIsApplying(false);
+      return;
     }
+
+    const data = res.data || res;
+    const disc =
+      data.discountAmount ??
+      data.discount_amount ??
+      data.discount ??
+      data.value;
+    const isSuccess =
+      data.success ?? data.is_valid ?? data.isValid ?? disc !== undefined;
+
+    if (isSuccess && disc !== undefined) {
+      setDiscountAmount(Number(disc));
+      setAppliedCoupon(data.coupon || { code: couponCode });
+      toast.success(data.message || `Coupon applied! You saved ₹${disc}`);
+    } else {
+      toast.error(
+        data.message ||
+          "This coupon cannot be applied to this order. Check minimum order value or expiry.",
+      );
+    }
+    setIsApplying(false);
   };
 
   const handleRemoveCoupon = () => {
@@ -151,26 +147,23 @@ export const useCheckout = () => {
 
   useEffect(() => {
     const fetchProfileAddress = async () => {
-      try {
-        setLoadingProfile(true);
-        const profile = await getClientProfile();
-        if (profile && profile.addresses && profile.addresses.length > 0) {
-          const defaultAddr = profile.addresses[0];
-          setAddress({
-            line1: defaultAddr.line1 || "",
-            line2: defaultAddr.line2 || "",
-            city: defaultAddr.city || "",
-            state: defaultAddr.state || "",
-            country: defaultAddr.country || "India",
-            zip_code:
-              defaultAddr.zip_code || defaultAddr.zipCode || "",
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load profile for address:", err);
-      } finally {
-        setLoadingProfile(false);
+      setLoadingProfile(true);
+      const [profile, error] = await getClientProfile();
+      if (!error && profile && profile.addresses && profile.addresses.length > 0) {
+        const defaultAddr = profile.addresses[0];
+        setAddress({
+          line1: defaultAddr.line1 || "",
+          line2: defaultAddr.line2 || "",
+          city: defaultAddr.city || "",
+          state: defaultAddr.state || "",
+          country: defaultAddr.country || "India",
+          zip_code:
+            defaultAddr.zip_code || defaultAddr.zipCode || "",
+        });
+      } else if (error) {
+        console.error("Failed to load profile for address:", error);
       }
+      setLoadingProfile(false);
     };
 
     fetchProfileAddress();
@@ -205,57 +198,50 @@ export const useCheckout = () => {
         return;
       }
 
-      try {
-        let payload: any;
-        let endpoint: string;
+      let payload: any;
+      let endpoint: string;
+
+      if (isOrder) {
+        payload = {
+          shipping_address: address,
+          product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
+          quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
+          coupon_code: appliedCoupon?.code || undefined,
+          payment_method: "wallet",
+        };
+        endpoint = "/order";
+      } else {
+        payload = {
+          astrologer_name: astrologerName,
+          expert_id: expertId ? parseInt(expertId) : undefined,
+          amount: total,
+          coupon_code: appliedCoupon?.code || undefined,
+          type: "consultation",
+        };
+        endpoint = "/consultation/book-with-wallet";
+      }
+
+      const [res, error] = await http.post<any>(endpoint, payload);
+
+      if (error) {
+        console.error("Wallet Payment Error:", error);
+        toast.error(error.message || "Wallet payment failed. Please try again.");
+      } else if (res) {
+        toast.success(
+          isOrder
+            ? "Order placed successfully using wallet!"
+            : "Consultation booked successfully!",
+        );
+        refreshBalance();
 
         if (isOrder) {
-          payload = {
-            shipping_address: address,
-            product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
-            quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
-            coupon_code: appliedCoupon?.code || undefined,
-            payment_method: "wallet",
-          };
-          endpoint = "/order";
+          router.push("/profile?tab=orders");
         } else {
-          payload = {
-            astrologer_name: astrologerName,
-            expert_id: expertId ? parseInt(expertId) : undefined,
-            amount: total,
-            coupon_code: appliedCoupon?.code || undefined,
-            type: "consultation",
-          };
-          endpoint = "/consultation/book-with-wallet";
+          const params = new URLSearchParams({ name: astrologerName });
+          router.push(`/chat?${params.toString()}`);
         }
-
-        const res = await apiClient.post<any>(endpoint, payload);
-        const data = (res as any)?.data ?? res;
-
-        if (data) {
-          toast.success(
-            isOrder
-              ? "Order placed successfully using wallet!"
-              : "Consultation booked successfully!",
-          );
-          refreshBalance();
-
-          if (isOrder) {
-            router.push("/profile?tab=orders");
-          } else {
-            const params = new URLSearchParams({ name: astrologerName });
-            router.push(`/chat?${params.toString()}`);
-          }
-        }
-      } catch (error: any) {
-        console.error("Wallet Payment Error:", error);
-        toast.error(
-          error.response?.data?.message ||
-            "Wallet payment failed. Please try again.",
-        );
-      } finally {
-        setIsProcessing(false);
       }
+      setIsProcessing(false);
       return;
     }
 
@@ -269,30 +255,27 @@ export const useCheckout = () => {
 
       let dbOrderId = null;
       if (isOrder) {
-        try {
-          const orderPayload = {
-            shipping_address: address,
-            product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
-            quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
-            coupon_code: appliedCoupon?.code || undefined,
-          };
-          const createOrderRes = await apiClient.post<any>(
-            "/order",
-            orderPayload,
-          );
-          const orderData =
-            (createOrderRes as any)?.data ?? createOrderRes;
-          dbOrderId = orderData.id;
-          sessionStorage.removeItem("buyNowItem");
-        } catch (error: any) {
-          console.error("Failed to create order:", error);
-          toast.error(
-            error.response?.data?.message ||
-              "Failed to create order. Please try again.",
-          );
+        const orderPayload = {
+          shipping_address: address,
+          product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
+          quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
+          coupon_code: appliedCoupon?.code || undefined,
+        };
+        const [createOrderRes, createError] = await http.post<any>(
+          "/order",
+          orderPayload,
+        );
+
+        if (createError) {
+          console.error("Failed to create order:", createError);
+          toast.error(createError.message || "Failed to create order. Please try again.");
           setIsProcessing(false);
           return;
         }
+
+        const orderData = (createOrderRes as any)?.data ?? createOrderRes;
+        dbOrderId = orderData.id;
+        sessionStorage.removeItem("buyNowItem");
       }
 
       const paymentOrderPayload = {
@@ -307,10 +290,17 @@ export const useCheckout = () => {
         },
       };
 
-      const orderRes = await apiClient.post<any>(
+      const [orderRes, orderError] = await http.post<any>(
         "/payment/orders/create",
         paymentOrderPayload,
       );
+
+      if (orderError) {
+        console.error("Order Creation Error:", orderError);
+        toast.error(orderError.message || "Failed to create payment order.");
+        setIsProcessing(false);
+        return;
+      }
       const orderPayloadData: any = (orderRes as any)?.data ?? orderRes;
       const { id: order_id, amount, currency, key_id } =
         orderPayloadData || {};
@@ -330,7 +320,7 @@ export const useCheckout = () => {
         order_id: order_id,
         handler: async (response: any) => {
           try {
-            const verifyRes = await apiClient.post<any>(
+            const [verifyRes, verifyError] = await http.post<any>(
               "/payment/orders/verify",
               {
                 razorpay_order_id: response.razorpay_order_id,
@@ -339,6 +329,13 @@ export const useCheckout = () => {
                 shipping_address: isOrder ? address : undefined,
               },
             );
+
+            if (verifyError) {
+              console.error("Verification error:", verifyError);
+              toast.error(verifyError.message || "Payment verification failed!");
+              setIsProcessing(false);
+              return;
+            }
 
             const verifyPayload: any = (verifyRes as any)?.data ?? verifyRes;
             if (verifyPayload?.success) {

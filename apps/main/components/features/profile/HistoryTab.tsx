@@ -61,7 +61,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
           </div>
         ) : (
           <div className="space-y-6">
-            {consultationHistory.map((session: any, idx: number) => (
+            {consultationHistory.filter(Boolean).map((session: any, idx: number) => (
               <div
                 key={session.id || idx}
                 className="group border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white"

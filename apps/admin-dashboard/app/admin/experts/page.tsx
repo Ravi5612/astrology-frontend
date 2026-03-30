@@ -48,30 +48,36 @@ export default function ExpertsPage() {
 
   // Fetch stats (Function)
   const fetchStats = async () => {
-    try {
-      const statsData = await getExpertStats();
-      if (statsData) {
-        setStats(statsData);
-      }
-    } catch (error) {
+    const [statsData, error] = await getExpertStats();
+    if (!error && statsData) {
+      setStats(statsData);
+    } else if (error) {
       console.error("Failed to fetch expert stats:", error);
     }
   };
 
+
   // Fetch experts (Function)
   const fetchExperts = async () => {
-    try {
-      setIsLoading(true);
-      const response = await getExperts({
-        search: searchQuery,
-        page: page,
-        limit: 10,
-        status: statusFilter || undefined
-      });
-      if (response && response.items) {
+    setIsLoading(true);
+    const [response, error] = await getExperts({
+      search: searchQuery,
+      page: page,
+      limit: 10,
+      status: statusFilter || undefined
+    });
+
+    if (error) {
+      console.error("Failed to fetch experts:", error);
+      setIsLoading(false);
+      return;
+    }
+
+    if (response) {
+      if (response.items) {
         setExperts(response.items);
         setTotalExperts(response.total || 0);
-      } else if (response && response.data) {
+      } else if (response.data) {
         setExperts(response.data);
         setTotalExperts(response.total || response.count || 0);
       } else if (Array.isArray(response)) {
@@ -81,12 +87,10 @@ export default function ExpertsPage() {
         setExperts(response.result || []);
         setTotalExperts(response.total || 0);
       }
-    } catch (error) {
-      console.error("Failed to fetch experts:", error);
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
+
 
   // Initial fetch stats
   useEffect(() => {
@@ -137,17 +141,20 @@ export default function ExpertsPage() {
 
   // Handle View Details - Fetch full profile for modal
   const handleViewDetails = async (expert: Expert) => {
-    try {
-      // Try fetching detailed profile from API first
-      const fullExpert = await getExpertById(expert.id);
-      const data = fullExpert.data || fullExpert;
-      setSelectedExpert(normalizeExpert(data));
-    } catch (error) {
+    setIsLoading(true);
+    const [fullExpert, error] = await getExpertById(expert.id);
+    
+    if (error) {
       console.warn("Detail API failed, using list data with profile_expert:", error);
       // Fallback: use the expert data already loaded from the list (which includes profile_expert)
       setSelectedExpert(normalizeExpert(expert));
+    } else {
+      const data = (fullExpert as any)?.data || fullExpert;
+      setSelectedExpert(normalizeExpert(data));
     }
+    setIsLoading(false);
   };
+
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

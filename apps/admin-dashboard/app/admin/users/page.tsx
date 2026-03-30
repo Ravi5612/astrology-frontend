@@ -64,26 +64,31 @@ export default function UsersPage() {
 
   // Fetch stats 
   const fetchStats = useCallback(async () => {
-    try {
-      const statsData = await getUserStats();
-      if (statsData) {
-        setStats(statsData);
-      }
-    } catch (error) {
+    const [statsData, error] = await getUserStats();
+    if (!error && statsData) {
+      setStats(statsData);
+    } else if (error) {
       console.error("Failed to fetch user stats:", error);
     }
   }, []);
 
+
   // Fetch users 
   const fetchUsers = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await getUsers({ search: searchQuery, page: page, limit: 10 });
+    setIsLoading(true);
+    const [response, error] = await getUsers({ search: searchQuery, page: page, limit: 10 });
 
-      if (response && response.items) {
+    if (error) {
+      console.error("Failed to fetch users:", error);
+      setIsLoading(false);
+      return;
+    }
+
+    if (response) {
+      if (response.items) {
         setUsers(response.items);
         setTotalUsers(response.total || response.count || 0);
-      } else if (response && response.data) {
+      } else if (response.data) {
         setUsers(response.data);
         setTotalUsers(response.total || response.count || 0);
       } else if (Array.isArray(response)) {
@@ -93,12 +98,10 @@ export default function UsersPage() {
         setUsers(response.result || []);
         setTotalUsers(response.total || 0);
       }
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   }, [searchQuery, page]);
+
 
   useEffect(() => {
     fetchStats();
@@ -134,19 +137,20 @@ export default function UsersPage() {
 
     setConfirmModal(prev => ({ ...prev, isLoading: true }));
 
-    try {
-      await toggleUserBlock(confirmModal.user.id, !confirmModal.user.is_blocked);
+    const [_, error] = await toggleUserBlock(confirmModal.user.id, !confirmModal.user.is_blocked);
 
-      // Refresh data
-      await Promise.all([fetchUsers(), fetchStats()]);
-
-      setConfirmModal({ isOpen: false, user: null, isLoading: false });
-    } catch (error) {
+    if (error) {
       console.error(`Failed to handle block/unblock action:`, error);
       alert(`Failed to perform action. Please try again.`);
       setConfirmModal(prev => ({ ...prev, isLoading: false }));
+      return;
     }
+
+    // Refresh data
+    await Promise.all([fetchUsers(), fetchStats()]);
+    setConfirmModal({ isOpen: false, user: null, isLoading: false });
   };
+
 
   // Get stats config (memoized)
   const statsConfig = useMemo(() => getStatsConfig(stats), [stats]);
@@ -170,16 +174,17 @@ export default function UsersPage() {
         tableMinWidth="min-w-[1000px]"
         onViewDetails={async (user) => {
           setSelectedUser(user);
-          try {
-            setIsDetailLoading(true);
-            const data = await getUserById(user.id);
-            setDetailedUser(data);
-          } catch (error) {
+          setIsDetailLoading(true);
+          const [data, error] = await getUserById(user.id);
+          
+          if (error) {
             console.error("Failed to fetch user details:", error);
-          } finally {
-            setIsDetailLoading(false);
+          } else {
+            setDetailedUser(data);
           }
+          setIsDetailLoading(false);
         }}
+
         onSearch={handleSearch}
         isLoading={isLoading}
         manualPagination={true}

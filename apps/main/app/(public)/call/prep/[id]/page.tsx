@@ -5,10 +5,9 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
-import apiClient from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
-import safeFetch from "@packages/safe-fetch/safeFetch";
 
 const Image = NextImage as any;
 const { ChevronLeft, Phone, Video, User, Calendar, MapPin, UserX, ShieldCheck } = LucideIcons as any;
@@ -46,12 +45,13 @@ function CallPrepContent() {
 
     useEffect(() => {
         const fetchAstro = async () => {
-            const [data, fetchError] = await safeFetch<any>(`${API_BASE_URL}/expert/details/${id}`);
+            const [res, fetchError] = await http.get<any>(`/expert/details/${id}`);
             
             if (fetchError) {
                 console.error("Failed to fetch astrologer for call prep:", fetchError);
                 setAstrologer(null);
-            } else if (data && (data.id || data.user)) {
+            } else if (res && (res.id || res.user)) {
+                const data = res?.data || res;
                 setAstrologer({
                     id: data.id,
                     name: data.user?.name || "Astrologer",
@@ -74,11 +74,11 @@ function CallPrepContent() {
         if (id) fetchAstro();
 
         const fetchBalance = async () => {
-            try {
-                const response: any = await apiClient.get('/wallet/balance');
-                setUserBalance(Number(response));
-            } catch (error) {
+            const [balance, error] = await http.get<number>('/wallet/balance');
+            if (error) {
                 console.error("Failed to fetch balance:", error);
+            } else {
+                setUserBalance(Number(balance));
             }
         };
         if (isClientAuthenticated) fetchBalance();
@@ -128,29 +128,30 @@ function CallPrepContent() {
         setShowSecurityModal(false);
         setActionLoading(true);
 
+        // Run Pre-call checks
+        toast.info("Checking hardware & connection...", { autoClose: 2000 });
         try {
-            // Run Pre-call checks
-            toast.info("Checking hardware & connection...", { autoClose: 2000 });
             await checkHardwareAndNetwork();
-
-            const response: any = await apiClient.post("/call/initiate", {
-                expertId: parseInt(id),
-                type: type
-            });
-
-            if (response && response.session?.id) {
-                toast.success("Connecting to expert...");
-                // Redirect to call room
-                router.push(`/call/room/${response.session.id}`);
-            }
-        } catch (error: any) {
-            console.error("[CallPrep] Initiation error details:", error);
-            // safeFetch stores the JSON response in error.body
-            const msg = error.body?.message || error.message || "Failed to start call";
-            toast.error(msg);
-        } finally {
+        } catch (hardwareError: any) {
+            toast.error(hardwareError.message);
             setActionLoading(false);
+            return;
         }
+
+        const [response, error] = await http.post<any>("/call/initiate", {
+            expertId: parseInt(id),
+            type: type
+        });
+
+        if (error) {
+            console.error("[CallPrep] Initiation error details:", error);
+            toast.error(error.message || "Failed to start call");
+        } else if (response && response.session?.id) {
+            toast.success("Connecting to expert...");
+            // Redirect to call room
+            router.push(`/call/room/${response.session.id}`);
+        }
+        setActionLoading(false);
     };
 
     if (loading) return (

@@ -83,7 +83,7 @@ const DisputesTab: React.FC<DisputesTabProps> = ({ disputes, loading, onViewChat
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {disputes.map((dispute) => (
+              {disputes.filter(Boolean).map((dispute) => (
                 <tr
                   key={dispute.id}
                   className="group hover:bg-gray-50/80 transition-colors"

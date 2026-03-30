@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { chatSocket } from "@/lib/socket";
-import apiClient from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import * as LucideIcons from "lucide-react";
@@ -54,40 +54,36 @@ function ExpertChatRoomContent() {
 
         // 0. Fetch Session Status and Client Info
         const fetchSessionInfo = async () => {
-            try {
-                console.log("[ExpertChatDebug] Fetching status for session:", sessionId);
+            console.log("[ExpertChatDebug] Fetching status for session:", sessionId);
 
-                // Fetch basic session info
-                const sessionRes: any = await apiClient.get(`/chat/session/${sessionId}?_t=${Date.now()}`);
-                if (sessionRes) {
-                    const status = sessionRes.status;
-                    setSessionStatus(status);
-                    if (sessionRes.user?.name) {
-                        setClientName(sessionRes.user.name);
-                    }
-                    if (sessionRes.user?.profile_picture || sessionRes.user?.avatar) {
-                        setClientAvatar(sessionRes.user.profile_picture || sessionRes.user.avatar);
-                    }
-
-                    // Pure sync from backend's improved fields
-                    console.log("[ExpertChatDebug] Server Sync Data:", {
-                        remainingSeconds: sessionRes.remainingSeconds,
-                        elapsedSeconds: sessionRes.elapsedSeconds
-                    });
-
-                    if (sessionRes.remainingSeconds !== undefined) {
-                        setTimeLeft(sessionRes.remainingSeconds);
-                    }
-                    if (sessionRes.elapsedSeconds !== undefined) {
-                        setElapsedTime(sessionRes.elapsedSeconds);
-                    }
+            // Fetch basic session info
+            const [sessionRes, sessionErr] = await apiClientSafe.get<any>(`/chat/session/${sessionId}?_t=${Date.now()}`);
+            if (sessionErr) {
+                console.error("Failed to fetch session info:", sessionErr);
+            } else if (sessionRes) {
+                const status = sessionRes.status;
+                setSessionStatus(status);
+                if (sessionRes.user?.name) {
+                    setClientName(sessionRes.user.name);
+                }
+                if (sessionRes.user?.profile_picture || sessionRes.user?.avatar) {
+                    setClientAvatar(sessionRes.user.profile_picture || sessionRes.user.avatar);
                 }
 
-                // Fetch history
-                const historyRes: any = await apiClient.get(`/chat/history/${sessionId}`);
+                if (sessionRes.remainingSeconds !== undefined) {
+                    setTimeLeft(sessionRes.remainingSeconds);
+                }
+                if (sessionRes.elapsedSeconds !== undefined) {
+                    setElapsedTime(sessionRes.elapsedSeconds);
+                }
+            }
+
+            // Fetch history
+            const [historyRes, historyErr] = await apiClientSafe.get<any>(`/chat/history/${sessionId}`);
+            if (historyErr) {
+                console.error("Failed to fetch history:", historyErr);
+            } else {
                 setMessages(historyRes || []);
-            } catch (err) {
-                console.error("Failed to fetch info:", err);
             }
         };
         fetchSessionInfo();
@@ -158,27 +154,24 @@ function ExpertChatRoomContent() {
 
     const handleActivate = async () => {
         setIsActivating(true);
-        try {
-            console.log("[ExpertChatDebug] Activating session...", sessionId);
+        console.log("[ExpertChatDebug] Activating session...", sessionId);
 
-            // 1. Socket hit (Instant/Real-time) - Do this first to mark status in Gateway
-            chatSocket.emit('activate_session', { sessionId: parseInt(sessionId) });
+        // 1. Socket hit (Instant/Real-time) - Do this first to mark status in Gateway
+        chatSocket.emit('activate_session', { sessionId: parseInt(sessionId) });
 
-            // 2. API call (Data Persistence)
-            await apiClient.post(`/chat/activate/${sessionId}`);
+        // 2. API call (Data Persistence)
+        const [_, error] = await apiClientSafe.post(`/chat/activate/${sessionId}`);
 
-            // Note: The UI will update via the 'session_activated' socket event
-        } catch (err: any) {
-            console.error("[ExpertChatDebug] Activation failed:", err);
+        if (error) {
+            console.error("[ExpertChatDebug] Activation failed:", error);
             // If it's already active, we don't need to show an error
-            if (err.response?.data?.message?.includes("active")) {
+            if (error.message?.includes("active")) {
                 setSessionStatus('active');
             } else {
-                toast.error(err.response?.data?.message || "Failed to activate session");
+                toast.error(error.message || "Failed to activate session");
             }
-        } finally {
-            setIsActivating(false);
         }
+        setIsActivating(false);
     };
 
     const handleSendMessage = () => {
@@ -213,24 +206,25 @@ function ExpertChatRoomContent() {
 
         try {
             setUploading(true);
-            // Re-using the same profile lib but usually expert has its own upload, 
-            // but for now we'll assume a generic upload endpoint works
             const formData = new FormData();
             formData.append('file', file);
-            const uploadRes = await apiClient.post('/client/upload-document', formData);
+            const [data, error] = await apiClientSafe.post<any>('/client/upload-document', formData);
 
-            if (uploadRes.data && uploadRes.data.url) {
+            if (error) {
+                console.error("Upload error:", error);
+                toast.error(error.message || "Upload failed");
+                return;
+            }
+
+            if (data?.url) {
                 const attachmentType = file.type.startsWith("image") ? "image" : "document";
                 setPendingAttachment({
-                    url: uploadRes.data.url,
+                    url: data.url,
                     type: attachmentType as any,
                     name: file.name
                 });
                 toast.info("File uploaded! Click send to share.");
             }
-        } catch (error) {
-            console.error("Upload error:", error);
-            toast.error("Upload failed");
         } finally {
             setUploading(false);
             if (e.target) e.target.value = "";

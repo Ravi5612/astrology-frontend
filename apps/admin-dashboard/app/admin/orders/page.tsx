@@ -40,45 +40,27 @@ export default function OrdersPage() {
     const [cancelReason, setCancelReason] = useState("");
 
     const fetchOrders = async () => {
-        try {
-            setLoading(true);
-            const data = await OrderService.getAllOrders();
-            // Handle various response structures
-            if (Array.isArray(data)) {
-                setOrders(data);
-            } else if (data.data && Array.isArray(data.data)) {
-                setOrders(data.data);
-            } else {
-                setOrders([]);
-            }
-        } catch (error) {
+        setLoading(true);
+        const [data, error] = await OrderService.getAllOrders();
+        
+        if (error) {
             console.error("Error fetching orders:", error);
-            // toast.warning("Could not fetch orders. Backend API might be missing.");
-            // Mock data for UI demonstration if API fails or returns empty
-            setOrders([
-                /*
-                {
-                    id: "ORDER-MOCK-101",
-                    totalAmount: 1499,
-                    status: 'pending',
-                    createdAt: new Date().toISOString(),
-                    user: { name: "Ravi Test", email: "ravi@example.com" },
-                    shippingAddress: {
-                        line1: "123 Main St",
-                        city: "New Delhi",
-                        state: "Delhi",
-                        zipCode: "110001"
-                    },
-                    items: [
-                        { quantity: 1, price: 1499, product: { name: "Rudraksha Mala" } }
-                    ]
-                }
-                */
-            ]);
-        } finally {
+            setOrders([]);
             setLoading(false);
+            return;
         }
+
+        // Handle various response structures
+        if (Array.isArray(data)) {
+            setOrders(data);
+        } else if (data && data.data && Array.isArray(data.data)) {
+            setOrders(data.data);
+        } else {
+            setOrders([]);
+        }
+        setLoading(false);
     };
+
 
     useEffect(() => {
         fetchOrders();
@@ -102,15 +84,16 @@ export default function OrdersPage() {
     }, []);
 
     const handleStatusUpdate = async (id: string, newStatus: string) => {
-        try {
-            await OrderService.updateVal(id, newStatus);
-            toast.success(`Order status updated to ${newStatus}`);
-            fetchOrders(); // Refresh list
-        } catch (error) {
+        const [_, error] = await OrderService.updateVal(id, newStatus);
+        if (error) {
             console.error("Failed to update status", error);
             toast.error("Failed to update status");
+            return;
         }
+        toast.success(`Order status updated to ${newStatus}`);
+        fetchOrders(); // Refresh list
     };
+
 
     const handleCancelOrder = async () => {
         if (!cancelOrderId || !cancelReason.trim()) {
@@ -118,18 +101,20 @@ export default function OrdersPage() {
             return;
         }
 
-        try {
-            await OrderService.updateVal(cancelOrderId, 'cancelled', cancelReason);
-            toast.success("Order cancelled successfully");
-            setShowCancelModal(false);
-            setCancelOrderId(null);
-            setCancelReason("");
-            fetchOrders();
-        } catch (error) {
+        const [_, error] = await OrderService.updateVal(cancelOrderId, 'cancelled', cancelReason);
+        if (error) {
             console.error("Failed to cancel order", error);
             toast.error("Failed to cancel order");
+            return;
         }
+        
+        toast.success("Order cancelled successfully");
+        setShowCancelModal(false);
+        setCancelOrderId(null);
+        setCancelReason("");
+        fetchOrders();
     };
+
 
     const openCancelModal = (orderId: string) => {
         setCancelOrderId(orderId);

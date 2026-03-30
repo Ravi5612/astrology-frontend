@@ -285,22 +285,23 @@ export default function ListingsPage() {
     // Fetch listings
     const fetchData = useCallback(async () => {
         setLoading(true);
-        try {
-            const params: { type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop'; search?: string } = {};
-            if (activeTab !== "all") {
-                params.type = activeTab;
-            }
-            if (debouncedSearch.trim()) {
-                params.search = debouncedSearch.trim();
-            }
-            const res = await getReferredUsers(params);
+        const params: { type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop'; search?: string } = {};
+        if (activeTab !== "all") {
+            params.type = activeTab;
+        }
+        if (debouncedSearch.trim()) {
+            params.search = debouncedSearch.trim();
+        }
+        
+        const [res, error] = await getReferredUsers(params);
+        
+        if (error) {
+            toast.error("Failed to load listings");
+        } else {
             setData(res?.data ?? []);
             setTotal(res?.total ?? 0);
-        } catch {
-            toast.error("Failed to load listings");
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     }, [activeTab, debouncedSearch, refreshKey]);
 
     useEffect(() => {

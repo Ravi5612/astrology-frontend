@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { callSocket } from "@/lib/socket";
 import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
-import apiClient from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, Clock, User } = LucideIcons as any;
 
@@ -37,22 +37,23 @@ export default function ExpertVideoCallPage() {
         const acceptAndConnect = async () => {
             console.log('[ExpertVideo] 🚀 Starting video call for sessionId:', sessionId);
 
-            try {
-                console.log('[ExpertVideo] 📡 Calling /call/accept...');
-                const data: any = await apiClient.post('/call/accept', { sessionId: parseInt(sessionId) });
-                console.log('[ExpertVideo] ✅ /call/accept response:', { hasToken: !!data.token, roomName: data.roomName });
-
-                setSessionData(data.session);
-                callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
-
-                setStatus('connecting');
-                await initVideoRoom(data.token, data.roomName);
-
-            } catch (err: any) {
-                console.error('[ExpertVideo] ❌ Error:', err);
-                toast.error(err?.message || 'Failed to connect video call');
+            console.log('[ExpertVideo] 📡 Calling /call/accept...');
+            const [data, error] = await apiClientSafe.post<any>('/call/accept', { sessionId: parseInt(sessionId) });
+            
+            if (error) {
+                console.error('[ExpertVideo] ❌ Error:', error);
+                toast.error(error.message || 'Failed to connect video call');
                 setTimeout(() => router.push('/dashboard'), 2000);
+                return;
             }
+
+            console.log('[ExpertVideo] ✅ /call/accept response:', { hasToken: !!data?.token, roomName: data?.roomName });
+
+            setSessionData(data?.session);
+            callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
+
+            setStatus('connecting');
+            await initVideoRoom(data?.token, data?.roomName);
         };
 
         acceptAndConnect();
@@ -186,10 +187,9 @@ export default function ExpertVideoCallPage() {
     };
 
     const handleEndCall = async () => {
-        try {
-            await apiClient.post(`/call/end`, { sessionId: parseInt(sessionId) });
-        } catch (err) {
-            console.error('[ExpertVideo] Failed to end call on backend', err);
+        const [_, error] = await apiClientSafe.post(`/call/end`, { sessionId: parseInt(sessionId) });
+        if (error) {
+            console.error('[ExpertVideo] Failed to end call on backend', error);
         }
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
         handleCallEnded();

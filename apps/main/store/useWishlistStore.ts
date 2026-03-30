@@ -72,13 +72,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
         set({ isLoading: true });
         try {
-            const [productsData, expertsData] = await Promise.all([
+            const [[pData, pErr], [eData, eErr]] = await Promise.all([
                 WishlistService.getWishlist(),
                 WishlistService.getExpertWishlist()
             ]);
 
-            const pItems = Array.isArray(productsData) ? productsData : (productsData.items || productsData.data || productsData.wishlist || []);
-            const eItems = Array.isArray(expertsData) ? expertsData : (expertsData.items || expertsData.data || expertsData.wishlist || []);
+            const pItems = (Array.isArray(pData) ? pData : ((pData as any)?.items || (pData as any)?.data || (pData as any)?.wishlist || [])).filter(Boolean);
+            const eItems = (Array.isArray(eData) ? eData : ((eData as any)?.items || (eData as any)?.data || (eData as any)?.wishlist || [])).filter(Boolean);
 
             set({ wishlistItems: pItems, expertWishlistItems: eItems });
         } catch {
@@ -155,11 +155,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
     isExpertInWishlist: (expertId: number) => {
         const { expertWishlistItems } = get();
-        return expertWishlistItems.some(item => (
-            Number(item.expertId) === Number(expertId) ||
-            Number(item.expert?.id) === Number(expertId) ||
-            (item.expert?.user && Number((item.expert.user as any).id) === Number(expertId))
-        ));
+        return expertWishlistItems.some(item =>
+            item != null && (
+                Number(item.expertId) === Number(expertId) ||
+                Number(item.expert?.id) === Number(expertId) ||
+                (item.expert?.user && Number((item.expert.user as any).id) === Number(expertId))
+            )
+        );
     },
 
     toggleExpertWishlist: async (expertId: number, isClientAuthenticated: boolean) => {

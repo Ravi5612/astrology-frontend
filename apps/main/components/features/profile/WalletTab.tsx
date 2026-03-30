@@ -405,7 +405,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                 {tx.description || tx.reason || tx.purpose || "Transaction"}
                               </p>
                               <p className="text-[10px] font-medium text-gray-400 mt-0.5 m-0 uppercase tracking-wider">
-                                Ref: #{tx.id?.slice(-8).toUpperCase() || "INTERNAL"}
+                                Ref: #{tx.id ? String(tx.id).slice(-8).toUpperCase() : "INTERNAL"}
                               </p>
                             </td>
                             <td className="px-8 py-6 text-center">

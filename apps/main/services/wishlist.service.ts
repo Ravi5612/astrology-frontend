@@ -1,39 +1,28 @@
-import { apiClient } from "../lib/api-client";
-
-const unwrap = <T = any>(response: any): T => (response as any)?.data ?? response;
+import http, { SafeFetchResponse } from "../lib/fetch-handler";
 
 export const WishlistService = {
 
-    getWishlist: async () => {
-        const response = await apiClient.get("/product-like");
-        return unwrap(response);
+    getWishlist: async (): Promise<SafeFetchResponse<any>> => {
+        return await http.get("/product-like");
     },
 
-    addToWishlist: async (productId: number) => {
-        const response = await apiClient.post("/product-like/add", { productId });
-        return unwrap(response);
+    addToWishlist: async (productId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.post("/product-like/add", { productId });
     },
 
-    removeFromWishlist: async (productId: number) => {
-        const response = await apiClient.delete(`/product-like/remove/${productId}`);
-        return unwrap(response);
+    removeFromWishlist: async (productId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.del(`/product-like/remove/${productId}`);
     },
 
-
-    getExpertWishlist: async () => {
-        const response = await apiClient.get("/expert-like");
-        return unwrap(response);
+    getExpertWishlist: async (): Promise<SafeFetchResponse<any>> => {
+        return await http.get("/expert-like");
     },
 
-    addExpertToWishlist: async (expertId: number) => {
-        const response = await apiClient.post("/expert-like/add", { expertId });
-        return unwrap(response);
+    addExpertToWishlist: async (expertId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.post("/expert-like/add", { expertId });
     },
 
-    removeExpertFromWishlist: async (expertId: number) => {
-        const response = await apiClient.delete(`/expert-like/remove/${expertId}`);
-        return unwrap(response);
+    removeExpertFromWishlist: async (expertId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.del(`/expert-like/remove/${expertId}`);
     }
 };
-
-

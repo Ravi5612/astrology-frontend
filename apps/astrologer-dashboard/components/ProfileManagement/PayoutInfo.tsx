@@ -33,16 +33,15 @@ export default function PayoutInfo() {
 
     // Fetch accounts from professional API
     const fetchAccounts = async () => {
-        try {
-            setLoading(true);
-            const data = await getBankAccounts();
+        setLoading(true);
+        const [data, error] = await getBankAccounts();
+        if (!error && data) {
             setAccounts(data);
-        } catch (error) {
+        } else if (error) {
             console.error("Failed to fetch bank accounts:", error);
             toast.error("Could not load bank accounts");
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -65,23 +64,23 @@ export default function PayoutInfo() {
 
     const handleDeleteAccount = async (id: string) => {
         if (confirm("Are you sure you want to remove this bank account?")) {
-            try {
-                const res = await deleteBankAccount(id);
-                toast.success(res?.message || "Account removed successfully");
+            const [res, error] = await deleteBankAccount(id);
+            if (!error) {
+                toast.success((res as any)?.message || "Account removed successfully");
                 fetchAccounts();
-            } catch (error: any) {
-                toast.error(error.response?.data?.message || "Failed to delete account");
+            } else {
+                toast.error(error.message || "Failed to delete account");
             }
         }
     };
 
     const handleSetPrimary = async (id: string) => {
-        try {
-            const res = await setPrimaryBankAccount(id);
-            toast.success(res?.message || "Primary account updated");
+        const [res, error] = await setPrimaryBankAccount(id);
+        if (!error) {
+            toast.success((res as any)?.message || "Primary account updated");
             fetchAccounts();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to set primary account");
+        } else {
+            toast.error(error.message || "Failed to set primary account");
         }
     };
 
@@ -91,18 +90,22 @@ export default function PayoutInfo() {
             return;
         }
 
-        try {
-            if (editingAccountId === 'new') {
-                const res = await addBankAccount(formData);
-                toast.success(res?.message || "New bank account added");
-            } else if (editingAccountId) {
-                const res = await updateBankAccount(editingAccountId, formData);
-                toast.success(res?.message || "Bank account updated");
-            }
+        let result: [any | null, any | null];
+        if (editingAccountId === 'new') {
+            result = await addBankAccount(formData);
+        } else if (editingAccountId) {
+            result = await updateBankAccount(editingAccountId, formData);
+        } else {
+            return;
+        }
+
+        const [res, error] = result;
+        if (!error) {
+            toast.success((res as any)?.message || (editingAccountId === 'new' ? "New bank account added" : "Bank account updated"));
             setEditingAccountId(null);
             fetchAccounts();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to save bank details");
+        } else {
+            toast.error(error.message || "Failed to save bank details");
         }
     };
 

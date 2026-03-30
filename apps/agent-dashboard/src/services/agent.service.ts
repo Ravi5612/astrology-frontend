@@ -1,13 +1,13 @@
-import apiClient from "../lib/api-client";
+import apiClientSafe, { ApiError } from "../lib/apiClientSafe";
 import { API_ROUTES } from "../lib/api-routes";
 
 // ── Profile ──────────────────────────────────────────────────────────────────
-export const getAgentProfile = async () => {
-    return apiClient.get(API_ROUTES.AGENTS.PROFILE);
+export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> => {
+    return apiClientSafe.get(API_ROUTES.AGENTS.PROFILE);
 };
 
-export const updateAgentProfile = async (formData: FormData) => {
-    return apiClient.patch(API_ROUTES.AGENTS.PROFILE, formData);
+export const updateAgentProfile = async (formData: FormData): Promise<[any | null, ApiError | null]> => {
+    return apiClientSafe.patch(API_ROUTES.AGENTS.PROFILE, formData);
 };
 
 // ── Listings ─────────────────────────────────────────────────────────────────
@@ -47,8 +47,8 @@ export interface ListingsResponse {
     limit?: number;
 }
 
-export const getAgentListings = async (params?: ListingParams): Promise<ListingsResponse> => {
-    return apiClient.get<ListingsResponse>(API_ROUTES.AGENTS.LISTINGS, params as Record<string, any>);
+export const getAgentListings = async (params?: ListingParams): Promise<[ListingsResponse | null, ApiError | null]> => {
+    return apiClientSafe.get<ListingsResponse>(API_ROUTES.AGENTS.LISTINGS, params as Record<string, any>);
 };
 
 export interface ReferredUser {
@@ -83,13 +83,13 @@ export interface ReferredUsersParams {
     limit?: number;
 }
 
-export const getReferredUsers = async (params?: ReferredUsersParams): Promise<ReferredUsersResponse> => {
-    return apiClient.get<ReferredUsersResponse>(API_ROUTES.AGENTS.REFERRED_USERS, params as Record<string, any>);
+export const getReferredUsers = async (params?: ReferredUsersParams): Promise<[ReferredUsersResponse | null, ApiError | null]> => {
+    return apiClientSafe.get<ReferredUsersResponse>(API_ROUTES.AGENTS.REFERRED_USERS, params as Record<string, any>);
 };
 
 
-export const createListing = async (payload: CreateListingPayload) => {
-    return apiClient.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>);
+export const createListing = async (payload: CreateListingPayload): Promise<[any | null, ApiError | null]> => {
+    return apiClientSafe.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>);
 };
 
 // ── Register User/Expert ─────────────────────────────────────────────────────
@@ -115,26 +115,32 @@ export interface RegisterUserResponse {
     emailError?: string;
 }
 
-export const registerUserByAgent = async (payload: RegisterUserPayload): Promise<RegisterUserResponse> => {
+export const registerUserByAgent = async (payload: RegisterUserPayload): Promise<[RegisterUserResponse | null, ApiError | null]> => {
     const { userType, ...rest } = payload;
     const body = {
         ...rest,
         roles: [userType], // 'expert' or 'client'
     };
-    return apiClient.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
+    return apiClientSafe.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
 };
 
 // ── Dashboard Stats ──────────────────────────────────────────────────────────
-export const getAgentDashboardStats = async () => {
-    try {
-        return await apiClient.get(API_ROUTES.AGENTS.DASHBOARD_STATS);
-    } catch {
-        return {
-            totalListings: 0,
-            activeListings: 0,
-            pendingPayouts: 0,
-            totalEarnings: 0,
-            recentActivity: []
-        };
+export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | null]> => {
+    const [data, error] = await apiClientSafe.get(API_ROUTES.AGENTS.DASHBOARD_STATS);
+    if (error) {
+        // Return null data and any default object if needed by UI, 
+        // but here we stick to the tuple pattern.
+        return [null, error];
     }
+    return [data, null];
+};
+��────────────────────────────────────────
+export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | null]> => {
+    const [data, error] = await apiClientSafe.get(API_ROUTES.AGENTS.DASHBOARD_STATS);
+    if (error) {
+        // Return null data and any default object if needed by UI, 
+        // but here we stick to the tuple pattern.
+        return [null, error];
+    }
+    return [data, null];
 };

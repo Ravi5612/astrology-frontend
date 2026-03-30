@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import http from "@/lib/fetch-handler";
 import { chatSocket } from "@/libs/socket";
-import apiClient, { uploadClientDocument } from "@/libs/api-profile";
+import { uploadClientDocument } from "@/libs/api-profile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
-import safeFetch from "@packages/safe-fetch/safeFetch";
 
 import { ChatMessage, ChatSession, Astrologer } from "@/lib/types";
 
@@ -58,12 +58,13 @@ function ChatRoomContent() {
         if (!isClientAuthenticated) return;
 
         const fetchData = async () => {
-            const [data, error] = await safeFetch<any>(`/api/v1/chat/user-session/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
-            if (error || !data?.success) {
-                toast.error(error?.message || "Failed to load chat session");
+            const [res, error] = await http.get<any>(`/chat/user-session/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
+            if (error) {
+                toast.error(error.message || "Failed to load chat session");
                 return;
             }
 
+            const data = res?.data ?? res;
             setExpertData(data.expert);
             setSessionStatus(data.session.status);
             setIsFree(data.session.isFree || false);
@@ -75,7 +76,6 @@ function ChatRoomContent() {
 
             if (data.session.status === 'active') {
                 setMessages(data.session.messages || []);
-                // Use pre-computed values from backend to avoid NaN from null dates
                 setElapsedTime(data.session.elapsedSeconds ?? 0);
                 setTimeLeft(data.session.remainingSeconds ?? 0);
             }
@@ -239,26 +239,23 @@ function ChatRoomContent() {
             return;
         }
 
-        try {
-            setUploading(true);
-            const uploadRes = await uploadClientDocument(file);
+        setUploading(true);
+        const [uploadRes, error] = await uploadClientDocument(file);
 
-            if (uploadRes && uploadRes.url) {
-                const attachmentType = file.type.startsWith("image") ? "image" : "document";
-                setPendingAttachment({
-                    url: uploadRes.url,
-                    type: attachmentType as any,
-                    name: file.name
-                });
-                toast.info("File uploaded! Click send to share.");
-            }
-        } catch (error) {
+        if (error) {
             console.error("Upload error:", error);
-            toast.error("Upload failed");
-        } finally {
-            setUploading(false);
-            if (e.target) e.target.value = "";
+            toast.error(error.message || "Upload failed");
+        } else if (uploadRes && uploadRes.url) {
+            const attachmentType = file.type.startsWith("image") ? "image" : "document";
+            setPendingAttachment({
+                url: uploadRes.url,
+                type: attachmentType as any,
+                name: file.name
+            });
+            toast.info("File uploaded! Click send to share.");
         }
+        setUploading(false);
+        if (e.target) e.target.value = "";
     };
 
     if (!expertData) {
@@ -340,7 +337,6 @@ function ChatRoomContent() {
                 setReviewSubmitted={setReviewSubmitted}
                 sessionId={sessionId}
                 expertData={expertData}
-                apiClient={apiClient}
                 router={router}
             />
 

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { apiClient } from "@repo/ui";
+import http from "../../../lib/fetch-handler";
 
 interface ReportIssueModalProps {
     isOpen: boolean;
@@ -59,97 +59,76 @@ export default function ReportIssueModal({
         setLoading(true);
         if (isChat) setSubmittingWithChat(true);
 
-        try {
-            const payload = {
-                type,
-                itemId: type === "order" ? itemDetails.id : itemDetails.id,
-                orderId: type === "order" ? itemDetails.id : null,
-                consultationId: type === "consultation" ? itemDetails.id : null,
-                category,
-                description: issue,
-                itemDetails: {
-                    ...(type === "order" && {
-                        orderNumber: itemDetails.orderId || itemDetails.id,
-                        amount: itemDetails.totalAmount,
-                        status: itemDetails.status,
-                        date: itemDetails.createdAt,
-                    }),
-                    ...(type === "consultation" && {
-                        sessionId: itemDetails.id,
-                        expertName: itemDetails.expert?.user?.name,
-                        amount: itemDetails.totalCost,
-                        status: itemDetails.status,
-                        date: itemDetails.createdAt,
-                    }),
-                },
-            };
+        const payload = {
+            type,
+            itemId: type === "order" ? itemDetails.id : itemDetails.id,
+            orderId: type === "order" ? itemDetails.id : null,
+            consultationId: type === "consultation" ? itemDetails.id : null,
+            category,
+            description: issue,
+            itemDetails: {
+                ...(type === "order" && {
+                    orderNumber: itemDetails.orderId || itemDetails.id,
+                    amount: itemDetails.totalAmount,
+                    status: itemDetails.status,
+                    date: itemDetails.createdAt,
+                }),
+                ...(type === "consultation" && {
+                    sessionId: itemDetails.id,
+                    expertName: itemDetails.expert?.user?.name,
+                    amount: itemDetails.totalCost,
+                    status: itemDetails.status,
+                    date: itemDetails.createdAt,
+                }),
+            },
+        };
 
-            console.log("Sending dispute payload:", payload);
-            const response = await apiClient.post("/support/disputes", payload);
-            const resBody = response.data as any;
-            console.log("Dispute creation response:", resBody);
-            let newDispute = resBody?.data || resBody?.dispute || resBody;
+        const [res, error] = await http.post<any>("/support/disputes", payload);
 
-            // Ensure newDispute is an object with an id property
-            if (typeof newDispute !== "object" || newDispute === null) {
-                newDispute = { id: newDispute };
-            } else if (!newDispute.id && (newDispute.disputeId || resBody.id)) {
-                newDispute.id = newDispute.disputeId || resBody.id;
-            }
-
-            toast.success("Issue reported successfully!");
-
-            // If Submit & Chat was clicked, send an automated summary message to the chat
-            if (isChat && newDispute?.id) {
-                try {
-                    const orderId = itemDetails.orderId || itemDetails.id;
-                    const amount = itemDetails.totalAmount || itemDetails.total_amount || itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0;
-                    const date = (itemDetails.createdAt || itemDetails.created_at)
-                        ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
-                        : "N/A";
-
-                    const summaryMessage = `📋 ISSUE SUMMARY 📋\n\n` +
-                        `Issue Category: ${category}\n` +
-                        `${type === "order" ? "Order ID" : "Session ID"}: #${orderId}\n` +
-                        `Amount: ₹${amount}\n` +
-                        `Date: ${date}\n\n` +
-                        `Description: ${issue.trim()}`;
-
-                    await apiClient.post(`/support/disputes/${newDispute.id}/messages`, {
-                        message: summaryMessage
-                    });
-                } catch (msgError) {
-                    console.error("Error sending automated message:", msgError);
-                }
-            }
-
-            if (onSuccess) onSuccess(isChat ? newDispute : undefined);
-            onClose();
-            setIssue("");
-            setCategory("");
-        } catch (error: any) {
+        if (error) {
             console.error("Error reporting issue:", error);
-            console.error("Error response:", error.response?.data);
-            console.error("Error message array:", error.response?.data?.message);
-
-            // Show specific backend error message if available
-            let errorMessage = "Failed to report issue. Please try again.";
-
-            if (error.response?.data?.message) {
-                if (Array.isArray(error.response.data.message)) {
-                    errorMessage = error.response.data.message.join(", ");
-                } else {
-                    errorMessage = error.response.data.message;
-                }
-            } else if (error.response?.data?.error) {
-                errorMessage = error.response.data.error;
-            }
-
-            toast.error(errorMessage);
-        } finally {
+            toast.error(error.message || "Failed to report issue. Please try again.");
             setLoading(false);
             setSubmittingWithChat(false);
+            return;
         }
+
+        const resBody = res?.data || res;
+        let newDispute = resBody?.data || resBody?.dispute || resBody;
+
+        if (typeof newDispute !== "object" || newDispute === null) {
+            newDispute = { id: newDispute };
+        } else if (!newDispute.id && (newDispute.disputeId || resBody.id)) {
+            newDispute.id = newDispute.disputeId || resBody.id;
+        }
+
+        toast.success("Issue reported successfully!");
+
+        if (isChat && newDispute?.id) {
+            const orderId = itemDetails.orderId || itemDetails.id;
+            const amount = itemDetails.totalAmount || itemDetails.total_amount || itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0;
+            const date = (itemDetails.createdAt || itemDetails.created_at)
+                ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+                : "N/A";
+
+            const summaryMessage = `📋 ISSUE SUMMARY 📋\n\n` +
+                `Issue Category: ${category}\n` +
+                `${type === "order" ? "Order ID" : "Session ID"}: #${orderId}\n` +
+                `Amount: ₹${amount}\n` +
+                `Date: ${date}\n\n` +
+                `Description: ${issue.trim()}`;
+
+            await http.post(`/support/disputes/${newDispute.id}/messages`, {
+                message: summaryMessage
+            });
+        }
+
+        if (onSuccess) onSuccess(isChat ? newDispute : undefined);
+        onClose();
+        setIssue("");
+        setCategory("");
+        setLoading(false);
+        setSubmittingWithChat(false);
     };
 
     if (!isOpen) return null;

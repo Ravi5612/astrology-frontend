@@ -1,28 +1,21 @@
-
-import { apiClient } from "../lib/api-client";
-
-const unwrap = <T = any>(response: any): T => (response as any)?.data ?? response;
+import http, { SafeFetchResponse } from "../lib/fetch-handler";
 
 export const CartService = {
-    getCart: async () => {
-        const response = await apiClient.get("/cart", {
-            params: { _t: new Date().getTime() } // Anti-cache
-        } as any);
-        return unwrap(response);
+    getCart: async (): Promise<SafeFetchResponse<any>> => {
+        return await http.get("/cart", {
+            headers: { "Cache-Control": "no-cache" }
+        });
     },
 
-    addToCart: async (productId: number, quantity: number) => {
-        const response = await apiClient.post("/cart/add", { productId, quantity });
-        return unwrap(response);
+    addToCart: async (productId: number, quantity: number): Promise<SafeFetchResponse<any>> => {
+        return await http.post("/cart/add", { productId, quantity });
     },
 
-    updateQuantity: async (productId: number, quantity: number) => {
-        const response = await apiClient.put("/cart/update", { productId, quantity });
-        return unwrap(response);
+    updateQuantity: async (productId: number, quantity: number): Promise<SafeFetchResponse<any>> => {
+        return await http.put("/cart/update", { productId, quantity });
     },
 
-    removeFromCart: async (productId: number) => {
-        const response = await apiClient.delete(`/cart/remove/${productId}`);
-        return unwrap(response);
+    removeFromCart: async (productId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.del(`/cart/remove/${productId}`);
     }
 };

@@ -1,5 +1,7 @@
 import { Product } from "@/lib/types";
 import { getApiUrl } from "@/utils/api-config";
+import apiClientSafe from "@/lib/fetch-handler";
+
 
 const normalizeProduct = (raw: any): Product => {
     const images = Array.isArray(raw?.images) ? raw.images : [];
@@ -23,19 +25,16 @@ const normalizeProduct = (raw: any): Product => {
 
 export const getProducts = async (): Promise<Product[]> => {
     try {
-        const res = await fetch(`${getApiUrl()}/products`, {
-            cache: "no-store" // ❌ NO CACHE AT ALL
-        });
+        const [data, error] = await apiClientSafe.get("/products", {} as any);
 
-        if (!res.ok) {
-            throw new Error("Failed to fetch products");
+        if (error) {
+            console.error("Failed to fetch products:", error);
+            return [];
         }
-
-        const data = await res.json();
 
         if (Array.isArray(data)) {
             return data.map(normalizeProduct);
-        } else if (data.data && Array.isArray(data.data)) {
+        } else if (data?.data && Array.isArray(data.data)) {
             return data.data.map(normalizeProduct);
         }
 

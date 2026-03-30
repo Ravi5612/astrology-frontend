@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { loadRazorpay } from "@/lib/razorpay";
 import { useRouter } from "next/navigation";
-import { useClientAuth, apiClient } from "@repo/ui";
+import { useClientAuth, apiClientSafe } from "@repo/ui";
 
 const CartModal = () => {
   const {
@@ -46,35 +46,32 @@ const CartModal = () => {
         return;
       }
 
-      try {
-        const response = await apiClient.post<any>("/orders", {
-          payment_method: "wallet",
-          shipping_address: shippingAddress,
-        });
+      const [res, error] = await apiClientSafe.post<any>("/orders", {
+        payment_method: "wallet",
+        shipping_address: shippingAddress,
+      });
 
-        if (response.status === 201 || response.status === 200) {
-          const savedOrder = response.data;
-          const orderData = {
-            id: savedOrder.id || `ORDER_${Date.now()}`,
-            items: cart,
-            total: cartTotal,
-            date: new Date().toISOString(),
-            status: "Paid",
-          };
-          addToHistory(orderData);
-          await refreshBalance();
-          clearCart();
-          closeCart();
-          router.push("/orders");
-        } else {
-          throw new Error("Failed to create order");
-        }
-      } catch (error: any) {
+      if (error) {
         console.error("Checkout error:", error);
-        alert(error?.message || "Something went wrong during checkout");
-      } finally {
+        alert((error as any)?.message || "Something went wrong during checkout");
         setLoading(false);
+        return;
       }
+
+      const savedOrder = res;
+      const orderData = {
+        id: savedOrder.id || `ORDER_${Date.now()}`,
+        items: cart,
+        total: cartTotal,
+        date: new Date().toISOString(),
+        status: "Paid",
+      };
+      addToHistory(orderData);
+      await refreshBalance();
+      clearCart();
+      closeCart();
+      router.push("/orders");
+      setLoading(false);
       return;
     }
 
@@ -96,29 +93,30 @@ const CartModal = () => {
       description: "Purchase of Astrology Products",
       image: "/images/web-logo.png",
       handler: async function (response: any) {
-        try {
-          // In a real app, we'd verify payment and create/update order on backend
-          await apiClient.post("/orders", {
-            payment_method: "razorpay",
-            shipping_address: shippingAddress,
-            razorpay_payment_id: response.razorpay_payment_id
-          });
-          
-          const orderData = {
-            id: response.razorpay_payment_id || `ORDER_${Date.now()}`,
-            items: cart,
-            total: cartTotal,
-            date: new Date().toISOString(),
-            status: "Paid",
-          };
-          addToHistory(orderData);
-          clearCart();
-          closeCart();
-          router.push("/orders");
-        } catch (err) {
+        // In a real app, we'd verify payment and create/update order on backend
+        const [_, error] = await apiClientSafe.post("/orders", {
+          payment_method: "razorpay",
+          shipping_address: shippingAddress,
+          razorpay_payment_id: response.razorpay_payment_id
+        });
+
+        if (error) {
           alert("Order created but payment verification pending.");
           router.push("/orders");
+          return;
         }
+
+        const orderData = {
+          id: response.razorpay_payment_id || `ORDER_${Date.now()}`,
+          items: cart,
+          total: cartTotal,
+          date: new Date().toISOString(),
+          status: "Paid",
+        };
+        addToHistory(orderData);
+        clearCart();
+        closeCart();
+        router.push("/orders");
       },
       prefill: {
         name: clientUser?.name || "Test User",

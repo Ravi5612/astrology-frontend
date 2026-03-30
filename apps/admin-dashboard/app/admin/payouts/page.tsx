@@ -17,27 +17,31 @@ export default function AdminPayoutsPage() {
     });
 
     const fetchPayouts = async () => {
-        try {
-            setLoading(true);
-            const [payoutsResponse, statsResponse] = await Promise.all([
-                getPendingWithdrawals(),
-                getWithdrawalStats()
-            ]);
+        setLoading(true);
+        const [[payoutsData, payoutsError], [statsData, statsError]] = await Promise.all([
+            getPendingWithdrawals(),
+            getWithdrawalStats()
+        ]);
 
-            setPayoutRequests(payoutsResponse.items || []);
-            setStats({
-                totalPending: statsResponse.totalPending || 0,
-                totalApproved: statsResponse.totalApproved || 0,
-                totalRejected: statsResponse.totalRejected || 0,
-                totalAmount: statsResponse.totalAmountPending || 0,
-                totalPaid: statsResponse.totalAmountApproved || 0,
-            });
-        } catch (error) {
-            console.error("Failed to fetch payouts or stats:", error);
+        if (payoutsError || statsError) {
+            console.error("Failed to fetch payouts or stats:", payoutsError || statsError);
             toast.error("Failed to load payout data");
-        } finally {
             setLoading(false);
+            return;
         }
+
+        setPayoutRequests((payoutsData as any)?.items || payoutsData || []);
+        
+        if (statsData) {
+            setStats({
+                totalPending: (statsData as any).totalPending || 0,
+                totalApproved: (statsData as any).totalApproved || 0,
+                totalRejected: (statsData as any).totalRejected || 0,
+                totalAmount: (statsData as any).totalAmountPending || 0,
+                totalPaid: (statsData as any).totalAmountApproved || 0,
+            });
+        }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -45,18 +49,21 @@ export default function AdminPayoutsPage() {
     }, []);
 
     const handleAction = async (id: number, status: 'completed' | 'rejected') => {
-        try {
-            setProcessingId(id);
-            await updateWithdrawalStatus(id, { status });
-            toast.success(`Withdrawal ${status === 'completed' ? 'Approved' : 'Rejected'} successfully`);
-            fetchPayouts(); // Refresh list
-        } catch (error) {
+        setProcessingId(id);
+        const [_, error] = await updateWithdrawalStatus(id, { status });
+        
+        if (error) {
             console.error(`Failed to ${status} withdrawal:`, error);
             toast.error(`Failed to ${status} withdrawal`);
-        } finally {
             setProcessingId(null);
+            return;
         }
+
+        toast.success(`Withdrawal ${status === 'completed' ? 'Approved' : 'Rejected'} successfully`);
+        await fetchPayouts(); // Refresh list
+        setProcessingId(null);
     };
+
 
     return (
         <div className="min-h-screen bg-transparent">

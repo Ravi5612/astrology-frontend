@@ -4,12 +4,12 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getApiUrl } from "@/utils/api-config";
 import * as LucideIcons from "lucide-react";
-import apiClient, { getClientProfile } from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
+import { getClientProfile } from "@/libs/api-profile";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
 import { VerificationPopup } from "@repo/ui";
 import { UserX } from "lucide-react";
-import safeFetch from "@packages/safe-fetch/safeFetch";
 
 import { Astrologer } from "@/lib/types";
 import HeroInfo from "./hero-info.component";
@@ -77,14 +77,15 @@ export default function ConsultationPrep() {
 
   useEffect(() => {
     const fetchAstro = async () => {
-      const [data, fetchError] = await safeFetch<any>(
-        `${API_BASE_URL}/expert/details/${id}`,
+      const [res, fetchError] = await http.get<any>(
+        `/expert/details/${id}`,
       );
 
       if (fetchError) {
         console.error("Failed to fetch astrologer for prep:", fetchError);
         setAstrologer(null);
-      } else if (data) {
+      } else if (res) {
+        const data = res?.data || res;
         setAstrologer({
           id: data.id,
           userId: data.user?.id,
@@ -109,11 +110,11 @@ export default function ConsultationPrep() {
 
     const fetchProfile = async () => {
       if (isClientAuthenticated) {
-        try {
-          const profile = await getClientProfile();
-          setClientProfile(profile);
-        } catch (err) {
+        const [profile, err] = await getClientProfile();
+        if (err) {
           console.error("Failed to fetch client profile:", err);
+        } else {
+          setClientProfile(profile);
         }
       }
     };
@@ -141,55 +142,53 @@ export default function ConsultationPrep() {
       return;
     }
     setActionLoading(true);
-    try {
-      const response = await apiClient.post<any>("/chat/initiate", {
-        expertId: parseInt(id),
-      });
-      if (response && response.id) {
-        localStorage.setItem(
-          "activeChatSession",
-          JSON.stringify({
-            id: response.id,
-            expertId: id,
-            status: "pending",
-            timestamp: Date.now(),
-          }),
-        );
 
-        if (askSomeoneElse) {
-          if (clientProfile) {
-            const introData = {
-              name: clientProfile.full_name || clientProfile.user?.name || "User",
-              dob: clientProfile.date_of_birth || "",
-              tob: clientProfile.time_of_birth || "",
-              pob: clientProfile.place_of_birth || "",
-              gender: clientProfile.gender || "",
-            };
-            localStorage.setItem("pendingIntroCard", JSON.stringify(introData));
-          }
-        } else {
-          if (!someoneElseData.name || !someoneElseData.dob) {
-            toast.error("Please fill Name and DOB for the consultation");
-            setActionLoading(false);
-            return;
-          }
-          localStorage.setItem(
-            "pendingIntroCard",
-            JSON.stringify(someoneElseData),
-          );
-        }
+    const [response, error] = await http.post<any>("/chat/initiate", {
+      expertId: parseInt(id),
+    });
 
-        toast.success("Connecting to expert...");
-        router.push(`/chat/room/${id}?sessionId=${response.id}`);
-      }
-    } catch (error: any) {
+    if (error) {
       console.error("Initiation error:", error);
-      const msg =
-        error.response?.data?.message || "Failed to start consultation";
-      toast.error(msg);
-    } finally {
-      setActionLoading(false);
+      toast.error(error.message || "Failed to start consultation");
+    } else if (response && response.id) {
+      localStorage.setItem(
+        "activeChatSession",
+        JSON.stringify({
+          id: response.id,
+          expertId: id,
+          status: "pending",
+          timestamp: Date.now(),
+        }),
+      );
+
+      if (askSomeoneElse) {
+        if (clientProfile) {
+          const profileData = clientProfile?.data || clientProfile;
+          const introData = {
+            name: profileData.full_name || profileData.user?.name || "User",
+            dob: profileData.date_of_birth || "",
+            tob: profileData.time_of_birth || "",
+            pob: profileData.place_of_birth || "",
+            gender: profileData.gender || "",
+          };
+          localStorage.setItem("pendingIntroCard", JSON.stringify(introData));
+        }
+      } else {
+        if (!someoneElseData.name || !someoneElseData.dob) {
+          toast.error("Please fill Name and DOB for the consultation");
+          setActionLoading(false);
+          return;
+        }
+        localStorage.setItem(
+          "pendingIntroCard",
+          JSON.stringify(someoneElseData),
+        );
+      }
+
+      toast.success("Connecting to expert...");
+      router.push(`/chat/room/${id}?sessionId=${response.id}`);
     }
+    setActionLoading(false);
   };
 
   if (loading)

@@ -40,8 +40,8 @@ export const useProfileOrdersHistoryLogic = (
         if (activeTab === "history" && isClientAuthenticated) {
             setLoadingHistory(true);
             try {
-                const sessions = await getAllChatSessions();
-                setConsultationHistory(sessions);
+                const [sessions, error] = await getAllChatSessions() as any;
+                setConsultationHistory(!error ? sessions : []);
             } catch (error) {
                 console.error("Failed to load consultation history:", error);
                 toast.error("Failed to load consultation history");
@@ -66,29 +66,31 @@ export const useProfileOrdersHistoryLogic = (
                 ]);
 
                 if (ordersResult.status === "fulfilled") {
-                    const myOrders = ordersResult.value;
+                    const [ordersData, ordersError] = ordersResult.value as any;
+                    const myOrders = ordersData;
                     const orderArray = Array.isArray(myOrders)
                         ? myOrders
                         : myOrders?.items || myOrders?.data || myOrders?.orders || [];
-                    setOrders(orderArray);
+                    setOrders(!ordersError ? orderArray : []);
                 } else {
                     throw ordersResult.reason;
                 }
 
                 if (disputesResult.status === "fulfilled") {
-                    const myDisputes = disputesResult.value;
+                    const [disputesData, disputesError] = disputesResult.value as any;
+                    const myDisputes = disputesData;
                     const disputes = Array.isArray(myDisputes)
                         ? myDisputes
                         : myDisputes?.data || myDisputes?.items || [];
                     const disputeMap: Record<number, any> = {};
-                    disputes.forEach((d: any) => {
+                    (!disputesError ? disputes : []).filter(Boolean).forEach((d: any) => {
                         const oId = d.orderId || d.order_id || d.order?.id;
                         if (oId) {
                             disputeMap[oId] = d;
                         }
                     });
                     setOrderDisputes(disputeMap);
-                    setAllDisputes(disputes);
+                    setAllDisputes(!disputesError ? disputes : []);
                 }
             } catch (error: any) {
                 console.error("Failed to load orders:", error);
@@ -109,8 +111,10 @@ export const useProfileOrdersHistoryLogic = (
         try {
             setSelectedSession(session);
             setShowChatModal(true);
-            const messages = await getChatHistory(session.id);
-            setChatMessages(messages);
+            const [messages, error] = await getChatHistory(session.id) as any;
+            if (!error && messages) {
+                setChatMessages(messages);
+            }
         } catch (error) {
             console.error("Failed to load chat messages:", error);
             toast.error("Failed to load chat messages");

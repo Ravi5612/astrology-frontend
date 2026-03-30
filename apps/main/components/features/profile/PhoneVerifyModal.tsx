@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@repo/ui';
-import { apiClient } from '@/lib/api-client';
+import http from '@/lib/fetch-handler';
 
 interface PhoneVerifyModalProps {
     isOpen: boolean;
@@ -32,15 +32,15 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         setLoading(true);
         setError('');
         setSuccessMsg('');
-        try {
-            const res: any = await apiClient.post('/client/profile/phone/send-otp', { phone });
+        const [res, err] = await http.post<any>('/client/profile/phone/send-otp', { phone });
+
+        if (err) {
+            setError(err.message || 'Failed to send OTP.');
+        } else {
             setSuccessMsg(res?.message || 'OTP sent successfully!');
             setStep(2);
-        } catch (err: any) {
-            setError(err?.message || err?.response?.data?.message || 'Failed to send OTP.');
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     const handleVerifyOtp = async () => {
@@ -51,17 +51,17 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         setLoading(true);
         setError('');
         setSuccessMsg('');
-        try {
-            const res: any = await apiClient.post('/client/profile/phone/verify-otp', { phone, code: otp });
+        const [res, err] = await http.post<any>('/client/profile/phone/verify-otp', { phone, code: otp });
+
+        if (err) {
+            setError(err.message || 'Verification failed. Incorrect OTP.');
+        } else {
             setSuccessMsg(res?.message || 'Phone verified successfully!');
             setTimeout(() => {
                 onSuccess();
             }, 1500);
-        } catch (err: any) {
-            setError(err?.message || err?.response?.data?.message || 'Verification failed. Incorrect OTP.');
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     return (

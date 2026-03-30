@@ -54,7 +54,7 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {rewards.map((userCoupon: any, idx: number) => {
+            {rewards.filter(Boolean).map((userCoupon: any, idx: number) => {
               const coupon = userCoupon.coupon || userCoupon;
 
               const d_value = coupon.value || coupon.discountValue || 0;

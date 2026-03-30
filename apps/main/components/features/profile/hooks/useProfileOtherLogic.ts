@@ -42,8 +42,10 @@ export const useProfileOtherLogic = (
         if (activeTab === "notifications" && isClientAuthenticated) {
             setLoadingNotifications(true);
             try {
-                const data = await getNotifications();
-                setNotifications(Array.isArray(data) ? data : data.data || []);
+                const [data, error] = await getNotifications() as any;
+                if (!error && data) {
+                    setNotifications(Array.isArray(data) ? data : data.data || []);
+                }
             } catch (error) {
                 console.error("Failed to load notifications:", error);
             } finally {
@@ -58,12 +60,16 @@ export const useProfileOtherLogic = (
 
     const handleMarkAsRead = async (id: number) => {
         try {
-            await markNotificationAsRead(id);
+            const [, error] = await markNotificationAsRead(id) as any;
+            if (error) {
+                console.error("Failed to mark as read:", error);
+                return;
+            }
             setNotifications((prev) =>
                 prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
             );
         } catch (error) {
-            console.error("Failed to mark as read:", error);
+            console.error("Unexpected error marking as read:", error);
         }
     };
 
@@ -71,11 +77,16 @@ export const useProfileOtherLogic = (
         if (!window.confirm("Are you sure you want to clear all notifications?"))
             return;
         try {
-            await clearAllNotifications();
+            const [, error] = await clearAllNotifications() as any;
+            if (error) {
+                console.error("Failed to clear notifications:", error);
+                toast.error("Failed to clear notifications");
+                return;
+            }
             setNotifications([]);
             toast.success("All notifications cleared");
         } catch (error) {
-            console.error("Failed to clear notifications:", error);
+            console.error("Unexpected error clearing notifications:", error);
         }
     };
 
@@ -84,8 +95,10 @@ export const useProfileOtherLogic = (
         if (activeTab === "rewards" && isClientAuthenticated) {
             setLoadingRewards(true);
             try {
-                const data = await getMyRewards();
-                setRewards(Array.isArray(data) ? data : data.data || []);
+                const [data, error] = await getMyRewards() as any;
+                if (!error && data) {
+                    setRewards(Array.isArray(data) ? data : data.data || []);
+                }
             } catch (error) {
                 console.error("Failed to load rewards:", error);
             } finally {
@@ -104,8 +117,8 @@ export const useProfileOtherLogic = (
             if (activeTab === "support") {
                 setLoadingSupportSettings(true);
                 try {
-                    const data = await getSupportSettings();
-                    if (data) {
+                    const [data, error] = await getSupportSettings() as any;
+                    if (!error && data) {
                         setSupportSettings(data);
                     }
                 } catch (error) {
@@ -131,10 +144,10 @@ export const useProfileOtherLogic = (
                 prevOrders.map((order) =>
                     order.id === data.orderId
                         ? {
-                              ...order,
-                              status: data.status,
-                              cancellationReason: data.cancellationReason,
-                          }
+                            ...order,
+                            status: data.status,
+                            cancellationReason: data.cancellationReason,
+                        }
                         : order,
                 ),
             );

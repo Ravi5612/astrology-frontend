@@ -1,88 +1,94 @@
 // Example: How to use the API client in your components/pages
 
-import apiClient from './apiClient';
+import apiClientSafe from './apiClientSafe';
+
+/**
+ * NEW: The modernized API client (apiClientSafe) uses a [data, error] tuple pattern.
+ * This eliminates the need for try/catch blocks and provides type safety for errors.
+ */
 
 // Example 1: Fetching data
 export const fetchExperts = async () => {
-    try {
-        const response = await apiClient.get('/expert/profile/list', {
-            params: {
-                limit: 20,
-                offset: 0,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching experts:', error);
-        throw error;
+    // No more try/catch needed!
+    const [data, error] = await apiClientSafe.get<any>('/expert/profile/list', {
+        params: {
+            limit: 20,
+            offset: 0,
+        },
+    });
+
+    if (error) {
+        console.error('Error fetching experts:', error.message);
+        return [];
     }
+
+    return data?.data || data || [];
 };
 
-// Example 2: Posting data
+// Example 2: Updating data
 export const updateProfile = async (profileData: any) => {
-    try {
-        const response = await apiClient.put('/user/profile', profileData);
-        return response.data;
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        throw error;
+    const [data, error] = await apiClientSafe.put('/user/profile', profileData);
+
+    if (error) {
+        console.error('Error updating profile:', error.message);
+        return null;
     }
+
+    return data;
 };
 
 // Example 3: Deleting data
 export const deleteItem = async (itemId: string) => {
-    try {
-        const response = await apiClient.delete(`/items/${itemId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error deleting item:', error);
-        throw error;
+    const [data, error] = await apiClientSafe.delete(`/items/${itemId}`);
+
+    if (error) {
+        console.error('Error deleting item:', error.message);
+        return false;
     }
+
+    return true;
 };
 
-// Example 4: With custom headers
+// Example 4: Uploading files
 export const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-        const response = await apiClient.post('/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        throw error;
+    // apiClientSafe.upload handles FormData correctly
+    const [data, error] = await apiClientSafe.upload<any>('/upload', formData);
+
+    if (error) {
+        console.error('Error uploading file:', error.message);
+        return null;
     }
+
+    return data;
 };
 
 // Example 5: Using in a service class
 export class ExpertService {
     static async getAll(params?: { limit?: number; offset?: number }) {
-        const response = await apiClient.get('/expert/profile/list', { params });
-        return response.data;
+        const [data, error] = await apiClientSafe.get<any>('/expert/profile/list', { params });
+        if (error) return [];
+        return data?.data || data || [];
     }
 
     static async getById(id: number) {
-        const response = await apiClient.get(`/expert/profile/${id}`);
-        return response.data;
+        const [data, error] = await apiClientSafe.get(`/expert/profile/${id}`);
+        return data;
     }
 
     static async create(data: any) {
-        const response = await apiClient.post('/expert/profile', data);
-        return response.data;
+        const [res, error] = await apiClientSafe.post('/expert/profile', data);
+        return res;
     }
 
     static async update(id: number, data: any) {
-        const response = await apiClient.put(`/expert/profile/${id}`, data);
-        return response.data;
+        return await apiClientSafe.put(`/expert/profile/${id}`, data);
     }
 
     static async delete(id: number) {
-        const response = await apiClient.delete(`/expert/profile/${id}`);
-        return response.data;
+        return await apiClientSafe.delete(`/expert/profile/${id}`);
     }
 }
 
@@ -93,30 +99,30 @@ export class ExpertService {
  * 
  * "use client";
  * import { useEffect, useState } from 'react';
- * import apiClient from '@/lib/apiClient';
+ * import apiClientSafe from '@/lib/apiClientSafe';
  * 
  * export const ExampleComponent = () => {
  *   const [data, setData] = useState(null);
- *   const [loading, setLoading] = true);
+ *   const [loading, setLoading] = useState(true);
+ *   const [errorMsg, setErrorMsg] = useState("");
  * 
  *   useEffect(() => {
  *     const loadData = async () => {
- *       try {
- *         const result = await apiClient.get('/some-endpoint');
- *         setData(result.data);
- *       } catch (error) {
- *         // Error will be handled by interceptor
- *         // If token refresh fails, user will be redirected to /sign-in
- *         console.error('Error:', error);
- *       } finally {
- *         setLoading(false);
+ *       const [result, error] = await apiClientSafe.get('/some-endpoint');
+ *       
+ *       if (error) {
+ *         setErrorMsg(error.message);
+ *       } else {
+ *         setData(result);
  *       }
+ *       setLoading(false);
  *     };
  * 
  *     loadData();
  *   }, []);
  * 
  *   if (loading) return <div>Loading...</div>;
+ *   if (errorMsg) return <div>Error: {errorMsg}</div>;
  * 
  *   return <div>{JSON.stringify(data)}</div>;
  * };

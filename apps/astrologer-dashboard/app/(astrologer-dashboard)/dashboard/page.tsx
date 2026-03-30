@@ -10,16 +10,15 @@ import { ConsultationRatings } from "@/components/dashboard/ConsulationRating";
 import { ReviewsList } from "@/components/dashboard/ReviewsList";
 import { ReviewsModal } from "@/components/dashboard/ReviewsModal";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getExpertReviewStats, getExpertReviews, Review, ReviewStats } from "@/lib/reviews";
+import { getReviewStats, getReviews, Review } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
-import apiClient from "@/lib/apiClient";
 import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 import { AlertTriangle, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 const Page = () => {
   const { user } = useAuthStore();
-  const [ratingStats, setRatingStats] = useState<ReviewStats | null>(null);
+  const [ratingStats, setRatingStats] = useState<any | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsTotal, setReviewsTotal] = useState(0);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
@@ -43,24 +42,29 @@ const Page = () => {
         setLoading(false);
         return;
       }
-      try {
-        const [stats, reviewsData, dStats] = await Promise.all([
-          getExpertReviewStats(user.profileId),
-          getExpertReviews(user.profileId, 1, 10), // Fetch first 10 reviews
-          getDashboardStats('total').catch(err => {
-            console.error("[Dashboard] Total stats fetch failed:", err);
-            return null;
-          })
-        ]);
-        setRatingStats(stats);
-        setReviews(reviewsData.data || []);
+      
+      const [
+        [stats, statsErr],
+        [reviewsData, reviewsErr],
+        [dStats, dStatsErr]
+      ] = await Promise.all([
+        getReviewStats(),
+        getReviews(1, 10),
+        getDashboardStats('total')
+      ]);
+
+      if (statsErr) console.error("[Dashboard] Review stats fetch failed:", statsErr);
+      if (reviewsErr) console.error("[Dashboard] Reviews fetch failed:", reviewsErr);
+      if (dStatsErr) console.error("[Dashboard] Dashboard stats fetch failed:", dStatsErr);
+
+      if (stats) setRatingStats(stats);
+      if (reviewsData) {
+        setReviews(reviewsData.reviews || []);
         setReviewsTotal(reviewsData.total || 0);
-        setDashboardStats(dStats);
-      } catch (error) {
-        console.error("Error fetching ratings/reviews:", error);
-      } finally {
-        setLoading(false);
       }
+      if (dStats) setDashboardStats(dStats);
+      
+      setLoading(false);
     };
 
     fetchData();
@@ -68,33 +72,33 @@ const Page = () => {
 
   const statsData = [
     {
-      title: "Total Appointment",
-      value: (dashboardStats?.total_appointments ?? dashboardStats?.today_appointments ?? 0).toString(),
-      trend: { value: "All Time", isPositive: true, period: "total" },
+      title: "Total Chat Sessions",
+      value: (dashboardStats?.totalChatSessions || 0).toString(),
+      trend: { value: dashboardStats?.trends?.sessions || "All Time", isPositive: true, period: "total" },
       icon: CalendarCheck,
       iconBgColor: "bg-blue-100",
       iconColor: "text-blue-600",
     },
     {
-      title: "Total Complete",
-      value: (dashboardStats?.total_completed ?? dashboardStats?.completed_today ?? 0).toString(),
-      trend: { value: "Success", isPositive: true, period: "total" },
+      title: "Reviews",
+      value: (dashboardStats?.totalReviews || 0).toString(),
+      trend: { value: "Feedback", isPositive: true, period: "total" },
       icon: CheckCircle,
       iconBgColor: "bg-green-100",
       iconColor: "text-green-600",
     },
     {
-      title: "Total Expired",
-      value: (dashboardStats?.total_expired ?? dashboardStats?.expired_today ?? 0).toString(),
-      trend: { value: "Missed", isPositive: false, period: "total" },
+      title: "Average Rating",
+      value: (dashboardStats?.averageRating || 0).toFixed(1),
+      trend: { value: "Quality", isPositive: true, period: "total" },
       icon: XCircle,
-      iconBgColor: "bg-red-100",
-      iconColor: "text-red-600",
+      iconBgColor: "bg-yellow-100",
+      iconColor: "text-yellow-600",
     },
     {
       title: "Total Earnings",
-      value: `₹${(dashboardStats?.total_earnings || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      trend: { value: "Lifetime", isPositive: true, period: "all time" },
+      value: `₹${(dashboardStats?.totalEarnings || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      trend: { value: dashboardStats?.trends?.earnings || "Lifetime", isPositive: true, period: "all time" },
       icon: Wallet,
       iconBgColor: "bg-purple-100",
       iconColor: "text-purple-600",

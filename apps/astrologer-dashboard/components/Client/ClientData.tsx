@@ -5,11 +5,11 @@ import ClientHeader from "./ClientHeader";
 import ClientTable from "./ClientTable";
 import ClientMobileList from "./ClientMobileList";
 import { Client, SortConfig, SortKey } from "./types";
-import { apiClient } from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import { toast } from "react-toastify";
 import * as LucideIcons from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getExpertReviews } from "@/lib/reviews";
+import { getReviews } from "@/lib/reviews";
 import Button from "../ui/Button";
 
 const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin } = LucideIcons as any;
@@ -53,20 +53,20 @@ export default function ClientsPage() {
     const fetchClients = async () => {
       try {
         setLoading(true);
-        const [sessionsRes, reviewsRes] = await Promise.allSettled([
-          apiClient.get('/chat/sessions/all'),
-          expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID")
+        const [sessionsResult, reviewsResult] = await Promise.all([
+          apiClientSafe.get<any>('/chat/sessions/all'),
+          expertUser?.profileId ? getReviews(1, 50) : Promise.resolve([null, null] as [any, any])
         ]);
 
-        const getSessionsData = (res: any) => {
-          if (res.status !== 'fulfilled') return [];
-          if (Array.isArray(res.value.data)) return res.value.data;
-          if (Array.isArray(res.value)) return res.value; // In case the interceptor already returns data
-          return [];
-        };
+        const [sessionsData, sessionsError] = sessionsResult;
+        const [reviewsData, reviewsError] = reviewsResult;
 
-        const sessions = getSessionsData(sessionsRes);
-        const reviews = (reviewsRes.status === 'fulfilled' && (reviewsRes.value as any).data) ? (reviewsRes.value as any).data : ((reviewsRes.status === 'fulfilled' && (reviewsRes.value as any)) ? (reviewsRes.value as any) : []);
+        if (sessionsError) {
+            console.error("Failed to fetch sessions:", sessionsError);
+        }
+        
+        const sessions = (sessionsData as any)?.data || sessionsData || [];
+        const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
 
         // Map API response to Client interface
         const mappedClients: Client[] = sessions.map((session: any) => {
@@ -167,8 +167,9 @@ export default function ClientsPage() {
     setLoadingChat(true);
 
     try {
-      const response = await apiClient.get<any>(`/chat/history/${session.id}`);
-      const messages = Array.isArray(response) ? response : (response?.data || []);
+      const [res, error] = await apiClientSafe.get<any>(`/chat/history/${session.id}`);
+      if (error) throw error;
+      const messages = (res as any)?.data || res || [];
       setChatMessages(messages);
     } catch (error) {
       console.error("Failed to load chat history:", error);

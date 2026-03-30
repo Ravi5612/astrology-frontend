@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
 import { toast } from "react-toastify";
+import apiClientSafe from "../../lib/apiClientSafe";
 
 const Link = NextLink as any;
 
@@ -16,19 +17,11 @@ const ForgotPasswordPage: React.FC = () => {
         setLoading(true);
 
         try {
-            const apiBase = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:6543").replace(/\/api\/v1\/?$/, "");
-            const API_URL = `${apiBase}/api/v1/auth/forgot/password`;
             const origin = typeof window !== 'undefined' ? window.location.origin : "";
+            const [data, error] = await apiClientSafe.post<any>(`/auth/forgot/password`, { email, origin });
 
-            const res = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, origin }),
-            });
-
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                toast.error(errData?.message || "Failed to send reset link. Please try again.");
+            if (error) {
+                toast.error((error as any)?.message || "Failed to send reset link. Please try again.");
             } else {
                 toast.success("Password reset link sent! Please check your email.");
                 setIsSent(true);

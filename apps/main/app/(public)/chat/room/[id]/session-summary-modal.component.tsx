@@ -3,6 +3,7 @@
 import React from "react";
 import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
+import http from "@/lib/fetch-handler";
 
 const { Star } = LucideIcons as any;
 
@@ -19,7 +20,6 @@ type SessionSummaryModalProps = {
     setReviewSubmitted: (val: boolean) => void;
     sessionId: string | null;
     expertData: any;
-    apiClient: any;
     router: any;
 };
 
@@ -36,7 +36,6 @@ export default function SessionSummaryModal({
     setReviewSubmitted,
     sessionId,
     expertData,
-    apiClient,
     router
 }: SessionSummaryModalProps) {
     if (!showModal) return null;
@@ -150,20 +149,16 @@ export default function SessionSummaryModal({
 
                                     console.log("[UserChatDebug] Submitting Review Payload:", payload);
 
-                                    try {
-                                        setReviewSubmitted(true);
+                                    setReviewSubmitted(true);
+                                    
+                                    const [res, err] = await http.post('/reviews', payload);
 
-                                        // Real API call to backend
-                                        await apiClient.post('/reviews', payload);
-
-                                        toast.success("Thank you for your feedback!");
-
-                                        // Wait a bit then redirect
-                                        setTimeout(() => router.push('/'), 1500);
-                                    } catch (err: any) {
+                                    if (err) {
                                         setReviewSubmitted(false);
-                                        const errorMsg = err.response?.data?.message || "Failed to submit review. Please try again.";
-                                        toast.error(errorMsg);
+                                        toast.error(err.message || "Failed to submit review. Please try again.");
+                                    } else {
+                                        toast.success("Thank you for your feedback!");
+                                        setTimeout(() => router.push('/'), 1500);
                                     }
                                 }}
                                 disabled={reviewSubmitted}

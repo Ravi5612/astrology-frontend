@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { AuthService, ClientUser } from "../services/auth.service";
-import { apiClient } from "../lib/api-client";
+import apiClientSafe from "../lib/fetch-handler";
 const authDebug = (...args: unknown[]) => {
     if (process.env.NODE_ENV !== "production") {
         console.log("[AuthDebug][store]", ...args);
@@ -48,19 +48,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     clientLogout: async () => {
         // 1. Tell the backend to invalidate the session (best-effort)
-        try {
-            await AuthService.logout();
-        } catch {
-            // Backend logout failed — continue anyway to clear local state
-        }
+        await AuthService.logout();
 
         // 2. Clear HttpOnly cookies via a dedicated API route
-        //    (Server Actions can't be reliably dynamic-imported from client stores)
         try {
             await fetch("/api/auth/logout", { method: "POST" });
         } catch {
-            // If the route fails, cookies may persist until expiry
-            // But we still clear local state so UI reflects logout
             console.warn("[Logout] Failed to clear server cookies.");
         }
 
@@ -79,26 +72,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     refreshBalance: async () => {
-        try {
-            const balanceRes: any = await AuthService.fetchBalance();
-            const raw = balanceRes?.data ?? balanceRes;
-
-            let parsed = 0;
-            if (typeof raw === "number") {
-                parsed = raw;
-            } else if (typeof raw === "string") {
-                const n = Number(raw);
-                parsed = Number.isFinite(n) ? n : 0;
-            } else if (raw && typeof raw === "object") {
-                const candidate = raw.balance ?? raw.amount ?? raw.walletBalance;
-                const n = Number(candidate);
-                parsed = Number.isFinite(n) ? n : 0;
-            }
-
-            set({ clientBalance: parsed });
-        } catch {
+        const [res, error] = await AuthService.fetchBalance();
+        if (error) {
             // Silently fail — balance is non-critical
+            return;
         }
+
+        const raw = res?.data ?? res;
+
+        let parsed = 0;
+        if (typeof raw === "number") {
+            parsed = raw;
+        } else if (typeof raw === "string") {
+            const n = Number(raw);
+            parsed = Number.isFinite(n) ? n : 0;
+        } else if (raw && typeof raw === "object") {
+            const candidate = raw.balance ?? raw.amount ?? raw.walletBalance;
+            const n = Number(candidate);
+            parsed = Number.isFinite(n) ? n : 0;
+        }
+
+        set({ clientBalance: parsed });
     },
 
     refreshAuth: async () => {
@@ -110,84 +104,80 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             hasClientUser: Boolean(get().clientUser),
         });
 
-        try {
-            // Priority: Try fetching the more detailed client profile first
-            // This ensures we get the latest 'profile_picture' which might not be joined in /auth/me
-            let res: any;
-            try {
-                res = await apiClient.get('/client/profile');
-            } catch {
-                res = await AuthService.fetchProfile();
-            }
+        // Priority: Try fetching the more detailed client profile first
+        let [res, error] = await apiClientSafe.get<any>('/client/profile');
+        if (error) {
+            const [profileRes, profileError] = await AuthService.fetchProfile();
+            res = profileRes;
+            error = profileError;
+        }
 
-            // Support both shapes:
-            // 1) direct payload (safeFetch-based apiClient)
-            // 2) wrapped payload { status, data }
-            const raw = res?.data ?? res;
-            let user: ClientUser | null = null;
-            authDebug("refreshAuth:response", {
-                hasResponse: Boolean(res),
-                isNullRaw: raw == null,
-                rawType: typeof raw,
-                hasRawUser: Boolean(raw?.user),
-                hasRawId: Boolean(raw?.id),
-            });
-
-            if (raw?.user?.id) {
-                user = {
-                    id: raw.user.id,
-                    name: raw.user.name,
-                    email: raw.user.email,
-                    roles: raw.user.roles || [],
-                    profile_picture: raw.profile_picture || raw.user.profile_picture,
-                    avatar: raw.profile_picture || raw.user.avatar,
-                };
-            } else if (raw?.id) {
-                user = {
-                    id: raw.id,
-                    name: raw.full_name || raw.name || "User",
-                    email: raw.email || "",
-                    roles: raw.roles || [],
-                    profile_picture: raw.profile_picture,
-                    avatar: raw.profile_picture || raw.avatar,
-                };
-            }
-
-            if (user) {
-                set({
-                    clientUser: {
-                        ...(get().clientUser || {}),
-                        ...user
-                    } as ClientUser,
-                    isClientAuthenticated: true
-                });
-                authDebug("refreshAuth:user resolved", { id: user.id, name: user.name });
-                get().refreshBalance();
-            } else {
-                set({
-                    isClientAuthenticated: false,
-                    clientUser: null,
-                });
-                authDebug("refreshAuth:2xx with non-user payload -> unauthenticated");
-            }
-        } catch (err: any) {
-            const status = err?.status ?? err?.response?.status;
+        if (error) {
             authDebug("refreshAuth:error", {
-                status,
-                message: err?.message,
+                status: error.status,
+                message: error.message,
             });
-
-            // On ANY error, we assume unauthenticated for safety.
             set({
                 isClientAuthenticated: false,
                 clientUser: null,
+                clientLoading: false
             });
-        } finally {
-            set({ clientLoading: false });
-            authDebug("refreshAuth:final", {
-                isClientAuthenticated: get().isClientAuthenticated,
-                hasClientUser: Boolean(get().clientUser),
+            return;
+        }
+
+        // Support both shapes:
+        // 1) direct payload (safeFetch-based apiClientSafe)
+        // 2) wrapped payload { status, data }
+        const raw = res?.data ?? res;
+
+        let user: ClientUser | null = null;
+        
+        authDebug("refreshAuth:response", {
+            hasResponse: Boolean(res),
+            isNullRaw: raw == null,
+            rawType: typeof raw,
+            hasRawUser: Boolean(raw?.user),
+            hasRawId: Boolean(raw?.id),
+        });
+
+        if (raw?.user?.id) {
+            user = {
+                id: raw.user.id,
+                name: raw.user.name,
+                email: raw.user.email,
+                roles: raw.user.roles || [],
+                profile_picture: raw.profile_picture || raw.user.profile_picture,
+                avatar: raw.profile_picture || raw.user.avatar,
+            };
+        } else if (raw?.id) {
+            user = {
+                id: raw.id,
+                name: raw.full_name || raw.name || "User",
+                email: raw.email || "",
+                roles: raw.roles || [],
+                profile_picture: raw.profile_picture,
+                avatar: raw.profile_picture || raw.avatar,
+            };
+        }
+
+        if (user) {
+            set({
+                clientUser: {
+                    ...(get().clientUser || {}),
+                    ...user
+                } as ClientUser,
+                isClientAuthenticated: true,
+                clientLoading: false
             });
+            authDebug("refreshAuth:user resolved", { id: user.id, name: user.name });
+            get().refreshBalance();
+        } else {
+            set({
+                isClientAuthenticated: false,
+                clientUser: null,
+                clientLoading: false
+            });
+            authDebug("refreshAuth:2xx with non-user payload -> unauthenticated");
         }
     },
 

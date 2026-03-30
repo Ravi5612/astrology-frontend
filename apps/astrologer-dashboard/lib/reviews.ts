@@ -1,35 +1,35 @@
-import apiClient from "./apiClient";
+import apiClientSafe, { ApiError } from "./apiClientSafe";
 
 export interface Review {
-    id: number;
+    id: string;
     rating: number;
     comment: string;
-    createdAt: string;
     user: {
-        id: number;
         name: string;
         avatar?: string;
     };
+    created_at: string;
+    reply?: string;
 }
 
-export interface ReviewStats {
-    rating: number;
-    totalReviews: number;
-}
+export const getReviews = async (page: number = 1, limit: number = 10): Promise<[{ reviews: Review[], total: number } | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get(`/expert/reviews?page=${page}&limit=${limit}`);
+    if (error) return [null, error];
+    const data = (res as any)?.data?.data || (res as any)?.data || res;
 
-export const getExpertReviewStats = async (expertId: number): Promise<ReviewStats> => {
-    const response: any = await apiClient.get(`/reviews/expert/${expertId}/stats`, {
-        timeoutMs: 20000
-    });
-    return response?.data ?? response;
+    return [{
+        reviews: data.items || data.reviews || [],
+        total: data.total || 0
+    }, null];
 };
 
-export const getExpertReviews = async (expertId: number, page: number = 1, limit: number = 10) => {
-    const response: any = await apiClient.get(`/reviews/expert/${expertId}`, {
-        params: { page, limit },
-        timeoutMs: 30000
-    });
-    return response;
+export const getReviewStats = async (): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get('/expert/reviews/stats');
+    if (error) return [null, error];
+    const data = (res as any)?.data?.data || (res as any)?.data || res;
+    return [data, null];
 };
 
-
+export const replyToReview = async (id: string, reply: string): Promise<[any | null, ApiError | null]> => {
+    return apiClientSafe.post(`/expert/reviews/${id}/reply`, { reply });
+};

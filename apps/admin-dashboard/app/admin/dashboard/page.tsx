@@ -35,17 +35,17 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      try {
-        const data = await getDashboardStats();
-        setDashboardData(data);
-      } catch (error) {
+      const [data, error] = await getDashboardStats();
+      if (error) {
         console.error("Failed to fetch dashboard stats", error);
-      } finally {
-        setLoading(false);
+      } else {
+        setDashboardData(data);
       }
+      setLoading(false);
     };
     fetchStats();
   }, []);
+
 
   // Stats data (memoized for performance)
   const stats = useMemo(

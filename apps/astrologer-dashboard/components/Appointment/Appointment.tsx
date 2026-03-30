@@ -7,10 +7,10 @@ import AppointmentList from "./AppointmentList";
 import AppointmentCalendar from "./AppointmentCalendar";
 import RescheduleModal from "./RescheduleModal";
 import { Appointment } from "./types";
-import apiClient from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import { useAuthStore } from "@/store/useAuthStore";
 import { chatSocket, callSocket } from "@/lib/socket";
-import { getExpertReviews } from "@/lib/reviews";
+import { getReviews } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
 
 export default function AppointmentsPage() {
@@ -52,32 +52,32 @@ export default function AppointmentsPage() {
         callCompletedRes,
         reviewsRes,
         statsRes
-      ] = await Promise.allSettled([
-        apiClient.get("/chat/sessions/appointments/pending"),
-        apiClient.get("/chat/sessions/appointments/completed"),
-        apiClient.get("/call/sessions/appointments/pending"),
-        apiClient.get("/call/sessions/appointments/completed"),
-        expertUser?.profileId ? getExpertReviews(expertUser.profileId, 1, 50) : Promise.reject("No expert ID"),
-        getDashboardStats('today').catch(err => {
-          console.error("[Appointment] Today stats fetch failed:", err);
-          return null;
-        })
+      ] = await Promise.all([
+        apiClientSafe.get<any>("/chat/sessions/appointments/pending"),
+        apiClientSafe.get<any>("/chat/sessions/appointments/completed"),
+        apiClientSafe.get<any>("/call/sessions/appointments/pending"),
+        apiClientSafe.get<any>("/call/sessions/appointments/completed"),
+        expertUser?.profileId ? getReviews(1, 50) : Promise.resolve([null, null] as [any, any]),
+        getDashboardStats('today')
       ]);
 
-      const getSessionsData = (res: any) => {
-        if (res.status !== 'fulfilled') return [];
-        if (Array.isArray(res.value?.data)) return res.value.data;
-        if (Array.isArray(res.value)) return res.value;
-        return [];
+      const getSessions = (result: [any | null, any | null]) => {
+        const [data, error] = result;
+        if (error || !data) return [];
+        const payload = data?.data || data;
+        return Array.isArray(payload) ? payload : [];
       };
 
-      const chatPending = getSessionsData(chatPendingRes).map((s: any) => ({ ...s, _source: 'chat' }));
-      const chatCompleted = getSessionsData(chatCompletedRes).map((s: any) => ({ ...s, _source: 'chat' }));
-      const callPending = getSessionsData(callPendingRes).map((s: any) => ({ ...s, _source: 'call' }));
-      const callCompleted = getSessionsData(callCompletedRes).map((s: any) => ({ ...s, _source: 'call' }));
+      const chatPending = getSessions(chatPendingRes).map((s: any) => ({ ...s, _source: 'chat' }));
+      const chatCompleted = getSessions(chatCompletedRes).map((s: any) => ({ ...s, _source: 'chat' }));
+      const callPending = getSessions(callPendingRes).map((s: any) => ({ ...s, _source: 'call' }));
+      const callCompleted = getSessions(callCompletedRes).map((s: any) => ({ ...s, _source: 'call' }));
 
       const allSessions: any[] = [...chatPending, ...chatCompleted, ...callPending, ...callCompleted];
-      const reviews = (reviewsRes.status === 'fulfilled' ? ((reviewsRes.value as any).data || (Array.isArray(reviewsRes.value) ? reviewsRes.value : [])) : []);
+      
+      const [reviewsData, reviewsError] = reviewsRes;
+      const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
+
 
       // Deduplicate sessions by ID and Source (since IDs might overlap between chat and call)
       const uniqueSessionsMap = new Map();
@@ -120,7 +120,7 @@ export default function AppointmentsPage() {
         // Verification logic (placeholder for calls if needed, mostly for chat status sync)
         if (source === 'chat' && currentStatus === 'active') {
           try {
-            const verificationRes: any = await apiClient.get(`/chat/session/${session.id}?_t=${Date.now()}`);
+            const [verificationRes, verificationError] = await apiClientSafe.get<any>(`/chat/session/${session.id}?_t=${Date.now()}`);
             const verifiedPayload = verificationRes?.data ?? verificationRes;
             if (verifiedPayload && verifiedPayload.status) {
               currentStatus = verifiedPayload.status;
@@ -164,8 +164,9 @@ export default function AppointmentsPage() {
       }));
 
       // Stats Logic
-      if (statsRes.status === 'fulfilled' && statsRes.value) {
-        setStats(statsRes.value);
+      const [statsData, statsError] = statsRes;
+      if (statsData) {
+        setStats(statsData);
       }
 
       console.log("[AppointmentDebug] Mapped appointments:", mappedAppointments);

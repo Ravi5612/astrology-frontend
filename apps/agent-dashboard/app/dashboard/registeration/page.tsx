@@ -214,9 +214,12 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
             toast.error("Please fill all required fields");
             return;
         }
-        try {
-            setSubmitting(true);
-            const res = await registerUserByAgent({ ...form, userType });
+        setSubmitting(true);
+        const [res, error] = await registerUserByAgent({ ...form, userType });
+        
+        if (error) {
+            toast.error(error.message || "Registration failed. Try again.");
+        } else if (res) {
             setTempPassword(res.tempPassword);
             setRegisteredUser(res.user);
             setForm(EMPTY_USER_FORM);
@@ -225,11 +228,8 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
             } else {
                 toast.success(`${userType === "expert" ? "Astrologer" : "Client"} registered successfully! ✅`);
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Registration failed. Try again.");
-        } finally {
-            setSubmitting(false);
         }
+        setSubmitting(false);
     };
 
     return (
@@ -291,25 +291,25 @@ function PlaceForm({ type }: { type: "mandir" | "puja_shop" }) {
             toast.error(`Please fill the ${entityLabel} name and location`);
             return;
         }
-        try {
-            setSubmitting(true);
-            await createListing({
-                type: type === "mandir" ? "mandir" : "puja_shop",
-                name: form.name,
-                location: form.location,
-                phone: form.contact,
-                deity: form.mainDeity,
-                // Pass opening/closing time as part of items field for now
-                items: `Opening: ${form.openingTime} | Closing: ${form.closingTime}`,
-            });
+        setSubmitting(true);
+        const [res, error] = await createListing({
+            type: type === "mandir" ? "mandir" : "puja_shop",
+            name: form.name,
+            location: form.location,
+            phone: form.contact,
+            deity: form.mainDeity,
+            // Pass opening/closing time as part of items field for now
+            items: `Opening: ${form.openingTime} | Closing: ${form.closingTime}`,
+        });
+
+        if (error) {
+            toast.error(error.message || "Failed to submit listing");
+        } else {
             setForm(EMPTY_MANDIR);
             setSuccess(true);
             toast.success(`${entityLabel} listing submitted for review! 🙏`);
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to submit listing");
-        } finally {
-            setSubmitting(false);
         }
+        setSubmitting(false);
     };
 
     const inputFocusRing = isMandir

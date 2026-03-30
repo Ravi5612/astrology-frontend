@@ -32,10 +32,12 @@ function buildUrl(path: string): string {
   return `/api/v1${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-async function apiGet<T>(
+// --- SAFE TUPLE-BASED HELPERS ---
+
+async function apiGetSafe<T>(
   path: string,
   params?: Record<string, string | number>,
-): Promise<{ data: T; status: number }> {
+): Promise<[T | null, any | null]> {
   let url = buildUrl(path);
   if (params) {
     const qs = new URLSearchParams(
@@ -45,28 +47,52 @@ async function apiGet<T>(
     ).toString();
     url = `${url}?${qs}`;
   }
-  const [data, error] = await safeFetch<T>(url, { credentials: "include" });
-  if (error) throw error;
-  return { data: data as T, status: 200 };
+  return await safeFetch<T>(url, { credentials: "include" });
 }
 
-async function apiPost<T>(
+async function apiPostSafe<T>(
   path: string,
   body?: Record<string, unknown>,
-): Promise<{ data: T; status: number }> {
+): Promise<[T | null, any | null]> {
   const url = buildUrl(path);
-  const [data, error] = await safeFetch<T>(url, {
+  return await safeFetch<T>(url, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     ...(body ? { body: JSON.stringify(body) } : {}),
   } as any);
-  if (error) throw error;
-  return { data: data as T, status: 200 };
 }
 
-// Re-export named apiClient for backward compat with any direct imports
-export const apiClient = { get: apiGet, post: apiPost };
+async function apiPatchSafe<T>(
+  path: string,
+  body?: Record<string, unknown>,
+): Promise<[T | null, any | null]> {
+  const url = buildUrl(path);
+  return await safeFetch<T>(url, {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  } as any);
+}
+
+async function apiDeleteSafe<T>(
+  path: string,
+): Promise<[T | null, any | null]> {
+  const url = buildUrl(path);
+  return await safeFetch<T>(url, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
+
+// NEW: Export tuplified apiClientSafe for modernized apps
+export const apiClientSafe = {
+  get: apiGetSafe,
+  post: apiPostSafe,
+  patch: apiPatchSafe,
+  delete: apiDeleteSafe
+};
 
 interface ClientUser {
   id: number;
@@ -124,7 +150,7 @@ export const ClientAuthProvider = ({
     deleteLegacyCookie("clientAccessToken");
 
     try {
-      await apiPost("/auth/client-logout");
+      await apiPostSafe("/auth/client-logout");
     } catch (err: any) {
       // Even if backend fails, continue with frontend logout
     }
@@ -134,8 +160,10 @@ export const ClientAuthProvider = ({
 
   const refreshBalance = async () => {
     try {
-      const res = await apiGet<any>("/wallet/balance");
-      setClientBalance(res.data);
+      const [res, error] = await apiGetSafe<any>("/wallet/balance");
+      if (!error && res) {
+          setClientBalance(res as any);
+      }
     } catch (_) { }
   };
 
@@ -148,19 +176,20 @@ export const ClientAuthProvider = ({
     }
     if (!isClientAuthenticated) setClientLoading(true);
     try {
-      const res = await apiGet<any>("/client/profile", { _t: new Date().getTime() });
-      if (res.data?.user) {
-        setClientUser(res.data.user);
+      const [res, error] = await apiGetSafe<any>("/client/profile", { _t: new Date().getTime() });
+      const data = res as any;
+      if (!error && data?.user) {
+        setClientUser(data.user);
         setIsClientAuthenticated(true);
         refreshBalance();
-      } else if (res.data?.id) {
+      } else if (!error && data?.id) {
         setClientUser({
-          id: res.data.user?.id || res.data.id,
-          name: res.data.user?.name || res.data.full_name,
-          email: res.data.user?.email,
-          roles: res.data.user?.roles || [],
-          profile_picture: res.data.profile_picture || res.data.user?.profile_picture,
-          avatar: res.data.profile_picture || res.data.user?.avatar,
+          id: data.user?.id || data.id,
+          name: data.user?.name || data.full_name,
+          email: data.user?.email,
+          roles: data.user?.roles || [],
+          profile_picture: data.profile_picture || data.user?.profile_picture,
+          avatar: data.profile_picture || data.user?.avatar,
         });
         setIsClientAuthenticated(true);
       } else {
@@ -183,20 +212,21 @@ export const ClientAuthProvider = ({
       deleteLegacyCookie("clientAccessToken");
 
       try {
-        const res = await apiGet<any>("/client/profile", { _t: new Date().getTime() });
+        const [res, error] = await apiGetSafe<any>("/client/profile", { _t: new Date().getTime() });
+        const data = res as any;
 
-        if (res.data?.user) {
-          setClientUser(res.data.user);
+        if (!error && data?.user) {
+          setClientUser(data.user);
           setIsClientAuthenticated(true);
           refreshBalance();
-        } else if (res.data?.id) {
+        } else if (!error && data?.id) {
           setClientUser({
-            id: res.data.user?.id || res.data.id,
-            name: res.data.user?.name || res.data.full_name,
-            email: res.data.user?.email,
-            roles: res.data.user?.roles || [],
-            profile_picture: res.data.profile_picture || res.data.user?.profile_picture,
-            avatar: res.data.profile_picture || res.data.user?.avatar,
+            id: data.user?.id || data.id,
+            name: data.user?.name || data.full_name,
+            email: data.user?.email,
+            roles: data.user?.roles || [],
+            profile_picture: data.profile_picture || data.user?.profile_picture,
+            avatar: data.profile_picture || data.user?.avatar,
           });
           setIsClientAuthenticated(true);
         } else {
@@ -219,6 +249,7 @@ export const ClientAuthProvider = ({
     authCheckRef.current = true;
     initClientAuth();
   }, []);
+
 
   return (
     <ClientAuthContext.Provider

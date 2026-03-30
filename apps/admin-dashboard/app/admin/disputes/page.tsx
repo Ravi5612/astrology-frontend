@@ -29,40 +29,42 @@ export default function DisputesPage() {
 
   // Fetch disputes from backend
   const fetchDisputes = async () => {
-    try {
-      setLoading(true);
-      const response = await getDisputes();
+    setLoading(true);
+    const [data, error] = await getDisputes();
 
-      // Handle different response structures
-      const disputesData = response.data || response.disputes || response || [];
-      setDisputes(disputesData);
-    } catch (error: any) {
+    if (error) {
       console.error("Error fetching disputes:", error);
       toast.error("Failed to load disputes");
       setDisputes([]);
-    } finally {
       setLoading(false);
+      return;
     }
+
+    // Handle different response structures
+    const disputesData = (data as any)?.data || (data as any)?.disputes || data || [];
+    setDisputes(disputesData);
+    setLoading(false);
   };
 
   const fetchStats = async () => {
-    try {
-      const response = await getDisputeStats();
-      if (response) {
-        // Handle snake_case from backend by normalizing to camelCase
-        setStats({
-          total: response.total ?? 0,
-          pending: response.pending ?? 0,
-          underReview: response.underReview ?? response.under_review ?? 0,
-          resolved: response.resolved ?? 0,
-          rejected: response.rejected ?? 0,
-        });
-      }
-    } catch (error: any) {
-      console.warn("⚠️ Dispute stats API failed (500), using local state defaults.");
-      // Gracefully handle 500 error from backend
+    const [data, error] = await getDisputeStats();
+    if (error) {
+      console.warn("⚠️ Dispute stats API failed, using defaults.");
+      return;
+    }
+
+    if (data) {
+      // Handle snake_case from backend by normalizing to camelCase
+      setStats({
+        total: (data as any).total ?? 0,
+        pending: (data as any).pending ?? 0,
+        underReview: (data as any).underReview ?? (data as any).under_review ?? 0,
+        resolved: (data as any).resolved ?? 0,
+        rejected: (data as any).rejected ?? 0,
+      });
     }
   };
+
 
   // Load data on mount
   useEffect(() => {

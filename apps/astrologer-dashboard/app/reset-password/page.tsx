@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import NextLink from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
+import apiClientSafe from "../../lib/apiClientSafe";
 
 const Link = NextLink as any;
 
@@ -40,18 +41,12 @@ const ResetPasswordContent: React.FC = () => {
         setLoading(true);
 
         try {
-            const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/api\/v1\/?$/, "");
-            const API_URL = `${API_BASE}/api/v1/auth/reset/password?token=${token}`;
+            const API_URL = `/auth/reset/password?token=${token}`;
 
-            const res = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password }),
-            });
+            const [data, error] = await apiClientSafe.post<any>(API_URL, { password });
 
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                toast.error(errData?.message || "Failed to reset password. The link may have expired.");
+            if (error) {
+                toast.error((error as any)?.message || "Failed to reset password. The link may have expired.");
             } else {
                 toast.success("Password reset successful!");
                 setIsSuccess(true);

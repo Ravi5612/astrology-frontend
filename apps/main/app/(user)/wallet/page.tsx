@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { toast } from "react-toastify";
-import apiClient from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
 import * as LucideIcons from "lucide-react";
 import { PATHS } from "@repo/routes";
 
@@ -31,15 +31,15 @@ export default function UserWalletPage() {
         }
 
         setIsProcessing(true);
-        try {
-            await apiClient.post("/wallet/topup", { amount: rechargeAmount });
+        const [res, error] = await http.post("/wallet/topup", { amount: rechargeAmount });
+
+        if (error) {
+            toast.error(error.message || "Recharge failed. Please try again.");
+        } else {
             toast.success(`Successfully recharged ₹${rechargeAmount}!`);
             refreshBalance();
-        } catch (err: any) {
-            toast.error(err.response?.data?.message || "Recharge failed. Please try again.");
-        } finally {
-            setIsProcessing(false);
         }
+        setIsProcessing(false);
     };
 
     if (clientLoading) {

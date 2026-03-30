@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { apiClient } from "../../../lib/api-client";
+import http from "../../../lib/fetch-handler";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AddressData {
@@ -80,23 +80,28 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     e.preventDefault();
     setStatus("Saving...");
 
-    try {
-      await apiClient.patch("/client/profile", formData as unknown as Record<string, unknown>);
+    const [res, error] = await http.patch("/client/profile", formData);
 
-      const fileInput = document.getElementById("profile-upload") as HTMLInputElement;
-      if (fileInput?.files?.[0]) {
-        const formDataWithFile = new FormData();
-        formDataWithFile.append("file", fileInput.files[0]);
-        await apiClient.patch("/client/picture", formDataWithFile);
-      }
-
-      setStatus("Saved Successfully!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch {
+    if (error) {
       setStatus("Update Failed!");
+      return;
     }
+
+    const fileInput = document.getElementById("profile-upload") as HTMLInputElement;
+    if (fileInput?.files?.[0]) {
+      const formDataWithFile = new FormData();
+      formDataWithFile.append("file", fileInput.files[0]);
+      const [, picError] = await http.patch("/client/picture", formDataWithFile);
+      if (picError) {
+        // We still continue if only the picture fails, or could show warning
+        console.error("Profile picture update failed", picError);
+      }
+    }
+
+    setStatus("Saved Successfully!");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   return (

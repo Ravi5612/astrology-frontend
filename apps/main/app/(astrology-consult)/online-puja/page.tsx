@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, Monitor, Filter, Sparkles, Star, Clock, ListFilter, ChevronDown, Loader2, X } from "lucide-react";
-import { apiClient } from "@/lib/api-client";
+import http from "@/lib/fetch-handler";
 import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import Image from "next/image";
@@ -30,15 +30,16 @@ const OnlinePujaPage = () => {
 
     useEffect(() => {
         const fetchPujas = async () => {
-            try {
-                setLoading(true);
-                const data = await apiClient.get<ExpertPuja[]>(API_ROUTES.EXPERT.GET_ALL_PUJAS);
-                setPujas(data || []);
-            } catch (error) {
+            setLoading(true);
+            const [res, error] = await http.get<ExpertPuja[]>(API_ROUTES.EXPERT.GET_ALL_PUJAS);
+            
+            if (error) {
                 console.error("Failed to fetch pujas:", error);
-            } finally {
-                setLoading(false);
+                setPujas([]);
+            } else {
+                setPujas(res || []);
             }
+            setLoading(false);
         };
         fetchPujas();
     }, []);

@@ -3,10 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as LucideIcons from "lucide-react";
-import apiClient from "@/libs/api-profile";
-import { useAuthStore } from "@/store/useAuthStore"; // Changed import
-
-import { getActiveChatSessions, getPendingChatSessions } from "@/libs/api-profile";
+import http from "@/lib/fetch-handler";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const { MessageSquare, X } = LucideIcons as any;
 
@@ -15,28 +13,25 @@ export default function FloatingChatButton() {
     const [position, setPosition] = useState({ x: 24, y: 24 }); // Bottom-right offset
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-    const { isClientAuthenticated, clientUser } = useAuthStore(); // Changed usage
+    const { isClientAuthenticated, clientUser } = useAuthStore();
     const router = useRouter();
 
     useEffect(() => {
         if (!isClientAuthenticated) return;
 
         const checkActiveSession = async () => {
-            try {
-                // Securely fetch the active session for this client from backend
-                const response = await apiClient.get('/chat/sessions/active-client');
-                const session = (response as any).data ?? response;
-
-                console.log("[FloatingChatDebug] Backend response:", session);
-
+            const [res, error] = await http.get<any>('/chat/sessions/active-client');
+            
+            if (error) {
+                // Silent failure, session might not exist
+                setActiveSession(null);
+            } else {
+                const session = res?.data ?? res;
                 if (session && (session.status === 'active' || session.status === 'pending')) {
                     setActiveSession(session);
                 } else {
                     setActiveSession(null);
                 }
-            } catch (error) {
-                // Silent catch, session might simply not exist
-                setActiveSession(null);
             }
         };
 

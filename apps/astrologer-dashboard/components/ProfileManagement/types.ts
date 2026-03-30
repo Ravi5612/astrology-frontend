@@ -62,7 +62,7 @@ export interface Profile {
     video?: string; // Main introduction video
     detailed_experience: ExperienceItem[];
     custom_services?: CustomService[];
-    pujas: PujaService[];
+    pujas?: PujaService[];
     documents?: DocumentItem[]; // KYC Documents
 }
 

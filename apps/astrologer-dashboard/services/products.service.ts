@@ -1,3 +1,5 @@
+import apiClientSafe from "../lib/apiClientSafe";
+
 export interface Product {
     id?: string;
     _id?: string;
@@ -35,27 +37,13 @@ const normalizeFormData = (input: FormData) => {
     return out;
 };
 
-const getCookie = (name: string) => {
-    if (typeof document === "undefined") return undefined;
-    const v = `; ${document.cookie}`;
-    const parts = v.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(";").shift();
-};
-
-const authHeaders = (): Record<string, string> => {
-    const token = getCookie("accessToken");
-    return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
-// Expert-specific base path — all routes require 'expert' role JWT
 const BASE = "/api/v1/expert/products";
 
 export const ProductService = {
     /** Fetch only this expert's own products */
     getProducts: async (): Promise<Product[]> => {
-        const res = await fetch(BASE, { headers: authHeaders() });
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
+        const [data, error] = await apiClientSafe.get<any>(BASE);
+        if (error) throw new Error("Failed to fetch products");
         if (Array.isArray(data)) return data.map(fromApiProduct);
         if (Array.isArray(data?.data)) return (data.data as any[]).map(fromApiProduct);
         return [];
@@ -63,42 +51,28 @@ export const ProductService = {
 
     /** Create a new product under this expert */
     createProduct: async (fd: FormData): Promise<any> => {
-        const res = await fetch(BASE, {
-            method: "POST",
-            headers: authHeaders(),
-            body: normalizeFormData(fd),
-        });
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || "Failed to create product");
+        const [data, error] = await apiClientSafe.upload<any>(BASE, normalizeFormData(fd));
+        if (error) {
+            throw new Error((error as any)?.message || "Failed to create product");
         }
-        return res.json();
+        return data;
     },
 
     /** Update an existing product */
     updateProduct: async (id: string, fd: FormData): Promise<any> => {
-        const res = await fetch(`${BASE}/${id}`, {
-            method: "PATCH",
-            headers: authHeaders(),
-            body: normalizeFormData(fd),
-        });
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || "Failed to update product");
+        const [data, error] = await apiClientSafe.patch<any>(`${BASE}/${id}`, normalizeFormData(fd));
+        if (error) {
+            throw new Error((error as any)?.message || "Failed to update product");
         }
-        return res.json();
+        return data;
     },
 
     /** Delete a product */
     deleteProduct: async (id: string): Promise<any> => {
-        const res = await fetch(`${BASE}/${id}`, {
-            method: "DELETE",
-            headers: authHeaders(),
-        });
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || "Failed to delete product");
+        const [data, error] = await apiClientSafe.delete<any>(`${BASE}/${id}`);
+        if (error) {
+            throw new Error((error as any)?.message || "Failed to delete product");
         }
-        return res.json();
+        return data;
     },
 };

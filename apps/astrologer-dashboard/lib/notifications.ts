@@ -1,28 +1,32 @@
-import apiClient from './apiClient';
+import apiClientSafe, { ApiError } from "./apiClientSafe";
+
 
 export interface Notification {
     id: string;
     title: string;
     message: string;
-    description?: string;
-    createdAt: string;
-    isRead: boolean;
+    created_at: string;
+    read: boolean;
     type: string;
 }
 
-export const getNotifications = async () => {
-    const response: any = await apiClient.get('/notifications');
-    return response?.data ?? response;
+export const getNotifications = async (): Promise<[Notification[] | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get('/notifications');
+    if (error) return [null, error];
+    const data = ((res as any)?.data ?? res) as Notification[];
+    return [data, null];
 };
 
-export const markAsRead = async (id: string) => {
-    const response: any = await apiClient.patch(`/notifications/${id}/read`);
-    return response?.data ?? response;
+export const markAsRead = async (id: string): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.patch(`/notifications/${id}/read`);
+    if (error) return [null, error];
+    const data = (res as any)?.data ?? res;
+    return [data, null];
 };
 
-export const deleteNotification = async (id: string) => {
-    const response: any = await apiClient.delete(`/notifications/${id}`);
-    return response?.data ?? response;
+export const deleteNotification = async (id: string): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.delete(`/notifications/${id}`);
+    if (error) return [null, error];
+    const data = (res as any)?.data ?? res;
+    return [data, null];
 };
-
-

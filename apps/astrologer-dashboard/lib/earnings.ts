@@ -1,14 +1,15 @@
-import apiClient from "./apiClient";
-import { EarningsDashboardData } from "../components/Earnings/types";
+import apiClientSafe, { ApiError } from "./apiClientSafe";
 
-export const getEarningsStats = async (range: string = 'last_6_months'): Promise<EarningsDashboardData> => {
-    try {
-        const response: any = await apiClient.get(`/expert/earnings/stats?range=${range}`);
-        return response?.data?.data || response?.data || response;
-    } catch (error) {
-        console.error("[Earnings] Failed to fetch stats:", error);
-        throw error;
-    }
+export const getEarningsStats = async (period: string = 'monthly'): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get(`/expert/earnings/stats?period=${period}`);
+    if (error) return [null, error];
+    const data = (res as any)?.data ?? res;
+    return [data, null];
 };
 
-
+export const getEarningsHistory = async (page: number = 1, limit: number = 10): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get(`/expert/earnings?page=${page}&limit=${limit}`);
+    if (error) return [null, error];
+    const data = (res as any)?.data ?? res;
+    return [data, null];
+};

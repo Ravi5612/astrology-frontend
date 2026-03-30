@@ -37,14 +37,14 @@ export default function AgentDashboardHome() {
 
     useEffect(() => {
         const fetchDashboardData = async () => {
-            try {
-                const data = await getAgentDashboardStats();
-                setStatsData(data);
-            } catch (error) {
+            const [data, error] = await getAgentDashboardStats();
+            
+            if (error) {
                 console.error("Failed to fetch agent dashboard stats", error);
-            } finally {
-                setLoading(false);
+            } else {
+                setStatsData(data);
             }
+            setLoading(false);
         };
         fetchDashboardData();
     }, []);

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { callSocket } from "@/lib/socket";
-import { apiClient } from "@/lib/apiClient";
+import apiClientSafe from "@/lib/apiClientSafe";
 import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -47,49 +47,57 @@ export default function ExpertCallRoom() {
     };
 
     useEffect(() => {
-        // `cancelled` acts as a guard against React StrictMode double-invocation.
-        // When StrictMode unmounts the component immediately after first mount,
-        // the cleanup sets `cancelled = true`, aborting any in-flight async work.
-        // The second (real) mount creates a fresh closure with `cancelled = false`.
         let cancelled = false;
 
         const acceptAndConnect = async () => {
             console.log('[ExpertCallRoom] 🚀 Starting acceptAndConnect for sessionId:', sessionId);
+            
+            // Pre-check hardware
+            console.log('[ExpertCallRoom] 🎤 Checking hardware & network...');
             try {
-                // Pre-check hardware
-                console.log('[ExpertCallRoom] 🎤 Checking hardware & network...');
                 await checkHardwareAndNetwork();
-                if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after hardware check (StrictMode cleanup).'); return; }
-                console.log('[ExpertCallRoom] ✅ Hardware check passed.');
-
-                // Step 1: Accept call via REST API → get Twilio token for expert
-                console.log('[ExpertCallRoom] 📡 Calling /call/accept API...');
-                const response: any = await apiClient.post('/call/accept', {
-                    sessionId: parseInt(sessionId),
-                });
-                if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after API call (StrictMode cleanup).'); return; }
-                console.log('[ExpertCallRoom] 📡 /call/accept response:', { hasToken: !!response?.token, session: response?.session });
-
-                if (!response?.token) {
-                    throw new Error('No token received from accept endpoint');
-                }
-
-                setSessionData(response.session);
-
-                // Step 2: Join socket room so user gets notified
-                console.log('[ExpertCallRoom] 🔌 Emitting join_call_room for sessionId:', sessionId);
-                callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
-
-                // Step 3: Init Twilio Device
-                console.log('[ExpertCallRoom] 📞 Initializing Twilio Device...');
-                await initTwilioDevice(response.token);
-
-            } catch (err: any) {
+            } catch (hwErr: any) {
                 if (cancelled) return;
-                console.error('[ExpertCallRoom] ❌ Failed to accept call:', err);
-                toast.error(err?.message || 'Failed to join call');
+                console.error('[ExpertCallRoom] ❌ Hardware check failed:', hwErr);
+                toast.error(hwErr.message || 'Hardware check failed');
                 setTimeout(() => router.push('/dashboard'), 3000);
+                return;
             }
+            
+            if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after hardware check (StrictMode cleanup).'); return; }
+            console.log('[ExpertCallRoom] ✅ Hardware check passed.');
+
+            // Step 1: Accept call via REST API → get Twilio token for expert
+            console.log('[ExpertCallRoom] 📡 Calling /call/accept API...');
+            const [data, error] = await apiClientSafe.post<any>('/call/accept', {
+                sessionId: parseInt(sessionId),
+            });
+
+            if (error) {
+                if (cancelled) return;
+                console.error('[ExpertCallRoom] ❌ Failed to accept call:', error);
+                toast.error(error.message || 'Failed to join call');
+                setTimeout(() => router.push('/dashboard'), 3000);
+                return;
+            }
+
+            if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after API call (StrictMode cleanup).'); return; }
+            console.log('[ExpertCallRoom] 📡 /call/accept response:', { hasToken: !!data?.token, session: data?.session });
+
+            if (!data?.token) {
+                toast.error('No token received from accept endpoint');
+                return;
+            }
+
+            setSessionData(data.session);
+
+            // Step 2: Join socket room so user gets notified
+            console.log('[ExpertCallRoom] 🔌 Emitting join_call_room for sessionId:', sessionId);
+            callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
+
+            // Step 3: Init Twilio Device
+            console.log('[ExpertCallRoom] 📞 Initializing Twilio Device...');
+            await initTwilioDevice(data.token);
         };
 
         acceptAndConnect();

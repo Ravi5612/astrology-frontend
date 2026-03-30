@@ -1,63 +1,63 @@
-import apiClient from "./apiClient";
+import apiClientSafe, { ApiError } from "./apiClientSafe";
 
 export interface DashboardStats {
-    today_appointments: number;
-    completed_today: number;
-    expired_today: number;
-    today_earnings: number;
-    total_appointments?: number;
-    total_completed?: number;
-    total_expired?: number;
-    total_earnings: number;
+    totalChatSessions: number;
+    totalEarnings: number;
+    averageRating: number;
+    totalReviews: number;
+    trends: {
+        sessions: string;
+        earnings: string;
+    };
 }
 
-export const getDashboardStats = async (type: 'today' | 'total' = 'today'): Promise<DashboardStats> => {
-    try {
-        const response: any = await apiClient.get(`expert-dashboard/stats?type=${type}`);
-        console.log('[Dashboard] Raw API response:', response);
-        // apiClient returns the parsed JSON body directly — try all common backend shapes
-        const stats = response?.data?.data ?? response?.data ?? response;
-        console.log('[Dashboard] Parsed stats:', stats);
-        return stats;
-    } catch (error) {
-        console.error(`[Dashboard] Stats API call failed for type ${type}:`, error);
-        throw error;
-    }
+export const getDashboardStats = async (type: string = 'monthly'): Promise<[DashboardStats | null, ApiError | null]> => {
+    const [res, error] = await apiClientSafe.get(`expert-dashboard/stats?type=${type}`);
+    if (error) return [null, error];
+
+    // apiClientSafe returns the parsed JSON body directly — try all common backend shapes
+    const data = (res as any)?.data?.data || (res as any)?.data || res;
+
+    return [{
+        totalChatSessions: data.total_chat_sessions || data.totalSessions || 0,
+        totalEarnings: data.total_earnings || data.totalEarnings || 0,
+        averageRating: data.average_rating || data.averageRating || 0,
+        totalReviews: data.total_reviews || data.totalReviews || 0,
+        trends: {
+            sessions: data.trends?.sessions || "+0%",
+            earnings: data.trends?.earnings || "+0%"
+        }
+    }, null];
 };
 
-export const getRecentSessions = async (): Promise<any[]> => {
-    try {
-        const [pendingRes, completedRes] = await Promise.all([
-            apiClient.get("/chat/sessions/appointments/pending"),
-            apiClient.get("/chat/sessions/appointments/completed")
-        ]);
+export const getRecentAppointments = async (): Promise<[any[] | null, ApiError | null]> => {
+    const [pendingRes, completedRes] = await Promise.all([
+        apiClientSafe.get<any>("/chat/sessions/appointments/pending"),
+        apiClientSafe.get<any>("/chat/sessions/appointments/completed")
+    ]);
 
-        let allSessions: any[] = [];
+    const extractData = (result: [any | null, ApiError | null]) => {
+        const [res, error] = result;
+        if (error || !res) return [];
+        const data = res?.data?.data || res?.data || res;
+        return Array.isArray(data) ? data : [];
+    };
 
-        const extractData = (res: any) => {
-            if (Array.isArray(res)) return res;
-            if (Array.isArray(res?.data)) return res.data;
-            if (res?.data?.data && Array.isArray(res.data.data)) return res.data.data;
-            if (res?.data?.items && Array.isArray(res.data.items)) return res.data.items;
-            return [];
-        };
+    const allSessions = [...extractData(pendingRes), ...extractData(completedRes)];
 
-        allSessions = [...extractData(pendingRes), ...extractData(completedRes)];
+    // Deduplicate sessions by ID
+    const uniqueSessions = Array.from(new Map(allSessions.map(item => [item.id, item])).values());
 
-        // Deduplicate sessions by ID
-        const uniqueSessions = Array.from(new Map(allSessions.map(item => [item.id, item])).values());
+    // Sort by date (newest first)
+    const sortedSessions = uniqueSessions.sort((a: any, b: any) => {
+        const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
+        const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
+        return dateB - dateA;
+    });
 
-        // Sort by date (newest first)
-        return uniqueSessions.sort((a: any, b: any) => {
-            const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
-            const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
-            return dateB - dateA;
-        });
-    } catch (error) {
-        console.error("[Dashboard] Failed to fetch recent sessions:", error);
-        return [];
-    }
-}
+    return [sortedSessions.slice(0, 5), null];
+};
+
 
 
 

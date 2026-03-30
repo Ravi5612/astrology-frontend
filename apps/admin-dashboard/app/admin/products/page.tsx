@@ -46,23 +46,27 @@ export default function ProductsPage() {
     const [submitting, setSubmitting] = useState(false);
 
     const fetchProducts = async () => {
-        try {
-            setLoading(true);
-            const data = await ProductService.getProducts();
-            if (Array.isArray(data)) {
-                setProducts(data);
-            } else if (data.data && Array.isArray(data.data)) {
-                setProducts(data.data);
-            } else {
-                setProducts([]);
-            }
-        } catch (error) {
+        setLoading(true);
+        const [data, error] = await ProductService.getProducts();
+
+        if (error) {
             console.error("Error fetching products:", error);
             toast.error("Failed to fetch products");
-        } finally {
+            setProducts([]);
             setLoading(false);
+            return;
         }
+
+        if (Array.isArray(data)) {
+            setProducts(data);
+        } else if (data && data.data && Array.isArray(data.data)) {
+            setProducts(data.data);
+        } else {
+            setProducts([]);
+        }
+        setLoading(false);
     };
+
 
     useEffect(() => {
         fetchProducts();
@@ -121,67 +125,72 @@ export default function ProductsPage() {
         if (!id) return;
         if (!confirm("Are you sure you want to delete this product?")) return;
 
-        try {
-            await ProductService.deleteProduct(id);
-            toast.success("Product deleted successfully");
-            fetchProducts();
-        } catch (error) {
+        const [_, error] = await ProductService.deleteProduct(id);
+        if (error) {
             console.error("Error deleting product:", error);
             toast.error("Failed to delete product");
+            return;
         }
+        
+        toast.success("Product deleted successfully");
+        fetchProducts();
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
-            setSubmitting(true);
+        setSubmitting(true);
 
-            // Construct FormData for multipart/form-data request
-            const submissionData = new FormData();
-            submissionData.append("name", formData.name);
-            submissionData.append("description", formData.description);
-            submissionData.append("price", String(formData.price));
-            submissionData.append("originalPrice", String(formData.originalPrice));
+        // Construct FormData for multipart/form-data request
+        const submissionData = new FormData();
+        submissionData.append("name", formData.name);
+        submissionData.append("description", formData.description);
+        submissionData.append("price", String(formData.price));
+        submissionData.append("originalPrice", String(formData.originalPrice));
 
-            // Only append active status if explicitly set (backend might default)
-            if (formData.isActive !== undefined) {
-                submissionData.append("isActive", String(formData.isActive));
-            }
-
-            // Handle Image
-            if (imageMode === "file" && selectedFile) {
-                // Backend requires the file key to be 'file'
-                submissionData.append("file", selectedFile);
-            } else if (imageMode === "url" && formData.imageUrl) {
-                submissionData.append("imageUrl", formData.imageUrl);
-            } else if (editingId && formData.imageUrl) {
-                // Retain existing image if editing and no new file
-                submissionData.append("imageUrl", formData.imageUrl);
-            } else if (!editingId && !selectedFile && !formData.imageUrl) {
-                toast.error("Please provide an image URL or upload a file.");
-                setSubmitting(false);
-                return;
-            }
-
-            if (editingId) {
-                await ProductService.updateProduct(editingId, submissionData);
-                toast.success("Product updated successfully");
-            } else {
-                // Create Product using FormData
-                await ProductService.createProduct(submissionData);
-                toast.success("Product added successfully");
-            }
-
-            resetForm();
-            fetchProducts();
-        } catch (error: any) {
-            console.error("Error saving product:", error);
-            toast.error(error.message || "Failed to save product");
-        } finally {
-            setSubmitting(false);
+        // Only append active status if explicitly set (backend might default)
+        if (formData.isActive !== undefined) {
+            submissionData.append("isActive", String(formData.isActive));
         }
+
+        // Handle Image
+        if (imageMode === "file" && selectedFile) {
+            // Backend requires the file key to be 'file'
+            submissionData.append("file", selectedFile);
+        } else if (imageMode === "url" && formData.imageUrl) {
+            submissionData.append("imageUrl", formData.imageUrl);
+        } else if (editingId && formData.imageUrl) {
+            // Retain existing image if editing and no new file
+            submissionData.append("imageUrl", formData.imageUrl);
+        } else if (!editingId && !selectedFile && !formData.imageUrl) {
+            toast.error("Please provide an image URL or upload a file.");
+            setSubmitting(false);
+            return;
+        }
+
+        let result;
+        if (editingId) {
+            result = await ProductService.updateProduct(editingId, submissionData);
+        } else {
+            // Create Product using FormData
+            result = await ProductService.createProduct(submissionData);
+        }
+
+        const [_, error] = result;
+        if (error) {
+            console.error("Error saving product:", error);
+            toast.error((error as any).message || "Failed to save product");
+            setSubmitting(false);
+            return;
+        }
+
+        toast.success(editingId ? "Product updated successfully" : "Product added successfully");
+        resetForm();
+        fetchProducts();
+        setSubmitting(false);
     };
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
