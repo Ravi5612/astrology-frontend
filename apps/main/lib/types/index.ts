@@ -7,7 +7,6 @@ export * from "./client";
 export * from "./chat";
 export * from "./support";
 export * from "./calculator";
-export * from "./rateLimit";
 export * from "./astrology-consult";
 export * from "./darshan";
 export * from "./famous-places";

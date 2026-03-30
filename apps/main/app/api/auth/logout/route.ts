@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { authLimiter, rateLimitResponse } from "@/lib/rateLimit";
 
 /**
  * POST /api/auth/logout
@@ -10,10 +9,6 @@ import { authLimiter, rateLimitResponse } from "@/lib/rateLimit";
  * reliable way to delete HttpOnly cookies from client-initiated code.
  */
 export async function POST(request: Request) {
-  // ── Rate limiting: max 20 requests per minute per IP ──────────────────────
-  const limit = authLimiter(request);
-  if (!limit.success) return rateLimitResponse(limit);
-
     const cookieStore = await cookies();
 
     // Delete all auth cookies (standard COOKIE_NAMES from backend)
