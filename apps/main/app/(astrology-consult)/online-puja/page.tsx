@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, Monitor, Filter, Sparkles, Star, Clock, ListFilter, ChevronDown, Loader2, X } from "lucide-react";
+import { Search, MapPin, Monitor, Sparkles, Star, Clock, ChevronDown, Loader2 } from "lucide-react";
 import http from "@/lib/fetch-handler";
 import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
@@ -15,18 +15,6 @@ const OnlinePujaPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedPujaName, setSelectedPujaName] = useState("All Pujas");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showDetails, setShowDetails] = useState<ExpertPuja | null>(null);
-
-    useEffect(() => {
-        if (showDetails) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [showDetails]);
 
     useEffect(() => {
         const fetchPujas = async () => {
@@ -185,9 +173,9 @@ const OnlinePujaPage = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
                         {filteredPujas.map((puja) => (
-                            <div 
+                            <Link 
                                 key={puja.id} 
-                                onClick={() => setShowDetails(puja)}
+                                href={`/online-puja/${puja.id}`}
                                 className="group flex flex-col bg-white rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden hover:shadow-[0_20px_50px_rgba(251,146,60,0.2)] transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                             >
                                 {/* Puja Image */}
@@ -284,137 +272,17 @@ const OnlinePujaPage = () => {
                                                 <span className="text-2xl font-black text-gray-900">₹{getMinCost(puja)}</span>
                                             </div>
                                         </div>
-                                        <Link 
-                                            href={`/astrologer/${puja.expert_id}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="px-6 py-3 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-gray-200 hover:shadow-orange-200 transition-all active:scale-95 flex items-center gap-2 group/btn"
-                                        >
-                                            Book
+                                        <div className="px-6 py-3 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-gray-200 hover:shadow-orange-200 transition-all active:scale-95 flex items-center gap-2 group/btn">
+                                            Details
                                             <Sparkles className="w-4 h-4 group-hover/btn:animate-spin-slow" />
-                                        </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 )}
             </div>
-
-            {/* Puja Details Modal */}
-            {showDetails && (
-                <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setShowDetails(null)}>
-                    <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
-                        {/* Modal Header */}
-                        <div className="relative h-32 sm:h-44 bg-[#301118]">
-                            <button 
-                                onClick={() => setShowDetails(null)}
-                                className="absolute top-4 right-4 z-20 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                            
-                            <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex flex-col justify-end p-6 pb-8">
-                                <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-orange-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest mb-2.5 w-fit">
-                                    {showDetails.is_online && showDetails.is_home_visit ? "Online + Visit" : showDetails.is_online ? "Online" : "Home Visit"} Ritual
-                                </div>
-                                <h3 className="text-3xl font-black text-white leading-tight">{showDetails.name}</h3>
-                                <p className="text-orange-200/80 text-sm font-bold mt-1">Sacred ceremony by {showDetails.expert?.user?.name || showDetails.expert?.name}</p>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="p-7 space-y-7 max-h-[55vh] overflow-y-auto custom-popup-scroll scroll-smooth">
-                            <div className="grid grid-cols-2 gap-5">
-                                <div className="p-5 bg-orange-50/50 rounded-3xl border border-orange-100/50 transition-colors hover:bg-orange-50">
-                                    <div className="flex items-center gap-2.5 mb-1.5 text-orange-600">
-                                        <Clock className="w-5 h-5" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-orange-800/40">Expected Time</span>
-                                    </div>
-                                    <p className="text-xl font-black text-gray-900 tracking-tight">{showDetails.min_duration_hours}-{showDetails.max_duration_hours} Hours</p>
-                                </div>
-                                <div className="p-5 bg-blue-50/50 rounded-3xl border border-blue-100/50 transition-colors hover:bg-blue-50">
-                                    <div className="flex items-center gap-2.5 mb-1.5 text-blue-600">
-                                        <Monitor className="w-5 h-5" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-800/40">Mode Avail.</span>
-                                    </div>
-                                    <p className="text-xl font-black text-gray-900 tracking-tight">
-                                        {showDetails.is_online && showDetails.is_home_visit ? "All Modes" : showDetails.is_online ? "Remote" : "In-Person"}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Significance */}
-                            <div>
-                                <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2.5 opacity-40">
-                                    <Sparkles className="w-4 h-4 text-orange-500" />
-                                    The Significance
-                                </h5>
-                                <p className="text-base text-gray-600 leading-relaxed font-medium">
-                                    {showDetails.description || "A comprehensive Vedic ceremony conducted with traditional protocols to invoke divine blessings into the devotee's life."}
-                                </p>
-                            </div>
-
-                            {/* Samagri List */}
-                            {showDetails.samagri_list && showDetails.samagri_list.length > 0 && (
-                                <div>
-                                    <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2.5 opacity-40">
-                                        <Filter className="w-4 h-4 text-orange-500" />
-                                        Required Samagri
-                                    </h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {showDetails.samagri_list.map((item, idx) => (
-                                            <div key={idx} className="flex justify-between items-center p-3.5 px-5 bg-gray-50/50 rounded-2xl text-base border border-gray-100 transition-all hover:bg-white hover:shadow-sm">
-                                                <span className="font-bold text-gray-700">{item.name}</span>
-                                                <span className="text-[11px] font-black text-orange-600 uppercase bg-white px-2.5 py-1 rounded-lg border border-orange-100 shadow-sm">{item.quantity}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Districts for Home Visit */}
-                            {showDetails.is_home_visit && showDetails.districts && showDetails.districts.length > 0 && (
-                                <div>
-                                    <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2.5 opacity-40">
-                                        <MapPin className="w-4 h-4 text-green-500" />
-                                        Service Areas (Districts)
-                                    </h5>
-                                    <div className="flex flex-wrap gap-2.5">
-                                        {showDetails.districts.map((d, idx) => (
-                                            <span key={idx} className="px-5 py-2.5 bg-green-50/50 text-green-700 rounded-2xl text-sm font-black border border-green-100 shadow-sm transition-all hover:bg-green-100 hover:scale-105 cursor-default">
-                                                {d}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="p-8 border-t border-gray-50 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-6">
-                            <div className="text-center sm:text-left">
-                                <p className="text-[11px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Dakshina from</p>
-                                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                                    <span className="text-4xl font-black text-gray-900 tracking-tighter">₹{
-                                        Math.min(
-                                            showDetails.is_online ? showDetails.online_cost : Infinity,
-                                            showDetails.is_home_visit ? showDetails.home_visit_without_samagri_cost : Infinity
-                                        )
-                                    }</span>
-                                    <span className="text-sm text-gray-400 font-bold">Starting</span>
-                                </div>
-                            </div>
-                            <Link 
-                                href={`/astrologer/${showDetails.expert_id}`}
-                                className="w-full sm:w-auto px-10 py-4.5 bg-orange-600 text-white text-base font-black rounded-3xl hover:bg-orange-700 shadow-2xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3 hover:-translate-y-1"
-                            >
-                                Confirm Booking
-                                <Sparkles className="w-5 h-5" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             <style jsx global>{`
                 @keyframes fade-in {
@@ -426,23 +294,6 @@ const OnlinePujaPage = () => {
                 @keyframes spin {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
-                }
-                
-                /* Custom Scrollbar for Modal */
-                .custom-popup-scroll::-webkit-scrollbar {
-                    width: 7px;
-                }
-                .custom-popup-scroll::-webkit-scrollbar-track {
-                    background: #fdfcfb;
-                    border-radius: 10px;
-                }
-                .custom-popup-scroll::-webkit-scrollbar-thumb {
-                    background: #e5e7eb;
-                    border-radius: 10px;
-                    border: 2px solid #fdfcfb;
-                }
-                .custom-popup-scroll::-webkit-scrollbar-thumb:hover {
-                    background: #f97316;
                 }
             `}</style>
         </div>

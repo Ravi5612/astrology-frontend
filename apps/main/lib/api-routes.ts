@@ -10,5 +10,6 @@ export const API_ROUTES = {
     },
     EXPERT: {
         GET_ALL_PUJAS: '/expert/pujas/all',
+        GET_PUJA_BY_ID: '/expert/puja/info/:id',
     },
 } as const;
