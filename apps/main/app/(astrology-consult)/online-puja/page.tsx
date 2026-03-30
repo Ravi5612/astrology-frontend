@@ -47,13 +47,24 @@ const OnlinePujaPage = () => {
     const uniquePujaNames = ["All Pujas", ...Array.from(new Set(pujas.map(p => p.name)))];
 
     const filteredPujas = pujas.filter(puja => {
-        const matchesType = typeFilter === 'all' || puja.type === typeFilter;
+        const matchesType = typeFilter === 'all' || 
+                            (typeFilter === 'online' && puja.is_online) || 
+                            (typeFilter === 'home_visit' && puja.is_home_visit);
         const matchesSearch = puja.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                              (puja.expert?.user?.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
                              (puja.districts?.some(d => d.toLowerCase().includes(searchQuery.toLowerCase())));
         const matchesDropdown = selectedPujaName === "All Pujas" || puja.name === selectedPujaName;
         return matchesType && matchesSearch && matchesDropdown;
     });
+
+    const getMinCost = (puja: ExpertPuja) => {
+        const costs = [
+            puja.is_online ? puja.online_cost : Infinity,
+            puja.is_home_visit ? puja.home_visit_without_samagri_cost : Infinity,
+            puja.is_home_visit ? puja.home_visit_with_samagri_cost : Infinity
+        ].filter(c => c > 0 && c !== Infinity);
+        return costs.length > 0 ? Math.min(...costs) : 0;
+    };
 
     return (
         <div className="min-h-screen bg-[#301118]">
@@ -74,7 +85,7 @@ const OnlinePujaPage = () => {
             </div>
 
             {/* Sticky Filters Section */}
-            <div className="sticky top-20 z-40 bg-[#301118]/90 backdrop-blur-xl border-b border-white/5 shadow-2xl py-4 px-4 px-4 transition-all">
+            <div className="sticky top-20 z-40 bg-[#301118]/90 backdrop-blur-xl border-b border-white/5 shadow-2xl py-4 px-4 transition-all">
                 <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-6">
                     
                     {/* Toggle Switch */}
@@ -179,18 +190,41 @@ const OnlinePujaPage = () => {
                                 onClick={() => setShowDetails(puja)}
                                 className="group flex flex-col bg-white rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden hover:shadow-[0_20px_50px_rgba(251,146,60,0.2)] transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                             >
-                                {/* Puja Badge */}
-                                <div className="relative h-2">
-                                    <div className={`absolute top-4 right-4 z-10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border ${puja.type === 'online' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-green-50 text-green-600 border-green-100'}`}>
-                                        {puja.type.replace('_', ' ')}
-                                    </div>
+                                {/* Puja Image */}
+                                <div className="relative h-48 sm:h-56 bg-gray-100 overflow-hidden">
+                                     {puja.puja_image_url ? (
+                                        <Image 
+                                            src={puja.puja_image_url} 
+                                            alt={puja.name} 
+                                            fill 
+                                            className="object-cover transition-transform group-hover:scale-110 duration-700"
+                                        />
+                                     ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-orange-50">
+                                            <Sparkles className="w-12 h-12 text-orange-200" />
+                                        </div>
+                                     )}
+                                     
+                                     {/* Availability Badges */}
+                                     <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                                        {puja.is_online && (
+                                            <span className="px-3 py-1 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-wider rounded-lg border border-blue-400/30">
+                                                Online
+                                            </span>
+                                        )}
+                                        {puja.is_home_visit && (
+                                            <span className="px-3 py-1 bg-emerald-600/90 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-wider rounded-lg border border-emerald-400/30">
+                                                Home Visit
+                                            </span>
+                                        )}
+                                     </div>
                                 </div>
 
-                                <div className="p-7 pt-10 flex flex-col h-full">
+                                <div className="p-7 flex flex-col h-full">
                                     {/* Pandit Info */}
                                     <div className="flex items-center gap-3 mb-6">
                                         <div 
-                                            className="relative w-14 h-14 rounded-2xl overflow-hidden shadow-md ring-2 ring-white ring-offset-2 ring-offset-orange-50 transition-transform group-hover:scale-110 duration-500"
+                                            className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-md ring-2 ring-white ring-offset-2 ring-offset-orange-50 transition-transform group-hover:scale-110 duration-500 shrink-0"
                                             style={{ backgroundColor: '#301118' }}
                                         >
                                             {puja.expert?.user?.avatar ? (
@@ -201,7 +235,7 @@ const OnlinePujaPage = () => {
                                                     className="object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-white font-bold text-xl opacity-80">
+                                                <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg opacity-80">
                                                     {(puja.expert?.user?.name || puja.expert?.name || "E").charAt(0)}
                                                 </div>
                                             )}
@@ -215,7 +249,6 @@ const OnlinePujaPage = () => {
                                                     <Star className="w-2.5 h-2.5 fill-yellow-600" />
                                                     {puja.expert?.rating || "4.8"}
                                                 </div>
-                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Vedic Expert</span>
                                             </div>
                                         </div>
                                     </div>
@@ -234,7 +267,7 @@ const OnlinePujaPage = () => {
                                                 <Clock className="w-4 h-4 text-orange-400" />
                                                 <span className="text-xs font-bold text-gray-700">{puja.min_duration_hours}-{puja.max_duration_hours}h</span>
                                             </div>
-                                            {puja.type === 'home_visit' && (
+                                            {puja.is_home_visit && (
                                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-xl">
                                                     <MapPin className="w-4 h-4 text-green-400" />
                                                     <span className="text-xs font-bold text-gray-700">{puja.districts?.length || 0} Districts</span>
@@ -246,10 +279,9 @@ const OnlinePujaPage = () => {
                                     {/* Price & Action */}
                                     <div className="mt-auto flex items-center justify-between pt-6 border-t border-gray-50">
                                         <div>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Investment</p>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Dakshina from</p>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-2xl font-black text-gray-900">₹{puja.cost}</span>
-                                                <span className="text-[10px] text-gray-400 font-bold">/ session</span>
+                                                <span className="text-2xl font-black text-gray-900">₹{getMinCost(puja)}</span>
                                             </div>
                                         </div>
                                         <Link 
@@ -257,7 +289,7 @@ const OnlinePujaPage = () => {
                                             onClick={(e) => e.stopPropagation()}
                                             className="px-6 py-3 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-gray-200 hover:shadow-orange-200 transition-all active:scale-95 flex items-center gap-2 group/btn"
                                         >
-                                            Book Now
+                                            Book
                                             <Sparkles className="w-4 h-4 group-hover/btn:animate-spin-slow" />
                                         </Link>
                                     </div>
@@ -283,7 +315,7 @@ const OnlinePujaPage = () => {
                             
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex flex-col justify-end p-6 pb-8">
                                 <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-orange-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest mb-2.5 w-fit">
-                                    {showDetails.type.replace('_', ' ')} Ritual
+                                    {showDetails.is_online && showDetails.is_home_visit ? "Online + Visit" : showDetails.is_online ? "Online" : "Home Visit"} Ritual
                                 </div>
                                 <h3 className="text-3xl font-black text-white leading-tight">{showDetails.name}</h3>
                                 <p className="text-orange-200/80 text-sm font-bold mt-1">Sacred ceremony by {showDetails.expert?.user?.name || showDetails.expert?.name}</p>
@@ -303,10 +335,10 @@ const OnlinePujaPage = () => {
                                 <div className="p-5 bg-blue-50/50 rounded-3xl border border-blue-100/50 transition-colors hover:bg-blue-50">
                                     <div className="flex items-center gap-2.5 mb-1.5 text-blue-600">
                                         <Monitor className="w-5 h-5" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-800/40">Mode</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-800/40">Mode Avail.</span>
                                     </div>
                                     <p className="text-xl font-black text-gray-900 tracking-tight">
-                                        {showDetails.type === 'home_visit' ? 'In-Person' : 'Online Call'}
+                                        {showDetails.is_online && showDetails.is_home_visit ? "All Modes" : showDetails.is_online ? "Remote" : "In-Person"}
                                     </p>
                                 </div>
                             </div>
@@ -341,7 +373,7 @@ const OnlinePujaPage = () => {
                             )}
 
                             {/* Districts for Home Visit */}
-                            {showDetails.type === 'home_visit' && showDetails.districts && showDetails.districts.length > 0 && (
+                            {showDetails.is_home_visit && showDetails.districts && showDetails.districts.length > 0 && (
                                 <div>
                                     <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2.5 opacity-40">
                                         <MapPin className="w-4 h-4 text-green-500" />
@@ -361,10 +393,15 @@ const OnlinePujaPage = () => {
                         {/* Modal Footer */}
                         <div className="p-8 border-t border-gray-50 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-6">
                             <div className="text-center sm:text-left">
-                                <p className="text-[11px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Dakshina / Investment</p>
+                                <p className="text-[11px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Dakshina from</p>
                                 <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                                    <span className="text-4xl font-black text-gray-900 tracking-tighter">₹{showDetails.cost}</span>
-                                    <span className="text-sm text-gray-400 font-bold">Inc. Taxes</span>
+                                    <span className="text-4xl font-black text-gray-900 tracking-tighter">₹{
+                                        Math.min(
+                                            showDetails.is_online ? showDetails.online_cost : Infinity,
+                                            showDetails.is_home_visit ? showDetails.home_visit_without_samagri_cost : Infinity
+                                        )
+                                    }</span>
+                                    <span className="text-sm text-gray-400 font-bold">Starting</span>
                                 </div>
                             </div>
                             <Link 
