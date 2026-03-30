@@ -85,12 +85,16 @@ export function ServiceModal({
           description: description.trim(),
         };
         const updated = [...(profile.custom_services || []), newItem];
-        await updateProfile({ custom_services: updated });
+        const [res, error] = await updateProfile({ custom_services: updated });
+        if (error) {
+          toast.error(error?.message || "Failed to add service.");
+          return;
+        }
         onSaved({ ...profile, custom_services: updated });
         toast.success("Service added successfully!");
         onClose();
       } catch (err: any) {
-        toast.error(err?.body?.message || err?.message || "Failed to add service.");
+        toast.error(err?.message || "Failed to add service.");
       } finally {
         setSaving(false);
       }
@@ -108,12 +112,20 @@ export function ServiceModal({
             ? { ...s, name: name.trim(), price, unit, description: description.trim() }
             : s
         );
-        await updateProfile({ custom_services: updated });
+        const [_, error] = await updateProfile({ custom_services: updated });
+        if (error) {
+          toast.error(error?.message || "Failed to save service.");
+          return;
+        }
         onSaved({ ...profile, custom_services: updated });
       } else {
         // Standard pricing field
         const payload = { [service.key]: Number(price) };
-        await updatePricing(payload);
+        const [_, error] = await updatePricing(payload);
+        if (error) {
+          toast.error(error?.message || "Failed to save pricing.");
+          return;
+        }
         onSaved({ ...profile, ...payload } as Profile);
       }
       toast.success("Service updated successfully!");

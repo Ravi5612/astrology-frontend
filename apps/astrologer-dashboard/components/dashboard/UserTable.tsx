@@ -63,8 +63,9 @@ export const UpcomingAppointments: React.FC = () => {
 
         const getSessions = (res: PromiseSettledResult<any>) => {
           if (res.status !== "fulfilled") return [];
-          const data = res.value?.data;
-          return Array.isArray(data) ? data : Array.isArray(res.value) ? res.value : [];
+          const [data, error] = res.value; // res.value is now the [data, error] tuple
+          if (error) return [];
+          return Array.isArray(data) ? data : [];
         };
 
         const allSessions = [

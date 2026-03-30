@@ -53,12 +53,13 @@ async function request<T>(path: string, options: any = {}): Promise<[T | null, A
  * Standard fetch options for our backend.
  */
 export const apiClientSafe = {
-    get: <T>(url: string, options?: any) => safeFetch<T>(url, { ...options, method: 'GET' }),
-    post: <T>(url: string, body?: any, options?: any) => safeFetch<T>(url, { ...options, method: 'POST', body }),
-    put: <T>(url: string, body?: any, options?: any) => safeFetch<T>(url, { ...options, method: 'PUT', body }),
-    patch: <T>(url: string, body?: any, options?: any) => safeFetch<T>(url, { ...options, method: 'PATCH', body }),
-    delete: <T>(url: string, options?: any) => safeFetch<T>(url, { ...options, method: 'DELETE' }),
-    upload: <T>(url: string, body: FormData, options?: any) => safeFetch<T>(url, { ...options, method: 'POST', body }),
+    get: <T>(path: string, options?: any) => request<T>(path, { ...options, method: 'GET' }),
+    post: <T>(path: string, body?: any, options?: any) => request<T>(path, { ...options, method: 'POST', body }),
+    put: <T>(path: string, body?: any, options?: any) => request<T>(path, { ...options, method: 'PUT', body }),
+    patch: <T>(path: string, body?: any, options?: any) => request<T>(path, { ...options, method: 'PATCH', body }),
+    delete: <T>(path: string, options?: any) => request<T>(path, { ...options, method: 'DELETE' }),
+    upload: <T>(path: string, body: FormData, options?: any) => request<T>(path, { ...options, method: 'POST', body }),
 };
+
 
 export default apiClientSafe;

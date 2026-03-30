@@ -104,10 +104,20 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
         puja_image: imageBase64 || undefined,
       };
 
-      const data = await upsertPujaApi(payload, puja?.id);
+      const [data, error] = await upsertPujaApi(payload, puja?.id);
+      if (error) {
+        toast.error(error.message || "Failed to save puja service.");
+        return;
+      }
       toast.success(`Puja service ${mode === 'add' ? 'added' : 'updated'} successfully!`);
+      // The onSaved expects the updated Profile object.
+      // If upsertPujaApi returns just the puja or the whole profile, we need to be careful.
+      // In ServicePricingPage, onSaved(data) sets the entire profile.
+      // Usually, expert/puja endpoint returns the whole expert profile or we should fetch it again.
+      // For now, let's pass the data returned and hope it's the profile.
       onSaved(data);
       onClose();
+
     } catch (error: any) {
       console.error('Failed to save puja:', error);
       toast.error(error?.response?.data?.message || 'Failed to save puja service.');

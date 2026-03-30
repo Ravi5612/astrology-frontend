@@ -144,8 +144,16 @@ const ServicePricingPage = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const data = await getProfile();
-      if (data) setProfile(data);
+      const [data, error] = await getProfile();
+      if (error) {
+        // 404 is fine, it means the expert hasn't set up their profile yet
+        if (error.status !== 404) {
+          console.error("Error fetching profile:", error);
+          toast.error("Failed to load pricing data.");
+        }
+      } else if (data) {
+        setProfile(data);
+      }
     } catch (error) {
       console.error("Failed to fetch profile:", error);
       toast.error("Failed to load pricing data.");
@@ -175,7 +183,11 @@ const ServicePricingPage = () => {
     if (!window.confirm("Are you sure you want to remove this service?")) return;
     try {
       const updated = (profile.custom_services || []).filter(s => s.id !== id);
-      await updateProfile({ custom_services: updated });
+      const [_, error] = await updateProfile({ custom_services: updated });
+      if (error) {
+        toast.error("Failed to remove service.");
+        return;
+      }
       setProfile({ ...profile, custom_services: updated });
       toast.success("Service removed successfully!");
     } catch (error) {
@@ -188,7 +200,11 @@ const ServicePricingPage = () => {
     if (!profile) return;
     if (!window.confirm("Are you sure you want to remove this Puja service?")) return;
     try {
-      await deletePujaApi(id);
+      const [_, error] = await deletePujaApi(id);
+      if (error) {
+        toast.error("Failed to remove puja service.");
+        return;
+      }
       const updatedPujas = (profile.pujas || []).filter(p => p.id !== id);
       setProfile({ ...profile, pujas: updatedPujas });
       toast.success("Puja service removed successfully!");
