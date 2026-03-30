@@ -68,14 +68,18 @@ export interface Profile {
 
 export interface PujaService {
     id?: number;
-    type: 'online' | 'home_visit';
+    is_online: boolean;
+    is_home_visit: boolean;
     name: string;
     min_duration_hours: number;
     max_duration_hours: number;
-    cost: number;
+    online_cost?: number;
+    home_visit_with_samagri_cost?: number;
+    home_visit_without_samagri_cost?: number;
     description: string;
     districts?: string[];
     samagri_list: SamagriItem[];
+    puja_image_url?: string;
 }
 
 export interface SamagriItem {
