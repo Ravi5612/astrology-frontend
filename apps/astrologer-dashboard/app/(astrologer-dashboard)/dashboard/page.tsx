@@ -48,8 +48,8 @@ const Page = () => {
         [reviewsData, reviewsErr],
         [dStats, dStatsErr]
       ] = await Promise.all([
-        getReviewStats(),
-        getReviews(1, 10),
+        getReviewStats(user.profileId),
+        getReviews(user.profileId, 1, 10),
         getDashboardStats('total')
       ]);
 

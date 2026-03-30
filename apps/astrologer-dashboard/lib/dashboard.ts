@@ -58,6 +58,20 @@ export const getRecentAppointments = async (): Promise<[any[] | null, ApiError |
     return [sortedSessions.slice(0, 5), null];
 };
 
+/**
+ * Compatibility wrapper for getRecentAppointments used by some components
+ * that expect data directly instead of a tuple.
+ */
+export const getRecentSessions = async () => {
+    const [sessions, error] = await getRecentAppointments();
+    if (error) {
+        console.error("Error fetching recent sessions:", error);
+        return [];
+    }
+    return sessions || [];
+};
+
+
 
 
 

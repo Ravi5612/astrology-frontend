@@ -8,11 +8,15 @@ export interface PujaSamagriItem {
 export interface ExpertPuja {
     id: number;
     expert_id: number;
-    type: 'online' | 'home_visit';
+    is_online: boolean;
+    is_home_visit: boolean;
     name: string;
     min_duration_hours: number;
     max_duration_hours: number;
-    cost: number;
+    online_cost: number;
+    home_visit_with_samagri_cost: number;
+    home_visit_without_samagri_cost: number;
+    puja_image_url: string | null;
     description: string | null;
     districts: string[] | null;
     samagri_list: PujaSamagriItem[] | null;
