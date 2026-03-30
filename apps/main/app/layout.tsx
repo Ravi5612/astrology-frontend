@@ -48,11 +48,14 @@ export default async function RootLayout({
   if (token) {
     try {
       // Pass both header and cookie to support different backend auth strategies
-      const res: any = await AuthService.fetchProfile({
+      const [res, authError] = await AuthService.fetchProfile({
         Authorization: `Bearer ${token}`,
         Cookie: `accessToken=${token}`
-      });
-      user = res?.user || (res?.id ? res : null);
+      }) as any;
+      
+      if (!authError && res) {
+        user = res.user || (res.id ? res : null);
+      }
     } catch (err: any) {
       const errorMsg = err.message || String(err);
       if (errorMsg !== "Unauthorized" && !errorMsg.includes("Unauthorized")) {

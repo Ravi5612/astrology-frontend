@@ -40,12 +40,12 @@ const securityHeaders = [
       // Fonts: self + Google Fonts + FontAwesome + data URIs (for embedded fonts in libs like Chart.js)
       "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
 
-      // Images: self + Cloudinary + Google OAuth + JD Magic Box + data URIs + RandomUser + Unsplash + YouTube + Flaticon
-      "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com https://www.google.com https://randomuser.me https://images.unsplash.com https://www.youtube.com https://i.ytimg.com https://cdn-icons-png.flaticon.com",
+      // Images: self + Cloudinary + Google OAuth + JD Magic Box (Wildcard) + data URIs + RandomUser + Unsplash + YouTube + Flaticon + TripAdvisor + Sai Org + Wikimedia
+      "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://*.jdmagicbox.com https://www.google.com https://randomuser.me https://images.unsplash.com https://www.youtube.com https://i.ytimg.com https://cdn-icons-png.flaticon.com https://dynamic-media-cdn.tripadvisor.com https://sai.org.in https://upload.wikimedia.org",
 
       // API & WebSocket connections
       // In development, also allow direct backend connections on localhost
-      `connect-src 'self' https://api.prokerala.com https://checkout.razorpay.com https://translate.googleapis.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com${process.env.NODE_ENV !== "production" ? " http://localhost:6543 http://127.0.0.1:6543" : ""}`,
+      `connect-src 'self' https://checkout.razorpay.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com${process.env.NODE_ENV !== "production" ? " http://localhost:6543 http://127.0.0.1:6543" : ""}`,
 
       // Frames: Razorpay checkout iframe and YouTube embeds
       "frame-src https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://www.youtube-nocookie.com",
@@ -81,7 +81,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "content.jdmagicbox.com",
+        hostname: "*.jdmagicbox.com", // Wildcard for content, content3, etc.
       },
       {
         protocol: "https",
@@ -94,6 +94,18 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "cdn-icons-png.flaticon.com", // Payment method icons
+      },
+      {
+        protocol: "https",
+        hostname: "dynamic-media-cdn.tripadvisor.com", // TripAdvisor images
+      },
+      {
+        protocol: "https",
+        hostname: "sai.org.in", // Shirdi Sai Baba Temple images
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org", // Wikimedia Commons images
       },
     ],
   },

@@ -63,7 +63,11 @@ export const useCartStore = create<CartState>((set, get) => ({
 
         set({ isLoading: true });
         try {
-            const res = await CartService.getCart();
+            const [res, error] = await CartService.getCart() as any;
+            if (error) {
+                console.error("Failed to fetch cart:", error);
+                return;
+            }
             // Response structure is { id, items: [...], ... }
             const rawItems = res?.items || (Array.isArray(res) ? res : []);
 
@@ -90,7 +94,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 
         set({ isLoading: true });
         try {
-            await CartService.addToCart(productId, quantity);
+            const [data, error] = await CartService.addToCart(productId, quantity) as any;
+            if (error) throw error;
 
             toast.success("Added to cart! Click to view", {
                 onClick: () => window.location.href = '/cart',
@@ -133,7 +138,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 
         debounceTimeouts[productId] = setTimeout(async () => {
             try {
-                await CartService.updateQuantity(productId, quantity);
+                const [_, error] = await CartService.updateQuantity(productId, quantity) as any;
+                if (error) throw error;
                 // No fetch fetchCart() to define truth, relying on optimistic UI
             } catch (error: any) {
                 console.error("Update quantity error:", error);
@@ -148,7 +154,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     removeFromCart: async (productId: number) => {
         try {
-            await CartService.removeFromCart(productId);
+            const [_, error] = await CartService.removeFromCart(productId) as any;
+            if (error) throw error;
             toast.success("Item removed");
             await get().fetchCart(true);
         } catch (error: any) {

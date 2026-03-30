@@ -172,7 +172,7 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
             {ZodiacSignsData.map((item) => (
               <div key={item.id} className="group cursor-pointer">
-                <NextLink href="#" className="no-underline">
+                <NextLink href={`/horoscope/${item.title.toLowerCase()}`} className="no-underline">
                   <div className="bg-white/80 backdrop-blur-sm p-8 rounded-[2.5rem] border border-white hover:border-orange shadow-premium hover:shadow-2xl transition-all duration-500 text-center h-full flex flex-col items-center group-hover:-translate-y-2">
                     <div className="w-20 h-20 rounded-2xl bg-orange/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                       <Image

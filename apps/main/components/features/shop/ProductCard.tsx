@@ -89,7 +89,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
 
       <button
         onClick={handleLike}
-        className={`absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-xl transition-all duration-300 shadow-sm border border-gray-100 group-hover:shadow-md ${isLiked ? 'text-red-500 bg-red-50/50 border-red-100' : 'text-gray-400 hover:text-red-500'}`}
+        className={`absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full transition-all duration-300 shadow-sm border border-gray-100 group-hover:shadow-md ${isLiked ? 'text-red-500 bg-red-50/50 border-red-100' : 'text-gray-400 hover:text-red-500'}`}
       >
         <i className={`${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-lg transition-transform active:scale-125`}></i>
       </button>
@@ -115,8 +115,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
             <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-orange transition-colors duration-300" title={product.name}>
               {product.name}
             </h3>
-            <div className="flex items-center gap-1 text-orange font-black bg-orange/5 px-2 py-1 rounded-lg text-xs shrink-0 border border-orange/10">
-              <i className="fa-solid fa-star text-[10px]"></i>
+            <div className="flex items-center gap-1.5 text-orange font-black bg-orange/5 px-2.5 py-1 rounded-lg text-xs shrink-0 border border-orange/10">
+              <i className="fa-solid fa-star text-xs"></i>
               <span>4.8</span>
             </div>
           </div>
@@ -141,10 +141,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         <div className="flex gap-3 pt-2">
           <button
             onClick={handleAddToCart}
-            className="flex-1 h-12 rounded-2xl border-2 border-gray-100 text-gray-400 font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+            className="flex-1 h-14 rounded-2xl border-2 border-gray-100 text-gray-500 font-bold text-[10px] uppercase tracking-wider hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm hover:shadow-md px-1"
           >
-            <i className="fa-solid fa-cart-plus translate-y-[-1px] group-hover/btn:scale-110 transition-transform"></i>
-            {t.products.addToCart}
+            <i className="fa-solid fa-cart-shopping text-base translate-y-[-1px] group-hover/btn:scale-110 transition-transform"></i>
+            <span className="leading-tight text-left">
+                {t.products.addToCart.split(' ').map((word: string, i: number, arr: string[]) => (
+                    <React.Fragment key={i}>
+                        {word}{i === (arr.length === 3 ? 1 : 0) ? <br /> : ' '}
+                    </React.Fragment>
+                ))}
+            </span>
           </button>
           <button
             onClick={(e) => {
@@ -156,14 +162,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
               router.push(`/checkout?type=order`);
             }}
             disabled={isBuyLoading}
-            className="flex-1 h-12 rounded-2xl bg-orange text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-orange/40 hover:bg-orange/90 transition-all duration-300 flex items-center justify-center gap-2"
+            className="flex-1 h-14 rounded-2xl bg-orange text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-orange/40 hover:bg-orange/90 transition-all duration-300 flex items-center justify-center gap-2 px-1"
           >
             {isBuyLoading ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
               <>
-                <i className="fa-solid fa-bolt"></i>
-                {t.products.buyNow}
+                <i className="fa-solid fa-bolt text-lg translate-y-[-1px]"></i>
+                <span className="leading-tight text-left">
+                    {t.products.buyNow.split(' ').map((word: string, i: number, arr: string[]) => (
+                        <React.Fragment key={i}>
+                            {word}{i === 0 ? <br /> : ' '}
+                        </React.Fragment>
+                    ))}
+                </span>
               </>
             )}
           </button>

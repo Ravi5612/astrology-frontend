@@ -10,36 +10,60 @@ import safeFetch from "@packages/safe-fetch/safeFetch";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
-  const { isClientAuthenticated } = useAuthStore();
+  const { isClientAuthenticated, clientLoading } = useAuthStore();
   const {
     cartItems,
     updateQuantity,
     removeFromCart,
     cartTotal,
-    isLoading
+    isLoading: cartLoading
   } = useCartStore();
 
   const [suggestedProducts, setSuggestedProducts] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    if (!isClientAuthenticated) {
+    // Only redirect if we ARE NOT loading anymore and we ARE NOT authenticated
+    if (!clientLoading && !isClientAuthenticated) {
       router.push("/sign-in");
     }
 
     const fetchProducts = async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
-      const [data, fetchError] = await safeFetch<any>(`${baseUrl}/products`);
-      
-      if (!fetchError && data) {
-        const products = Array.isArray(data) ? data : data.data || [];
-        setSuggestedProducts(products);
-      }
-    };
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
+        const [data, fetchError] = await safeFetch<any>(`${baseUrl}/products`);
+        
+        if (!fetchError && data) {
+          const products = Array.isArray(data) ? data : data.data || [];
+          setSuggestedProducts(products);
+        }
+      };
+  
+      fetchProducts();
+  }, [isClientAuthenticated, clientLoading, router]);
 
-    fetchProducts();
-  }, [isClientAuthenticated, router]);
+  if (clientLoading || (!isClientAuthenticated && typeof window !== 'undefined')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange/20 border-t-orange rounded-full animate-spin"></div>
+          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Verifying Session...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!isClientAuthenticated) return null;
+  // Combined Loading state
+  const isDataLoading = cartLoading && cartItems.length === 0;
+
+  if (isDataLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange/20 border-t-orange rounded-full animate-spin"></div>
+          <p className="text-gray-400 font-black uppercase tracking-widest text-xs">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleQuantityChange = async (id: number, delta: number) => {
     const item = cartItems.find((i: any) => i.productId === id);
@@ -56,17 +80,6 @@ const CartPage: React.FC = () => {
   const shipping = 0;
   const tax = subtotal * 0.1;
   const grandTotal = subtotal + shipping + tax;
-
-  if (isLoading && cartItems.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-orange/20 border-t-orange rounded-full animate-spin"></div>
-          <p className="text-gray-400 font-black uppercase tracking-widest text-xs">Loading your cart...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-gray-50/50 min-h-screen py-12 md:py-24">
@@ -140,7 +153,7 @@ const CartPage: React.FC = () => {
                           <button
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
                             onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, -1)}
-                            disabled={isLoading || item.quantity <= 1}
+                            disabled={cartLoading || item.quantity <= 1}
                           >
                             <i className="fa-solid fa-minus text-xs" />
                           </button>
@@ -153,22 +166,22 @@ const CartPage: React.FC = () => {
                           <button
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
                             onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, 1)}
-                            disabled={isLoading}
+                            disabled={cartLoading}
                           >
                             <i className="fa-solid fa-plus text-xs" />
                           </button>
                         </div>
-
+ 
                         {/* Price */}
                         <div className="text-xl font-black text-gray-900 italic w-24 text-right">
                           ₹{(item.product?.sale_price || item.product?.price || 0) * item.quantity}
                         </div>
-
+ 
                         {/* Remove */}
                         <button
                           className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm disabled:opacity-50"
                           onClick={() => handleRemoveItem(item.productId || item.product?.id || 0)}
-                          disabled={isLoading}
+                          disabled={cartLoading}
                         >
                           <i className="fa-solid fa-trash-can" />
                         </button>

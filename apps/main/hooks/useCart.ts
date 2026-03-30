@@ -9,7 +9,9 @@ export const useCart = () => {
 
     const addToCartMutation = useMutation({
         mutationFn: async ({ productId, quantity }: { productId: number; quantity: number }) => {
-            return CartService.addToCart(productId, quantity);
+            const [data, error] = await CartService.addToCart(productId, quantity) as any;
+            if (error) throw error;
+            return data;
         },
         // Optimistic Update
         onMutate: async ({ productId, quantity }) => {

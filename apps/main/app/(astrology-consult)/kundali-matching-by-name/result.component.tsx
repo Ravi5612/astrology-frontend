@@ -38,7 +38,7 @@ const ResultComponent = ({
                   <div className="relative w-28 h-28 mx-auto">
                     <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:bg-blue-500/30 transition-all"></div>
                     <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-blue-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-                      <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=boy" alt="Groom" fill className="p-4" />
+                      <Image src="/images/default-avatar.png" alt="Groom" fill className="p-4" />
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
                        <FaMars className="text-sm" />
@@ -65,7 +65,7 @@ const ResultComponent = ({
                   <div className="relative w-28 h-28 mx-auto">
                     <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-xl group-hover:bg-rose-500/30 transition-all"></div>
                     <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-rose-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-                      <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=girl" alt="Bride" fill className="p-4" />
+                      <Image src="/images/default-avatar.png" alt="Bride" fill className="p-4" />
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
                        <FaVenus className="text-sm" />

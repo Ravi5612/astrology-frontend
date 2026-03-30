@@ -46,7 +46,7 @@ export const AuthInitializer = ({
                 });
                 if (!state.isClientAuthenticated) {
                     // Only redirect if user was trying to access a protected page
-                    const protectedPrefixes = ['/profile', '/wallet', '/settings', '/session-history'];
+                    const protectedPrefixes = ['/profile', '/wallet', '/settings', '/session-history', '/cart', '/checkout'];
                     if (protectedPrefixes.some(p => currentPath.startsWith(p))) {
                         authDebug("redirecting to /sign-in", { currentPath });
                         window.location.href = '/sign-in';

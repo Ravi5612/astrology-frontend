@@ -23,13 +23,13 @@ export default function ZodiacDetailsPage() {
   const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
-    setFormattedDate(
-      new Date().toLocaleDateString(lang === "hi" ? "hi-IN" : "en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    );
+    // We will initialize with today's date, but then overwrite it with the API date
+    const today = new Date().toLocaleDateString(lang === "hi" ? "hi-IN" : "en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    setFormattedDate(today);
   }, [lang]);
 
   const signData = ZodiacSignsData.find(
@@ -46,8 +46,23 @@ export default function ZodiacDetailsPage() {
       if (fetchError) {
           console.error("Error fetching data:", fetchError);
           setError(true);
-      } else if (data && data.data && data.data.daily_predictions) {
-          setHoroscope(data.data.daily_predictions[0]);
+      } else if (data && data.data) {
+          // 🔥 Dynamic Date Fix: Using 'datetime' from the actual API response
+          if (data.data.datetime) {
+            setFormattedDate(
+              new Date(data.data.datetime).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })
+            );
+          }
+          
+          if (data.data.daily_predictions) {
+            setHoroscope(data.data.daily_predictions[0]);
+          } else {
+            setError(true);
+          }
       } else {
           setError(true);
       }
