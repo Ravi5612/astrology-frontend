@@ -117,5 +117,14 @@ export const markDisputeMessagesRead = async (disputeId: number): Promise<SafeFe
     return await http.patch(`/support/disputes/${disputeId}/messages/read`);
 };
 
+// Puja Bookings
+export const getMyPujaAppointments = async (): Promise<SafeFetchResponse<any>> => {
+    return await http.get('/puja-appointments/user');
+};
+
+export const updatePujaAppointmentStatus = async (id: number, data: any): Promise<SafeFetchResponse<any>> => {
+    return await http.patch(`/puja-appointments/${id}/status`, data);
+};
+
 // For backward compatibility during migration, export http as default
 export default http;

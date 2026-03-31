@@ -169,6 +169,8 @@ export default function AppointmentsPage() {
           userMessage: isPuja ? session.user_message : undefined,
           expertMessage: isPuja ? session.expert_message : undefined,
           scheduledTime: isPuja ? session.scheduled_time : undefined,
+          pujaMode: isPuja ? session.mode : undefined,
+          price: session.price,
         };
       }));
 

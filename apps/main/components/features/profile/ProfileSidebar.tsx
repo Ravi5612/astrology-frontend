@@ -38,6 +38,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
         { icon: "fa-solid fa-scroll", label: t.sidebar.tabs.reports, id: "reports" },
         { icon: "fa-solid fa-circle-question", label: t.sidebar.tabs.disputes, id: "disputes" },
         { icon: "fa-solid fa-bell", label: t.sidebar.tabs.notifications, id: "notifications" },
+        { icon: "fa-solid fa-om", label: t.sidebar.tabs.pujas, id: "pujas" },
         { icon: "fa-solid fa-headset", label: t.sidebar.tabs.support, id: "support" },
     ];
 

@@ -24,6 +24,8 @@ export interface Appointment {
     userMessage?: string;
     expertMessage?: string;
     scheduledTime?: string;
+    pujaMode?: "online" | "home_visit_with" | "home_visit_without";
+    price?: number;
 }
 
 

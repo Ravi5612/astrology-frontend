@@ -86,48 +86,73 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
         setShowDateForm(false);
     };
 
-    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100">Accepted ✅</span>;
-    if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100">Rejected ❌</span>;
+    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 shadow-sm"><Check className="w-4 h-4"/> Accepted</span>;
+    if (appt.status === 'confirmed') return <span className="text-yellow-600 font-bold px-4 py-2 bg-yellow-50 rounded-xl border border-yellow-100 flex items-center gap-2 shadow-sm"><Star className="w-4 h-4 fill-yellow-600"/> Confirmed & Paid</span>;
+    if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2 shadow-sm"><Ban className="w-4 h-4"/> Rejected</span>;
     if (appt.status === 'on_hold') return (
-        <div className="flex items-center gap-2">
-            <span className="text-purple-600 font-bold px-4 py-2 bg-purple-50 rounded-xl border border-purple-100">On Hold ⏸️</span>
-            <Button size="sm" onClick={() => updateStatus('accepted')}>Accept Now</Button>
+        <div className="flex flex-col items-center gap-2 bg-blue-50/50 p-3 rounded-2xl border border-blue-100 group shadow-sm transition-all hover:shadow-md">
+            <span className="text-blue-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                <Pause className="w-3.5 h-3.5 animate-pulse" /> Propose Sent
+            </span>
+            <p className="text-[9px] text-blue-400 font-medium max-w-[140px] text-center leading-tight">Waiting for user to accept proposed schedule</p>
+            <div className="flex gap-2 w-full mt-1">
+                <Button size="sm" variant="secondary" className="flex-1 text-[10px] h-8" onClick={() => setShowDateForm(true)}>Modify</Button>
+                <Button size="sm" className="flex-1 text-[10px] h-8" onClick={() => updateStatus('accepted')}>Force Accept</Button>
+            </div>
         </div>
     );
 
     return (
         <div className="flex flex-col gap-3">
             {showDateForm ? (
-                <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 space-y-3 w-full sm:w-64">
-                    <p className="text-[10px] font-black text-orange-800 uppercase">Set Date & Time</p>
-                    <input 
-                        type="date" 
-                        value={newDate} 
-                        onChange={(e) => setNewDate(e.target.value)}
-                        className="w-full text-xs p-2 border rounded-lg"
-                    />
-                    <input 
-                        type="time" 
-                        value={newTime} 
-                        onChange={(e) => setNewTime(e.target.value)}
-                        className="w-full text-xs p-2 border rounded-lg"
-                    />
-                    <textarea 
-                        placeholder="Message to user..." 
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        className="w-full text-xs p-2 border rounded-lg h-20"
-                    />
-                    <div className="flex gap-2">
-                        <Button size="sm" className="flex-1" onClick={() => updateStatus('accepted', { scheduled_date: newDate, scheduled_time: newTime })}>Send</Button>
-                        <Button size="sm" variant="secondary" onClick={() => setShowDateForm(false)}>Cancel</Button>
+                <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 space-y-3 w-full sm:w-64 shadow-xl">
+                    <p className="text-[10px] font-black text-orange-800 uppercase tracking-widest flex items-center gap-2">
+                        <LucideRefreshCw className="w-3.5 h-3.5" />
+                        Reschedule Ritual
+                    </p>
+                    <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-orange-400 uppercase ml-1">Proposed Date</label>
+                        <input 
+                            type="date" 
+                            value={newDate} 
+                            onChange={(e) => setNewDate(e.target.value)}
+                            className="w-full text-xs p-2 border rounded-lg focus:ring-2 focus:ring-orange-200 outline-none"
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-orange-400 uppercase ml-1">Proposed Time</label>
+                        <input 
+                            type="time" 
+                            value={newTime} 
+                            onChange={(e) => setNewTime(e.target.value)}
+                            className="w-full text-xs p-2 border rounded-lg focus:ring-2 focus:ring-orange-200 outline-none"
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-orange-400 uppercase ml-1">Note to User</label>
+                        <textarea 
+                            placeholder="Why are you rescheduling? (e.g. Busy on original date)" 
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="w-full text-[11px] p-2 border rounded-lg h-20 focus:ring-2 focus:ring-orange-200 outline-none resize-none"
+                        />
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                        <Button 
+                            size="md" 
+                            className="flex-1 bg-orange-600 hover:bg-orange-700" 
+                            onClick={() => updateStatus(appt.askExpertForDate ? 'accepted' : 'on_hold', { scheduled_date: newDate, scheduled_time: newTime })}
+                        >
+                            {appt.askExpertForDate ? 'Send & Accept' : 'Propose'}
+                        </Button>
+                        <Button size="md" variant="secondary" className="flex-1" onClick={() => setShowDateForm(false)}>Back</Button>
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap lg:flex-nowrap gap-2">
                     <Button 
                         size="md" 
-                        className="bg-emerald-600 hover:bg-emerald-700 h-11"
+                        className="bg-emerald-600 hover:bg-emerald-700 h-11 flex-1 lg:flex-none lg:px-6"
                         leftIcon={<Check className="w-4 h-4" />}
                         disabled={isUpdating}
                         onClick={() => {
@@ -140,16 +165,16 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
                     <Button 
                         size="md" 
                         variant="secondary"
-                        className="text-purple-600 border-purple-200 h-11"
-                        leftIcon={<Pause className="w-4 h-4" />}
+                        className="text-orange-600 border-orange-200 h-11 flex-1 lg:flex-none lg:px-6"
+                        leftIcon={<LucideRefreshCw className="w-4 h-4" />}
                         disabled={isUpdating}
-                        onClick={() => updateStatus('on_hold')}
+                        onClick={() => setShowDateForm(true)}
                     >
-                        Hold
+                        Reschedule
                     </Button>
                     <Button 
                         size="md" 
-                        className="bg-red-500 hover:bg-red-600 h-11"
+                        className="bg-red-500 hover:bg-red-600 h-11 flex-1 lg:flex-none lg:px-6"
                         leftIcon={<Ban className="w-4 h-4" />}
                         disabled={isUpdating}
                         onClick={() => updateStatus('rejected')}
@@ -255,20 +280,40 @@ export default function AppointmentList({
                                         </span>
                                     )}
                                 </div>
+                                {appt.pujaId && (
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        <span className="bg-yellow-50 text-yellow-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-yellow-200 flex items-center gap-1.5 shadow-sm transition-all hover:shadow-md">
+                                            <LucideVideo className="w-3.5 h-3.5" />
+                                            {appt.pujaMode === 'online' ? 'Online Ritual' : (appt.pujaMode === 'home_visit_with' ? 'Home Visit (With Samagri)' : 'Home Visit (Basic)')}
+                                        </span>
+                                        <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-emerald-200 flex items-center gap-1 shadow-sm transition-all hover:shadow-md">
+                                            ₹{appt.price}
+                                        </span>
+                                    </div>
+                                )}
                                 {appt.userMessage && (
-                                    <div className="mt-3 p-3 bg-orange-50 rounded-xl border border-orange-100 italic text-xs text-gray-600">
+                                    <div className="mt-4 p-4 bg-orange-50/70 rounded-2xl border border-orange-100 italic text-[13px] text-gray-700 relative group overflow-hidden shadow-sm transition-all hover:shadow-md">
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-400 group-hover:w-1.5 transition-all"></div>
+                                        <LucideMessageSquare className="w-4 h-4 text-orange-400 mb-2 opacity-50" />
                                         " {appt.userMessage} "
                                     </div>
                                 )}
                                 {appt.expertMessage && (
-                                    <div className="mt-2 p-3 bg-blue-50 rounded-xl border border-blue-100 italic text-xs text-blue-600">
-                                        Expert: " {appt.expertMessage} "
+                                    <div className="mt-2 p-4 bg-blue-50/70 rounded-2xl border border-blue-100 italic text-[13px] text-blue-700 relative group overflow-hidden shadow-sm transition-all hover:shadow-md">
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 group-hover:w-1.5 transition-all"></div>
+                                        <span className="text-[10px] font-black uppercase tracking-wider mb-2 block opacity-60">Expert Response</span>
+                                        " {appt.expertMessage} "
                                     </div>
                                 )}
                                 {appt.askExpertForDate && appt.status === 'pending' && (
-                                    <p className="mt-2 text-xs font-black text-orange-600 animate-pulse uppercase tracking-[0.2em]">
-                                        ⚠️ User is asking you for date & time
-                                    </p>
+                                    <div className="mt-3 p-3 bg-yellow-50 rounded-xl border border-dashed border-yellow-300 flex items-center gap-3">
+                                        <div className="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center animate-bounce">
+                                            <LucideClock className="w-4 h-4 text-yellow-600" />
+                                        </div>
+                                        <p className="text-[11px] font-black text-yellow-800 uppercase tracking-wider leading-tight">
+                                            User is requesting you to <br/> propose a date & time
+                                        </p>
+                                    </div>
                                 )}
                             </div>
                         </div>

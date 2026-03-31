@@ -15,6 +15,7 @@ import SupportTab from "@/components/features/profile/SupportTab";
 import ConsultationChatModal from "@/components/features/profile/ConsultationChatModal";
 import UserDisputeChatModal from "@/components/features/user/UserDisputeChatModal";
 import DisputesTab from "@/components/features/profile/DisputesTab";
+import PujaBookingsTab from "@/components/features/profile/PujaBookingsTab";
 import { useProfileLogic } from "@/components/features/profile/useProfileLogic";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
@@ -66,7 +67,10 @@ const ProfileContent: React.FC = () => {
     reportItemDetails, setReportItemDetails,
 
     // Tab
-    activeTab, setActiveTab
+    activeTab, setActiveTab,
+
+    // Puja
+    pujaBookings, loadingPuja, handleUpdatePujaStatus
   } = useProfileLogic();
 
   // Only show full-page loader if we are doing initial load and have no data yet
@@ -242,6 +246,29 @@ const ProfileContent: React.FC = () => {
                   onMarkAsRead={(id) => handleMarkAsRead(Number(id))}
                   onClearAll={handleClearAllNotifs}
                 />
+              )}
+
+              {activeTab === "pujas" && (
+                 <div className="bg-white border-0 shadow-sm rounded-2xl mb-6 overflow-hidden">
+                    <div className="bg-white px-6 pt-6 pb-2 mb-2 flex items-center">
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                        style={{ backgroundColor: "#fff7ed", color: "#ea580c" }}
+                      >
+                        <i className="fa-solid fa-om"></i>
+                      </div>
+                      <h5 className="text-xl font-bold text-gray-900 m-0" style={fontStyle}>
+                        {t.sidebar.tabs.pujas}
+                      </h5>
+                    </div>
+                    <div className="px-6 pb-6 pt-0">
+                      <PujaBookingsTab 
+                        loading={loadingPuja} 
+                        bookings={pujaBookings} 
+                        onUpdateStatus={handleUpdatePujaStatus} 
+                      />
+                    </div>
+                  </div>
               )}
 
               {activeTab === "support" && <SupportTab supportSettings={supportSettings} />}
