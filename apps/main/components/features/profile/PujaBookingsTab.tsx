@@ -23,7 +23,7 @@ const formatDate = (dateString: string, includeTime = false) => {
         options.minute = '2-digit';
         options.hour12 = true;
     }
-    return new Intl.NumberFormat('en-IN').format ? date.toLocaleDateString("en-IN", options) : date.toDateString();
+    return date.toLocaleDateString("en-IN", options);
   } catch (e) {
     return dateString;
   }
