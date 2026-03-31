@@ -40,8 +40,8 @@ const securityHeaders = [
       // Fonts: self + Google Fonts + FontAwesome + data URIs (for embedded fonts in libs like Chart.js)
       "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
 
-      // Images: self + Cloudinary + Google OAuth + JD Magic Box (Wildcard) + data URIs + RandomUser + Unsplash + YouTube + Flaticon + TripAdvisor + Sai Org + Wikimedia
-      "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://*.jdmagicbox.com https://www.google.com https://randomuser.me https://images.unsplash.com https://www.youtube.com https://i.ytimg.com https://cdn-icons-png.flaticon.com https://dynamic-media-cdn.tripadvisor.com https://sai.org.in https://upload.wikimedia.org",
+      // Images: self + Cloudinary + Google OAuth + JD Magic Box (Wildcard) + data URIs + RandomUser + Unsplash + YouTube + Flaticon + TripAdvisor + Sai Org + Wikimedia + Flickr + Alamy + Shutterstock + TwoBrownFeet + IndiTales
+      "img-src 'self' data: blob: *",
 
       // API & WebSocket connections
       // In development, also allow direct backend connections on localhost
@@ -62,50 +62,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
         protocol: "http",
-        hostname: "localhost",
-        port: "3001",
-      },
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
-        port: "3001",
-      },
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com", // Google OAuth profile pictures
-      },
-      {
-        protocol: "https",
-        hostname: "*.jdmagicbox.com", // Wildcard for content, content3, etc.
-      },
-      {
-        protocol: "https",
-        hostname: "randomuser.me", // Mock profile pictures
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com", // Live Darshan & other images
-      },
-      {
-        protocol: "https",
-        hostname: "cdn-icons-png.flaticon.com", // Payment method icons
-      },
-      {
-        protocol: "https",
-        hostname: "dynamic-media-cdn.tripadvisor.com", // TripAdvisor images
-      },
-      {
-        protocol: "https",
-        hostname: "sai.org.in", // Shirdi Sai Baba Temple images
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org", // Wikimedia Commons images
+        hostname: "**",
       },
     ],
   },

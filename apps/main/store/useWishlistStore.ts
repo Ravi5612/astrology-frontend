@@ -192,19 +192,28 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
     },
 
     togglePujaWishlist: async (pujaId: number, isClientAuthenticated: boolean) => {
+        const { isPujaInWishlist, fetchWishlist } = get();
         if (!isClientAuthenticated) {
             toast.error("Please login to like puja");
             return;
         }
 
         try {
-            const [data, err] = await WishlistService.togglePujaWishlist(pujaId);
-            if (err) throw err;
-            
-            toast.success(data?.liked ? "Added to wishlist" : "Removed from wishlist");
-            await get().fetchWishlist(true);
-        } catch {
-            toast.error("Failed to update wishlist");
+            if (isPujaInWishlist(pujaId)) {
+                await WishlistService.removePujaFromWishlist(pujaId);
+                toast.success("Removed from liked pujas");
+            } else {
+                await WishlistService.addPujaToWishlist(pujaId);
+                toast.success("Added to liked pujas");
+            }
+            await fetchWishlist(true);
+        } catch (error: any) {
+            if (error.response?.status === 409) {
+                toast.info("Already liked");
+                await fetchWishlist(true);
+            } else {
+                toast.error("Failed to update liked pujas");
+            }
         }
     },
 

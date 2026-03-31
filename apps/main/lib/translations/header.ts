@@ -15,7 +15,7 @@ export const headerTranslations = {
         navHome: "Home",
         navDailyHoroscope: "Daily Horoscope",
         navAstrologyConsult: "Calculators",
-        navFamousPlaces: "Famous Places",
+        navFamousPlaces: "Famous Temple",
         navLiveDarshan: "Live Darshan",
 
         // Dropdown items
@@ -63,7 +63,7 @@ export const headerTranslations = {
         navHome: "होम",
         navDailyHoroscope: "दैनिक राशिफल",
         navAstrologyConsult: "ज्योतिष परामर्श",
-        navFamousPlaces: "प्रसिद्ध स्थान",
+        navFamousPlaces: "प्रसिद्ध मंदिर",
         navLiveDarshan: "लाइव दर्शन",
 
         // Dropdown items

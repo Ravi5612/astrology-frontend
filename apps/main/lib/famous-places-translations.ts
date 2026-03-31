@@ -14,9 +14,17 @@ export const famousPlacesTranslations = {
         section2Title1: "Holy Pilgrimage",
         section2Highlight: "Across India",
         section2Desc: "Explore the widely revered pilgrimage sites that define India's rich spiritual heritage and tradition.",
+        sectionSearchPlaceholder: "Search for pilgrimages...",
+        section1SearchPlaceholder: "Search temples in Mohali/Chandigarh...",
 
         noResults: "No divine results found at the moment. Please try again.",
         loadingText: "Exploring India's pilgrimage sites... please check back shortly.",
+        searchPlaceholder: "Search for temples, sacred sites, or cities...",
+        searchButton: "Search",
+        searching: "Searching...",
+        searchResultsTitle: "Divine",
+        searchResultsHighlight: "Search Results",
+        searchResultsDesc: "Displaying the most relevant sacred sites based on your search.",
 
         card: {
             reviews: "Reviews",
@@ -67,9 +75,17 @@ export const famousPlacesTranslations = {
         section2Title1: "पवित्र तीर्थयात्रा",
         section2Highlight: "पूरे भारत में",
         section2Desc: "उन व्यापक रूप से पूजनीय तीर्थस्थलों का अन्वेषण करें जो भारत की समृद्ध आध्यात्मिक विरासत और परंपरा को परिभाषित करते हैं।",
+        sectionSearchPlaceholder: "तीर्थस्थलों की खोज करें...",
+        section1SearchPlaceholder: "मोहाली/चंडीगढ़ के मंदिरों को खोजें...",
 
         noResults: "फिलहाल कोई दिव्य परिणाम नहीं मिला। कृपया पुनः प्रयास करें।",
         loadingText: "भारत के तीर्थस्थलों की खोज की जा रही है... कृपया कुछ ही देर में पुनः देखें।",
+        searchPlaceholder: "मंदिरों, पवित्र स्थलों या शहरों की खोज करें...",
+        searchButton: "खोजें",
+        searching: "खोज की जा रही है...",
+        searchResultsTitle: "दिव्य",
+        searchResultsHighlight: "खोज परिणाम",
+        searchResultsDesc: "आपकी खोज के आधार पर सबसे प्रासंगिक पवित्र स्थल प्रदर्शित किए जा रहे हैं।",
 
         card: {
             reviews: "समीक्षाएं",

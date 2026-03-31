@@ -89,7 +89,18 @@ export const applyCoupon = async (code: string, amount: number, serviceType: str
 };
 
 export const getSupportSettings = async (): Promise<SafeFetchResponse<SupportSettings>> => {
-    return await http.get('/settings/support');
+    const [data, error] = await http.get('/settings/support');
+    
+    // Fallback if backend API is not yet available
+    if (error || !data) {
+        return [{
+            email: "support@astrologyinbharat.com",
+            phone: "+91-9999999999",
+            whatsapp: "+91-9999999999"
+        }, null];
+    }
+    
+    return [data, null];
 };
 
 // Disputes / Support Tickets

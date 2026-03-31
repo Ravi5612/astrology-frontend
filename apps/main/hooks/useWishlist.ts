@@ -23,7 +23,9 @@ export const useWishlist = () => {
                     ? WishlistService.removeExpertFromWishlist(id)
                     : WishlistService.addExpertToWishlist(id);
             } else if (type === "puja") {
-                return WishlistService.togglePujaWishlist(id);
+                return isLiked
+                    ? WishlistService.removePujaFromWishlist(id)
+                    : WishlistService.addPujaToWishlist(id);
             } else {
                 return isLiked
                     ? WishlistService.removeFromWishlist(id)
