@@ -1,12 +1,44 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, Monitor, Sparkles, Star, Clock, ChevronDown, Loader2 } from "lucide-react";
+import { Search, MapPin, Monitor, Sparkles, Star, Clock, ChevronDown, Loader2, Heart } from "lucide-react";
 import http from "@/lib/fetch-handler";
 import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import Image from "next/image";
 import Link from "next/link";
+
+const LikeButton = ({ initialLikes }: { initialLikes: number }) => {
+    const [liked, setLiked] = useState(false);
+    const [count, setCount] = useState(initialLikes || Math.floor(Math.random() * 100) + 10);
+
+    const handleLike = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (liked) {
+            setLiked(false);
+            setCount(prev => prev - 1);
+        } else {
+            setLiked(true);
+            setCount(prev => prev + 1);
+        }
+    };
+
+    return (
+        <button 
+            type="button"
+            onClick={handleLike}
+            className="flex items-center gap-1.5 transition-all active:scale-110 hover:opacity-80"
+        >
+            <Heart 
+                className={`w-5 h-5 transition-all ${liked ? "fill-[#f54a00] text-[#f54a00]" : "text-gray-400 group-hover:text-gray-600"}`} 
+            />
+            <span className={`text-xs font-black ${liked ? "text-[#f54a00]" : "text-gray-400"}`}>
+                {count}
+            </span>
+        </button>
+    );
+};
 
 const OnlinePujaPage = () => {
     const [pujas, setPujas] = useState<ExpertPuja[]>([]);
@@ -171,110 +203,93 @@ const OnlinePujaPage = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 px-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
                         {filteredPujas.map((puja) => (
                             <Link 
                                 key={puja.id} 
                                 href={`/online-puja/${puja.id}`}
-                                className="group flex flex-col bg-white rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden hover:shadow-[0_20px_50px_rgba(251,146,60,0.2)] transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                                className="group flex flex-col bg-white rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden hover:shadow-[0_20px_50px_rgba(251,146,60,0.15)] transition-all duration-500 hover:-translate-y-2 cursor-pointer no-underline"
                             >
                                 {/* Puja Image */}
-                                <div className="relative h-48 sm:h-56 bg-gray-100 overflow-hidden">
+                                <div className="relative h-44 sm:h-48 bg-gray-100 overflow-hidden shrink-0">
                                      {puja.puja_image_url ? (
                                         <Image 
                                             src={puja.puja_image_url} 
                                             alt={puja.name} 
                                             fill 
-                                            className="object-cover transition-transform group-hover:scale-110 duration-700"
+                                            className="object-cover transition-transform group-hover:scale-105 duration-700"
                                         />
                                      ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-orange-50">
-                                            <Sparkles className="w-12 h-12 text-orange-200" />
+                                            <Sparkles className="w-10 h-10 text-orange-200" />
                                         </div>
                                      )}
                                      
                                      {/* Availability Badges */}
-                                     <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                                     <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                                         {puja.is_online && (
-                                            <span className="px-3 py-1 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-wider rounded-lg border border-blue-400/30">
+                                            <span className="px-2 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-blue-400/30">
                                                 Online
                                             </span>
                                         )}
                                         {puja.is_home_visit && (
-                                            <span className="px-3 py-1 bg-emerald-600/90 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-wider rounded-lg border border-emerald-400/30">
-                                                Home Visit
+                                            <span className="px-2 py-0.5 bg-emerald-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-emerald-400/30">
+                                                Home visit
                                             </span>
                                         )}
                                      </div>
                                 </div>
-
-                                <div className="p-7 flex flex-col h-full">
-                                    {/* Pandit Info */}
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div 
-                                            className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-md ring-2 ring-white ring-offset-2 ring-offset-orange-50 transition-transform group-hover:scale-110 duration-500 shrink-0"
-                                            style={{ backgroundColor: '#301118' }}
-                                        >
-                                            {puja.expert?.user?.avatar ? (
-                                                <Image 
-                                                    src={puja.expert.user.avatar} 
-                                                    alt={puja.expert.user.name || puja.expert?.name || "Expert"} 
-                                                    fill 
-                                                    className="object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg opacity-80">
-                                                    {(puja.expert?.user?.name || puja.expert?.name || "E").charAt(0)}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-black text-gray-900 line-clamp-1">
-                                                {puja.expert?.user?.name || puja.expert?.name || "Verified Pandit"}
-                                            </h4>
-                                            <div className="flex items-center gap-1.5 mt-0.5">
-                                                <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-yellow-50 text-yellow-700 rounded-lg text-[10px] font-black border border-yellow-100">
-                                                    <Star className="w-2.5 h-2.5 fill-yellow-600" />
-                                                    {puja.expert?.rating || "4.8"}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Puja Details */}
-                                    <div className="mb-8">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2 truncate group-hover:text-orange-600 transition-colors">
+                                <div className="p-4 sm:p-5 flex flex-col flex-grow">
+                                    {/* Header: Name + Like */}
+                                    <div className="flex justify-between items-start gap-2 mb-2">
+                                        <h3 className="text-lg font-black text-gray-900 group-hover:text-orange-600 transition-colors leading-tight">
                                             {puja.name}
                                         </h3>
-                                        <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed h-[40px] mb-4">
-                                            {puja.description || "Divine Vedic ceremony performed with full rituals and mantras for spiritual prosperity."}
-                                        </p>
-                                        
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-xl">
-                                                <Clock className="w-4 h-4 text-orange-400" />
-                                                <span className="text-xs font-bold text-gray-700">{puja.min_duration_hours}-{puja.max_duration_hours}h</span>
-                                            </div>
-                                            {puja.is_home_visit && (
-                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-xl">
-                                                    <MapPin className="w-4 h-4 text-green-400" />
-                                                    <span className="text-xs font-bold text-gray-700">{puja.districts?.length || 0} Districts</span>
-                                                </div>
-                                            )}
+                                        <div className="pt-0.5">
+                                            <LikeButton initialLikes={Math.floor(Math.random() * 50) + 12} />
                                         </div>
                                     </div>
 
-                                    {/* Price & Action */}
-                                    <div className="mt-auto flex items-center justify-between pt-6 border-t border-gray-50">
+                                    {/* Expert Info & Rating */}
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="flex items-center gap-1">
+                                            <div className="relative w-5 h-5 rounded-md overflow-hidden ring-1 ring-gray-100 shrink-0">
+                                                {puja.expert?.user?.avatar ? (
+                                                    <Image src={puja.expert.user.avatar} alt="Pandit" fill className="object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-[#301118]/80 text-white text-[8px] flex items-center justify-center font-bold">
+                                                        P
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">
+                                                By {puja.expert?.user?.name || "Verified Pandit"}
+                                            </span>
+                                        </div>
+                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                        <div className="flex items-center gap-0.5 text-yellow-600">
+                                            <Star className="w-3 h-3 fill-yellow-600" />
+                                            <span className="text-[11px] font-black">{puja.expert?.rating || "4.8"}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Description (Reduced vertical space) */}
+                                    <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed h-[40px] mb-4">
+                                        {puja.description || "Divine Vedic ceremony performed with full rituals and sacred mantras for spiritual prosperity."}
+                                    </p>
+
+                                    {/* Footer: Price + Action (More compact) */}
+                                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
                                         <div>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Dakshina from</p>
+                                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-0.5">Dakshina</span>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-2xl font-black text-gray-900">₹{getMinCost(puja)}</span>
+                                                <span className="text-xl font-black text-gray-900">₹{getMinCost(puja)}</span>
                                             </div>
                                         </div>
-                                        <div className="px-6 py-3 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-orange-600 shadow-lg shadow-gray-200 hover:shadow-orange-200 transition-all active:scale-95 flex items-center gap-2 group/btn">
+
+                                        <div className="px-4 py-2 bg-[#1a1a1a] text-white text-xs font-bold rounded-xl hover:bg-orange-600 shadow-md transition-all active:scale-95 flex items-center gap-1.5 group/btn">
                                             Details
-                                            <Sparkles className="w-4 h-4 group-hover/btn:animate-spin-slow" />
+                                            <Sparkles className="w-3.5 h-3.5 group-hover/btn:animate-spin-slow" />
                                         </div>
                                     </div>
                                 </div>
