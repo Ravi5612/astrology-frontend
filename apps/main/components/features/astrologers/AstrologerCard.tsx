@@ -119,9 +119,9 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
   const remainingCount = allServices.length - 3;
 
   return (
-    <div className="w-full">
-      <div className={`bg-white rounded-xl shadow-sm border border-[#daa23e] p-3 text-center transition-transform duration-300 hover:-translate-y-1.5 ${cardClassName}`}>
-        <NextLink href={createDetailsUrl()} className="no-underline hover:no-underline block">
+    <div className="w-full h-full">
+      <div className={`bg-white h-full flex flex-col rounded-xl shadow-sm border border-[#daa23e] p-3 text-center transition-transform duration-300 hover:-translate-y-1.5 ${cardClassName}`}>
+        <NextLink href={createDetailsUrl()} className="no-underline hover:no-underline flex flex-col flex-1">
           {/* IMAGE SECTION */}
           <div className="relative flex justify-center pt-8">
             {/* ❤️ LIKE & COUNT — TOP LEFT (OUTSIDE IMAGE) */}
@@ -164,13 +164,13 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
             </div>
 
             {/* PROFILE IMAGE */}
-            <div className="relative">
+            <div className="relative w-[120px] h-[120px] mx-auto mt-1 mb-2">
               <Image
                 src={image}
                 alt={name}
-                width={120}
-                height={120}
-                className="object-cover rounded-full mb-2 border border-[#daa23e]"
+                fill
+                sizes="120px"
+                className="object-cover rounded-full border border-[#daa23e] shadow-sm"
               />
 
               {/* ▶ PLAY VIDEO */}
@@ -241,7 +241,7 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
 
           {/* DETAILS */}
           {/* Name */}
-          <div className="px-4 pt-2 pb-1 text-[18px] font-semibold text-[#301118]">
+          <div className="px-4 pt-2 pb-1 text-[18px] font-semibold text-[#301118] truncate" title={name}>
             {name}
           </div>
 
@@ -264,24 +264,24 @@ const AstrologerCard: React.FC<AstrologerCardProps> = ({
           </div>
 
           {/* Experience */}
-          <div className="px-4 my-2 text-[16px] text-[#1a1a1a]">
+          <div className="px-2 my-2 text-[14px] text-[#1a1a1a] flex items-center justify-center gap-1.5">
             <strong>{t.astrologerCard.exp}</strong>
-            <span className="ml-2 font-semibold bg-orange/10 text-orange px-2 py-0.5 rounded">
+            <span className="font-semibold bg-orange/10 text-orange px-2 py-0.5 rounded text-[12px] shrink-0">
               {experience} {t.astrologerCard.years}
             </span>
           </div>
 
           {/* Language */}
-          <div className="px-4 my-2 text-[16px] text-[#1a1a1a]">
+          <div className="px-2 my-1.5 text-[14px] text-[#1a1a1a] flex items-center justify-center gap-1.5 w-full">
             <strong>{t.astrologerCard.lang}</strong>
-            <span className="ml-2 font-semibold bg-gray-100 px-2 py-0.5 rounded">
+            <span className="font-semibold bg-gray-100 px-2 py-0.5 rounded text-[12px] truncate max-w-[130px] inline-block" title={language}>
               {language}
             </span>
           </div>
         </NextLink>
 
         {/* ACTION BUTTONS WITH PRICES POINTER */}
-        <div className="px-3 pb-4 space-y-2.5">
+        <div className="px-3 pb-4 space-y-2.5 mt-auto">
           <div className="flex gap-2">
             {/* Chat Button */}
             <button

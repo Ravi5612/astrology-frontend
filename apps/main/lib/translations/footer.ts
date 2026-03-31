@@ -25,7 +25,7 @@ export const footerTranslations = {
         // Important Links
         astrologerLogin: "Astrologer Login",
         astrologerRegistration: "Astrologer Registration",
-        shubhMuhurat: "Shubh Muhurat 2026",
+        shubhMuhurat: "Hindu Calendar",
         shopProducts: "Shop Our Products",
         aboutUs: "About Us",
         contactUs: "Contact Us",
@@ -66,7 +66,7 @@ export const footerTranslations = {
         // Important Links
         astrologerLogin: "ज्योतिषी लॉगिन",
         astrologerRegistration: "ज्योतिषी पंजीकरण",
-        shubhMuhurat: "शुभ मुहूर्त 2026",
+        shubhMuhurat: "हिन्दू पंचांग",
         shopProducts: "हमारे उत्पाद खरीदें",
         aboutUs: "हमारे बारे में",
         contactUs: "संपर्क करें",

@@ -48,4 +48,5 @@ export const PATHS = {
   COMPATIBILITY_BY_ZODIAC_CALCULATOR: "/calculator/compatibility-by-zodiac",
   DAHEJ_CALCULATOR: "/calculator/dahej",
   LIVE_DARSHAN: "/live-darshan",
+  HINDU_CALENDAR: "/hindu-calendar",
 } as const;
