@@ -7,9 +7,11 @@ import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
 import { getBasePath } from "@/utils/api-config";
 import { FaHeart, FaGift, FaUserAstronaut, FaSpinner } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
+import { MdStars } from "react-icons/md";
+import { PujaCard } from "@/components/features/puja/PujaCard";
 
 const WishlistGrid: React.FC = () => {
-    const { wishlistItems, expertWishlistItems, isLoading } = useWishlistStore();
+    const { wishlistItems, expertWishlistItems, pujaWishlistItems, isLoading } = useWishlistStore();
 
     const cleanApiUrl = getBasePath();
 
@@ -33,7 +35,7 @@ const WishlistGrid: React.FC = () => {
         );
     }
 
-    if (wishlistItems.length === 0 && expertWishlistItems.length === 0) {
+    if (wishlistItems.length === 0 && expertWishlistItems.length === 0 && pujaWishlistItems.length === 0) {
         return (
             <div className="text-center py-32 bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200 px-6 max-w-4xl mx-auto">
                 <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 shadow-premium border border-slate-100 text-slate-200">
@@ -138,6 +140,35 @@ const WishlistGrid: React.FC = () => {
                                 </div>
                             );
                         })}
+                    </div>
+                </section>
+            )}
+
+            {pujaWishlistItems.length > 0 && (
+                <section className="space-y-12">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+                        <div className="space-y-2">
+                           <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 rounded-full">
+                              <MdStars className="text-orange-500 text-[10px]" />
+                              <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Divine Rituals</span>
+                           </div>
+                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Liked Pujas</h2>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm">
+                           <span className="tabular-nums">{pujaWishlistItems.length}</span> pujas saved
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {pujaWishlistItems.map((item, idx) => (
+                            <div 
+                                key={item.id} 
+                                className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700"
+                                style={{ animationDelay: `${idx * 100}ms` }}
+                            >
+                                <PujaCard puja={item.puja as any} />
+                            </div>
+                        ))}
                     </div>
                 </section>
             )}
