@@ -1,0 +1,46 @@
+import { useState, useEffect, useCallback } from "react";
+import { toast } from "react-toastify";
+import { getMyPujaAppointments, updatePujaAppointmentStatus } from "@/libs/api-profile";
+
+export const useProfilePujaLogic = (isClientAuthenticated: boolean, activeTab: string) => {
+    const [pujaBookings, setPujaBookings] = useState<any[]>([]);
+    const [loadingPuja, setLoadingPuja] = useState(false);
+
+    const loadPujaBookings = useCallback(async () => {
+        if (activeTab === "pujas" && isClientAuthenticated) {
+            setLoadingPuja(true);
+            try {
+                const [data, error] = await getMyPujaAppointments();
+                if (!error && data) {
+                    setPujaBookings(Array.isArray(data) ? data : (data.data || []));
+                }
+            } catch (err) {
+                console.error("Failed to load puja bookings:", err);
+            } finally {
+                setLoadingPuja(false);
+            }
+        }
+    }, [activeTab, isClientAuthenticated]);
+
+    useEffect(() => {
+        loadPujaBookings();
+    }, [loadPujaBookings]);
+
+    const handleUpdatePujaStatus = async (id: number, status: string, extra: any = {}) => {
+        const [res, error] = await updatePujaAppointmentStatus(id, { status, ...extra });
+        if (error) {
+            toast.error(error.message || "Failed to update booking");
+            return false;
+        }
+        toast.success(`Booking ${status} successfully`);
+        loadPujaBookings();
+        return true;
+    };
+
+    return {
+        pujaBookings,
+        loadingPuja,
+        loadPujaBookings,
+        handleUpdatePujaStatus
+    };
+};

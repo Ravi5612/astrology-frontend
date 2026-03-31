@@ -20,6 +20,7 @@ export const profileTranslations = {
                 reports: "My Kundli Reports",
                 disputes: "My Support Tickets",
                 notifications: "All Notifications",
+                pujas: "Puja Bookings",
                 support: "Help & Support"
             },
             updatePhoto: "Update Profile Picture",
@@ -232,6 +233,7 @@ export const profileTranslations = {
                 reports: "मेरी कुंडली रिपोर्ट",
                 disputes: "मेरे सहायता टिकट",
                 notifications: "सभी सूचनाएं",
+                pujas: "पूजा बुकिंग",
                 support: "सहायता और समर्थन"
             },
             updatePhoto: "प्रोफ़ाइल चित्र अपडेट करें",
