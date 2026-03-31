@@ -22,5 +22,6 @@ export interface ExpertPuja {
     samagri_list: PujaSamagriItem[] | null;
     created_at: string;
     updated_at: string;
+    total_likes?: number;
     expert?: ExpertProfile;
 }

@@ -3,7 +3,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { WishlistService } from "../services/wishlist.service";
 import { toast } from "react-toastify";
 
-export type WishlistType = "expert" | "product";
+export type WishlistType = "expert" | "product" | "puja";
 
 export const useWishlist = () => {
     const queryClient = useQueryClient();
@@ -22,6 +22,8 @@ export const useWishlist = () => {
                 return isLiked
                     ? WishlistService.removeExpertFromWishlist(id)
                     : WishlistService.addExpertToWishlist(id);
+            } else if (type === "puja") {
+                return WishlistService.togglePujaWishlist(id);
             } else {
                 return isLiked
                     ? WishlistService.removeFromWishlist(id)
@@ -31,7 +33,10 @@ export const useWishlist = () => {
         // Optimistic Update
         onMutate: async ({ id, type, isLiked }) => {
             // Cancel outgoing refetches
-            const queryKey = type === "expert" ? ["wishlist", "experts"] : ["wishlist", "products"];
+            let queryKey = ["wishlist", "products"];
+            if (type === "expert") queryKey = ["wishlist", "experts"];
+            if (type === "puja") queryKey = ["wishlist", "pujas"];
+            
             await queryClient.cancelQueries({ queryKey });
 
             // Snapshot previous values
@@ -39,6 +44,7 @@ export const useWishlist = () => {
             const previousState = {
                 expertWishlistItems: store.expertWishlistItems,
                 wishlistItems: store.wishlistItems,
+                pujaWishlistItems: store.pujaWishlistItems,
             };
 
             // Optimistically update Zustand store
@@ -52,6 +58,18 @@ export const useWishlist = () => {
                 } else {
                     useWishlistStore.setState((state) => ({
                         expertWishlistItems: [...state.expertWishlistItems, { expertId: id, expert: { id } } as any],
+                    }));
+                }
+            } else if (type === "puja") {
+                if (isLiked) {
+                    useWishlistStore.setState((state) => ({
+                        pujaWishlistItems: state.pujaWishlistItems.filter(
+                            (item) => Number((item as any).pujaId || item.puja?.id) !== Number(id)
+                        ),
+                    }));
+                } else {
+                    useWishlistStore.setState((state) => ({
+                        pujaWishlistItems: [...state.pujaWishlistItems, { pujaId: id, puja: { id } } as any],
                     }));
                 }
             } else {
@@ -76,7 +94,10 @@ export const useWishlist = () => {
             }
         },
         onSettled: (data, error, variables) => {
-            const queryKey = variables.type === "expert" ? ["wishlist", "experts"] : ["wishlist", "products"];
+            let queryKey = ["wishlist", "products"];
+            if (variables.type === "expert") queryKey = ["wishlist", "experts"];
+            if (variables.type === "puja") queryKey = ["wishlist", "pujas"];
+            
             queryClient.invalidateQueries({ queryKey });
             // Sync store
             useWishlistStore.getState().fetchWishlist(true);

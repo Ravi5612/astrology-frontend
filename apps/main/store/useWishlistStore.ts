@@ -36,11 +36,17 @@ export interface WishlistItem {
         is_available?: boolean;
         total_likes?: number;
     };
+    puja?: {
+        id: number;
+        name: string;
+        total_likes: number;
+    };
 }
 
 interface WishlistState {
     wishlistItems: WishlistItem[];
     expertWishlistItems: WishlistItem[];
+    pujaWishlistItems: WishlistItem[];
     isLoading: boolean;
 
     // Actions
@@ -55,6 +61,10 @@ interface WishlistState {
     isExpertInWishlist: (expertId: number) => boolean;
     toggleExpertWishlist: (expertId: number, isClientAuthenticated: boolean) => Promise<void>;
 
+    // Puja Actions
+    isPujaInWishlist: (pujaId: number) => boolean;
+    togglePujaWishlist: (pujaId: number, isClientAuthenticated: boolean) => Promise<void>;
+
     // Reset
     resetWishlist: () => void;
 }
@@ -62,25 +72,28 @@ interface WishlistState {
 export const useWishlistStore = create<WishlistState>((set, get) => ({
     wishlistItems: [],
     expertWishlistItems: [],
+    pujaWishlistItems: [],
     isLoading: false,
 
     fetchWishlist: async (isClientAuthenticated: boolean) => {
         if (!isClientAuthenticated) {
-            set({ wishlistItems: [], expertWishlistItems: [] });
+            set({ wishlistItems: [], expertWishlistItems: [], pujaWishlistItems: [] });
             return;
         }
 
         set({ isLoading: true });
         try {
-            const [[pData, pErr], [eData, eErr]] = await Promise.all([
+            const [[pData], [eData], [pujaData]] = await Promise.all([
                 WishlistService.getWishlist(),
-                WishlistService.getExpertWishlist()
+                WishlistService.getExpertWishlist(),
+                WishlistService.getPujaWishlist()
             ]);
 
             const pItems = (Array.isArray(pData) ? pData : ((pData as any)?.items || (pData as any)?.data || (pData as any)?.wishlist || [])).filter(Boolean);
             const eItems = (Array.isArray(eData) ? eData : ((eData as any)?.items || (eData as any)?.data || (eData as any)?.wishlist || [])).filter(Boolean);
+            const pujaItems = (Array.isArray(pujaData) ? pujaData : ((pujaData as any)?.items || (pujaData as any)?.data || (pujaData as any)?.wishlist || [])).filter(Boolean);
 
-            set({ wishlistItems: pItems, expertWishlistItems: eItems });
+            set({ wishlistItems: pItems, expertWishlistItems: eItems, pujaWishlistItems: pujaItems });
         } catch {
             // Silent fail — wishlist is non-critical
         } finally {
@@ -173,7 +186,29 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
+    isPujaInWishlist: (pujaId: number) => {
+        const { pujaWishlistItems } = get();
+        return pujaWishlistItems.some(item => (Number((item as any).pujaId) === Number(pujaId) || Number((item as any).puja?.id) === Number(pujaId)));
+    },
+
+    togglePujaWishlist: async (pujaId: number, isClientAuthenticated: boolean) => {
+        if (!isClientAuthenticated) {
+            toast.error("Please login to like puja");
+            return;
+        }
+
+        try {
+            const [data, err] = await WishlistService.togglePujaWishlist(pujaId);
+            if (err) throw err;
+            
+            toast.success(data?.liked ? "Added to wishlist" : "Removed from wishlist");
+            await get().fetchWishlist(true);
+        } catch {
+            toast.error("Failed to update wishlist");
+        }
+    },
+
     resetWishlist: () => {
-        set({ wishlistItems: [], expertWishlistItems: [] });
+        set({ wishlistItems: [], expertWishlistItems: [], pujaWishlistItems: [] });
     }
 }));

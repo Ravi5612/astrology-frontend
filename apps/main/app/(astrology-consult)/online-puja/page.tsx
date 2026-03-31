@@ -7,21 +7,28 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import Image from "next/image";
 import Link from "next/link";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "react-toastify";
 
-const LikeButton = ({ initialLikes }: { initialLikes: number }) => {
-    const [liked, setLiked] = useState(false);
-    const [count, setCount] = useState(initialLikes || Math.floor(Math.random() * 100) + 10);
+const LikeButton = ({ pujaId, initialLikes }: { pujaId: number; initialLikes: number }) => {
+    const { isClientAuthenticated } = useAuthStore();
+    const { isPujaInWishlist } = useWishlistStore();
+    const { toggleLike } = useWishlist();
+    
+    const isLiked = isPujaInWishlist(pujaId);
 
     const handleLike = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        if (liked) {
-            setLiked(false);
-            setCount(prev => prev - 1);
-        } else {
-            setLiked(true);
-            setCount(prev => prev + 1);
+        
+        if (!isClientAuthenticated) {
+            toast.error("Please login to like puja");
+            return;
         }
+
+        toggleLike({ id: pujaId, type: "puja", isLiked });
     };
 
     return (
@@ -31,10 +38,10 @@ const LikeButton = ({ initialLikes }: { initialLikes: number }) => {
             className="flex items-center gap-1.5 transition-all active:scale-110 hover:opacity-80"
         >
             <Heart 
-                className={`w-5 h-5 transition-all ${liked ? "fill-[#f54a00] text-[#f54a00]" : "text-gray-400 group-hover:text-gray-600"}`} 
+                className={`w-5 h-5 transition-all ${isLiked ? "fill-[#f54a00] text-[#f54a00]" : "text-gray-400 group-hover:text-gray-600"}`} 
             />
-            <span className={`text-xs font-black ${liked ? "text-[#f54a00]" : "text-gray-400"}`}>
-                {count}
+            <span className={`text-xs font-black ${isLiked ? "text-[#f54a00]" : "text-gray-400"}`}>
+                {initialLikes + (isLiked ? 1 : 0)}
             </span>
         </button>
     );
@@ -48,8 +55,11 @@ const OnlinePujaPage = () => {
     const [selectedPujaName, setSelectedPujaName] = useState("All Pujas");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const { isClientAuthenticated } = useAuthStore();
+    const { fetchWishlist } = useWishlistStore();
+
     useEffect(() => {
-        const fetchPujas = async () => {
+        const fetchPujasItems = async () => {
             setLoading(true);
             const [res, error] = await http.get<ExpertPuja[]>(API_ROUTES.EXPERT.GET_ALL_PUJAS);
             
@@ -61,8 +71,12 @@ const OnlinePujaPage = () => {
             }
             setLoading(false);
         };
-        fetchPujas();
+        fetchPujasItems();
     }, []);
+
+    useEffect(() => {
+        fetchWishlist(isClientAuthenticated);
+    }, [isClientAuthenticated, fetchWishlist]);
 
     const uniquePujaNames = ["All Pujas", ...Array.from(new Set(pujas.map(p => p.name)))];
 
@@ -246,7 +260,7 @@ const OnlinePujaPage = () => {
                                             {puja.name}
                                         </h3>
                                         <div className="pt-0.5">
-                                            <LikeButton initialLikes={Math.floor(Math.random() * 50) + 12} />
+                                            <LikeButton pujaId={puja.id} initialLikes={puja.total_likes || 0} />
                                         </div>
                                     </div>
 

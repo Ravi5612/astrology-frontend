@@ -12,4 +12,7 @@ export const API_ROUTES = {
         GET_ALL_PUJAS: '/expert/pujas/all',
         GET_PUJA_BY_ID: '/expert/puja/info/:id',
     },
+    WISHLIST: {
+        PUJA_TOGGLE: '/wishlist/puja/:id/toggle',
+    },
 } as const;

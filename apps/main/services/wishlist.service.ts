@@ -24,5 +24,13 @@ export const WishlistService = {
 
     removeExpertFromWishlist: async (expertId: number): Promise<SafeFetchResponse<any>> => {
         return await http.del(`/expert-like/remove/${expertId}`);
+    },
+    
+    getPujaWishlist: async (): Promise<SafeFetchResponse<any>> => {
+        return await http.get("/wishlist/puja");
+    },
+
+    togglePujaWishlist: async (pujaId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.post(`/wishlist/puja/${pujaId}/toggle`);
     }
 };
