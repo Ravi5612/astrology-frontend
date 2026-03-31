@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { Star, User, Loader2, ChevronDown } from "lucide-react";
-import { Review, getExpertReviews } from "@/lib/reviews";
+import { Review, getReviews } from "@/lib/reviews";
 
 const PAGE_SIZE = 10;
 
@@ -29,8 +29,10 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         setLoadingMore(true);
         try {
             const nextPage = page + 1;
-            const res = await getExpertReviews(expertId, nextPage, PAGE_SIZE);
-            const newReviews: Review[] = res?.data || [];
+            const [res, error] = await getReviews(nextPage, PAGE_SIZE);
+            if (error) throw new Error(error.message);
+            
+            const newReviews: Review[] = res?.reviews || [];
             setReviews(prev => {
                 const existingIds = new Set(prev.map(r => r.id));
                 const unique = newReviews.filter(r => !existingIds.has(r.id));
@@ -43,7 +45,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         } finally {
             setLoadingMore(false);
         }
-    }, [expertId, page, loadingMore]);
+    }, [expertId, page, loadingMore, total]);
 
     if (reviews.length === 0) {
         return (
@@ -97,7 +99,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                                 </div>
                             </div>
                             <span className="text-[10px] text-gray-400">
-                                {new Date((review as any).created_at || review.createdAt || Date.now()).toLocaleDateString()}
+                                {new Date(review.created_at || Date.now()).toLocaleDateString()}
                             </span>
                         </div>
                         <p className="text-sm text-gray-600 line-clamp-2 italic">

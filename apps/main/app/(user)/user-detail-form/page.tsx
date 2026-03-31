@@ -9,7 +9,6 @@ import { useUserDetailForm } from "./useUserDetailForm";
 
 const UserDetailFormContent = () => {
   const {
-    astogerName, // Wait, it's astrologerName in the hook, let me check. Ah, I wrote astrologerName.
     astrologerName,
     rate,
     formData,

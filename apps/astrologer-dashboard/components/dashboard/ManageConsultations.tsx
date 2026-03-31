@@ -53,7 +53,7 @@ const STANDARD_SERVICES = (profile: Profile | null) => [
   },
 ];
 
-export const ManageConsultaions: React.FC = () => {
+export const ManageConsultations: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState<"add" | "edit" | null>(null);
@@ -62,8 +62,8 @@ export const ManageConsultaions: React.FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getProfile();
-        setProfile(data);
+        const [data, error] = await getProfile();
+        if (data) setProfile(data);
       } catch {
         // silent – no toast spam on dashboard
       } finally {

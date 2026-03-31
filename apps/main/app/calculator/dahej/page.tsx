@@ -43,7 +43,7 @@ const DahejCalculatorPage = () => {
                 salary={salary}
                 setSalary={setSalary}
                 loading={loading}
-                canCalculate={canCalculate}
+                canCalculate={!!canCalculate}
                 handleCalculate={(e) => {
                     e.preventDefault();
                     calculate();

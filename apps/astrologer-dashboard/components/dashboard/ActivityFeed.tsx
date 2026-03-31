@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { User as UserIcon, Clock as ClockIcon } from 'lucide-react';
 const User = UserIcon as any;
 const Clock = ClockIcon as any;
-import { getRecentSessions } from '@/lib/dashboard';
+import { getRecentAppointments as getRecentSessions } from '@/lib/dashboard';
 import { format, formatDistanceToNow } from 'date-fns';
 
 interface Activity {
@@ -19,7 +19,9 @@ export const RecentActivity: React.FC = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const sessions = await getRecentSessions();
+        const [sessions] = await getRecentSessions();
+        if (!sessions) return;
+        
         const recent5 = sessions.slice(0, 5).map(session => {
           const date = new Date(session.created_at || session.createdAt || Date.now());
           return {

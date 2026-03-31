@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { X, Star, User, Loader2 } from "lucide-react";
-import { getExpertReviews, Review } from "@/lib/reviews";
+import { getReviews, Review } from "@/lib/reviews";
 import Button from "../ui/Button";
 
 interface ReviewsModalProps {
@@ -26,9 +26,11 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
     const fetchReviews = async () => {
         setLoading(true);
         try {
-            const data = await getExpertReviews(expertId, page, 10);
-            setReviews(data.data || []);
-            setTotal(data.total || 0);
+            const [data, error] = await getReviews(page, 10);
+            if (error) throw new Error(error.message);
+            
+            setReviews(data?.reviews || []);
+            setTotal(data?.total || 0);
         } catch (error) {
             console.error("Error fetching reviews list:", error);
         } finally {
@@ -97,7 +99,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                                         </div>
                                     </div>
                                     <span className="text-sm text-gray-400">
-                                        {new Date((review as any).created_at || review.createdAt || Date.now()).toLocaleDateString(undefined, {
+                                        {new Date(review.created_at || Date.now()).toLocaleDateString(undefined, {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric'

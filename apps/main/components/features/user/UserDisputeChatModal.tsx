@@ -93,14 +93,14 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
             setLoading(true);
 
             // 1. Fetch Dispute Status for persistent banner after refresh
-            const response = await getDisputeById(disputeId);
-            const disputeData = response.data || response.dispute || response;
+            const [response, disputeErr] = await getDisputeById(disputeId);
+            const disputeData = (response as any)?.data || (response as any)?.dispute || response;
 
             console.log("📄 [UserAPI] Dispute status:", disputeData?.status);
 
             // 2. Fetch Messages
-            const data = await getDisputeMessages(disputeId);
-            let msgs: Message[] = Array.isArray(data) ? data : (data.messages || data.data || []);
+            const [data, msgsErr] = await getDisputeMessages(disputeId);
+            let msgs: Message[] = Array.isArray(data) ? data : ((data as any)?.messages || (data as any)?.data || []);
 
             if (disputeData?.status === "close_requested" || disputeData?.status === "resolved") {
                 setUserEndRequestedAt(disputeData.updatedAt || new Date().toISOString());
@@ -128,10 +128,10 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
 
         try {
             setLoading(true);
-            const msgData = await sendDisputeMessage(disputeId, { message: newMessage });
+            const [msgData, sendErr] = await sendDisputeMessage(disputeId, { message: newMessage });
 
-            if (msgData && msgData.id) {
-                setMessages((prev) => [...prev, msgData]);
+            if (msgData && (msgData as any).id) {
+                setMessages((prev) => [...prev, msgData as Message]);
             } else {
                 fetchMessages();
             }
@@ -155,17 +155,17 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
 
         try {
             setUploading(true);
-            const uploadRes = await uploadClientDocument(file);
+            const [uploadRes, uploadErr] = await uploadClientDocument(file);
 
-            if (uploadRes && uploadRes.url) {
+            if (uploadRes && (uploadRes as any).url) {
                 const attachmentType = file.type.startsWith("image") ? "image" : "document";
-                const msgData = await sendDisputeMessage(disputeId, {
-                    attachmentUrl: uploadRes.url,
+                const [msgData, sendErr] = await sendDisputeMessage(disputeId, {
+                    attachmentUrl: (uploadRes as any).url,
                     attachmentType
                 });
 
-                if (msgData && msgData.id) {
-                    setMessages((prev) => [...prev, msgData]);
+                if (msgData && (msgData as any).id) {
+                    setMessages((prev) => [...prev, msgData as Message]);
                 } else {
                     fetchMessages();
                 }

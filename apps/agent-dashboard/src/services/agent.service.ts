@@ -134,13 +134,3 @@ export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | 
     }
     return [data, null];
 };
-��────────────────────────────────────────
-export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | null]> => {
-    const [data, error] = await apiClientSafe.get(API_ROUTES.AGENTS.DASHBOARD_STATS);
-    if (error) {
-        // Return null data and any default object if needed by UI, 
-        // but here we stick to the tuple pattern.
-        return [null, error];
-    }
-    return [data, null];
-};

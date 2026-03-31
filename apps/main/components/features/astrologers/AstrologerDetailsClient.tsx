@@ -29,7 +29,7 @@ export default function AstrologerDetailsClient({
     loadingReviews,
     totalReviews,
     handleChatClick,
-  } = useAstrologerDetails(astrologer.id!);
+  } = useAstrologerDetails(String(astrologer.id!));
 
   return (
     <>

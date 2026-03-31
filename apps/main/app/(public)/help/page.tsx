@@ -17,7 +17,7 @@ const HelpSupportPage = () => {
   useEffect(() => {
     const fetchSupport = async () => {
       try {
-        const data = await getSupportSettings();
+        const [data, _error] = await getSupportSettings();
         if (data) {
           setSupportSettings(data);
         }

@@ -32,16 +32,17 @@ export const getProducts = async (): Promise<Product[]> => {
             return [];
         }
 
-        if (Array.isArray(data)) {
-            return data.map(normalizeProduct);
-        } else if (data?.data && Array.isArray(data.data)) {
-            return data.data.map(normalizeProduct);
+        const raw: any = data;
+        if (Array.isArray(raw)) {
+            return raw.map(normalizeProduct);
+        } else if (raw?.data && Array.isArray(raw.data)) {
+            return raw.data.map(normalizeProduct);
         }
 
         return [];
     } catch (error) {
         console.error("Backend not reachable:", error);
-        return []; // backend band → kuch bhi show nahi
+        return [];
     }
 };
 

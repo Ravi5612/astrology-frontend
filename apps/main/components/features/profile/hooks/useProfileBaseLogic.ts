@@ -85,15 +85,15 @@ export const useProfileBaseLogic = () => {
     const loadProfile = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await getClientProfile();
+            const [data, profileErr] = await getClientProfile();
             if (data) {
                 setProfileData({
                     ...data,
-                    full_name: data.full_name || data.user?.name || "",
-                    addresses: normalizeAddressesForUI(data.addresses),
+                    full_name: (data as any).full_name || (data as any).user?.name || "",
+                    addresses: normalizeAddressesForUI((data as any).addresses),
                 });
-                if (data.profile_picture) {
-                    setImagePreview(data.profile_picture);
+                if ((data as any).profile_picture) {
+                    setImagePreview((data as any).profile_picture);
                 }
             }
         } catch (error: any) {
@@ -119,10 +119,10 @@ export const useProfileBaseLogic = () => {
 
         try {
             setSavingSections((prev) => ({ ...prev, personal: true }));
-            const uploadResult = await uploadClientDocument(file);
+            const [uploadResult, uploadErr] = await uploadClientDocument(file);
 
-            if (uploadResult && uploadResult.url) {
-                const imageUrl = uploadResult.url;
+            if (uploadResult && (uploadResult as any).url) {
+                const imageUrl = (uploadResult as any).url;
                 setProfileData((prev) => ({ ...prev, profile_picture: imageUrl }));
                 setImagePreview(imageUrl);
                 updateClientUser({ avatar: imageUrl, profile_picture: imageUrl });
@@ -271,11 +271,15 @@ export const useProfileBaseLogic = () => {
 
             let savedData: any;
             try {
-                savedData = await updateClientProfile(payload);
+                const [updateRes, updateErr] = await updateClientProfile(payload);
+                if (updateErr) throw updateErr;
+                savedData = updateRes;
             } catch (err: any) {
                 const status = err?.status ?? err?.response?.status;
                 if (status === 404) {
-                    savedData = await createClientProfile(payload);
+                    const [createRes, createErr] = await createClientProfile(payload);
+                    if (createErr) throw createErr;
+                    savedData = createRes;
                 } else {
                     throw err;
                 }

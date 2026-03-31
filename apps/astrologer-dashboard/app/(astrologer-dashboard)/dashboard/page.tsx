@@ -4,9 +4,9 @@ import { Users, CalendarCheck, Clock, Wallet, CheckCircle, XCircle } from "lucid
 import { StatsCards } from "@repo/ui";
 import { RecentActivity } from "@/components/dashboard/ActivityFeed";
 import { UpcomingAppointments } from "@/components/dashboard/UserTable";
-import { ManageConsultaions } from "@/components/dashboard/ManageConsultaions";
+import { ManageConsultations } from "@/components/dashboard/ManageConsultations";
 // import { MyConsultations } from "@/components/MyConsulation";
-import { ConsultationRatings } from "@/components/dashboard/ConsulationRating";
+import { ConsultationRatings } from "@/components/dashboard/ConsultationRating";
 import { ReviewsList } from "@/components/dashboard/ReviewsList";
 import { ReviewsModal } from "@/components/dashboard/ReviewsModal";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -228,7 +228,7 @@ const Page = () => {
             </div>
           )}
         </div>
-        <ManageConsultaions />
+        <ManageConsultations />
       </section>
 
       {user?.profileId && (

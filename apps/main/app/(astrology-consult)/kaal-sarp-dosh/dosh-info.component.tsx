@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FaExclamationTriangle, FaLeaf, FaSkullCrossbones, FaSparkles } from "react-icons/fa";
+import { FaExclamationTriangle, FaLeaf, FaSkull } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 
 const DoshInfoSection = () => {
