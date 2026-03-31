@@ -20,10 +20,15 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
 
   useEffect(() => {
     const loadImage = async () => {
+      if (!place?.title) return;
       // Prioritize thumbnails, but fetch real exterior photo if possible
-      const images = await fetchPlaceImages(place.title);
-      if (images && images.length > 0) {
-        setRealImage(images[0] || null);
+      try {
+        const images = await fetchPlaceImages(place.title);
+        if (images && images.length > 0) {
+          setRealImage(images[0] || null);
+        }
+      } catch (err) {
+        console.error("Failed to load real image", err);
       }
     };
     loadImage();

@@ -17,23 +17,36 @@ const PlaceDetailPage = () => {
   const [place, setPlace] = useState<Place | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    const data = getPlaceBySlug(slug as string);
-    if (!data) {
-      setLoading(false);
-      return;
-    }
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [images]);
 
-    setPlace(data);
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const data = await getPlaceBySlug(slug as string);
+      
+      if (!data) {
+        setLoading(false);
+        return;
+      }
 
-    const loadImages = async () => {
+      setPlace(data);
+
       const imgs = await fetchPlaceImages(data.title);
       setImages(imgs);
       setLoading(false);
     };
 
-    loadImages();
+    if (slug) {
+      loadData();
+    }
   }, [slug]);
 
   if (loading) {
@@ -60,35 +73,45 @@ const PlaceDetailPage = () => {
     );
   }
 
-  const mainImage: string =
-    (images && images.length > 0 && images[0] ? images[0] : "") ||
-    (place.thumbnailUrl ? place.thumbnailUrl : "/images/image-not-found.png");
-
   return (
     <div className="min-h-screen bg-[#FDFCFB]">
       {/* 1. Full-Width Hero Section */}
-      <section className="relative h-[45vh] md:h-[55vh] w-full overflow-hidden">
-        <Image
-          src={mainImage}
-          alt={place.title}
-          fill
-          className="w-full h-full object-cover"
-          priority
-        />
-        {/* Black Overlay to darken image */}
-        <div className="absolute inset-0 bg-black/30"></div>
-        {/* Subtle Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#301118]/80 via-transparent to-transparent"></div>
+      <section className="relative h-[45vh] md:h-[55vh] w-full overflow-hidden bg-brown">
+        {images.length > 0 ? (
+          images.map((img, idx) => (
+            <Image
+              key={img}
+              src={img}
+              alt={`${place.title} view ${idx + 1}`}
+              fill
+              className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-1000 ease-in-out ${
+                idx === currentImageIndex ? "opacity-100" : "opacity-0"
+              }`}
+              priority={idx === 0}
+            />
+          ))
+        ) : (
+          <Image
+            src={place.thumbnailUrl ? place.thumbnailUrl : "/images/image-not-found.png"}
+            alt={place.title}
+            fill
+            className="w-full h-full object-cover"
+            priority
+          />
+        )}
+        {/* Dark Overlays for Text Legibility */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90"></div>
 
         {/* Navigation Over Hero */}
         <div className="absolute top-0 left-0 right-0 z-50 p-4 md:p-6">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <Link
               href="/famous-places"
-              className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2 no-underline"
+              className="px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2 no-underline"
             >
               <svg
-                className="w-3 h-3"
+                className="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -106,14 +129,14 @@ const PlaceDetailPage = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={toggleLang}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3 py-1 rounded-full text-[10px] font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
                 title={t.switchLangLabel}
               >
-                <span>{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+                <span className="text-sm">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
                 {t.switchLang}
               </button>
 
-              <div className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest">
+              <div className="px-4 py-2 rounded-md bg-orange/80 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-widest shadow-lg">
                 {place.category || t.card.sacredSite}
               </div>
             </div>
@@ -121,25 +144,27 @@ const PlaceDetailPage = () => {
         </div>
 
         {/* Hero Title Container */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-2 mb-2 opacity-90">
-              <div className="flex items-center text-orange">
-                <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span className="text-[11px] font-bold ml-1">
-                  {place.rating || "4.8"}
+            <div className="inline-block bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-white/10 shadow-2xl">
+              <div className="flex items-center gap-3 mb-4 opacity-100">
+                <div className="flex items-center text-orange bg-orange/10 px-3 py-1.5 rounded-full border border-orange/20">
+                  <svg className="w-4 h-4 fill-current drop-shadow-md" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="text-[13px] font-black ml-1.5 text-white">
+                    {place.rating || "4.8"}
+                  </span>
+                </div>
+                <div className="w-1.5 h-1.5 rounded-full bg-white/60"></div>
+                <span className="text-xs font-bold uppercase tracking-widest text-white/90">
+                  {t.detail.verifiedSite}
                 </span>
               </div>
-              <div className="w-1 h-1 rounded-full bg-white/40"></div>
-              <span className="text-[10px] font-bold uppercase tracking-tight">
-                {t.detail.verifiedSite}
-              </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight tracking-tight text-white drop-shadow-xl">
+                {place.title}
+              </h1>
             </div>
-            <h1 className="text-3xl md:text-5xl font-display font-bold leading-tight tracking-tight drop-shadow-sm">
-              {place.title}
-            </h1>
           </div>
         </div>
       </section>
@@ -189,8 +214,8 @@ const PlaceDetailPage = () => {
                 </span>
                 <div className="flex-1 h-px bg-slate-100"></div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {images.slice(1, 4).map((img, i) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {images.slice(1).map((img, i) => (
                   <div
                     key={i}
                     className="relative aspect-square rounded-xl overflow-hidden border border-slate-100 shadow-sm"

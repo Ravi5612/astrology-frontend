@@ -27,10 +27,14 @@ export const WishlistService = {
     },
     
     getPujaWishlist: async (): Promise<SafeFetchResponse<any>> => {
-        return await http.get("/wishlist/puja");
+        return await http.get("/puja-like");
     },
 
-    togglePujaWishlist: async (pujaId: number): Promise<SafeFetchResponse<any>> => {
-        return await http.post(`/wishlist/puja/${pujaId}/toggle`);
+    addPujaToWishlist: async (pujaId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.post("/puja-like/add", { pujaId });
+    },
+
+    removePujaFromWishlist: async (pujaId: number): Promise<SafeFetchResponse<any>> => {
+        return await http.del(`/puja-like/remove/${pujaId}`);
     }
 };

@@ -1,4 +1,5 @@
 export interface Place {
+  id?: string | number;
   title: string;
   address: string;
   rating?: number;
@@ -10,3 +11,4 @@ export interface Place {
   position?: number;
   images?: string[];
 }
+

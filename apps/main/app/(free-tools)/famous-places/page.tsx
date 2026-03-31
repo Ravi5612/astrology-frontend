@@ -16,6 +16,89 @@ const FamousPlacesPage = () => {
   const [pilgrimages, setPilgrimages] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Place[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Section-Specific Search State
+  const [templeSearchQuery, setTempleSearchQuery] = useState("");
+  const [isSearchingTemples, setIsSearchingTemples] = useState(false);
+  const [pilgrimageSearchQuery, setPilgrimageSearchQuery] = useState("");
+  const [isSearchingPilgrimages, setIsSearchingPilgrimages] = useState(false);
+
+  const handleTempleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = templeSearchQuery.trim();
+    if (!query) {
+      try {
+        setLoading(true);
+        const res = await fetchPlaces("Best Temples in Mohali and Chandigarh", "Mohali, Punjab, India");
+        setTemples(res);
+      } catch (err) {
+        console.error("Failed to reload default temples:", err);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    setIsSearchingTemples(true);
+    try {
+      const semanticQuery = query.toLowerCase().includes("temple") ? query : `${query} temples`;
+      const results = await fetchPlaces(semanticQuery, "Mohali, Punjab, India");
+      setTemples(results);
+    } catch (err) {
+      console.error("Temple search failed", err);
+    } finally {
+      setIsSearchingTemples(false);
+    }
+  };
+
+  const handlePilgrimageSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = pilgrimageSearchQuery.trim();
+    if (!query) {
+      try {
+        setLoading(true);
+        const res = await fetchPlaces("Famous Holy Pilgrimage sites in India", "India");
+        setPilgrimages(res);
+      } catch (err) {
+        console.error("Failed to reload pilgrimages:", err);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    setIsSearchingPilgrimages(true);
+    try {
+      const semanticQuery = query.toLowerCase().includes("pilgrimage") || query.toLowerCase().includes("temple") ? query : `${query} pilgrimage sites`;
+      const results = await fetchPlaces(semanticQuery, "India");
+      setPilgrimages(results);
+    } catch (err) {
+      console.error("Pilgrimage search failed", err);
+    } finally {
+      setIsSearchingPilgrimages(false);
+    }
+  };
+
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    try {
+      const semanticQuery = searchQuery.toLowerCase().includes("temple") || searchQuery.toLowerCase().includes("place") ? searchQuery : `${searchQuery} famous places`;
+      const results = await fetchPlaces(semanticQuery, "India");
+      setSearchResults(results);
+    } catch (err) {
+      console.error("Search failed", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -36,6 +119,30 @@ const FamousPlacesPage = () => {
 
     loadData();
   }, []);
+
+  const isFirstMountTemple = React.useRef(true);
+  useEffect(() => {
+    if (isFirstMountTemple.current) {
+      isFirstMountTemple.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      handleTempleSearch();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [templeSearchQuery]);
+
+  const isFirstMountPilgrim = React.useRef(true);
+  useEffect(() => {
+    if (isFirstMountPilgrim.current) {
+      isFirstMountPilgrim.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      handlePilgrimageSearch();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [pilgrimageSearchQuery]);
 
   const Skeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -93,6 +200,7 @@ const FamousPlacesPage = () => {
             {t.heroDesc}
           </p>
 
+
           <div className="flex flex-wrap justify-center gap-4">
             <div className="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-semibold flex items-center gap-2">
               <i className="fa-solid fa-om text-orange"></i> {t.verifiedSites}
@@ -105,6 +213,48 @@ const FamousPlacesPage = () => {
       </section>
 
       <main className="max-w-7xl mx-auto py-20 px-4 space-y-32">
+        {/* Search Results Section - Conditional */}
+        {searchResults.length > 0 && (
+          <section
+            id="search-results"
+            className="relative p-8 md:p-12 rounded-[40px] overflow-hidden bg-white shadow-2xl border border-orange/10 scroll-mt-20"
+          >
+            {/* Soft Glow Background */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-orange/5 rounded-full blur-[80px]"></div>
+            
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange/10 border border-orange/20 text-orange text-[10px] font-bold uppercase tracking-widest mb-4">
+                    {searchResults.length} {t.verifiedSites}
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-display font-bold text-brown mb-4">
+                    {t.searchResultsTitle} <span className="text-orange">{t.searchResultsHighlight}</span>
+                  </h2>
+                  <p className="text-slate-500 text-lg leading-relaxed font-body">
+                    {t.searchResultsDesc}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchQuery("");
+                  }}
+                  className="text-xs font-bold text-slate-400 hover:text-orange transition-colors uppercase tracking-widest flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-xmark"></i> Clear Results
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {searchResults.map((place, idx) => (
+                  <PlaceCard key={place.id || `search-${idx}`} place={place} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Mohali/Chandigarh Temples Section */}
         <section
           className="relative p-8 md:p-12 rounded-[40px] overflow-hidden bg-brown/95 shadow-2xl border border-white/5"
@@ -117,13 +267,53 @@ const FamousPlacesPage = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-                  {t.section1Title1} <span className="text-orange">{t.section1Highlight}</span>
+                  {templeSearchQuery.trim() ? (
+                    <>Search results for <span className="text-orange">"{templeSearchQuery}"</span></>
+                  ) : (
+                    <>{t.section1Title1} <span className="text-orange">{t.section1Highlight}</span></>
+                  )}
                 </h2>
                 <p className="text-white/60 text-lg leading-relaxed font-body">
                   {t.section1Desc}
                 </p>
               </div>
-              <div className="hidden md:block h-px flex-1 bg-gray-100 mx-8 mb-4"></div>
+              
+              {/* Inline Search Bar - Mohali Section */}
+              <div className="flex-1 max-w-sm md:mx-8 mb-4">
+                <form 
+                  onSubmit={handleTempleSearch}
+                  className="relative group w-full"
+                >
+                  <div className="absolute inset-0 bg-white rounded-2xl border-2 border-transparent group-focus-within:border-orange transition-all duration-300 shadow-2xl group-focus-within:shadow-orange/30"></div>
+                  <div className="relative h-14 flex items-center px-2 gap-3">
+                    <div className="w-10 h-10 flex flex-shrink-0 items-center justify-center bg-orange/10 rounded-xl ml-1 text-orange transition-transform group-focus-within:scale-105">
+                      <i className={`fa-solid ${isSearchingTemples ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder={t.section1SearchPlaceholder as string}
+                      value={templeSearchQuery}
+                      onChange={(e) => setTempleSearchQuery(e.target.value)}
+                      className="flex-1 w-full bg-transparent border-none outline-none text-brown placeholder:text-gray-400 text-sm font-bold tracking-wide"
+                    />
+                    {templeSearchQuery && (
+                      <button 
+                        type="button"
+                        onClick={async () => {
+                          setTempleSearchQuery("");
+                          setLoading(true);
+                          const res = await fetchPlaces("Best Temples in Mohali and Chandigarh", "Mohali, Punjab, India");
+                          setTemples(res);
+                          setLoading(false);
+                        }}
+                        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange hover:bg-orange/10 rounded-full transition-colors mr-1"
+                      >
+                        <i className="fa-solid fa-xmark"></i>
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
             </div>
 
             {loading ? (
@@ -131,7 +321,7 @@ const FamousPlacesPage = () => {
             ) : temples.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {temples.map((place, idx) => (
-                  <PlaceCard key={idx} place={place} />
+                  <PlaceCard key={place.id || `temple-${idx}`} place={place} />
                 ))}
               </div>
             ) : (
@@ -159,13 +349,53 @@ const FamousPlacesPage = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-                  {t.section2Title1} <span className="text-orange">{t.section2Highlight}</span>
+                  {pilgrimageSearchQuery.trim() ? (
+                    <>Search results for <span className="text-orange">"{pilgrimageSearchQuery}"</span></>
+                  ) : (
+                    <>{t.section2Title1} <span className="text-orange">{t.section2Highlight}</span></>
+                  )}
                 </h2>
                 <p className="text-white/60 text-lg leading-relaxed font-body">
                   {t.section2Desc}
                 </p>
               </div>
-              <div className="hidden md:block h-px flex-1 bg-gray-100 mx-8 mb-4"></div>
+              
+              {/* Inline Search Bar - Pilgrimage Section */}
+              <div className="flex-1 max-w-sm md:mx-8 mb-4">
+                <form 
+                  onSubmit={handlePilgrimageSearch}
+                  className="relative group w-full"
+                >
+                  <div className="absolute inset-0 bg-white rounded-2xl border-2 border-transparent group-focus-within:border-orange transition-all duration-300 shadow-2xl group-focus-within:shadow-orange/30"></div>
+                  <div className="relative h-14 flex items-center px-2 gap-3">
+                    <div className="w-10 h-10 flex flex-shrink-0 items-center justify-center bg-orange/10 rounded-xl ml-1 text-orange transition-transform group-focus-within:scale-105">
+                      <i className={`fa-solid ${isSearchingPilgrimages ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder={t.sectionSearchPlaceholder as string}
+                      value={pilgrimageSearchQuery}
+                      onChange={(e) => setPilgrimageSearchQuery(e.target.value)}
+                      className="flex-1 w-full bg-transparent border-none outline-none text-brown placeholder:text-gray-400 text-sm font-bold tracking-wide"
+                    />
+                    {pilgrimageSearchQuery && (
+                      <button 
+                        type="button"
+                        onClick={async () => {
+                          setPilgrimageSearchQuery("");
+                          setLoading(true);
+                          const res = await fetchPlaces("Famous Holy Pilgrimage sites in India", "India");
+                          setPilgrimages(res);
+                          setLoading(false);
+                        }}
+                        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange hover:bg-orange/10 rounded-full transition-colors mr-1"
+                      >
+                        <i className="fa-solid fa-xmark"></i>
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
             </div>
 
             {loading ? (
@@ -173,7 +403,7 @@ const FamousPlacesPage = () => {
             ) : pilgrimages.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {pilgrimages.map((place, idx) => (
-                  <PlaceCard key={idx} place={place} />
+                  <PlaceCard key={place.id || `pilgrim-${idx}`} place={place} />
                 ))}
               </div>
             ) : (
