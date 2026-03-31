@@ -15,4 +15,8 @@ export const API_ROUTES = {
     WISHLIST: {
         PUJA_TOGGLE: '/wishlist/puja/:id/toggle',
     },
+    PUJA: {
+        BOOKING: '/puja-appointments',
+        GET_USER_APPOINTMENTS: '/puja-appointments/user',
+    },
 } as const;

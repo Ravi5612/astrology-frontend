@@ -6,10 +6,15 @@ import {
     XCircle as LucideXCircle,
     MessageSquare as LucideMessageSquare,
     Star as LucideStar,
+    Check,
+    Ban,
+    Pause,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Appointment } from "./types";
 import Button from "../ui/Button";
+import apiClientSafe from "@/lib/apiClientSafe";
+import { toast } from "react-toastify";
 
 const Clock = LucideClock as any;
 const Video = LucideVideo as any;
@@ -21,6 +26,7 @@ const Star = LucideStar as any;
 interface AppointmentListProps {
     appointments: Appointment[];
     onReschedule: (appt: Appointment) => void;
+    onUpdate?: () => void;
 }
 
 // Countdown Timer Component
@@ -54,9 +60,112 @@ function CountdownTimer({ expiresAt }: { expiresAt: string }) {
     );
 }
 
+// Puja Actions Component
+function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => void }) {
+    const [isUpdating, setIsUpdating] = React.useState(false);
+    const [showDateForm, setShowDateForm] = React.useState(false);
+    const [newDate, setNewDate] = React.useState("");
+    const [newTime, setNewTime] = React.useState("");
+    const [message, setMessage] = React.useState("");
+
+    const updateStatus = async (status: string, extra: any = {}) => {
+        setIsUpdating(true);
+        const [res, error] = await apiClientSafe.patch(`/puja-appointments/${appt.id}/status`, {
+            status,
+            expert_message: message || undefined,
+            ...extra
+        });
+
+        if (error) {
+            toast.error(error.message || "Failed to update status");
+        } else {
+            toast.success(`Puja request ${status} successfully`);
+            if (onUpdate) onUpdate();
+        }
+        setIsUpdating(false);
+        setShowDateForm(false);
+    };
+
+    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100">Accepted ✅</span>;
+    if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100">Rejected ❌</span>;
+    if (appt.status === 'on_hold') return (
+        <div className="flex items-center gap-2">
+            <span className="text-purple-600 font-bold px-4 py-2 bg-purple-50 rounded-xl border border-purple-100">On Hold ⏸️</span>
+            <Button size="sm" onClick={() => updateStatus('accepted')}>Accept Now</Button>
+        </div>
+    );
+
+    return (
+        <div className="flex flex-col gap-3">
+            {showDateForm ? (
+                <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 space-y-3 w-full sm:w-64">
+                    <p className="text-[10px] font-black text-orange-800 uppercase">Set Date & Time</p>
+                    <input 
+                        type="date" 
+                        value={newDate} 
+                        onChange={(e) => setNewDate(e.target.value)}
+                        className="w-full text-xs p-2 border rounded-lg"
+                    />
+                    <input 
+                        type="time" 
+                        value={newTime} 
+                        onChange={(e) => setNewTime(e.target.value)}
+                        className="w-full text-xs p-2 border rounded-lg"
+                    />
+                    <textarea 
+                        placeholder="Message to user..." 
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="w-full text-xs p-2 border rounded-lg h-20"
+                    />
+                    <div className="flex gap-2">
+                        <Button size="sm" className="flex-1" onClick={() => updateStatus('accepted', { scheduled_date: newDate, scheduled_time: newTime })}>Send</Button>
+                        <Button size="sm" variant="secondary" onClick={() => setShowDateForm(false)}>Cancel</Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex flex-wrap gap-2">
+                    <Button 
+                        size="md" 
+                        className="bg-emerald-600 hover:bg-emerald-700 h-11"
+                        leftIcon={<Check className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => {
+                            if (appt.askExpertForDate) setShowDateForm(true);
+                            else updateStatus('accepted');
+                        }}
+                    >
+                        Accept
+                    </Button>
+                    <Button 
+                        size="md" 
+                        variant="secondary"
+                        className="text-purple-600 border-purple-200 h-11"
+                        leftIcon={<Pause className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => updateStatus('on_hold')}
+                    >
+                        Hold
+                    </Button>
+                    <Button 
+                        size="md" 
+                        className="bg-red-500 hover:bg-red-600 h-11"
+                        leftIcon={<Ban className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => updateStatus('rejected')}
+                    >
+                        Reject
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function AppointmentList({
     appointments,
     onReschedule,
+    onUpdate,
 }: AppointmentListProps) {
     // Utility function for classnames
     const cn = (...classes: (string | undefined | null | boolean)[]) =>
@@ -69,6 +178,9 @@ export default function AppointmentList({
         completed: "bg-gray-100 text-gray-600 border-gray-200",
         cancelled: "bg-red-100 text-red-600 border-red-200",
         expired: "bg-orange-100 text-orange-600 border-orange-200",
+        on_hold: "bg-purple-100 text-purple-600 border-purple-200",
+        rejected: "bg-red-50 text-red-400 border-red-100",
+        accepted: "bg-emerald-100 text-emerald-600 border-emerald-200",
     };
 
     return (
@@ -143,45 +255,64 @@ export default function AppointmentList({
                                         </span>
                                     )}
                                 </div>
+                                {appt.userMessage && (
+                                    <div className="mt-3 p-3 bg-orange-50 rounded-xl border border-orange-100 italic text-xs text-gray-600">
+                                        " {appt.userMessage} "
+                                    </div>
+                                )}
+                                {appt.expertMessage && (
+                                    <div className="mt-2 p-3 bg-blue-50 rounded-xl border border-blue-100 italic text-xs text-blue-600">
+                                        Expert: " {appt.expertMessage} "
+                                    </div>
+                                )}
+                                {appt.askExpertForDate && appt.status === 'pending' && (
+                                    <p className="mt-2 text-xs font-black text-orange-600 animate-pulse uppercase tracking-[0.2em]">
+                                        ⚠️ User is asking you for date & time
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         {/* Right Section: Actions */}
                         <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 lg:mt-0">
-                            {appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
-                                <>
-                                    <a
-                                        href={appt.meetingLink}
-                                        className="px-5 py-3 text-sm bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-yellow-700 shadow-sm transition-all w-full sm:w-auto"
-                                    >
-                                        {appt.service === "Chat Consultation" ? (
-                                            <>
-                                                <MessageSquare className="w-5 h-5" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Video className="w-5 h-5" /> Join Meeting
-                                            </>
-                                        )}
-                                    </a>
-                                    <Button
-                                        onClick={() => onReschedule(appt)}
-                                        variant="secondary"
-                                        size="md"
-                                        leftIcon={<RefreshCw className="w-5 h-5" />}
-                                        className="w-full sm:w-auto"
-                                    >
-                                        Reschedule
-                                    </Button>
-                                    <Button
-                                        variant="primary"
-                                        size="md"
-                                        leftIcon={<XCircle className="w-5 h-5" />}
-                                        className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full sm:w-auto"
-                                    >
-                                        Cancel
-                                    </Button>
-                                </>
+                            {appt.pujaId ? (
+                                <PujaActions appt={appt} />
+                            ) : (
+                                appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
+                                    <>
+                                        <a
+                                            href={appt.meetingLink}
+                                            className="px-5 py-3 text-sm bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-yellow-700 shadow-sm transition-all w-full sm:w-auto"
+                                        >
+                                            {appt.service === "Chat Consultation" ? (
+                                                <>
+                                                    <MessageSquare className="w-5 h-5" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Video className="w-5 h-5" /> Join Meeting
+                                                </>
+                                            )}
+                                        </a>
+                                        <Button
+                                            onClick={() => onReschedule(appt)}
+                                            variant="secondary"
+                                            size="md"
+                                            leftIcon={<RefreshCw className="w-5 h-5" />}
+                                            className="w-full sm:w-auto"
+                                        >
+                                            Reschedule
+                                        </Button>
+                                        <Button
+                                            variant="primary"
+                                            size="md"
+                                            leftIcon={<XCircle className="w-5 h-5" />}
+                                            className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full sm:w-auto"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </>
+                                )
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
                                 <div className="flex flex-col items-end gap-2">
@@ -276,40 +407,44 @@ export default function AppointmentList({
 
                         {/* Actions stacked */}
                         <div className="flex flex-col gap-2">
-                            {appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
-                                <>
-                                    <a
-                                        href={appt.meetingLink}
-                                        className="w-full px-3 py-2.5 bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 hover:bg-yellow-700 shadow-sm transition-all"
-                                    >
-                                        {appt.service === "Chat Consultation" ? (
-                                            <>
-                                                <MessageSquare className="w-4 h-4" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Video className="w-4 h-4" /> Join
-                                            </>
-                                        )}
-                                    </a>
-                                    <Button
-                                        onClick={() => onReschedule(appt)}
-                                        variant="secondary"
-                                        size="md"
-                                        leftIcon={<RefreshCw className="w-4 h-4" />}
-                                        className="w-full"
-                                    >
-                                        Reschedule
-                                    </Button>
-                                    <Button
-                                        variant="primary"
-                                        size="md"
-                                        leftIcon={<XCircle className="w-4 h-4" />}
-                                        className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full"
-                                    >
-                                        Cancel
-                                    </Button>
-                                </>
+                            {appt.pujaId ? (
+                                <PujaActions appt={appt} onUpdate={onUpdate} />
+                            ) : (
+                                appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
+                                    <>
+                                        <a
+                                            href={appt.meetingLink}
+                                            className="w-full px-3 py-2.5 bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 hover:bg-yellow-700 shadow-sm transition-all"
+                                        >
+                                            {appt.service === "Chat Consultation" ? (
+                                                <>
+                                                    <MessageSquare className="w-4 h-4" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Video className="w-4 h-4" /> Join
+                                                </>
+                                            )}
+                                        </a>
+                                        <Button
+                                            onClick={() => onReschedule(appt)}
+                                            variant="secondary"
+                                            size="md"
+                                            leftIcon={<RefreshCw className="w-4 h-4" />}
+                                            className="w-full"
+                                        >
+                                            Reschedule
+                                        </Button>
+                                        <Button
+                                            variant="primary"
+                                            size="md"
+                                            leftIcon={<XCircle className="w-4 h-4" />}
+                                            className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </>
+                                )
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
                                 <div className="space-y-2">

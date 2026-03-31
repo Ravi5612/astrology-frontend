@@ -13,6 +13,8 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "react-toastify";
 
 const PujaDetailPage = () => {
     const { id } = useParams();
@@ -20,6 +22,12 @@ const PujaDetailPage = () => {
     const [puja, setPuja] = useState<ExpertPuja | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedMode, setSelectedMode] = useState<'online' | 'home_visit_with' | 'home_visit_without' | null>(null);
+    const [scheduledDate, setScheduledDate] = useState("");
+    const [scheduledTime, setScheduledTime] = useState("");
+    const [askExpertForDate, setAskExpertForDate] = useState(false);
+    const [userMessage, setUserMessage] = useState("");
+    const [isBooking, setIsBooking] = useState(false);
+    const { isClientAuthenticated } = useAuthStore();
 
     useEffect(() => {
         const fetchPujaDetails = async () => {
@@ -58,6 +66,42 @@ const PujaDetailPage = () => {
         if (selectedMode === 'home_visit_with') return puja.home_visit_with_samagri_cost;
         if (selectedMode === 'home_visit_without') return puja.home_visit_without_samagri_cost;
         return 0;
+    };
+
+    const handleBookingRequest = async () => {
+        if (!isClientAuthenticated) {
+            toast.error("Please login to send puja request");
+            return;
+        }
+
+        if (!askExpertForDate && (!scheduledDate || !scheduledTime)) {
+            toast.error("Please select a date and time OR ask astrologer for date");
+            return;
+        }
+
+        setIsBooking(true);
+        const bookingData = {
+            puja_id: Number(id),
+            scheduled_date: askExpertForDate ? null : scheduledDate,
+            scheduled_time: askExpertForDate ? null : scheduledTime,
+            ask_expert_for_date: askExpertForDate,
+            mode: selectedMode,
+            price: getCurrentCost(),
+            user_message: userMessage
+        };
+
+        const [res, error] = await http.post(API_ROUTES.PUJA.BOOKING, bookingData);
+
+        if (error) {
+            toast.error(error.message || "Failed to send booking request");
+        } else {
+            toast.success("Puja request sent successfully! Wait for astrologer to confirm.");
+            setScheduledDate("");
+            setScheduledTime("");
+            setAskExpertForDate(false);
+            setUserMessage("");
+        }
+        setIsBooking(false);
     };
 
     return (
@@ -174,7 +218,7 @@ const PujaDetailPage = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="text-center sm:text-left flex-grow">
+                            <div className="text-center sm:text-left grow">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 border border-emerald-500/20">
                                     Top Rated Pandit
                                 </div>
@@ -301,6 +345,66 @@ const PujaDetailPage = () => {
                             )}
                         </div>
 
+                        {/* Date & Time Selection */}
+                        <div className="space-y-4 pt-4 border-t border-gray-100">
+                            <div>
+                                <h3 className="text-sm font-black text-gray-900 mb-3">Preferred Schedule</h3>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <input 
+                                        type="checkbox" 
+                                        id="askExpertForDate"
+                                        checked={askExpertForDate}
+                                        onChange={(e) => setAskExpertForDate(e.target.checked)}
+                                        className="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                                    />
+                                    <label htmlFor="askExpertForDate" className="text-xs font-bold text-gray-600 cursor-pointer">
+                                        Ask the astrologer for date and time
+                                    </label>
+                                </div>
+
+                                {!askExpertForDate && (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Date</label>
+                                            <div className="relative">
+                                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500" />
+                                                <input 
+                                                    type="date" 
+                                                    value={scheduledDate}
+                                                    onChange={(e) => setScheduledDate(e.target.value)}
+                                                    min={new Date().toISOString().split('T')[0]}
+                                                    className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Time</label>
+                                            <div className="relative">
+                                                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500" />
+                                                <input 
+                                                    type="time" 
+                                                    value={scheduledTime}
+                                                    onChange={(e) => setScheduledTime(e.target.value)}
+                                                    className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-1.5 pt-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Message for Pandit Ji (Optional)</label>
+                                <textarea 
+                                    placeholder="e.g. Special ritual requests or family details..."
+                                    value={userMessage}
+                                    onChange={(e) => setUserMessage(e.target.value)}
+                                    rows={3}
+                                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all resize-none"
+                                />
+                            </div>
+                        </div>
+
                         {/* Price Display */}
                         <div className="pt-6 border-t border-gray-100">
                             <div className="flex items-center justify-between mb-6">
@@ -320,9 +424,19 @@ const PujaDetailPage = () => {
                                 </div>
                             </div>
                             
-                            <button className="w-full py-5 bg-[#301118] text-white font-black rounded-3xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-900/10 active:scale-[0.98] flex items-center justify-center gap-3 group/book">
-                                Proceed to Booking
-                                <Sparkles className="w-5 h-5 group-hover/book:animate-spin-slow" />
+                            <button 
+                                onClick={handleBookingRequest}
+                                disabled={isBooking}
+                                className="w-full py-5 bg-[#301118] text-white font-black rounded-3xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-900/10 active:scale-[0.98] flex items-center justify-center gap-3 group/book disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isBooking ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    <>
+                                        Send request to astrologer for pooja
+                                        <Sparkles className="w-5 h-5 group-hover/book:animate-spin-slow" />
+                                    </>
+                                )}
                             </button>
                             
                             <p className="mt-4 text-[10px] text-center text-gray-400 font-bold leading-relaxed">

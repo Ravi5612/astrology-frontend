@@ -50,6 +50,7 @@ export default function AppointmentsPage() {
         chatCompletedRes,
         callPendingRes,
         callCompletedRes,
+        pujaRes,
         reviewsRes,
         statsRes
       ] = await Promise.all([
@@ -57,6 +58,7 @@ export default function AppointmentsPage() {
         apiClientSafe.get<any>("/chat/sessions/appointments/completed"),
         apiClientSafe.get<any>("/call/sessions/appointments/pending"),
         apiClientSafe.get<any>("/call/sessions/appointments/completed"),
+        apiClientSafe.get<any>("/puja-appointments/expert"),
         expertUser?.profileId ? getReviews(1, 50) : Promise.resolve([null, null] as [any, any]),
         getDashboardStats('today')
       ]);
@@ -72,8 +74,9 @@ export default function AppointmentsPage() {
       const chatCompleted = getSessions(chatCompletedRes).map((s: any) => ({ ...s, _source: 'chat' }));
       const callPending = getSessions(callPendingRes).map((s: any) => ({ ...s, _source: 'call' }));
       const callCompleted = getSessions(callCompletedRes).map((s: any) => ({ ...s, _source: 'call' }));
+      const pujaSessions = getSessions(pujaRes).map((s: any) => ({ ...s, _source: 'puja' }));
 
-      const allSessions: any[] = [...chatPending, ...chatCompleted, ...callPending, ...callCompleted];
+      const allSessions: any[] = [...chatPending, ...chatCompleted, ...callPending, ...callCompleted, ...pujaSessions];
       
       const [reviewsData, reviewsError] = reviewsRes;
       const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
@@ -129,24 +132,25 @@ export default function AppointmentsPage() {
         }
 
         const isCall = source === 'call';
+        const isPuja = source === 'puja';
         const callTypeLabel = session.type === 'video' ? 'Video' : 'Voice';
 
         return {
           id: session.id,
           name: session.user?.name || "Client",
           avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
-          service: isCall ? `${callTypeLabel} Call` : "Chat Consultation",
-          date: session.created_at || session.createdAt || new Date().toISOString(),
+          service: isPuja ? (session.puja?.name || "Puja Service") : (isCall ? `${callTypeLabel} Call` : "Chat Consultation"),
+          date: isPuja ? (session.scheduled_date || session.created_at || new Date().toISOString()) : (session.created_at || session.createdAt || new Date().toISOString()),
           status: currentStatus,
           type: "new",
           reminder: false,
-          meetingLink: isCall ? (session.type === 'video' ? `/video/${session.id}` : `/call/${session.id}`) : `/chat/${session.id}`,
-          sessionId: session.id,
+          meetingLink: isPuja ? `/puja-session/${session.id}` : (isCall ? (session.type === 'video' ? `/video/${session.id}` : `/call/${session.id}`) : `/chat/${session.id}`),
+          sessionId: !isPuja ? session.id : undefined,
           clientId: session.client_id || session.userId || session.clientId,
           expiresAt: session.expires_at || session.expiresAt,
           isFree: !!(session.is_free ?? session.isFree),
           freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
-          durationMins: (() => {
+          durationMins: isPuja ? 0 : (() => {
             let d = session.duration_mins ?? session.durationMins ?? session.duration ?? session.duration_seconds / 60 ?? 0;
             if (d === 0 && (currentStatus === 'completed' || currentStatus === 'expired')) {
               const start = (session.activated_at || session.activatedAt || session.start_time) ? new Date(session.activated_at || session.activatedAt || session.start_time).getTime() : 0;
@@ -160,6 +164,11 @@ export default function AppointmentsPage() {
             comment: sessionReview.comment || ""
           } : undefined,
           terminatedBy: session.terminated_by || session.terminatedBy,
+          pujaId: isPuja ? session.puja_id : undefined,
+          askExpertForDate: isPuja ? session.ask_expert_for_date : undefined,
+          userMessage: isPuja ? session.user_message : undefined,
+          expertMessage: isPuja ? session.expert_message : undefined,
+          scheduledTime: isPuja ? session.scheduled_time : undefined,
         };
       }));
 
@@ -440,6 +449,7 @@ export default function AppointmentsPage() {
         <AppointmentList
           appointments={filteredAppointments}
           onReschedule={openRescheduleModal}
+          onUpdate={fetchAllSessions}
         />
       ) : (
         <AppointmentCalendar appointments={filteredAppointments} />
