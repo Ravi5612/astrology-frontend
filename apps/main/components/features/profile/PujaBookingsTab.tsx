@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { format } from "date-fns";
 import { useLanguageStore } from "@/store/languageStore";
 
 interface PujaBookingsTabProps {
@@ -8,6 +7,27 @@ interface PujaBookingsTabProps {
   bookings: any[];
   onUpdateStatus: (id: number, status: string, extra?: any) => Promise<boolean>;
 }
+
+// Simple native date formatter to replace date-fns
+const formatDate = (dateString: string, includeTime = false) => {
+  if (!dateString) return "TBD";
+  try {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    };
+    if (includeTime) {
+        options.hour = '2-digit';
+        options.minute = '2-digit';
+        options.hour12 = true;
+    }
+    return new Intl.NumberFormat('en-IN').format ? date.toLocaleDateString("en-IN", options) : date.toDateString();
+  } catch (e) {
+    return dateString;
+  }
+};
 
 const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   loading,
@@ -124,7 +144,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     <div>
                       <span className="block text-[8px] font-black text-gray-400 uppercase tracking-widest">Scheduled For</span>
                       <span className="text-sm font-bold text-gray-700">
-                        {booking.scheduled_date ? format(new Date(booking.scheduled_date), "dd MMM yyyy") : "TBD"}
+                        {formatDate(booking.scheduled_date)}
                       </span>
                     </div>
                   </div>
@@ -160,7 +180,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
             <div className="mt-8 pt-8 border-t border-gray-50 flex flex-wrap gap-4 items-center justify-between">
               <div className="text-xs text-gray-400 flex items-center gap-2">
                 <i className="fa-solid fa-circle-info"></i>
-                Request sent on {format(new Date(booking.created_at), "dd MMM, hh:mm a")}
+                Request sent on {formatDate(booking.created_at, true)}
               </div>
 
               <div className="flex flex-wrap gap-3 w-full sm:w-auto">
