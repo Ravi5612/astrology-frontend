@@ -39,5 +39,6 @@ yarn-error.log*
 *.pem
 
 # Agents
-.agents/skills/vercel-react-best-practices/SKILL.md
+.agents/
+skills-lock.json
 
