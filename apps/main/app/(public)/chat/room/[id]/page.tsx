@@ -8,7 +8,7 @@ import { uploadClientDocument } from "@/libs/api-profile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 
-import { ChatMessage, ChatSession, Astrologer } from "@/lib/types";
+import { ChatMessage, ChatSession, Expert } from "@/lib/types";
 
 import WaitingCountdown from "./waiting-countdown.component";
 import Header from "./header.component";
@@ -32,7 +32,7 @@ function ChatRoomContent() {
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [sessionStatus, setSessionStatus] = useState<'pending' | 'active' | 'completed'>('pending');
-    const [expertData, setExpertData] = useState<Astrologer | null>(null);
+    const [expertData, setExpertData] = useState<Expert | null>(null);
     const [expiresAt, setExpiresAt] = useState<string | null>(null);
     const [isFree, setIsFree] = useState<boolean>(false);
     const [freeMinutes, setFreeMinutes] = useState<number>(0);

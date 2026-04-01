@@ -37,7 +37,7 @@ export const headerTranslations = {
 
 
         // Buttons
-        askAstrologer: "Ask Astrologer",
+        askExpert: "Ask Expert",
 
         // Services Carousel
         serviceMatchmaking: "Matchmaking",
@@ -84,7 +84,7 @@ export const headerTranslations = {
         dropOnlinePuja: "ऑनलाइन पूजा",
 
         // Buttons
-        askAstrologer: "ज्योतिषी से पूछें",
+        askExpert: "ज्योतिषी से पूछें",
 
         // Services Carousel
         serviceMatchmaking: "कुंडली मिलान",

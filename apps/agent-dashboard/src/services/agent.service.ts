@@ -18,17 +18,17 @@ export const updateAgentProfile = async (formData: FormData): Promise<[any | nul
 export interface ListingParams {
     page?: number;
     limit?: number;
-    type?: string; // 'astrologer' | 'mandir' | 'puja_shop'
+    type?: string; // 'expert' | 'mandir' | 'puja_shop'
     search?: string;
 }
 
 export interface CreateListingPayload {
-    type: "mandir" | "astrologer" | "puja_shop";
+    type: "mandir" | "expert" | "puja_shop";
     name: string;
     location?: string;
     phone?: string;
     deity?: string;          // mandir
-    specialization?: string; // astrologer
+    specialization?: string; // expert
     items?: string;          // puja_shop
 }
 
@@ -61,7 +61,7 @@ export interface ReferredUser {
     email: string | null;
     phone: string | null;
     status: string;
-    type: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
+    type: 'expert' | 'client' | 'mandir' | 'puja_shop';
     avatar: string | null;
     createdAt: string;
     location?: string | null;
@@ -81,7 +81,7 @@ export interface ReferredUsersResponse {
 }
 
 export interface ReferredUsersParams {
-    type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop';
+    type?: 'expert' | 'client' | 'mandir' | 'puja_shop';
     search?: string;
     page?: number;
     limit?: number;

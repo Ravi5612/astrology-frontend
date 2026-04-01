@@ -1,4 +1,4 @@
-import { Astrologer, ExpertProfile } from "./astrologer";
+import { Expert, ExpertProfile } from "./expert";
 
 export type CallStatus = 'ringing' | 'connecting' | 'connected' | 'ended';
 

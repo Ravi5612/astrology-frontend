@@ -57,10 +57,10 @@ const WhyChooseUs = () => {
               />
             </div>
 
-            {/* 2. Middle: Astrologer Mascot */}
+            {/* 2. Middle: Expert Mascot */}
             <Image
               src="/images/astro.png"
-              alt="astrologer mascot"
+              alt="expert mascot"
               width={320}
               height={320}
               style={{ height: "auto" }}

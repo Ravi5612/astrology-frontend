@@ -57,11 +57,11 @@ const VerifyEmailContent: React.FC = () => {
                                 // Role-based Redirection
                                 const roles = result.user?.roles || [];
                                 const isExpert = roles.some((r: unknown) => 
-                                    ["expert", "astrologer", "Expert", "Astrologer", "EXPERT"].includes(String(r))
+                                    ["expert", "expert", "Expert", "Expert", "EXPERT"].includes(String(r))
                                 );
 
                                 if (isExpert) {
-                                    const dashboardUrl = process.env.NEXT_PUBLIC_ASTROLOGER_DASHBOARD_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3003' : window.location.origin.replace('www.', 'astrologer.'));
+                                    const dashboardUrl = process.env.NEXT_PUBLIC_EXPERT_DASHBOARD_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3003' : window.location.origin.replace('www.', 'expert.'));
                                     window.location.href = `${dashboardUrl}/dashboard`;
                                 } else {
                                     router.push('/profile'); 

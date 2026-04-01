@@ -81,7 +81,7 @@ const HeroSection = () => {
 
                     {/* wfc — width: fit-content, padding: 15px 23px, letter-spacing: 1px */}
                     <Link
-                      href="/our-astrologers"
+                      href="/our-experts"
                       className="mt-4 mb-4 inline-block no-underline bg-orange text-white font-bold rounded-full hover:opacity-90 active:scale-95 transition-all"
                       style={{
                         width: "fit-content",
@@ -99,24 +99,24 @@ const HeroSection = () => {
               <div className="w-full lg:w-[42%] overflow-visible">
                 {/* right-illus */}
                 <div className="relative h-[400px] overflow-visible">
-                  {/* Astrologer-img-h wrapper — positioned div for width/left, spin on the image */}
+                  {/* Expert-img-h wrapper — positioned div for width/left, spin on the image */}
                   <div
                     className="absolute"
                     style={{ width: "90%", left: "10%", top: "-160px", bottom: 0, zIndex: 5 }}
                   >
                     <Image
-                      src="/images/Astrologer-h.png"
-                      alt="Astrologer background"
+                      src="/images/Expert-h.png"
+                      alt="Expert background"
                       fill
                       sizes="(max-width: 1024px) 100vw, 42vw"
                       className="animate-[spin_30s_linear_infinite] object-contain scale-[1.0]"
                       style={{ transformOrigin: "center center" }}
                     />
                   </div>
-                  {/* Astrologer-img → z-index 6 */}
+                  {/* Expert-img → z-index 6 */}
                   <Image
-                    src="/images/Astrologer.png"
-                    alt="Astrologer"
+                    src="/images/Expert.png"
+                    alt="Expert"
                     fill
                     sizes="(max-width: 1024px) 100vw, 42vw"
                     priority

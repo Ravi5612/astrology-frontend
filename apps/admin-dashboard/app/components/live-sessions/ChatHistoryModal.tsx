@@ -85,7 +85,7 @@ export function ChatHistoryModal({ isOpen, onClose, messages: initialMessages, s
     }, [messages]);
 
     const handleTerminate = () => {
-        if (!window.confirm("ARE YOU ABSOLUTELY SURE? This will immediately stop the chat for both user and astrologer.")) return;
+        if (!window.confirm("ARE YOU ABSOLUTELY SURE? This will immediately stop the chat for both user and expert.")) return;
 
         setIsTerminating(true);
         const adminId = getAdminId();
@@ -120,7 +120,7 @@ export function ChatHistoryModal({ isOpen, onClose, messages: initialMessages, s
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 leading-tight">Live Chat Monitor</h2>
                             <p className="text-sm text-gray-500 font-medium">
-                                Session #{session?.id} • <span className="text-blue-600 font-semibold">{session?.user?.name}</span> & <span className="text-purple-600 font-semibold">{session?.astrologer?.name}</span>
+                                Session #{session?.id} • <span className="text-blue-600 font-semibold">{session?.user?.name}</span> & <span className="text-purple-600 font-semibold">{session?.expert?.name}</span>
                             </p>
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export function ChatHistoryModal({ isOpen, onClose, messages: initialMessages, s
                                             }`}>
                                             {!isAdmin && (
                                                 <p className="text-[10px] font-black mb-1 opacity-60 uppercase tracking-widest">
-                                                    {isUser ? session?.user?.name : session?.astrologer?.name}
+                                                    {isUser ? session?.user?.name : session?.expert?.name}
                                                 </p>
                                             )}
                                             {isAdmin && (

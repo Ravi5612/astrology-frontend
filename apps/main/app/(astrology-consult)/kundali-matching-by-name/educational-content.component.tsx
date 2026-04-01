@@ -61,7 +61,7 @@ const EducationalContent = () => {
                      <div className="flex -space-x-3">
                         {[1,2,3,4].map(i => (
                           <div key={i} className="w-10 h-10 rounded-full bg-gray-800 border-2 border-gray-900 overflow-hidden">
-                             <img src="/images/dummy-astrologer.jpg" alt="User" />
+                             <img src="/images/dummy-expert.jpg" alt="User" />
                           </div>
                         ))}
                      </div>

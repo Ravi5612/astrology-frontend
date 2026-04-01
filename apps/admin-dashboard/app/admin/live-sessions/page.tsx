@@ -64,7 +64,7 @@ export default function LiveSessionsPage() {
           avatar: s.user?.avatar || s.userAvatar || s.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.user?.id || s.user_id || s.id}`,
           rating: s.user?.rating || 4.5
         },
-        astrologer: {
+        expert: {
           id: (s.expert?.id || s.expert_id || "0").toString(),
           name: s.expert?.user?.name || s.expert?.user?.full_name || s.expertName || s.expert_name || "Unknown Expert",
           avatar: s.expert?.user?.avatar || s.expertAvatar || s.expert_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.expert?.id || s.expert_id || s.id}`,

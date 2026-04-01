@@ -115,7 +115,7 @@ const ExpertSection: React.FC = () => {
         </div>
         <div className="text-center mt-4">
           <Link
-            href="/our-astrologers"
+            href="/our-experts"
             className="btn px-5 py-2 rounded-pill fw-bold"
             style={{
               background: "linear-gradient(135deg, #f97316, #ea580c)",

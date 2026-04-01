@@ -37,11 +37,11 @@ export default function ReportIssueModal({
     ];
 
     const consultationCategories = [
-        "Astrologer did not join",
+        "Expert did not join",
         "Poor Audio/Video Quality",
         "Incomplete Session",
         "Incorrect Predictions",
-        "Rude behavior by Astrologer",
+        "Rude behavior by Expert",
         "Payment Issue",
         "Technical Problem",
         "Refund Request",

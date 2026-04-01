@@ -87,10 +87,10 @@ export function LiveSessionCard({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <ParticipantCard user={session.user} type="user" />
           <ParticipantCard
-            user={session.astrologer}
-            type="astrologer"
-            experience={session.astrologer.experience}
-            specialty={session.astrologer.specialty}
+            user={session.expert}
+            type="expert"
+            experience={session.expert.experience}
+            specialty={session.expert.specialty}
           />
         </div>
 

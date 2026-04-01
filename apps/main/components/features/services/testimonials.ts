@@ -11,7 +11,7 @@ export const ClientsTestimoinialData: TestimoinialData[] = [
         id: 1,
         name: "Rahul Verma",
         review:
-            "Amazing experience! The astrologer was very accurate and gave me practical solutions. Highly recommended.",
+            "Amazing experience! The expert was very accurate and gave me practical solutions. Highly recommended.",
         image: "/images/client1.jpg",
         rating: 5,
     },

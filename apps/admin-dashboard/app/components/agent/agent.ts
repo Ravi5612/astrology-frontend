@@ -3,7 +3,7 @@
 // ============================================================
 
 export type AgentStatus = "active" | "inactive" | "suspended";
-export type ListingType = "astrologer" | "mandir" | "puja_shop";
+export type ListingType = "expert" | "mandir" | "puja_shop";
 export type CommissionStatus = "pending" | "paid" | "cancelled";
 
 // ── Core Agent ───────────────────────────────────────────────
@@ -29,7 +29,7 @@ export interface Agent {
     upi_id?: string;
 
     // Commission rates (%)
-    commission_astrologer?: number;   // % on each astrologer consultation
+    commission_expert?: number;   // % on each expert consultation
     commission_mandir?: number;       // % on each mandir booking
     commission_puja_shop?: number;    // % on each puja shop sale
     commission_rate?: number;         // Flat rate from backend
@@ -57,7 +57,7 @@ export interface AgentListing {
     agent_code?: string;     // Standardized agent code
     agent_name?: string;     // Standardized agent name
     deity?: string;          // mandir
-    specialization?: string; // astrologer
+    specialization?: string; // expert
     items?: string;          // puja_shop
     created_at: string;
 }

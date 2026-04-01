@@ -56,7 +56,7 @@ const TopExpertsSection: React.FC = () => {
                             <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center hover:border-orange/20 hover:shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300">
                                 <div className="relative inline-block mb-3">
                                     <Image
-                                        src={expert.user?.avatar || "/images/dummy-astrologer.jpg"}
+                                        src={expert.user?.avatar || "/images/dummy-expert.jpg"}
                                         alt={expert.user?.name || "Expert"}
                                         height={80}
                                         width={80}

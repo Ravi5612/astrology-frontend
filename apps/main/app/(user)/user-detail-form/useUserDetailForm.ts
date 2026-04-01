@@ -8,7 +8,7 @@ export const useUserDetailForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const astrologerName = searchParams.get("name") || "Astrologer";
+  const expertName = searchParams.get("name") || "Expert";
   const rate = searchParams.get("price") || "20";
 
   const [formData, setFormData] = useState<UserDetails>({
@@ -59,7 +59,7 @@ export const useUserDetailForm = () => {
     if (validateForm()) {
       sessionStorage.setItem("userDetails", JSON.stringify(formData));
       const params = new URLSearchParams({
-        name: astrologerName,
+        name: expertName,
         price: rate,
         date: bookingDate,
         time: bookingTime,
@@ -72,7 +72,7 @@ export const useUserDetailForm = () => {
   };
 
   return {
-    astrologerName, rate, formData, setFormData,
+    expertName, rate, formData, setFormData,
     bookingDate, setBookingDate, bookingTime, setBookingTime,
     duration, setDuration, totalAmount, errors, setErrors,
     handleChange, handleSubmit

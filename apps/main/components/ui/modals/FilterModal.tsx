@@ -77,7 +77,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, onApply }) =
               <i className="fa-solid fa-filter"></i>
             </div>
             <div>
-              <h2 className="text-xl font-black text-gray-900 m-0">Filter Astrologers</h2>
+              <h2 className="text-xl font-black text-gray-900 m-0">Filter Experts</h2>
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">Refine your search</p>
             </div>
           </div>

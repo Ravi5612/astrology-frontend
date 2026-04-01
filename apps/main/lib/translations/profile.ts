@@ -58,9 +58,9 @@ export const profileTranslations = {
             },
             occupation: "Occupation",
             occupationPlaceholder: "e.g. Software Engineer, Business Owner",
-            aboutMe: "About Me / Notes for Astrologer",
+            aboutMe: "About Me / Notes for Expert",
             aboutMePlaceholder: "Share your spiritual journey or specific problems you're seeking guidance for...",
-            aboutMeFallback: "Share details about yourself to help astrologers provide better guidance.",
+            aboutMeFallback: "Share details about yourself to help experts provide better guidance.",
             notSet: "Not set"
         },
         addressDetails: {

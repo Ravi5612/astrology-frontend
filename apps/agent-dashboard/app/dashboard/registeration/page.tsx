@@ -27,13 +27,13 @@ interface TabConfig {
 const TABS: TabConfig[] = [
     {
         id: "expert",
-        label: "Astrologer",
+        label: "Expert",
         emoji: "⭐",
         icon: Star,
         activeBg: "bg-yellow-700",
         activeText: "text-white",
         borderColor: "border-yellow-700",
-        infoText: "A temporary password will be generated. Share it with the astrologer — it won't be shown again.",
+        infoText: "A temporary password will be generated. Share it with the expert — it won't be shown again.",
     },
     {
         id: "client",
@@ -226,7 +226,7 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
             if (res.emailSent === false) {
                 toast.warning(`Registered, but credentials email failed: ${res.emailError || "Unknown error"}. Share the password manually.`);
             } else {
-                toast.success(`${userType === "expert" ? "Astrologer" : "Client"} registered successfully! ✅`);
+                toast.success(`${userType === "expert" ? "Expert" : "Client"} registered successfully! ✅`);
             }
         }
         setSubmitting(false);
@@ -255,12 +255,12 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ A temporary password will be generated after registration. Share it with the {userType === "expert" ? "astrologer" : "client"} —{" "}
+                    ℹ️ A temporary password will be generated after registration. Share it with the {userType === "expert" ? "expert" : "client"} —{" "}
                     <strong>it won&apos;t be shown again.</strong>
                 </div>
 
                 <Button variant="primary" type="submit" icon={UserPlus} disabled={submitting} fullWidth>
-                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Astrologer" : "Client"}`}
+                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : "Client"}`}
                 </Button>
             </form>
 
@@ -484,7 +484,7 @@ export default function RegisterUserPage() {
                 <div className={`${currentTab.activeBg} px-6 py-3 flex items-center gap-2`}>
                     <span className="text-lg">{currentTab.emoji}</span>
                     <p className={`text-sm font-black ${currentTab.activeText}`}>
-                        {activeTab === "expert" && "Register New Astrologer"}
+                        {activeTab === "expert" && "Register New Expert"}
                         {activeTab === "client" && "Register New Client"}
                         {activeTab === "mandir" && "Add New Mandir Listing"}
                         {activeTab === "puja_shop" && "Add New Puja Shop Listing"}

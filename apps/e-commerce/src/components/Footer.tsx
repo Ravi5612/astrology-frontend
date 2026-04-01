@@ -14,7 +14,7 @@ const Footer = () => {
             />
             <p className="text-gray-300 text-sm leading-relaxed mb-6 font-outfit">
               Astrology in Bharat is India’s trusted astrology platform offering
-              accurate guidance through verified astrologers using authentic
+              accurate guidance through verified experts using authentic
               Indian astrology systems.
             </p>
             <div className="flex gap-4">
@@ -82,12 +82,12 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-gray-300 font-outfit">
               <li>
                 <a href="#" className="hover:text-theme-orange transition">
-                  Chat with Astrologer
+                  Chat with Expert
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-theme-orange transition">
-                  Talk to Astrologer
+                  Talk to Expert
                 </a>
               </li>
               <li>
@@ -120,12 +120,12 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-gray-300 font-outfit">
               <li>
                 <a href="#" className="hover:text-theme-orange transition">
-                  Astrologer Login
+                  Expert Login
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-theme-orange transition">
-                  Astrologer Registration
+                  Expert Registration
                 </a>
               </li>
               <li>

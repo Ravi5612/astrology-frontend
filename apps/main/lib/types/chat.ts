@@ -1,4 +1,4 @@
-import { Astrologer } from "./astrologer";
+import { Expert } from "./expert";
 
 export type ChatStatus = 'pending' | 'active' | 'completed' | 'terminated' | 'expired';
 
@@ -27,7 +27,7 @@ export interface ChatSession {
     remainingSeconds?: number;
     elapsedSeconds?: number;
     expiresAt?: string;
-    expert?: Astrologer;
+    expert?: Expert;
     totalCost?: number;
     durationMins?: number;
     pricePerMinute?: number;

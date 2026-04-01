@@ -105,7 +105,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-full border-4 border-orange-50 overflow-hidden bg-orange-50 shadow-inner">
                     <Image
-                      src={booking.expert?.user?.profile_picture || booking.expert?.user?.avatar || "/images/dummy-astrologer.jpg"}
+                      src={booking.expert?.user?.profile_picture || booking.expert?.user?.avatar || "/images/dummy-expert.jpg"}
                       width={96}
                       height={96}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"

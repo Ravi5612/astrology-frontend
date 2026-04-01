@@ -10,7 +10,7 @@ const StatsBar: React.FC = () => {
 
   const stats = [
     { value: "1,00,000+", label: t.statUsers },
-    { value: "500+", label: t.statAstrologers },
+    { value: "500+", label: t.statExperts },
     { value: "10+", label: t.statServices },
     { value: "4.8★", label: t.statRating },
   ];

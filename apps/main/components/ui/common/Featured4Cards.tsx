@@ -12,14 +12,14 @@ const Featured4Cards = () => {
 
   const cards = [
     {
-      href: "/our-astrologers",
+      href: "/our-experts",
       icon: "/images/icon1.png",
       alt: "Live Chat",
       title: t.featuredCards.liveChat.title,
       desc: t.featuredCards.liveChat.desc,
     },
     {
-      href: "/our-astrologers",
+      href: "/our-experts",
       icon: "/images/icon2.png",
       alt: "Speak",
       title: t.featuredCards.speak.title,

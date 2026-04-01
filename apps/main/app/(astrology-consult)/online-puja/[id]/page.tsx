@@ -75,7 +75,7 @@ const PujaDetailPage = () => {
         }
 
         if (!askExpertForDate && (!scheduledDate || !scheduledTime)) {
-            toast.error("Please select a date and time OR ask astrologer for date");
+            toast.error("Please select a date and time OR ask expert for date");
             return;
         }
 
@@ -95,7 +95,7 @@ const PujaDetailPage = () => {
         if (error) {
             toast.error(error.message || "Failed to send booking request");
         } else {
-            toast.success("Puja request sent successfully! Wait for astrologer to confirm.");
+            toast.success("Puja request sent successfully! Wait for expert to confirm.");
             setScheduledDate("");
             setScheduledTime("");
             setAskExpertForDate(false);
@@ -232,7 +232,7 @@ const PujaDetailPage = () => {
                                     <span className="text-white/60 font-medium">10+ Years Exp.</span>
                                 </div>
                                 <Link 
-                                    href={`/astrologer/${puja.expert_id}`}
+                                    href={`/expert/${puja.expert_id}`}
                                     className="inline-flex items-center gap-2 mt-6 text-sm font-black text-orange-400 hover:text-orange-300 transition-colors group/link"
                                 >
                                     View Full Profile
@@ -358,7 +358,7 @@ const PujaDetailPage = () => {
                                         className="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                     />
                                     <label htmlFor="askExpertForDate" className="text-xs font-bold text-gray-600 cursor-pointer">
-                                        Ask the astrologer for date and time
+                                        Ask the expert for date and time
                                     </label>
                                 </div>
 
@@ -433,7 +433,7 @@ const PujaDetailPage = () => {
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : (
                                     <>
-                                        Send request to astrologer for pooja
+                                        Send request to expert for pooja
                                         <Sparkles className="w-5 h-5 group-hover/book:animate-spin-slow" />
                                     </>
                                 )}

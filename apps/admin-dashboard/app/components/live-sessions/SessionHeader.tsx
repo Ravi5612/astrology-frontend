@@ -17,7 +17,7 @@ export function SessionHeader({ onRefresh, isRefreshing }: SessionHeaderProps) {
           Live Sessions Monitor
         </h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">
-          Monitor and manage ongoing user-astrologer sessions in real-time
+          Monitor and manage ongoing user-expert sessions in real-time
         </p>
       </div>
 

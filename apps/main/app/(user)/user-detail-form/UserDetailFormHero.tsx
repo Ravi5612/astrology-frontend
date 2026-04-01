@@ -3,7 +3,7 @@
 import React from "react";
 import { UserDetailFormHeroProps } from "@/lib/types";
 
-const UserDetailFormHero: React.FC<UserDetailFormHeroProps> = ({ astrologerName }) => {
+const UserDetailFormHero: React.FC<UserDetailFormHeroProps> = ({ expertName }) => {
   return (
     <section className="banner-part">
       <div className="overlay-hero py-16 md:py-24">
@@ -13,7 +13,7 @@ const UserDetailFormHero: React.FC<UserDetailFormHeroProps> = ({ astrologerName 
               Book Your <span className="text-[#daa23e]">Consultation</span>
             </h1>
             <p className="text-white/90 text-lg md:text-xl max-w-2xl">
-              Share your details and schedule a session with {astrologerName}
+              Share your details and schedule a session with {expertName}
             </p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { ExpertProfile } from "./astrologer";
+import { ExpertProfile } from "./expert";
 
 export interface PujaSamagriItem {
     name: string;

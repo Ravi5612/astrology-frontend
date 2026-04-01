@@ -49,13 +49,13 @@ export default function ChartSection({ activeTab, setActiveTab }: ChartSectionPr
 
   const userGrowthData = useMemo(
     () => [
-      { month: "Jan", users: 1200, astrologers: 45 },
-      { month: "Feb", users: 1450, astrologers: 52 },
-      { month: "Mar", users: 1680, astrologers: 58 },
-      { month: "Apr", users: 1920, astrologers: 65 },
-      { month: "May", users: 2350, astrologers: 71 },
-      { month: "Jun", users: 2780, astrologers: 78 },
-      { month: "Jul", users: 3200, astrologers: 85 },
+      { month: "Jan", users: 1200, experts: 45 },
+      { month: "Feb", users: 1450, experts: 52 },
+      { month: "Mar", users: 1680, experts: 58 },
+      { month: "Apr", users: 1920, experts: 65 },
+      { month: "May", users: 2350, experts: 71 },
+      { month: "Jun", users: 2780, experts: 78 },
+      { month: "Jul", users: 3200, experts: 85 },
     ],
     []
   );
@@ -181,9 +181,9 @@ export default function ChartSection({ activeTab, setActiveTab }: ChartSectionPr
 
         {/* User Growth Chart */}
         {activeTab === "growth" && (
-          <div role="img" aria-label="Line chart showing user and astrologer growth">
+          <div role="img" aria-label="Line chart showing user and expert growth">
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700">User & Astrologer Growth</h3>
+              <h3 className="text-sm font-medium text-gray-700">User & Expert Growth</h3>
               <p className="text-xs text-gray-600 mt-1">Platform expansion over time</p>
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -210,12 +210,12 @@ export default function ChartSection({ activeTab, setActiveTab }: ChartSectionPr
                 />
                 <Line
                   type="monotone"
-                  dataKey="astrologers"
+                  dataKey="experts"
                   stroke="#d97706"
                   strokeWidth={2}
                   dot={{ r: 4 }}
                   activeDot={{ r: 6 }}
-                  name="Astrologers"
+                  name="Experts"
                 />
               </LineChart>
             </ResponsiveContainer>

@@ -22,7 +22,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     src,
     alt = 'Avatar',
     size = 'md',
-    fallback = '/images/dummy-astrologer.jpg', // Default fallback
+    fallback = '/images/dummy-expert.jpg', // Default fallback
     className,
     ...props
 }) => {

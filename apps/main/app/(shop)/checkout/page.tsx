@@ -13,7 +13,7 @@ const CheckoutContent = () => {
     buyNowInfo,
     directProduct,
     cartItems,
-    astrologerName,
+    expertName,
     date,
     time,
     duration,
@@ -68,7 +68,7 @@ const CheckoutContent = () => {
               buyNowInfo={buyNowInfo}
               directProduct={directProduct}
               cartItems={cartItems}
-              astrologerName={astrologerName}
+              expertName={expertName}
               date={date}
               time={time}
               duration={duration}

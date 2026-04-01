@@ -1,14 +1,14 @@
 import React from "react";
-import AstrologerList from "@/components/features/astrologers/AstrologerList";
-import AstrologerServices from "@/components/features/services/AstrologyServices";
+import ExpertList from "@/components/features/experts/ExpertList";
+import ExpertServices from "@/components/features/services/AstrologyServices";
 import ChooseYourZodiac from "@/components/layout/main/ChooseYourZodiac";
 import AstrologyProduct from "@/components/features/shop/AstrologyProduct";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import Testimonial from "@/components/layout/main/Testimonial";
 import CTA from "@/components/layout/main/CTA";
 import HeroSection from "@/components/layout/main/HeroSection";
-import AstrologerConsultant from "@/components/layout/main/AstrologerConsultant";
-import AstrologerListWrapper from "@/components/features/astrologers/AstrologerListWrapper";
+import ExpertConsultant from "@/components/layout/main/ExpertConsultant";
+import ExpertListWrapper from "@/components/features/experts/ExpertListWrapper";
 import PujaListSection from "@/components/features/puja/PujaListSection";
 
 export default async function Page(props: {
@@ -19,10 +19,10 @@ export default async function Page(props: {
   return (
     <>
       <HeroSection />
-      <AstrologerListWrapper searchParams={searchParams} />
-      <AstrologerServices />
+      <ExpertListWrapper searchParams={searchParams} />
+      <ExpertServices />
       <PujaListSection />
-      <AstrologerConsultant />
+      <ExpertConsultant />
       <ChooseYourZodiac />
       <AstrologyProduct />
       <WhyChooseUs />

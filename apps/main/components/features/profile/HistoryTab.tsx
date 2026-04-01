@@ -175,7 +175,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                             <p className="text-gray-500 font-medium text-sm">
                               {session.expert?.category ||
                                 session.expert?.specialization ||
-                                "Expert Astrologer"}
+                                "Expert Expert"}
                             </p>
                           </div>
                           <div className="md:text-right">

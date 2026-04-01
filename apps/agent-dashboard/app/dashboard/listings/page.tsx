@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 // ── Tab config ───────────────────────────────────────────────────────────────
 
-type TabId = "all" | "astrologer" | "client" | "mandir" | "puja_shop";
+type TabId = "all" | "expert" | "client" | "mandir" | "puja_shop";
 
 interface Tab {
     id: TabId;
@@ -33,8 +33,8 @@ const TABS: Tab[] = [
         badgeBg: "bg-gray-100 text-gray-700",
     },
     {
-        id: "astrologer",
-        label: "Astrologer",
+        id: "expert",
+        label: "Expert",
         icon: Star,
         color: "text-yellow-600",
         activeBg: "bg-yellow-700",
@@ -90,7 +90,7 @@ function ListingAvatar({ item }: { item: ReferredUser }) {
     }
 
     const gradientMap: Record<string, string> = {
-        astrologer: "bg-gradient-to-br from-yellow-500 to-amber-700",
+        expert: "bg-gradient-to-br from-yellow-500 to-amber-700",
         client: "bg-gradient-to-br from-blue-500 to-indigo-700",
         mandir: "bg-gradient-to-br from-orange-500 to-red-700",
         puja_shop: "bg-gradient-to-br from-purple-500 to-pink-700",
@@ -110,7 +110,7 @@ function ListingAvatar({ item }: { item: ReferredUser }) {
 // ── Type Badge ───────────────────────────────────────────────────────────────
 function TypeBadge({ type }: { type: ReferredUser["type"] }) {
     const config: Record<string, { bg: string; text: string; border: string; icon: React.ElementType; label: string }> = {
-        astrologer: { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200", icon: Star, label: "Astrologer" },
+        expert: { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200", icon: Star, label: "Expert" },
         client: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200", icon: Users, label: "Client" },
         mandir: { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-200", icon: Building2, label: "Mandir" },
         puja_shop: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-200", icon: ShoppingBag, label: "Puja Shop" },
@@ -232,7 +232,7 @@ function ListingCard({ item }: { item: ReferredUser }) {
                             </span>
                         </div>
                         <p className="text-[9px] text-gray-400 mt-0.5 italic">
-                            Earned from {item.type === 'astrologer' ? 'total earnings' : 'total spending'}
+                            Earned from {item.type === 'expert' ? 'total earnings' : 'total spending'}
                         </p>
                     </div>
                 )}
@@ -285,7 +285,7 @@ export default function ListingsPage() {
     // Fetch listings
     const fetchData = useCallback(async () => {
         setLoading(true);
-        const params: { type?: 'astrologer' | 'client' | 'mandir' | 'puja_shop'; search?: string } = {};
+        const params: { type?: 'expert' | 'client' | 'mandir' | 'puja_shop'; search?: string } = {};
         if (activeTab !== "all") {
             params.type = activeTab;
         }
@@ -309,7 +309,7 @@ export default function ListingsPage() {
     }, [fetchData]);
 
     // Per-tab counts from live data (when tab = all)
-    const astrologerCount = useMemo(() => data.filter((u) => u.type === "astrologer").length, [data]);
+    const expertCount = useMemo(() => data.filter((u) => u.type === "expert").length, [data]);
     const clientCount = useMemo(() => data.filter((u) => u.type === "client").length, [data]);
     const mandirCount = useMemo(() => data.filter((u) => u.type === "mandir").length, [data]);
     const pujaShopCount = useMemo(() => data.filter((u) => u.type === "puja_shop").length, [data]);
@@ -318,7 +318,7 @@ export default function ListingsPage() {
     const getTabCount = (tab: Tab): number | null => {
         if (tab.id === "all") return total;
         if (activeTab === "all") {
-            if (tab.id === "astrologer") return astrologerCount;
+            if (tab.id === "expert") return expertCount;
             if (tab.id === "client") return clientCount;
             if (tab.id === "mandir") return mandirCount;
             if (tab.id === "puja_shop") return pujaShopCount;
@@ -422,11 +422,11 @@ export default function ListingsPage() {
                     </div>
                     {activeTab === "all" && (
                         <>
-                            {astrologerCount > 0 && (
+                            {expertCount > 0 && (
                                 <div className="flex items-center gap-2 bg-yellow-50 rounded-xl border border-yellow-200 px-4 py-2 shadow-sm">
                                     <Star className="w-4 h-4 text-yellow-600" />
                                     <span className="text-xs font-bold text-yellow-700">
-                                        {astrologerCount} astrologers
+                                        {expertCount} experts
                                     </span>
                                 </div>
                             )}

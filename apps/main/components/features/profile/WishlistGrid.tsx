@@ -3,7 +3,7 @@
 import React from "react";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { ProductCard } from "@/components/features/shop/ProductCard";
-import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
+import ExpertCard from "@/components/features/experts/ExpertCard";
 import { FaHeart, FaGift, FaUserAstronaut, FaSpinner } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { MdStars } from "react-icons/md";
@@ -15,7 +15,7 @@ const WishlistGrid: React.FC = () => {
     const cleanApiUrl = "http://localhost:6543/api/v1";
 
     const getImageUrl = (path?: string) => {
-        if (!path) return "/images/dummy-astrologer.jpg";
+        if (!path) return "/images/dummy-expert.jpg";
         if (path.startsWith("http") || path.startsWith("data:") || path.startsWith("/")) return path;
         return `${cleanApiUrl}/uploads/${path}`;
     };
@@ -94,7 +94,7 @@ const WishlistGrid: React.FC = () => {
                               <FaUserAstronaut className="text-indigo-500 text-[10px]" />
                               <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Favorite Experts</span>
                            </div>
-                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Liked Astrologers</h2>
+                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Liked Experts</h2>
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm">
                            <span className="tabular-nums">{expertWishlistItems.length}</span> experts saved
@@ -106,7 +106,7 @@ const WishlistGrid: React.FC = () => {
                             const expert = item.expert;
 
                             // Handling response where user data might be flat on expert or nested
-                            const name = (expert as any)?.name || (expert as any)?.user?.name || "Astrologer";
+                            const name = (expert as any)?.name || (expert as any)?.user?.name || "Expert";
                             const avatar = (expert as any)?.avatar || (expert as any)?.user?.avatar;
 
                             return (
@@ -115,8 +115,8 @@ const WishlistGrid: React.FC = () => {
                                     className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700"
                                     style={{ animationDelay: `${idx * 100}ms` }}
                                 >
-                                    <AstrologerCard
-                                        astrologerData={{
+                                    <ExpertCard
+                                        expertData={{
                                             id: expert?.id || item.expertId,
                                             userId: (expert as any)?.userId || expert?.id,
                                             image: getImageUrl(avatar),

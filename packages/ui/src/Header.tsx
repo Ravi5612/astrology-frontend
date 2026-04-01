@@ -836,10 +836,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
               </nav>
             </div>
 
-            {/* Ask Astrologer CTA */}
+            {/* Ask Expert CTA */}
             <div className="flex-shrink-0 hidden md:block">
               <Link
-                href="/our-astrologers"
+                href="/our-experts"
                 className="btn-ask-expert bg-orange text-white transition-all hover:scale-105 active:scale-95"
                 style={{
                   padding: "10px 20px",
@@ -862,7 +862,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   height={20}
                   style={{ width: 'auto', filter: "brightness(0) invert(1)" }}
                 />
-                {t.askAstrologer}
+                {t.askExpert}
               </Link>
             </div>
           </div>

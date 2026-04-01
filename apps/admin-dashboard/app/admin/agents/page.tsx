@@ -19,7 +19,7 @@ const ProfileModal = lazy(() =>
 
 // ── Listing table columns ─────────────────────────────────────
 const TYPE_LABEL: Record<string, { label: string; className: string }> = {
-    astrologer: { label: "Astrologer", className: "bg-yellow-100 text-yellow-700" },
+    expert: { label: "Expert", className: "bg-yellow-100 text-yellow-700" },
     mandir: { label: "Mandir", className: "bg-orange-100 text-orange-700" },
     puja_shop: { label: "Puja Shop", className: "bg-purple-100 text-purple-700" },
 };
@@ -389,7 +389,7 @@ const EyeOff = ({ className }: { className?: string }) => (
 // ── Listing Stats ─────────────────────────────────────────────
 const getListingStats = (data: AgentListing[]) => [
     { title: "Total Listings", value: data.length, icon: BookOpen, iconColor: "text-blue-600", iconBgColor: "bg-blue-100" },
-    { title: "Astrologers", value: data.filter(l => l.listing_type === "astrologer").length, icon: Star, iconColor: "text-yellow-600", iconBgColor: "bg-yellow-100" },
+    { title: "Experts", value: data.filter(l => l.listing_type === "expert").length, icon: Star, iconColor: "text-yellow-600", iconBgColor: "bg-yellow-100" },
     { title: "Mandirs", value: data.filter(l => l.listing_type === "mandir").length, icon: Building2, iconColor: "text-orange-600", iconBgColor: "bg-orange-100" },
     { title: "Puja Shops", value: data.filter(l => l.listing_type === "puja_shop").length, icon: ShoppingBag, iconColor: "text-purple-600", iconBgColor: "bg-purple-100" },
 ];
@@ -556,7 +556,7 @@ export default function AgentsPage() {
                             onChange={(e) => setTypeFilter(e.target.value)}
                             className="w-40 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 font-medium">
                             <option value="">All Types</option>
-                            <option value="astrologer">Astrologer</option>
+                            <option value="expert">Expert</option>
                             <option value="mandir">Mandir</option>
                             <option value="puja_shop">Puja Shop</option>
                         </select>

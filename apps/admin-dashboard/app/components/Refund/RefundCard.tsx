@@ -63,8 +63,8 @@ export function RefundCard({
 
         {/* Users Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-          <UserInfoCard user={refund.user} astrologer={refund.astrologer} type="user" />
-          <UserInfoCard user={refund.user} astrologer={refund.astrologer} type="astrologer" />
+          <UserInfoCard user={refund.user} expert={refund.expert} type="user" />
+          <UserInfoCard user={refund.user} expert={refund.expert} type="expert" />
         </div>
 
         {/* Consultation Info */}

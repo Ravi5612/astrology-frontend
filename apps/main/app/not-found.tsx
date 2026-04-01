@@ -18,7 +18,7 @@ const NotFound: React.FC = () => {
            <div className="absolute -inset-8 bg-orange-500/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
            <div className="relative w-64 h-64 md:w-80 md:h-80 mx-auto">
              <Image
-               src="/images/Astrologer.png"
+               src="/images/Expert.png"
                alt="Stars Hidden"
                fill
                className="object-contain drop-shadow-[0_20px_50px_rgba(249,115,22,0.3)] group-hover:scale-105 transition-transform duration-700"

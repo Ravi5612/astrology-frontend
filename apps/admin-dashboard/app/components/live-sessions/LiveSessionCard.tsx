@@ -130,15 +130,15 @@ export function LiveSessionCard({
 
           <div className="flex items-center gap-3">
             <div>
-              <h4 className="font-medium text-gray-900 text-right">{session.astrologer.name}</h4>
+              <h4 className="font-medium text-gray-900 text-right">{session.expert.name}</h4>
               <p className="text-sm text-gray-600 text-right">
-                Astrologer • {session.astrologer.experience}y
+                Expert • {session.expert.experience}y
               </p>
             </div>
             <div className="relative">
               <img
-                src={session.astrologer.avatar}
-                alt={session.astrologer.name}
+                src={session.expert.avatar}
+                alt={session.expert.name}
                 className="w-12 h-12 rounded-full border-2 border-yellow-200"
               />
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center">

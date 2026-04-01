@@ -144,7 +144,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
         try {
             await WishlistService.addExpertToWishlist(expertId);
-            toast.success("Added to liked astrologers");
+            toast.success("Added to liked experts");
             await get().fetchWishlist(true);
         } catch (error: any) {
             if (error.response?.status === 409) {

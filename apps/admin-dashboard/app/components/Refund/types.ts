@@ -6,7 +6,7 @@ export interface User {
   email: string;
 }
 
-export interface Astrologer {
+export interface Expert {
   id: string;
   name: string;
   avatar: string;
@@ -33,7 +33,7 @@ export type RefundPriority = "low" | "medium" | "high" | "urgent";
 export interface RefundRequest {
   id: string;
   user: User;
-  astrologer: Astrologer;
+  expert: Expert;
   consultation: Consultation;
   reason: string;
   amount: number;

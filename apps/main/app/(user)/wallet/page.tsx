@@ -85,7 +85,7 @@ export default function UserWalletPage() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">Funds</span>
                         </h1>
                         <p className="text-gray-400 font-medium max-w-sm leading-relaxed">
-                            Use your wallet balance to book instant consultations with India's top astrologers.
+                            Use your wallet balance to book instant consultations with India's top experts.
                         </p>
                     </div>
 

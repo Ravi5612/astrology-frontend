@@ -17,8 +17,8 @@ const getListingStats = (data: AgentListing[]) => [
         iconBgColor: "bg-blue-100",
     },
     {
-        title: "Astrologers",
-        value: data.filter((l) => l.listing_type === "astrologer").length,
+        title: "Experts",
+        value: data.filter((l) => l.listing_type === "expert").length,
         icon: Star,
         iconColor: "text-yellow-600",
         iconBgColor: "bg-yellow-100",
@@ -41,7 +41,7 @@ const getListingStats = (data: AgentListing[]) => [
 
 // ── Listing type badge ────────────────────────────────────────
 const TYPE_LABEL: Record<string, { label: string; className: string }> = {
-    astrologer: { label: "Astrologer", className: "bg-yellow-100 text-yellow-700" },
+    expert: { label: "Expert", className: "bg-yellow-100 text-yellow-700" },
     mandir: { label: "Mandir", className: "bg-orange-100 text-orange-700" },
     puja_shop: { label: "Puja Shop", className: "bg-purple-100 text-purple-700" },
 };
@@ -162,7 +162,7 @@ export default function ListingsPage() {
                     className="w-40 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all font-medium"
                 >
                     <option value="">All Types</option>
-                    <option value="astrologer">Astrologer</option>
+                    <option value="expert">Expert</option>
                     <option value="mandir">Mandir</option>
                     <option value="puja_shop">Puja Shop</option>
                 </select>

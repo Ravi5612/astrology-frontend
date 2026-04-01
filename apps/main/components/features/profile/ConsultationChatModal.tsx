@@ -88,7 +88,7 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
         selectedSession.expert?.user?.avatar ||
         selectedSession.expert?.avatar ||
         selectedSession.expert?.image ||
-        "/images/dummy-astrologer.jpg";
+        "/images/dummy-expert.jpg";
 
     return createPortal(
         <div
@@ -224,7 +224,7 @@ const ConsultationChatModal: React.FC<ConsultationChatModalProps> = ({
                                                     onError={(e) => {
                                                         (e.target as any).src = isUser
                                                             ? "https://avatar.iran.liara.run/public/boy?username=User"
-                                                            : "/images/dummy-astrologer.jpg";
+                                                            : "/images/dummy-expert.jpg";
                                                     }}
                                                 />
                                             </div>

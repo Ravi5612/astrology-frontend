@@ -9,7 +9,7 @@ import { useUserDetailForm } from "./useUserDetailForm";
 
 const UserDetailFormContent = () => {
   const {
-    astrologerName,
+    expertName,
     rate,
     formData,
     bookingDate,
@@ -27,7 +27,7 @@ const UserDetailFormContent = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <UserDetailFormHero astrologerName={astrologerName} />
+      <UserDetailFormHero expertName={expertName} />
 
       <section className="py-12 md:py-16 bg-[#ffe3b852]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +43,7 @@ const UserDetailFormContent = () => {
                     </h5>
                   </div>
                   <p className="text-gray-600 leading-relaxed max-w-2xl">
-                    Your birth details help our expert astrologers create an
+                    Your birth details help our expert experts create an
                     accurate birth chart and provide personalized predictions
                     based on planetary positions at your birth time.
                   </p>

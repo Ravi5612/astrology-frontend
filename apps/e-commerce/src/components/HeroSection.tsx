@@ -26,7 +26,7 @@ const HeroSection = () => {
                       <li>
                         {" "}
                         <i className="fa-solid fa-check"></i> Verified &amp;
-                        Experienced Astrologers
+                        Experienced Experts
                       </li>
                       <li>
                         {" "}
@@ -85,14 +85,14 @@ const HeroSection = () => {
               <div className="col-lg-6 col-md-12">
                 <div className="right-illus">
                   <img
-                    src="images/Astrologer-h.png"
-                    alt="Astrologer"
-                    className="Astrologer-img-h fa-spin"
+                    src="images/Expert-h.png"
+                    alt="Expert"
+                    className="Expert-img-h fa-spin"
                   />
                   <img
                     src="images/astro-products.png"
-                    alt="Astrologer"
-                    className="Astrologer-img relative bottom-[-23px]"
+                    alt="Expert"
+                    className="Expert-img relative bottom-[-23px]"
                   />
                 </div>
               </div>

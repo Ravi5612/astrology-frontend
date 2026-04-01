@@ -67,13 +67,13 @@ const Header = () => {
 
             {/* Right Actions */}
             <div className="hidden lg:flex items-center gap-6">
-              {/* Ask Astrologer CTA */}
+              {/* Ask Expert CTA */}
               <a
                 href="/consult"
                 className="flex items-center gap-2 text-gray-700 hover:text-primary-orange font-semibold transition"
               >
                 <img src="/images/chat.svg" alt="Chat" className="w-5 h-5" />
-                <span>Ask Astrologer</span>
+                <span>Ask Expert</span>
               </a>
 
               {/* Desktop Cart */}
@@ -133,7 +133,7 @@ const Header = () => {
                 className="flex items-center gap-2 text-gray-700 font-semibold"
               >
                 <img src="/images/chat.svg" alt="Chat" className="w-5 h-5" />
-                <span>Ask Astrologer</span>
+                <span>Ask Expert</span>
               </a>
             </nav>
           </div>

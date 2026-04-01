@@ -59,7 +59,7 @@ export interface UserDetailBookingFieldsProps {
 }
 
 export interface UserDetailFormHeroProps {
-    astrologerName: string;
+    expertName: string;
 }
 
 export interface UserDetailSummaryBoxProps {

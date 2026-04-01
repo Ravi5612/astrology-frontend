@@ -10,7 +10,7 @@ export const mockRefunds: RefundRequest[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
       email: "rahul@example.com"
     },
-    astrologer: {
+    expert: {
       id: "AST001",
       name: "Pandit Ji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pandit",
@@ -23,7 +23,7 @@ export const mockRefunds: RefundRequest[] = [
       amount: 1500,
       date: new Date("2024-01-15")
     },
-    reason: "Astrologer didn't join the session on time",
+    reason: "Expert didn't join the session on time",
     amount: 1500,
     requestedAmount: 1500,
     status: "pending",
@@ -39,7 +39,7 @@ export const mockRefunds: RefundRequest[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
       email: "priya@example.com"
     },
-    astrologer: {
+    expert: {
       id: "AST002",
       name: "Guruji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Guruji",

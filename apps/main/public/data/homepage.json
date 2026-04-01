@@ -146,7 +146,7 @@
             "location": "Delhi, India",
             "image": "/images/t1.png",
             "rating": 5,
-            "text": "I had a great experience with Astrology in Bharat. The astrologer was very accurate and guided me properly about my career and future decisions."
+            "text": "I had a great experience with Astrology in Bharat. The expert was very accurate and guided me properly about my career and future decisions."
         },
         {
             "id": 2,
@@ -154,7 +154,7 @@
             "location": "Delhi, India",
             "image": "/images/t1.png",
             "rating": 5,
-            "text": "I had a great experience with Astrology in Bharat. The astrologer was very accurate and guided me properly about my career and future decisions."
+            "text": "I had a great experience with Astrology in Bharat. The expert was very accurate and guided me properly about my career and future decisions."
         },
         {
             "id": 3,
@@ -162,14 +162,14 @@
             "location": "Delhi, India",
             "image": "/images/t1.png",
             "rating": 5,
-            "text": "I had a great experience with Astrology in Bharat. The astrologer was very accurate and guided me properly about my career and future decisions."
+            "text": "I had a great experience with Astrology in Bharat. The expert was very accurate and guided me properly about my career and future decisions."
         }
     ],
     "whyChooseUs": [
         {
             "id": 1,
             "icon": "fa-user-check",
-            "title": "Verified & Experienced Astrologers"
+            "title": "Verified & Experienced Experts"
         },
         {
             "id": 2,

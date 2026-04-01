@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 const Image = NextImage as any;
 const { ChevronLeft, Phone, Video, User, Calendar, MapPin, UserX, ShieldCheck } = LucideIcons as any;
 
-interface AstrologerData {
+interface ExpertData {
     id: string | number;
     name: string;
     image: string;
@@ -34,7 +34,7 @@ function CallPrepContent() {
     const id = params.id as string;
     const type = searchParams.get('type') || 'audio';
 
-    const [astrologer, setAstrologer] = useState<AstrologerData | null>(null);
+    const [expert, setExpert] = useState<ExpertData | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [userBalance, setUserBalance] = useState<number>(0);
@@ -46,14 +46,14 @@ function CallPrepContent() {
             const [res, fetchError] = await http.get<any>(`/expert/details/${id}`);
             
             if (fetchError) {
-                console.error("Failed to fetch astrologer for call prep:", fetchError);
-                setAstrologer(null);
+                console.error("Failed to fetch expert for call prep:", fetchError);
+                setExpert(null);
             } else if (res && (res.id || res.user)) {
                 const data = res?.data || res;
-                setAstrologer({
+                setExpert({
                     id: data.id,
-                    name: data.user?.name || "Astrologer",
-                    image: data.user?.avatar || "/images/dummy-astrologer.jpg",
+                    name: data.user?.name || "Expert",
+                    image: data.user?.avatar || "/images/dummy-expert.jpg",
                     expertise: data.specialization || "",
                     experience: data.experience_in_years || 0,
                     price: data.price || 0,
@@ -65,7 +65,7 @@ function CallPrepContent() {
                     is_available: data.isAvailable ?? data.is_available ?? false,
                 });
             } else {
-                setAstrologer(null);
+                setExpert(null);
             }
             setLoading(false);
         };
@@ -158,7 +158,7 @@ function CallPrepContent() {
         </div>
     );
 
-    if (!astrologer) return (
+    if (!expert) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
             <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
                 <UserX className="w-12 h-12 text-red-500" />
@@ -174,8 +174,8 @@ function CallPrepContent() {
     );
 
     const callPrice = type === 'video'
-        ? (astrologer.video_call_price || astrologer.price * 2 || 0)
-        : (astrologer.call_price || astrologer.price || 0);
+        ? (expert.video_call_price || expert.price * 2 || 0)
+        : (expert.call_price || expert.price || 0);
 
     return (
         <div className="min-h-screen bg-[#fafafa] pb-20">
@@ -201,7 +201,7 @@ function CallPrepContent() {
                             </span>
                             <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight">
                                 Consulting <br />
-                                <span className="text-orange">{astrologer.name}</span>
+                                <span className="text-orange">{expert.name}</span>
                             </h1>
                             <p className="text-gray-500 text-lg font-medium mt-4">
                                 Experience a personal {type} consultation for precise future predictions and remedies.
@@ -251,14 +251,14 @@ function CallPrepContent() {
                     <div className="lg:col-span-5">
                         <div className="bg-white p-3 rounded-[3.5rem] shadow-xl">
                             <div className="relative h-[400px] rounded-[3rem] overflow-hidden">
-                                <Image src={astrologer.image} alt={astrologer.name} fill className="object-cover" />
+                                <Image src={expert.image} alt={expert.name} fill className="object-cover" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
                                 {/* Availability Badge */}
-                                <div className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border shadow-sm flex items-center gap-2 ${astrologer.is_available ? 'bg-orange border-white/20' : 'bg-white border-gray-200'}`}>
-                                    <div className={`w-2 h-2 rounded-full ${astrologer.is_available ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-400'}`}></div>
-                                    <span className={`${astrologer.is_available ? 'text-white' : 'text-gray-400'} text-[10px] font-black uppercase tracking-widest`}>
-                                        {astrologer.is_available ? 'Available Now' : 'Offline'}
+                                <div className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border shadow-sm flex items-center gap-2 ${expert.is_available ? 'bg-orange border-white/20' : 'bg-white border-gray-200'}`}>
+                                    <div className={`w-2 h-2 rounded-full ${expert.is_available ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-400'}`}></div>
+                                    <span className={`${expert.is_available ? 'text-white' : 'text-gray-400'} text-[10px] font-black uppercase tracking-widest`}>
+                                        {expert.is_available ? 'Available Now' : 'Offline'}
                                     </span>
                                 </div>
 
@@ -266,11 +266,11 @@ function CallPrepContent() {
                                     ₹{callPrice} / MIN
                                 </div>
                                 <div className="absolute bottom-10 left-10 text-white">
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Expert Astrologer</p>
-                                    <h2 className="text-2xl font-black">{astrologer.name}</h2>
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Expert Expert</p>
+                                    <h2 className="text-2xl font-black">{expert.name}</h2>
                                     <div className="flex items-center gap-2 mt-2 opacity-80 font-bold text-sm">
                                         <MapPin className="w-4 h-4" />
-                                        <span>{astrologer.expertise} • {astrologer.experience} yrs</span>
+                                        <span>{expert.expertise} • {expert.experience} yrs</span>
                                     </div>
                                 </div>
                             </div>

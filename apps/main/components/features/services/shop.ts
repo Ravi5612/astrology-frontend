@@ -20,7 +20,7 @@ export const products: ProductsData[] = [
         title: "Astrology Kundli Report",
         image: "/images/product-2.webp",
         price: 499,
-        description: "Detailed horoscope report by our expert astrologers.",
+        description: "Detailed horoscope report by our expert experts.",
     },
     {
         id: 3,
@@ -55,7 +55,7 @@ export const products: ProductsData[] = [
         title: "Astrology Kundli Report",
         image: "/images/product-2.webp",
         price: 499,
-        description: "Detailed horoscope report by our expert astrologers.",
+        description: "Detailed horoscope report by our expert experts.",
     },
     {
         id: 8,

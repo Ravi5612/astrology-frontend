@@ -19,8 +19,8 @@ export default function RefundPolicyPage() {
             <h2>2. Consultation Refunds</h2>
             <p>Refunds for Chat/Call/Video consultations are applicable under the following conditions:</p>
             <ul>
-                <li><strong>Network Issues:</strong> If there is a technical glitch from our side or the astrologer's side that prevents the consultation from happening.</li>
-                <li><strong>Astrologer Unavailability:</strong> If the astrologer does not join the session after booking.</li>
+                <li><strong>Network Issues:</strong> If there is a technical glitch from our side or the expert's side that prevents the consultation from happening.</li>
+                <li><strong>Expert Unavailability:</strong> If the expert does not join the session after booking.</li>
                 <li><strong>Incomplete Session:</strong> If the session is disconnected prematurely due to platform issues.</li>
             </ul>
             <p>
