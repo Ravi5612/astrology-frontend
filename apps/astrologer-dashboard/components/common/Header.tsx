@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
+import { getNotifications, deleteAllNotifications } from "@/lib/notifications";
 
 import { SearchInput } from "@repo/ui";
 import { Avatar } from "@repo/ui";
@@ -114,33 +115,62 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
   // Dynamic notifications state
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [showKycNotice, setShowKycNotice] = useState(true);
 
-  useEffect(() => {
-    // Initial notifications with a priority rejection notice
-    const initial = [
-      { id: 1, message: "New user registered", time: "2m ago", type: 'info' },
-      { id: 2, message: "System update available", time: "10m ago", type: 'info' },
-    ];
-
-    const status = (user?.kycStatus || "").toLowerCase();
-    if (status === 'rejected') {
-      initial.unshift({
-        id: Date.now(),
-        message: "❌ Profile Rejected: " + (user?.rejectionReason || "Check profile for details"),
-        time: "Just now",
-        type: 'error'
-      });
-    } else if (status === 'active' || status === 'approved') {
-      initial.unshift({
-        id: Date.now(),
-        message: "✅ Account Approved: Your profile is now live!",
-        time: "Active",
-        type: 'success'
-      });
+  const loadNotifications = async () => {
+    const [data, error] = await getNotifications();
+    if (error) {
+      console.error("Failed to fetch notifications in header:", error);
+      return;
     }
 
-    setNotifications(initial);
-  }, [user]);
+    const mapped = (data || []).map((n: any) => ({
+      id: n.id,
+      message: n.message || n.title,
+      time: n.created_at ? new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now",
+      type: n.type || 'info'
+    }));
+
+    // Add KYC status notices on top of fetched notifications if applicable
+    if (showKycNotice) {
+      const status = (user?.kycStatus || "").toLowerCase();
+      if (status === 'rejected') {
+        mapped.unshift({
+          id: 'kyc-rejected',
+          message: "❌ Profile Rejected: " + (user?.rejectionReason || "Check profile"),
+          time: "Status",
+          type: 'error'
+        });
+      } else if (status === 'active' || status === 'approved') {
+        mapped.unshift({
+          id: 'kyc-active',
+          message: "✅ Account Approved!",
+          time: "Status",
+          type: 'success'
+        });
+      }
+    }
+
+    setNotifications(mapped);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadNotifications();
+    }
+  }, [user, isAuthenticated]);
+
+  const handleClearAll = async () => {
+    const [_, error] = await deleteAllNotifications();
+    if (error) {
+      toast.error("Failed to clear notifications");
+      return;
+    }
+    setNotifications([]);
+    setShowKycNotice(false);
+    setIsNotificationOpen(false);
+    toast.success("Notifications cleared");
+  };
 
   const checkClosePopup = () => {
     // Close only if mouse on neither icon nor popup
@@ -274,11 +304,21 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     }}
                   >
                     <div className="p-4">
-                      <h3 className="text-sm font-semibold text-gray-800 mb-2">
-                        Notifications
-                      </h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-semibold text-gray-800">
+                          Notifications
+                        </h3>
+                        {notifications.length > 0 && (
+                          <button
+                            onClick={handleClearAll}
+                            className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-tight"
+                          >
+                            Clear All
+                          </button>
+                        )}
+                      </div>
                       {notifications.length === 0 ? (
-                        <p className="text-sm text-gray-500">No new notifications</p>
+                        <p className="text-sm text-gray-500 py-4 text-center">No new notifications</p>
                       ) : (
                         <ul className="space-y-2">
                           {notifications.map((notification) => (

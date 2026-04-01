@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Bell, XCircle, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { FC } from "react";
-import { getNotifications, markAsRead, deleteNotification, Notification as ApiNotification } from "@/lib/notifications";
+import { getNotifications, markAsRead, deleteNotification, deleteAllNotifications, Notification as ApiNotification } from "@/lib/notifications";
 import { toast } from "react-toastify";
 
 interface Notification {
@@ -168,6 +168,19 @@ const NotificationPage = () => {
         toast.success("Notification deleted");
     };
 
+    const handleClearAll = async () => {
+        if (notifications.length === 0) return;
+        if (!confirm("Are you sure you want to clear all notifications?")) return;
+        
+        const [_, error] = await deleteAllNotifications();
+        if (error) {
+            toast.error("Failed to clear notifications");
+            return;
+        }
+        setNotifications([]);
+        toast.success("All notifications cleared");
+    };
+
 
     if (!isMounted) {
         return null;
@@ -182,8 +195,18 @@ const NotificationPage = () => {
                         Stay updated with your profile and activity alerts.
                     </p>
                 </div>
-                <div className="bg-orange-50 p-3 rounded-xl">
-                    <Bell className="w-8 h-8 text-orange-500" />
+                <div className="flex items-center gap-4">
+                    {notifications.length > 0 && (
+                        <button
+                            onClick={handleClearAll}
+                            className="px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl border border-red-100 transition-colors"
+                        >
+                            Clear All
+                        </button>
+                    )}
+                    <div className="bg-orange-50 p-3 rounded-xl">
+                        <Bell className="w-8 h-8 text-orange-500" />
+                    </div>
                 </div>
             </header>
 

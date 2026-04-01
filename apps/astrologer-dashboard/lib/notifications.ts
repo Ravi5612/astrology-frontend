@@ -30,3 +30,10 @@ export const deleteNotification = async (id: string): Promise<[any | null, ApiEr
     const data = (res as any)?.data ?? res;
     return [data, null];
 };
+
+export const deleteAllNotifications = async (): Promise<[any | null, ApiError | null]> => {
+    const [res, error] = await api.delete('/notifications/all');
+    if (error) return [null, error];
+    const data = (res as any)?.data ?? res;
+    return [data, null];
+};
