@@ -10,7 +10,7 @@ export const getWalletBalance = async (): Promise<[WalletStatsData | null, ApiEr
     return [{
         availableBalance: data.available_balance ?? data.availableBalance ?? 0,
         totalWithdrawn: data.total_withdrawn ?? data.totalWithdrawn ?? 0,
-        pendingWithdrawals: data.pending_withdrawals ?? data.pending_withdrawals ?? 0,
+        pendingWithdrawals: data.pending_withdrawals ?? data.pendingWithdrawals ?? 0,
         balanceTrend: data.balance_trend ?? data.balanceTrend ?? 0
     }, null];
 };

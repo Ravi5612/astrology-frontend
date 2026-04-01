@@ -66,7 +66,7 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                                     <p className="text-[10px] text-red-600 font-bold flex items-center gap-1">
                                         {/* @ts-ignore */}
                                         <AlertCircle className="w-3 h-3 text-red-500" />
-                                        Insufficient Balance! You only have ₹{availableBalance.toLocaleString('en-IN')}
+                                        Insufficient Balance! You only have ₹{(availableBalance ?? 0).toLocaleString('en-IN')}
                                     </p>
                                 )}
                                 <p className="text-[10px] text-gray-400 font-medium flex items-center gap-1">
