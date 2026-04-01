@@ -15,6 +15,7 @@ import {
   Settings,
   LogOut,
   Wallet,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -29,6 +30,7 @@ const IconMap: Record<string, React.ElementType> = {
   Settings,
   LogOut,
   Wallet,
+  Bell,
 };
 
 interface MenuItem {
