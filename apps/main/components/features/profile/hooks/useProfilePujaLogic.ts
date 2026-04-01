@@ -29,7 +29,7 @@ export const useProfilePujaLogic = (isClientAuthenticated: boolean, activeTab: s
     const handleUpdatePujaStatus = async (id: number, status: string, extra: any = {}) => {
         const [res, error] = await updatePujaAppointmentStatus(id, { status, ...extra });
         if (error) {
-            toast.error(error.message || "Failed to update booking");
+            toast.error(error.body?.message || error.message || "Failed to update booking");
             return false;
         }
         toast.success(`Booking ${status} successfully`);

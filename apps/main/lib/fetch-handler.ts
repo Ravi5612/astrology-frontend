@@ -79,7 +79,7 @@ async function fetchWithAuth<T>(path: string, options: FetchOptions = {}): Promi
                 }
             }
             
-            console.error(`[API ERROR] ${options.method || "GET"} ${path}`, error);
+            console.error(`[API ERROR] ${options.method || "GET"} ${path}`, error.body?.message || error.message, error);
             return [null, error];
         }
 
