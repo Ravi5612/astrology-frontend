@@ -25,6 +25,7 @@ const cleanApiBase = BACKEND_URL;
 
 export async function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
+    console.log("[MiddlewareLog] Pathname:", pathname);
 
     // 0. Define Protected Routes
     const isDashboardRoute = pathname.startsWith('/dashboard');
