@@ -38,6 +38,18 @@ export default function EarningsStats({ stats }: EarningsStatsProps) {
             }
         },
         {
+            title: "Puja Rituals",
+            value: `₹${(stats?.pujaRevenue || 0).toLocaleString('en-IN')}`,
+            icon: TrendingUp,
+            iconBgColor: "bg-orange-100",
+            iconColor: "text-orange-600",
+            trend: {
+                value: "Active",
+                isPositive: true,
+                period: "Revenue"
+            },
+        },
+        {
             title: "Successful Withdrawals",
             value: `₹${totalWithdrawn.toLocaleString('en-IN')}`,
             icon: ArrowUpRight,
@@ -53,7 +65,7 @@ export default function EarningsStats({ stats }: EarningsStatsProps) {
 
     return (
         <div className="mb-8">
-            <StatsCards stats={statsData} columns={3} />
+            <StatsCards stats={statsData} columns={4} />
         </div>
     );
 }
