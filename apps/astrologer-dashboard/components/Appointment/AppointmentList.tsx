@@ -86,15 +86,15 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
         setShowDateForm(false);
     };
 
-    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 shadow-sm"><Check className="w-4 h-4"/> Accepted</span>;
+    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Check className="w-4 h-4"/> It is accepted</span>;
     if (appt.status === 'confirmed') return <span className="text-yellow-600 font-bold px-4 py-2 bg-yellow-50 rounded-xl border border-yellow-100 flex items-center gap-2 shadow-sm"><Star className="w-4 h-4 fill-yellow-600"/> Confirmed & Paid</span>;
-    if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2 shadow-sm"><Ban className="w-4 h-4"/> Rejected</span>;
+    if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Ban className="w-4 h-4"/> You rejected this</span>;
     if (appt.status === 'on_hold') return (
-        <div className="flex flex-col items-center gap-2 bg-blue-50/50 p-3 rounded-2xl border border-blue-100 group shadow-sm transition-all hover:shadow-md">
-            <span className="text-blue-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
-                <Pause className="w-3.5 h-3.5 animate-pulse" /> Propose Sent
+        <div className="flex flex-col items-center gap-2 bg-orange-50/50 p-3 rounded-2xl border border-orange-100 group shadow-sm transition-all hover:shadow-md animate-in fade-in transition-all">
+            <span className="text-orange-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" /> Rescheduled
             </span>
-            <p className="text-[9px] text-blue-400 font-medium max-w-[140px] text-center leading-tight">Waiting for user to accept proposed schedule</p>
+            <p className="text-[9px] text-orange-400 font-medium max-w-[140px] text-center leading-tight">Waiting for user to accept proposed reschedule</p>
             <div className="flex gap-2 w-full mt-1">
                 <Button size="sm" variant="secondary" className="flex-1 text-[10px] h-8" onClick={() => setShowDateForm(true)}>Modify</Button>
                 <Button size="sm" className="flex-1 text-[10px] h-8" onClick={() => updateStatus('accepted')}>Force Accept</Button>
@@ -182,6 +182,98 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
                         Reject
                     </Button>
                 </div>
+            )}
+        </div>
+    );
+}
+
+// Standard Actions Component for Chat/Call
+function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, onUpdate?: () => void, onReschedule: (appt: Appointment) => void }) {
+    const [isUpdating, setIsUpdating] = React.useState(false);
+
+    const updateStatus = async (status: string) => {
+        setIsUpdating(true);
+        // Map UI actions to chat/call endpoints if necessary, 
+        // but for now we follow the user requirement by using common status updates if possible
+        // Standard sessions usually handle status via specialized endpoints
+        const endpoint = appt.service.includes("Chat") ? `/chat/session/${appt.id}/status` : `/call/session/${appt.id}/status`;
+        
+        const [res, error] = await apiClientSafe.patch(endpoint, {
+            status
+        });
+
+        if (error) {
+            toast.error(error.message || "Failed to update status");
+        } else {
+            toast.success(`Request ${status} successfully`);
+            if (onUpdate) onUpdate();
+        }
+        setIsUpdating(false);
+    };
+
+    if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Check className="w-4 h-4"/> It is accepted</span>;
+    if (appt.status === 'rejected' || appt.status === 'cancelled') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Ban className="w-4 h-4"/> You rejected this</span>;
+    if (appt.status === 'on_hold') return <span className="text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-xl border border-orange-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><RefreshCw className="w-4 h-4 animate-spin-slow"/> Rescheduled</span>;
+
+    return (
+        <div className="flex flex-wrap lg:flex-nowrap gap-2">
+            {appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'active' && (
+                <>
+                    <Button 
+                        size="md" 
+                        className="bg-emerald-600 hover:bg-emerald-700 h-11 flex-1 lg:flex-none lg:px-6"
+                        leftIcon={<Check className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => updateStatus('accepted')}
+                    >
+                        Accept
+                    </Button>
+                    <Button 
+                        size="md" 
+                        variant="secondary"
+                        className="text-orange-600 border-orange-200 h-11 flex-1 lg:flex-none lg:px-6"
+                        leftIcon={<LucideRefreshCw className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => onReschedule(appt)}
+                    >
+                        Reschedule
+                    </Button>
+                    <Button 
+                        size="md" 
+                        className="bg-red-500 hover:bg-red-600 h-11 flex-1 lg:flex-none lg:px-6"
+                        leftIcon={<Ban className="w-4 h-4" />}
+                        disabled={isUpdating}
+                        onClick={() => updateStatus('rejected')}
+                    >
+                        Reject
+                    </Button>
+                </>
+            )}
+            {appt.status === 'active' && (
+                <a
+                    href={appt.meetingLink}
+                    className="px-5 py-3 text-sm bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-yellow-700 shadow-sm transition-all w-full"
+                >
+                    {appt.service.includes("Chat") ? (
+                        <>
+                            <MessageSquare className="w-5 h-5" /> Re-join Chat
+                        </>
+                    ) : (
+                        <>
+                            <Video className="w-5 h-5" /> Join Meeting
+                        </>
+                    )}
+                </a>
+            )}
+            {/* If pending but it's a join link case */}
+            {appt.status === 'pending' && !appt.pujaId && (
+                <a
+                    href={appt.meetingLink}
+                    className="px-5 py-3 text-sm bg-emerald-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-emerald-700 shadow-sm transition-all w-full mt-2"
+                    onClick={() => updateStatus('accepted')}
+                >
+                    <Video className="w-5 h-5" /> Join & Accept
+                </a>
             )}
         </div>
     );
@@ -321,43 +413,9 @@ export default function AppointmentList({
                         {/* Right Section: Actions */}
                         <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 lg:mt-0">
                             {appt.pujaId ? (
-                                <PujaActions appt={appt} />
+                                <PujaActions appt={appt} onUpdate={onUpdate} />
                             ) : (
-                                appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
-                                    <>
-                                        <a
-                                            href={appt.meetingLink}
-                                            className="px-5 py-3 text-sm bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-yellow-700 shadow-sm transition-all w-full sm:w-auto"
-                                        >
-                                            {appt.service === "Chat Consultation" ? (
-                                                <>
-                                                    <MessageSquare className="w-5 h-5" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Video className="w-5 h-5" /> Join Meeting
-                                                </>
-                                            )}
-                                        </a>
-                                        <Button
-                                            onClick={() => onReschedule(appt)}
-                                            variant="secondary"
-                                            size="md"
-                                            leftIcon={<RefreshCw className="w-5 h-5" />}
-                                            className="w-full sm:w-auto"
-                                        >
-                                            Reschedule
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            size="md"
-                                            leftIcon={<XCircle className="w-5 h-5" />}
-                                            className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full sm:w-auto"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </>
-                                )
+                                <StandardActions appt={appt} onUpdate={onUpdate} onReschedule={onReschedule} />
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
                                 <div className="flex flex-col items-end gap-2">
@@ -455,41 +513,7 @@ export default function AppointmentList({
                             {appt.pujaId ? (
                                 <PujaActions appt={appt} onUpdate={onUpdate} />
                             ) : (
-                                appt.status !== 'completed' && appt.status !== 'expired' && appt.status !== 'cancelled' && (
-                                    <>
-                                        <a
-                                            href={appt.meetingLink}
-                                            className="w-full px-3 py-2.5 bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 hover:bg-yellow-700 shadow-sm transition-all"
-                                        >
-                                            {appt.service === "Chat Consultation" ? (
-                                                <>
-                                                    <MessageSquare className="w-4 h-4" /> {appt.status === 'active' ? 'Re-join Chat' : 'Join Chat'}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Video className="w-4 h-4" /> Join
-                                                </>
-                                            )}
-                                        </a>
-                                        <Button
-                                            onClick={() => onReschedule(appt)}
-                                            variant="secondary"
-                                            size="md"
-                                            leftIcon={<RefreshCw className="w-4 h-4" />}
-                                            className="w-full"
-                                        >
-                                            Reschedule
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            size="md"
-                                            leftIcon={<XCircle className="w-4 h-4" />}
-                                            className="bg-red-600 hover:bg-red-700 shadow-red-500/20 w-full"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </>
-                                )
+                                <StandardActions appt={appt} onUpdate={onUpdate} onReschedule={onReschedule} />
                             )}
                             {(appt.status === 'completed' || appt.status === 'expired') && (
                                 <div className="space-y-2">
