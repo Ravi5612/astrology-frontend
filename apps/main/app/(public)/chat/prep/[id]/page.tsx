@@ -150,24 +150,6 @@ export default function ConsultationPrep() {
       console.error("Initiation error:", error);
       toast.error(error.message || "Failed to start consultation");
     } else if (response && response.id) {
-      localStorage.setItem(
-        "activeChatSession",
-        JSON.stringify({
-          id: response.id,
-          expertId: id,
-          status: "pending",
-          timestamp: Date.now(),
-        }),
-      );
-
-      if (!askSomeoneElse) {
-        if (!someoneElseData.name || !someoneElseData.dob) {
-          toast.error("Please fill Name and DOB for the consultation");
-          setActionLoading(false);
-          return;
-        }
-      }
-
       toast.success("Connecting to expert...");
       router.push(`/chat/room/${id}?sessionId=${response.id}`);
     }
