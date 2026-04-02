@@ -15,7 +15,7 @@ const ResetPasswordContent: React.FC = () => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+    const token = searchParams.get("password_reset_token") || searchParams.get("token");
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
