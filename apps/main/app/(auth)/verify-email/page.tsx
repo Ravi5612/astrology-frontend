@@ -21,7 +21,7 @@ const VerifyEmailContent: React.FC = () => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get('verification_token');
+    const token = searchParams.get('verification_token') || searchParams.get('token');
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -1,6 +1,6 @@
 {
   "name": "astrology-in-bharat-app-frontend",
-  "packageManager": "pnpm@10.25.0",
+  
   "private": true,
   "scripts": {
     "build": "turbo run build",
