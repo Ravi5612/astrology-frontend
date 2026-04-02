@@ -124,9 +124,9 @@ export default function AgentDashboardHome() {
                     <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-5">Quick Actions</h3>
                     <div className="space-y-3">
                         {[
-                            { label: "Add New Astrologer", href: "/dashboard/astrologers", icon: Star },
-                            { label: "Add New Mandir", href: "/dashboard/mandirs", icon: Building2 },
-                            { label: "Add New Puja Shop", href: "/dashboard/puja-shops", icon: ShoppingBag },
+                            { label: "Add New Astrologer", href: "/dashboard/registration", icon: Star },
+                            { label: "Add New Mandir", href: "/dashboard/registration", icon: Building2 },
+                            { label: "Add New Puja Shop", href: "/dashboard/registration", icon: ShoppingBag },
                             { label: "View Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
                         ].map(({ label, href, icon: Icon }) => (
                             <Link key={href} href={href} className="block">

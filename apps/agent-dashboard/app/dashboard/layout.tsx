@@ -35,7 +35,7 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "My Profile", href: "/dashboard/profile", icon: User },
-    { label: "Registeration", href: "/dashboard/registeration", icon: UserPlus },
+    { label: "Registration", href: "/dashboard/registration", icon: UserPlus },
     { label: "Listings", href: "/dashboard/listings", icon: List },
     { label: "Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
     { label: "Signout", href: "#", icon: LogOut },

@@ -54,15 +54,18 @@ export default function CommissionsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [statsRes, usersRes] = await Promise.all([
+                const [[stats, statsError], [users, usersError]] = await Promise.all([
                     getAgentDashboardStats(),
                     getReferredUsers({ limit: 200 }),
                 ]);
 
-                setStatsData(statsRes);
+                if (statsError) console.error("Stats Error:", statsError);
+                if (usersError) console.error("Users Error:", usersError);
+
+                setStatsData(stats);
 
                 // Map referred users to commission rows
-                const rows: CommissionRow[] = ((usersRes as any)?.data || []).map((u: ReferredUser) => ({
+                const rows: CommissionRow[] = ((users as any)?.data || []).map((u: ReferredUser) => ({
                     id: u.id,
                     type: u.type || "client",
                     listing: u.name || "Unknown",
@@ -124,13 +127,20 @@ export default function CommissionsPage() {
                 </div>
 
                 {filtered.length === 0 ? (
-                    <div className="p-6">
-                        <NotFound
-                            title="No Commissions Found"
-                            returnUrl="/dashboard/commissions"
-                            returnLabel="Show All"
-                            imagePath="/images/Astrologer.png"
-                        />
+                    <div className="p-12 text-center">
+                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                            <BadgeIndianRupee className="w-10 h-10 text-gray-300" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900">No Commissions Yet</h3>
+                        <p className="text-gray-500 text-sm max-w-xs mx-auto mt-1">
+                            Your earnings and referral commissions will appear here once they are generated.
+                        </p>
+                        <button
+                            onClick={() => setFilter("all")}
+                            className="mt-6 text-primary font-bold text-sm hover:underline"
+                        >
+                            Clear Filters
+                        </button>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
