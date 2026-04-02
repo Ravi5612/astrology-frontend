@@ -1,19 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Bell, XCircle, CheckCircle, AlertCircle } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Bell, BellOff, Check, Clock, Inbox, Mail, MailOpen, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/utils/cn";
 import type { FC } from "react";
 import { getNotifications, markAsRead, deleteNotification, deleteAllNotifications, Notification as ApiNotification } from "@/lib/notifications";
 import { toast } from "react-toastify";
+import { format, isToday } from "date-fns";
 
 interface Notification {
     id: string;
     title: string;
     description: string;
-    createdAt: string; // ISO date string
+    createdAt: string;
     read: boolean;
-    type: "info" | "success" | "error" | "warning";
 }
 
 const NotificationItem: FC<{
@@ -21,93 +22,82 @@ const NotificationItem: FC<{
     onMarkRead: (id: string) => void;
     onDelete: (id: string) => void;
 }> = ({ notification, onMarkRead, onDelete }) => {
-    // Map notification type to icon and colors
-    const isWarning = notification.type === "warning" || notification.description.toLowerCase().includes("intervention") || notification.title.toLowerCase().includes("intervention");
-
-    const iconMap = {
-        info: <Bell className="w-5 h-5 text-blue-500" aria-hidden="true" /> as any,
-        success: (
-            <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />
-        ) as any,
-        error: <XCircle className="w-5 h-5 text-red-500" aria-hidden="true" /> as any,
-        warning: <AlertCircle className="w-5 h-5 text-orange-500" aria-hidden="true" /> as any,
-    };
-
-    const typeKey = (isWarning ? "warning" : notification.type) as keyof typeof iconMap;
-
-    const bgColorMap = {
-        info: notification.read ? "bg-white border-gray-200" : "bg-blue-50 border-blue-300",
-        success: notification.read ? "bg-white border-gray-200" : "bg-green-50 border-green-300",
-        error: notification.read ? "bg-white border-gray-200" : "bg-red-50 border-red-300",
-        warning: notification.read ? "bg-white border-gray-200" : "bg-orange-50 border-orange-300",
-    };
-
-    const titleColorMap = {
-        info: notification.read ? "text-gray-900" : "text-blue-800",
-        success: notification.read ? "text-gray-900" : "text-green-800",
-        error: notification.read ? "text-gray-900" : "text-red-800",
-        warning: notification.read ? "text-gray-900" : "text-orange-800",
-    };
-
-    const buttonColorMap = {
-        info: "text-blue-700 hover:text-blue-900 focus:ring-blue-400",
-        success: "text-green-700 hover:text-green-900 focus:ring-green-400",
-        error: "text-red-700 hover:text-red-900 focus:ring-red-400",
-        warning: "text-orange-700 hover:text-orange-900 focus:ring-orange-400",
-    };
-
+    
     return (
-        <li
-            key={notification.id}
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            onClick={() => !notification.read && onMarkRead(notification.id)}
             className={cn(
-                "flex items-start space-x-4 p-4 rounded-lg border transition-colors",
-                bgColorMap[typeKey],
-                isWarning && !notification.read && "border-2 border-orange-400 shadow-md"
+                "p-5 rounded-2xl border transition-all duration-300 cursor-pointer group flex justify-between items-start gap-4",
+                notification.read
+                    ? "bg-white border-gray-100 opacity-70 hover:opacity-100"
+                    : "bg-orange/5 border-orange/10 shadow-sm hover:shadow-md hover:bg-orange/10"
             )}
-            aria-live="polite"
-            role="listitem"
-            tabIndex={0}
         >
-            <div className="shrink-0">{iconMap[typeKey]}</div>
-            <div className="flex-1">
-                <h3
+            <div className="flex gap-4 flex-1 min-w-0">
+                <div
                     className={cn(
-                        "text-sm font-semibold tracking-wide",
-                        titleColorMap[typeKey],
-                        isWarning && "font-black"
+                        "w-12 h-12 flex items-center justify-center rounded-xl transition-transform group-hover:scale-110 shrink-0",
+                        notification.read
+                            ? "bg-gray-100 text-gray-400"
+                            : "bg-orange text-white"
                     )}
                 >
-                    {notification.title}
-                </h3>
-                <p className={cn("mt-1 text-sm text-gray-600", isWarning && "text-gray-800 font-bold")}>{notification.description}</p>
-                <time
-                    dateTime={notification.createdAt}
-                    className="mt-1 inline-block text-xs text-gray-400"
-                >
-                    {new Date(notification.createdAt || Date.now()).toLocaleString()}
-                </time>
-            </div>
-            <div className="flex flex-col gap-2">
-                {!notification.read && (
-                    <button
-                        onClick={() => onMarkRead(notification.id)}
+                    {notification.read ? (
+                        <MailOpen className="w-5 h-5" />
+                    ) : (
+                        <Mail className="w-5 h-5" />
+                    )}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h6
                         className={cn(
-                            "focus:outline-none focus:ring-2 rounded text-xs py-1",
-                            buttonColorMap[typeKey]
+                            "text-base mb-1 truncate",
+                            notification.read ? "text-gray-600" : "text-gray-900 font-bold"
                         )}
-                        aria-label={`Mark notification '${notification.title}' as read`}
                     >
-                        Mark Read
-                    </button>
+                        {notification.title}
+                    </h6>
+                    <p
+                        className="text-gray-500 text-sm mb-3 leading-relaxed line-clamp-2"
+                        style={{ lineHeight: "1.5" }}
+                    >
+                        {notification.description}
+                    </p>
+                    <span className="flex items-center gap-2 text-[10px] text-orange font-bold uppercase tracking-widest">
+                        <Clock className="w-3.5 h-3.5" />
+                        {new Date(notification.createdAt || Date.now()).toLocaleString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "numeric",
+                            minute: "numeric",
+                        })}
+                    </span>
+                </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-3 shrink-0">
+                {!notification.read && (
+                    <div className="relative flex items-center justify-center w-6 h-6">
+                        <span className="absolute w-3 h-3 rounded-full bg-orange animate-ping opacity-75"></span>
+                        <span className="relative w-2.5 h-2.5 rounded-full bg-orange shadow-lg shadow-orange/50"></span>
+                    </div>
                 )}
                 <button
-                    onClick={() => onDelete(notification.id)}
-                    className="text-gray-400 hover:text-red-500 text-xs py-1 transition-colors"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(notification.id);
+                    }}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                    title="Delete"
                 >
-                    Delete
+                    <Trash2 className="w-4 h-4" />
                 </button>
             </div>
-        </li>
+        </motion.div>
     );
 };
 
@@ -121,7 +111,6 @@ const NotificationPage = () => {
         const [data, error] = await getNotifications();
         
         if (error) {
-            console.error("Failed to fetch notifications:", error);
             toast.error("Failed to load notifications");
             setNotifications([]);
             setIsLoading(false);
@@ -133,8 +122,7 @@ const NotificationPage = () => {
             title: n.title,
             description: n.message,
             createdAt: n.created_at,
-            read: n.read,
-            type: n.type === 'error' ? 'error' : n.type === 'success' ? 'success' : 'info'
+            read: n.read
         }));
 
         setNotifications(mapped);
@@ -148,101 +136,134 @@ const NotificationPage = () => {
 
     const handleMarkRead = async (id: string) => {
         const [_, error] = await markAsRead(id);
-        if (error) {
-            toast.error("Failed to mark as read");
-            return;
-        }
+        if (error) return;
         setNotifications((prev) =>
             prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
         );
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this notification?")) return;
+        if (!confirm("Delete this notification?")) return;
         const [_, error] = await deleteNotification(id);
-        if (error) {
-            toast.error("Failed to delete notification");
-            return;
-        }
+        if (error) return;
         setNotifications((prev) => prev.filter((n) => n.id !== id));
-        toast.success("Notification deleted");
     };
 
     const handleClearAll = async () => {
         if (notifications.length === 0) return;
-        if (!confirm("Are you sure you want to clear all notifications?")) return;
-        
+        if (!confirm("Clear all notifications?")) return;
         const [_, error] = await deleteAllNotifications();
-        if (error) {
-            toast.error("Failed to clear notifications");
-            return;
-        }
+        if (error) return;
         setNotifications([]);
-        toast.success("All notifications cleared");
     };
 
+    const groupedNotifications = useMemo(() => {
+        const sorted = [...notifications].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const today: Notification[] = [];
+        const earlier: Notification[] = [];
+        
+        sorted.forEach(n => {
+            if (isToday(new Date(n.createdAt))) today.push(n);
+            else earlier.push(n);
+        });
+        
+        return { today, earlier };
+    }, [notifications]);
 
-    if (!isMounted) {
-        return null;
-    }
+    if (!isMounted) return null;
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-            <header className="mb-8 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Notifications</h1>
-                    <p className="mt-2 text-gray-500">
-                        Stay updated with your profile and activity alerts.
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    {notifications.length > 0 && (
-                        <button
-                            onClick={handleClearAll}
-                            className="px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl border border-red-100 transition-colors"
-                        >
-                            Clear All
-                        </button>
-                    )}
-                    <div className="bg-orange-50 p-3 rounded-xl">
-                        <Bell className="w-8 h-8 text-orange-500" />
+        <div className="min-h-screen bg-[#FFF9F4] pb-12 font-poppins">
+            <div className="container mx-auto px-4 py-8 max-w-2xl">
+                <div className="bg-white border-0 shadow-premium rounded-[32px] overflow-hidden mb-6">
+                    <div className="px-8 py-7 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <h5 className="text-xl font-bold text-gray-900 mb-0 flex items-center">
+                            <span className="w-12 h-12 rounded-full bg-orange/10 text-orange flex items-center justify-center mr-4 flex-shrink-0 shadow-inner">
+                                <Bell className="w-6 h-6" />
+                            </span>
+                            Notifications
+                        </h5>
+                        {notifications.length > 0 && (
+                            <button
+                                onClick={handleClearAll}
+                                className="px-5 py-2.5 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-2xl transition-all flex items-center gap-2 border-0 shadow-sm"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Clear All
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="p-8">
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center py-24">
+                                <div className="relative w-14 h-14 mb-6">
+                                    <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
+                                </div>
+                                <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+                                    Fetching Updates
+                                </p>
+                            </div>
+                        ) : notifications.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-24 text-center">
+                                <div className="w-24 h-24 bg-gray-50 rounded-[32px] flex items-center justify-center mb-8 border border-gray-100 shadow-inner rotate-12">
+                                    <BellOff className="w-12 h-12 text-gray-300" />
+                                </div>
+                                <h6 className="font-bold text-gray-900 text-2xl mb-3 tracking-tight">
+                                    Inbox Zero!
+                                </h6>
+                                <p className="text-gray-500 text-sm max-w-[240px] m-0 leading-relaxed font-medium">
+                                    We'll notify you when something important happens.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-12">
+                                {groupedNotifications.today.length > 0 && (
+                                    <section>
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Today</span>
+                                            <div className="h-px flex-1 bg-gray-100/50"></div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <AnimatePresence mode='popLayout'>
+                                                {groupedNotifications.today.map((n) => (
+                                                    <NotificationItem
+                                                        key={n.id}
+                                                        notification={n}
+                                                        onMarkRead={handleMarkRead}
+                                                        onDelete={handleDelete}
+                                                    />
+                                                ))}
+                                            </AnimatePresence>
+                                        </div>
+                                    </section>
+                                )}
+
+                                {groupedNotifications.earlier.length > 0 && (
+                                    <section>
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Earlier</span>
+                                            <div className="h-px flex-1 bg-gray-100/50"></div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <AnimatePresence mode='popLayout'>
+                                                {groupedNotifications.earlier.map((n) => (
+                                                    <NotificationItem
+                                                        key={n.id}
+                                                        notification={n}
+                                                        onMarkRead={handleMarkRead}
+                                                        onDelete={handleDelete}
+                                                    />
+                                                ))}
+                                            </AnimatePresence>
+                                        </div>
+                                    </section>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
-            </header>
-
-            <main>
-                <div
-                    id="notifications-list"
-                    className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100"
-                    tabIndex={-1}
-                >
-                    {isLoading ? (
-                        <div className="p-12 text-center text-gray-500">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                            <p className="font-medium">Loading notifications...</p>
-                        </div>
-                    ) : notifications.length > 0 ? (
-                        <ul className="divide-y divide-gray-100" role="list">
-                            {notifications.map((notification) => (
-                                <NotificationItem
-                                    key={notification.id}
-                                    notification={notification}
-                                    onMarkRead={handleMarkRead}
-                                    onDelete={handleDelete}
-                                />
-                            ))}
-                        </ul>
-                    ) : (
-                        <div className="p-16 text-center text-gray-400">
-                            <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Bell className="w-10 h-10 text-gray-300" />
-                            </div>
-                            <h2 className="text-xl font-semibold text-gray-600 mb-2">No notifications found</h2>
-                            <p className="max-w-xs mx-auto">We'll let you know when something important happens.</p>
-                        </div>
-                    )}
-                </div>
-            </main>
+            </div>
         </div>
     );
 };

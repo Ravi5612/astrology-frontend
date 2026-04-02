@@ -156,10 +156,7 @@ function ExpertChatRoomContent() {
         setIsActivating(true);
         console.log("[ExpertChatDebug] Activating session...", sessionId);
 
-        // 1. Socket hit (Instant/Real-time) - Do this first to mark status in Gateway
-        chatSocket.emit('activate_session', { sessionId: parseInt(sessionId) });
-
-        // 2. API call (Data Persistence)
+        // 1. API call (Data Persistence) - This now triggers the single automated card and socket broadcast
         const [_, error] = await api.post(`/chat/activate/${sessionId}`);
 
         if (error) {

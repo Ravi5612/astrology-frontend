@@ -26,7 +26,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
     const fetchReviews = async () => {
         setLoading(true);
         try {
-            const [data, error] = await getReviews(page, 10);
+            const [data, error] = await getReviews(expertId, page, 10);
             if (error) throw new Error(error.message);
             
             setReviews(data?.reviews || []);

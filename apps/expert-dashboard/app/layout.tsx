@@ -33,10 +33,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         if (text) {
           try {
             const data = JSON.parse(text);
-            // Construct full user object like the store does
-            initialUser = { ...data.user, ...data, profileId: data.id };
+            initialUser = { 
+              ...(data.user || {}), 
+              ...data, 
+              profileId: data.id,
+              userId: data.user_id || data.userId || data.user?.id
+            };
 
-            // Final sanity check for expert role
             const isExpert = initialUser?.roles?.some(
               (r: any) => (typeof r === 'string' ? r : r.name).toUpperCase() === "EXPERT"
             );

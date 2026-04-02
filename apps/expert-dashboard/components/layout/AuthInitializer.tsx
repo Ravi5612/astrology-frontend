@@ -25,11 +25,12 @@ export const AuthInitializer = ({
             }
 
             const publicPaths = ["/", "/register", "/forgot-password", "/reset-password", "/verify-email", "/verify-ip"];
-            if (publicPaths.includes(pathname || "/")) {
+            const isPublic = publicPaths.includes(pathname || "/");
+            
+            if (isPublic) {
                 return;
             }
 
-            // Fallback for cases where SSR didn't fetch user but cookie exists
             await refreshAuth();
         };
 

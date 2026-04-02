@@ -105,13 +105,14 @@ const Page = () => {
     },
   ];
 
-  // Logic for distribution fallback
+  // Use real distribution from stats if available, otherwise fallback to zeros
+  // Use real distribution from backend stats
   const distribution = [
-    { stars: 5, count: Math.round((ratingStats?.totalReviews || 0) * 0.7) },
-    { stars: 4, count: Math.round((ratingStats?.totalReviews || 0) * 0.2) },
-    { stars: 3, count: Math.round((ratingStats?.totalReviews || 0) * 0.05) },
-    { stars: 2, count: Math.round((ratingStats?.totalReviews || 0) * 0.03) },
-    { stars: 1, count: Math.round((ratingStats?.totalReviews || 0) * 0.02) },
+    { stars: 5, count: ratingStats?.counts?.[5] || 0 },
+    { stars: 4, count: ratingStats?.counts?.[4] || 0 },
+    { stars: 3, count: ratingStats?.counts?.[3] || 0 },
+    { stars: 2, count: ratingStats?.counts?.[2] || 0 },
+    { stars: 1, count: ratingStats?.counts?.[1] || 0 },
   ];
 
   return (

@@ -15,12 +15,21 @@ export interface Review {
 export const getReviews = async (expertId: string | number, page: number = 1, limit: number = 10): Promise<[{ reviews: Review[], total: number } | null, ApiError | null]> => {
     const [res, error] = await api.get(`/reviews/expert/${expertId}?page=${page}&limit=${limit}`);
     if (error) return [null, error];
-    const data = (res as any)?.data?.data || (res as any)?.data || res;
+    const rawData = (res as any)?.data?.data || (res as any)?.data || res;
+    
+    // Smart parsing for different API response shapes
+    let reviews: Review[] = [];
+    let total = 0;
 
-    return [{
-        reviews: data.items || data.reviews || [],
-        total: data.total || (data.items || data.reviews || []).length || 0
-    }, null];
+    if (Array.isArray(rawData)) {
+        reviews = rawData;
+        total = rawData.length;
+    } else if (rawData && typeof rawData === 'object') {
+        reviews = rawData.items || rawData.reviews || rawData.data || [];
+        total = rawData.total || (reviews.length) || 0;
+    }
+
+    return [{ reviews, total }, null];
 };
 
 /**

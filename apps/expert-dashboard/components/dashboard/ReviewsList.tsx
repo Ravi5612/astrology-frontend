@@ -29,7 +29,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         setLoadingMore(true);
         try {
             const nextPage = page + 1;
-            const [res, error] = await getReviews(nextPage, PAGE_SIZE);
+            const [res, error] = await getReviews(expertId, nextPage, PAGE_SIZE);
             if (error) throw new Error(error.message);
             
             const newReviews: Review[] = res?.reviews || [];
