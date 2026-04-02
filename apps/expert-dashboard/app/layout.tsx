@@ -55,8 +55,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <AuthInitializer initialUser={initialUser}>
           {children}
           <ToastContainer position="top-right" />

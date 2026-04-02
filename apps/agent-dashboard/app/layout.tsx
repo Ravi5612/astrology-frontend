@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body className="antialiased font-outfit bg-stone-50">
                 <ToastContainer position="bottom-right" autoClose={4000} style={{ zIndex: 99999 }} />
                 <Suspense fallback={null}>{children}</Suspense>

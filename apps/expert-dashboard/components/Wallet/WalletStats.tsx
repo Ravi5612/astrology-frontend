@@ -11,7 +11,7 @@ export default function WalletStats({ stats }: WalletStatsProps) {
     const statsData = [
         {
             title: "Available Balance",
-            value: `₹${stats.availableBalance.toLocaleString('en-IN')}`,
+            value: `₹${(stats?.availableBalance ?? 0).toLocaleString('en-IN')}`,
             icon: Wallet,
             iconBgColor: "bg-emerald-100",
             iconColor: "text-emerald-600",
@@ -23,7 +23,7 @@ export default function WalletStats({ stats }: WalletStatsProps) {
         },
         {
             title: "Total Withdrawn",
-            value: `₹${stats.totalWithdrawn.toLocaleString('en-IN')}`,
+            value: `₹${(stats?.totalWithdrawn ?? 0).toLocaleString('en-IN')}`,
             icon: Landmark,
             iconBgColor: "bg-blue-100",
             iconColor: "text-blue-600",
@@ -35,7 +35,7 @@ export default function WalletStats({ stats }: WalletStatsProps) {
         },
         {
             title: "Processing",
-            value: `₹${stats.pendingWithdrawals.toLocaleString('en-IN')}`,
+            value: `₹${(stats?.pendingWithdrawals ?? 0).toLocaleString('en-IN')}`,
             icon: Clock,
             iconBgColor: "bg-amber-100",
             iconColor: "text-amber-600",

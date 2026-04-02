@@ -141,6 +141,15 @@ async function executeFetch<T>(
 
 function withBody(method: string, body?: unknown): Partial<SafeFetchInit> {
   if (body === undefined) return { method };
+
+  // Handle FormData separately
+  if (typeof FormData !== "undefined" && body instanceof FormData) {
+    return {
+      method,
+      body,
+    };
+  }
+
   return {
     method,
     body: JSON.stringify(body),

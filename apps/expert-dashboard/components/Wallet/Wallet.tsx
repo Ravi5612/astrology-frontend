@@ -20,30 +20,34 @@ export default function Wallet() {
         try {
             // Fetch balance
             try {
-                const balance = await getWalletBalance();
-                setStats(balance);
+                const [balance, balanceError] = await getWalletBalance();
+                if (balance) setStats(balance);
+                if (balanceError) console.error("[Wallet] Balance error:", balanceError);
             } catch (error) {
                 console.error("[Wallet] Failed to fetch balance:", error);
             }
 
             // Fetch transactions
             try {
-                const txData = await getWalletTransactions();
-                setTransactions(txData.transactions || []);
+                const [txData, txError] = await getWalletTransactions();
+                if (txData) setTransactions(txData.transactions || []);
+                if (txError) console.error("[Wallet] Transaction error:", txError);
             } catch (error) {
                 console.error("[Wallet] Failed to fetch transactions:", error);
             }
 
             // Fetch bank accounts
             try {
-                const accounts = await getBankAccounts();
-                // Check if response has data nested (some endpoints do)
-                const accountsData = (accounts as any)?.data || accounts;
-                setBankAccounts(Array.isArray(accountsData) ? accountsData : []);
+                const [accounts, accountsError] = await getBankAccounts();
+                if (accountsError) {
+                    console.error("[Wallet] Bank accounts error:", accountsError);
+                } else {
+                    // Check if response has data nested (some endpoints do)
+                    const accountsData = (accounts as any)?.data || accounts;
+                    setBankAccounts(Array.isArray(accountsData) ? accountsData : []);
+                }
             } catch (error: any) {
-                console.error("[Wallet] Failed to fetch bank accounts (400 Bad Request investigation):", error);
-                const backendMsg = error?.body?.message || error?.data?.message || error?.message;
-                console.error("[Wallet] Backend error message:", backendMsg);
+                console.error("[Wallet] Failed to fetch bank accounts:", error);
             }
         } catch (error) {
             console.error("Critical error in loadData:", error);

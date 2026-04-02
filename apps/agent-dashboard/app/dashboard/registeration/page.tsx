@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@repo/ui";
 import {
-    UserPlus, Copy, CheckCircle, Eye, EyeOff, X,
+    UserPlus, CheckCircle, X,
     Star, Users, Building2, ShoppingBag,
     MapPin, Phone, Clock, Flame,
 } from "lucide-react";
@@ -33,7 +33,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-yellow-700",
         activeText: "text-white",
         borderColor: "border-yellow-700",
-        infoText: "A temporary password will be generated. Share it with the expert — it won't be shown again.",
+        infoText: "The expert will receive their login credentials and a verification link via email.",
     },
     {
         id: "client",
@@ -43,7 +43,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-primary",
         activeText: "text-white",
         borderColor: "border-primary",
-        infoText: "A temporary password will be generated. Share it with the client — it won't be shown again.",
+        infoText: "The client will receive their login credentials and a verification link via email.",
     },
     {
         id: "mandir",
@@ -98,23 +98,13 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 
 // ── Success Modal (for user registration) ────────────────────────────────────
 function SuccessModal({
-    tempPassword,
     registeredUser,
     onClose,
 }: {
-    tempPassword: string;
     registeredUser: any;
     onClose: () => void;
 }) {
-    const [showPassword, setShowPassword] = useState(false);
-    const [copied, setCopied] = useState(false);
-
-    const copyPassword = () => {
-        navigator.clipboard.writeText(tempPassword);
-        setCopied(true);
-        toast.success("Password copied!");
-        setTimeout(() => setCopied(false), 3000);
-    };
+    const roleString = registeredUser.roles?.[0]?.name || registeredUser.role || "user";
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -131,7 +121,7 @@ function SuccessModal({
                     <p className="text-sm text-gray-500 mt-1">
                         {registeredUser.name} has been registered as{" "}
                         <span className="font-bold text-primary capitalize">
-                            {registeredUser.roles?.[0]?.name || registeredUser.role || "user"}
+                            {roleString}
                         </span>
                     </p>
                 </div>
@@ -139,33 +129,26 @@ function SuccessModal({
                 <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-1.5">
                     <p className="text-xs text-gray-500">Name: <span className="font-bold text-gray-800">{registeredUser.name}</span></p>
                     <p className="text-xs text-gray-500">Email: <span className="font-bold text-gray-800">{registeredUser.email}</span></p>
-                    <p className="text-xs text-gray-500">Role: <span className="font-bold text-gray-800 capitalize">{registeredUser.roles?.[0]?.name || registeredUser.role || "user"}</span></p>
+                    <p className="text-xs text-gray-500">Role: <span className="font-bold text-gray-800 capitalize">{roleString}</span></p>
                 </div>
 
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
-                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest mb-2">⚠️ Temporary Password — Share Once Only!</p>
-                    <div className="flex items-center gap-2">
-                        <code className="flex-1 text-lg font-black text-amber-900 tracking-widest">
-                            {showPassword ? tempPassword : "••••••••"}
-                        </code>
-                        <button onClick={() => setShowPassword((v) => !v)} className="text-amber-600 hover:text-amber-800 p-1 transition-colors">
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                        <button
-                            onClick={copyPassword}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${copied ? "bg-green-100 text-green-700" : "bg-amber-200 text-amber-800 hover:bg-amber-300"}`}
-                        >
-                            {copied ? <><CheckCircle className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
-                        </button>
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-4 text-center">
+                    <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
+                        <Flame className="w-4 h-4" />
+                        <span className="text-xs font-black uppercase tracking-widest">Credentials Sent</span>
                     </div>
+                    <p className="text-sm text-blue-900 font-bold italic">
+                        The login password and verification link have been sent to 
+                        <span className="block mt-1 font-black underline decoration-blue-300 underline-offset-2">{registeredUser.email}</span>
+                    </p>
                 </div>
 
-                <p className="text-xs text-gray-400 text-center mb-4">
-                    This password will <strong>not be shown again</strong> after you close this window.
+                <p className="text-xs text-center text-slate-400 font-medium px-4 mb-6 italic">
+                    The user/expert can now log in after verifying their email using the credentials provided in their inbox.
                 </p>
 
                 <Button variant="primary" fullWidth onClick={onClose}>
-                    Done — I&apos;ve noted the password
+                    Great, Done
                 </Button>
             </div>
         </div>
@@ -205,7 +188,6 @@ function ListingSuccessModal({ name, type, onClose }: { name: string; type: stri
 function UserForm({ userType }: { userType: "expert" | "client" }) {
     const [form, setForm] = useState(EMPTY_USER_FORM);
     const [submitting, setSubmitting] = useState(false);
-    const [tempPassword, setTempPassword] = useState<string | null>(null);
     const [registeredUser, setRegisteredUser] = useState<any>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -220,13 +202,12 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
         if (error) {
             toast.error(error.message || "Registration failed. Try again.");
         } else if (res) {
-            setTempPassword(res.tempPassword);
             setRegisteredUser(res.user);
             setForm(EMPTY_USER_FORM);
             if (res.emailSent === false) {
-                toast.warning(`Registered, but credentials email failed: ${res.emailError || "Unknown error"}. Share the password manually.`);
+                toast.warning(`Registered, but credentials email failed: ${res.emailError || "Unknown error"}. Please check email service.`);
             } else {
-                toast.success(`${userType === "expert" ? "Expert" : "Client"} registered successfully! ✅`);
+                toast.success(`${userType === "expert" ? "Expert" : "Client"} registered! Credentials sent to ${res.user.email} ✅`);
             }
         }
         setSubmitting(false);
@@ -255,8 +236,7 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ A temporary password will be generated after registration. Share it with the {userType === "expert" ? "expert" : "client"} —{" "}
-                    <strong>it won&apos;t be shown again.</strong>
+                    ℹ️ The login credentials and a verification link will be automatically sent to the {userType === "expert" ? "expert" : "client"}&apos;s email address after registration.
                 </div>
 
                 <Button variant="primary" type="submit" icon={UserPlus} disabled={submitting} fullWidth>
@@ -264,11 +244,10 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
                 </Button>
             </form>
 
-            {tempPassword && registeredUser && (
+            {registeredUser && (
                 <SuccessModal
-                    tempPassword={tempPassword}
                     registeredUser={registeredUser}
-                    onClose={() => { setTempPassword(null); setRegisteredUser(null); }}
+                    onClose={() => { setRegisteredUser(null); }}
                 />
             )}
         </>

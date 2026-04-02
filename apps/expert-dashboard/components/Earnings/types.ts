@@ -2,6 +2,7 @@ export interface EarningsStatsData {
     totalRevenue: number;
     walletBalance: number;
     totalWithdrawn: number;
+    pujaRevenue?: number;
     revenueGrowth?: number;
     balanceGrowth?: number;
     withdrawalGrowth?: number;

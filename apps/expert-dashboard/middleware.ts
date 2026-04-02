@@ -34,7 +34,10 @@ export async function middleware(request: NextRequest) {
     const urlAccessToken = searchParams.get('accessToken') || searchParams.get('token');
     const urlRefreshToken = searchParams.get('refreshToken') || searchParams.get('refresh_token');
 
-    if (urlAccessToken) {
+    // EXCLUDE verification and reset-password routes from stripping token
+    const isAuthRoute = pathname.includes('/verify-email') || pathname.includes('/reset-password');
+
+    if (urlAccessToken && !isAuthRoute) {
         const nextResponse = NextResponse.redirect(new URL(pathname, request.url));
         nextResponse.cookies.set('accessToken', urlAccessToken, {
             httpOnly: true,

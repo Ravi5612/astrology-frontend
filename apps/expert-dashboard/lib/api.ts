@@ -11,7 +11,8 @@ export { ApiError };
 export const api = createSafeFetchInstance({
   baseUrl: 'http://localhost:6543/api/v1',
   headers: {
-    'Content-Type': 'application/json',
+    // Content-Type: 'application/json' removed to allow FormData requests
+    // Standard JSON requests will still work if the library or fetch handles them.
   },
   timeoutMs: 10_000,
 });

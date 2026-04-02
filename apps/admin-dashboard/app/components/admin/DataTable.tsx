@@ -319,15 +319,15 @@ export function DataTable<T extends { id: number | string }>({
               <p className="text-sm text-gray-700" role="status" aria-live="polite">
                 Showing{" "}
                 <span className="font-medium">
-                  {filteredData.length === 0 ? 0 : paginationData.startIndex + 1}
+                  {manualPagination ? (totalItems === 0 ? 0 : paginationData.startIndex + 1) : (filteredData.length === 0 ? 0 : paginationData.startIndex + 1)}
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
-                  {Math.min(paginationData.endIndex, filteredData.length)}
+                  {manualPagination ? paginationData.endIndex : Math.min(paginationData.endIndex, filteredData.length)}
                 </span>{" "}
                 of{" "}
-                <span className="font-medium">{filteredData.length}</span>{" "}
-                {filteredData.length === 1 ? "entry" : "entries"}
+                <span className="font-medium">{manualPagination ? totalItems : filteredData.length}</span>{" "}
+                {(manualPagination ? totalItems : filteredData.length) === 1 ? "entry" : "entries"}
               </p>
 
               {/* Pagination controls */}

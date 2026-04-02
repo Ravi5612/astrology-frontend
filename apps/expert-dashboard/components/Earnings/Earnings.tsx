@@ -19,8 +19,13 @@ export default function EarningsPage() {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const stats = await getEarningsStats(timeRange);
-        setData(stats);
+        const [stats, error] = await getEarningsStats(timeRange);
+        if (error) {
+           console.error("[EarningsPage] Failed to load earnings stats:", error);
+           setData(null);
+        } else {
+           setData(stats);
+        }
       } catch (error) {
         console.error("[EarningsPage] Failed to load earnings stats:", error);
       } finally {
