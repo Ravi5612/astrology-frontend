@@ -5,6 +5,15 @@ export interface DashboardStats {
     totalEarnings: number;
     averageRating: number;
     totalReviews: number;
+    // New fields for Appointments page compatibility
+    today_appointments?: number;
+    completed_today?: number;
+    expired_today?: number;
+    today_earnings?: number;
+    total_appointments?: number;
+    total_completed?: number;
+    total_expired?: number;
+    total_earnings?: number;
     trends: {
         sessions: string;
         earnings: string;
@@ -19,8 +28,9 @@ export const getDashboardStats = async (type: string = 'monthly'): Promise<[Dash
     const data = (res as any)?.data?.data || (res as any)?.data || res;
 
     return [{
-        totalChatSessions: data.total_chat_sessions || data.totalSessions || 0,
-        totalEarnings: data.total_earnings || data.totalEarnings || 0,
+        ...data, // Spread all raw data first (today_appointments, etc.)
+        totalChatSessions: data.total_chat_sessions || data.totalSessions || data.total_appointments || 0,
+        totalEarnings: data.total_earnings || data.totalEarnings || data.today_earnings || 0,
         averageRating: data.average_rating || data.averageRating || 0,
         totalReviews: data.total_reviews || data.totalReviews || 0,
         trends: {
