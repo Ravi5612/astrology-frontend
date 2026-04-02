@@ -145,14 +145,8 @@ async function executeFetch<T>(
 
 function withBody(method: string, body?: unknown): Partial<SafeFetchInit> {
   if (body === undefined) return { method };
-<<<<<<< Updated upstream
-
   // Handle FormData separately
   if (typeof FormData !== "undefined" && body instanceof FormData) {
-=======
-  
-  if (body instanceof FormData) {
->>>>>>> Stashed changes
     return {
       method,
       body,
