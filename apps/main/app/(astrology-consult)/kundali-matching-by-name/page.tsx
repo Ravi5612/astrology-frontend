@@ -6,10 +6,15 @@ import HeroComponent from "./hero.component";
 import MatchingForm from "./matching-form.component";
 import ResultComponent from "./result.component";
 import EducationalContent from "./educational-content.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { matchingTranslations } from "@/lib/translations/calculators/matching";
 
 import { ConsultPersonDetails, AdvancedMatchResults } from "@/lib/types";
 
 const KundaliMatchingByNamePage = () => {
+  const { lang } = useLanguageStore();
+  const t = (matchingTranslations[lang as keyof typeof matchingTranslations] || matchingTranslations.en).form;
+
   const [boyDetails, setBoyDetails] = useState<ConsultPersonDetails>({
     name: "",
     date: "",
@@ -76,7 +81,7 @@ const KundaliMatchingByNamePage = () => {
       !girlDetails.time ||
       !girlDetails.lat
     ) {
-      setError("Please fill in all birth details for both individuals.");
+      setError(t.errorFillAll);
       return;
     }
 
@@ -96,7 +101,7 @@ const KundaliMatchingByNamePage = () => {
       );
 
       if (fetchErr) {
-        const errMsg = fetchErr?.message || "Failed to generate report.";
+        const errMsg = fetchErr?.message || t.errorFailed;
         setError(typeof errMsg === "string" ? errMsg : JSON.stringify(errMsg));
         return;
       }
@@ -112,7 +117,7 @@ const KundaliMatchingByNamePage = () => {
           });
         }, 300);
       } else {
-        setError("Received incomplete data from the server.");
+        setError(t.errorIncomplete);
       }
     } finally {
       setLoading(false);

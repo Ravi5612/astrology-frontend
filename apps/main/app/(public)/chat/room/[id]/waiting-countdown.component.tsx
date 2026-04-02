@@ -7,8 +7,10 @@ const { Clock } = LucideIcons as any;
 
 export default function WaitingCountdown({ expiresAt, onExpire }: { expiresAt: string; onExpire: () => void }) {
     const [secondsLeft, setSecondsLeft] = useState<number>(0);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const calculateSeconds = () => {
             const diff = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000);
             if (diff <= 0) {
@@ -40,7 +42,7 @@ export default function WaitingCountdown({ expiresAt, onExpire }: { expiresAt: s
             <div className="flex items-center gap-2 bg-black/10 px-4 py-1.5 rounded-full border border-orange-500/20">
                 <Clock className="w-3 h-3 text-orange-500" />
                 <span className="text-orange-500 font-black tabular-nums text-xs">
-                    Auto-Expires in: {mins}:{secs.toString().padStart(2, '0')}
+                    Auto-Expires in: {mounted ? `${mins}:${secs.toString().padStart(2, '0')}` : '--:--'}
                 </span>
             </div>
         </div>

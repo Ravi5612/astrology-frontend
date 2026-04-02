@@ -9,8 +9,10 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { useLanguageStore } from "@/store/languageStore";
+import { pujaTranslations } from "@/lib/translations/puja";
 
-const LikeButton = ({ pujaId, initialLikes }: { pujaId: number; initialLikes: number }) => {
+const LikeButton = ({ pujaId, initialLikes, t, fontStyle }: { pujaId: number; initialLikes: number; t: any; fontStyle: any }) => {
     const { isClientAuthenticated } = useAuthStore();
     const { isPujaInWishlist } = useWishlistStore();
     const { toggleLike } = useWishlist();
@@ -22,7 +24,7 @@ const LikeButton = ({ pujaId, initialLikes }: { pujaId: number; initialLikes: nu
         e.stopPropagation();
         
         if (!isClientAuthenticated) {
-            toast.error("Please login to like puja");
+            toast.error(t.toastLike, { style: fontStyle });
             return;
         }
 
@@ -50,6 +52,10 @@ interface PujaCardProps {
 }
 
 export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
+    const { lang } = useLanguageStore();
+    const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en).card;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
     const getMinCost = (puja: ExpertPuja) => {
         const costs = [
             puja.online_cost,
@@ -82,13 +88,13 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
                  {/* Availability Badges */}
                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                     {puja.is_online && (
-                        <span className="px-2 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-blue-400/30">
-                            Online
+                        <span className="px-2 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-blue-400/30" style={fontStyle}>
+                            {t.online}
                         </span>
                     )}
                     {puja.is_home_visit && (
-                        <span className="px-2 py-0.5 bg-emerald-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-emerald-400/30">
-                            Home visit
+                        <span className="px-2 py-0.5 bg-emerald-600/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-wider rounded-md border border-emerald-400/30" style={fontStyle}>
+                            {t.homeVisit}
                         </span>
                     )}
                  </div>
@@ -100,7 +106,7 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
                         {puja.name}
                     </h3>
                     <div className="pt-0.5">
-                        <LikeButton pujaId={puja.id} initialLikes={puja.total_likes || 0} />
+                        <LikeButton pujaId={puja.id} initialLikes={puja.total_likes || 0} t={t} fontStyle={fontStyle} />
                     </div>
                 </div>
 
@@ -116,8 +122,8 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
                                 </div>
                             )}
                         </div>
-                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">
-                            By {puja.expert?.user?.name || "Verified Pandit"}
+                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide" style={fontStyle}>
+                            {t.by} {puja.expert?.user?.name || t.verifiedPandit}
                         </span>
                     </div>
                     <div className="w-1 h-1 bg-gray-300 rounded-full" />
@@ -128,20 +134,20 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed h-[40px] mb-4">
-                    {puja.description || "Divine Vedic ceremony performed with full rituals and sacred mantras for spiritual prosperity."}
+                <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed h-[40px] mb-4" style={fontStyle}>
+                    {puja.description || t.descriptionFallback}
                 </p>
 
                 {/* Footer: Price + Action */}
                 <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
                     <div>
-                        <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-0.5">Dakshina</span>
+                        <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-0.5" style={fontStyle}>{t.dakshina}</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-xl font-black text-gray-900">₹{getMinCost(puja)}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-1 text-orange-500 text-[10px] font-bold uppercase tracking-widest bg-orange-50 px-3 py-1.5 rounded-xl group-hover:bg-orange-600 group-hover:text-white transition-all">
-                        Ritual details
+                    <div className="flex items-center gap-1 text-orange-500 text-[10px] font-bold uppercase tracking-widest bg-orange-50 px-3 py-1.5 rounded-xl group-hover:bg-orange-600 group-hover:text-white transition-all" style={fontStyle}>
+                        {t.ritualDetails}
                     </div>
                 </div>
             </div>

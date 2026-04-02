@@ -143,6 +143,7 @@ export default function ConsultationPrep() {
 
     const [response, error] = await http.post<any>("/chat/initiate", {
       expertId: parseInt(id),
+      metadata: !askSomeoneElse ? someoneElseData : null,
     });
 
     if (error) {
@@ -159,28 +160,12 @@ export default function ConsultationPrep() {
         }),
       );
 
-      if (askSomeoneElse) {
-        if (clientProfile) {
-          const profileData = clientProfile?.data || clientProfile;
-          const introData = {
-            name: profileData.full_name || profileData.user?.name || "User",
-            dob: profileData.date_of_birth || "",
-            tob: profileData.time_of_birth || "",
-            pob: profileData.place_of_birth || "",
-            gender: profileData.gender || "",
-          };
-          localStorage.setItem("pendingIntroCard", JSON.stringify(introData));
-        }
-      } else {
+      if (!askSomeoneElse) {
         if (!someoneElseData.name || !someoneElseData.dob) {
           toast.error("Please fill Name and DOB for the consultation");
           setActionLoading(false);
           return;
         }
-        localStorage.setItem(
-          "pendingIntroCard",
-          JSON.stringify(someoneElseData),
-        );
       }
 
       toast.success("Connecting to expert...");

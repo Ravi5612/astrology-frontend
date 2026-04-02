@@ -99,7 +99,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                       >
                         {t.orderId}
                       </span>
-                      <span className="font-bold text-gray-900">
+                      <span className="font-bold text-gray-900" style={fontStyle}>
                         #{order.orderId || order.id}
                       </span>
                     </div>
@@ -110,16 +110,16 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                       >
                         {t.date}
                       </span>
-                      <span className="font-bold text-gray-900">
+                      <span className="font-bold text-gray-900" style={fontStyle}>
                         {order.createdAt || order.created_at
                           ? new Date(
                               order.createdAt || order.created_at
-                            ).toLocaleDateString("en-IN", {
+                            ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
                             })
-                          : "N/A"}
+                          : t.na}
                       </span>
                     </div>
                     <div>
@@ -149,7 +149,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                       }`}
                       style={fontStyle}
                     >
-                      {order.status || t.pending}
+                      {t.statusMap?.[order.status?.toLowerCase() as keyof typeof t.statusMap] || order.status || t.pending}
                     </span>
                     <button
                       className={`w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm transition-transform duration-300 ${
@@ -181,7 +181,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                               <div className="w-16 h-16 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm flex-shrink-0">
                                 <Image
                                   src={productImg}
-                                  alt={product?.name || "Product"}
+                                  alt={product?.name || t.productName}
                                   width={64}
                                   height={64}
                                   className="object-cover w-full h-full"
@@ -193,7 +193,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                               <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start gap-4 mb-1">
                                   <h6 className="font-bold text-gray-900 m-0 truncate">
-                                    {product?.name || "Product Name"}
+                                    {product?.name || t.productName}
                                   </h6>
                                   <span className="font-bold text-gray-900 text-lg">
                                     ₹{item.price || 0}

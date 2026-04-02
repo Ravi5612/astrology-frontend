@@ -26,7 +26,7 @@ export default function HinduCalendarPage() {
       const year = currentMonthDate.getFullYear();
       const month = currentMonthDate.getMonth() + 1; // 1-12
       
-      const res = await getMonthlyCalendar(year, month, undefined, lang);
+      const res = await getMonthlyCalendar(year, month, '28.6139', '77.2090', lang);
       if (res.success) {
         setDaysData(res.data);
       }

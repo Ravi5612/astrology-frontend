@@ -2,8 +2,14 @@ import React from "react";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
+import { useLanguageStore } from "@/store/languageStore";
+import { pujaTranslations } from "@/lib/translations/puja";
 
 const ComingSoonSection = () => {
+  const { lang } = useLanguageStore();
+  const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en).comingSoon;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="space-section light-back">
       <div className="container">
@@ -14,28 +20,27 @@ const ComingSoonSection = () => {
             <HiOutlineSparkles className="text-white text-4xl animate-spin-slow" />
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-bold text-[#301118] mb-4">
-            Under Cosmic Alignment
+          <h2 className="text-3xl md:text-5xl font-bold text-[#301118] mb-4" style={fontStyle}>
+            {t.title}
           </h2>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-8">
-            Expected Reveal: Coming Soon
+          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-8" style={fontStyle}>
+            {t.reveal}
           </p>
 
-          <p className="text-gray-500 italic max-w-2xl mx-auto mb-12 leading-relaxed">
-            Our Vedic priests are preparing the sacred space for your digital
-            spiritual journey. Authentic rituals, live streaming, and
-            personalized blessings are arriving shortly.
+          <p className="text-gray-500 italic max-w-2xl mx-auto mb-12 leading-relaxed" style={fontStyle}>
+            {t.description}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/"
               className="btn-link py-4 px-12 shadow-xl inline-flex items-center gap-3 no-underline"
+              style={fontStyle}
             >
-              <FaArrowLeft size={12} /> Back to Home
+              <FaArrowLeft size={12} /> {t.btnBack}
             </Link>
-            <button className="bg-[#301118] text-white px-12 py-4 rounded-3 text-sm font-bold hover:bg-[#4a1a25] transition-colors border-0">
-              Notify Me
+            <button className="bg-[#301118] text-white px-12 py-4 rounded-3 text-sm font-bold hover:bg-[#4a1a25] transition-colors border-0" style={fontStyle}>
+              {t.btnNotify}
             </button>
           </div>
         </div>

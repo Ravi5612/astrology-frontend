@@ -1,0 +1,45 @@
+{
+  "tithi": {
+    "name": "N/A",
+    "start": "N/A",
+    "end": "N/A"
+  },
+  "nakshatra": {
+    "name": "N/A",
+    "start": "N/A",
+    "end": "N/A"
+  },
+  "karana": {
+    "name": "N/A",
+    "start": "N/A",
+    "end": "N/A"
+  },
+  "yoga": {
+    "name": "N/A",
+    "start": "N/A",
+    "end": "N/A"
+  },
+  "shubhMuhurat": {
+    "abhijit": {
+      "start": "N/A",
+      "end": "N/A"
+    },
+    "brahma": {
+      "start": "N/A",
+      "end": "N/A"
+    }
+  },
+  "ashubhMuhurat": {
+    "rahuKalam": {
+      "start": "N/A",
+      "end": "N/A"
+    },
+    "yamaganda": {
+      "start": "N/A",
+      "end": "N/A"
+    }
+  },
+  "sunrise": "06:14 AM",
+  "sunset": "06:35 PM",
+  "moonrise": "07:02 PM"
+}

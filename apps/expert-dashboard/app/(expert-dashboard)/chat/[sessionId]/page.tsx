@@ -111,7 +111,7 @@ function ExpertChatRoomContent() {
             if (session.elapsedSeconds !== undefined) {
                 setElapsedTime(session.elapsedSeconds);
             }
-            toast.success("Consultation started!");
+            toast.success("Consultation started!", { toastId: `session_activated_${sessionId}` });
         });
 
         chatSocket.on('session_ended', (data: any) => {

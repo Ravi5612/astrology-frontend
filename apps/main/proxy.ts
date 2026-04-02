@@ -9,11 +9,6 @@ interface JwtPayload {
   role?: string;
 }
 
-const debug = (...args: unknown[]) => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("[AuthDebug][proxy]", ...args);
-  }
-};
 
 const protectedPaths = [
   "/profile",
@@ -78,7 +73,6 @@ export async function proxy(request: NextRequest) {
   const googleErrorDescription = searchParams.get("error_description");
 
   if (googleError) {
-    debug("social login error found, redirecting to sign-in");
     const loginUrl = buildSignInUrl(request, pathname, {
       error: googleError,
       ...(googleErrorDescription ? { error_description: googleErrorDescription } : {}),
@@ -113,7 +107,6 @@ export async function proxy(request: NextRequest) {
     }
     return response;
   } catch (error) {
-    debug("refresh exception", error);
     return NextResponse.redirect(buildSignInUrl(request, pathname));
   }
 }

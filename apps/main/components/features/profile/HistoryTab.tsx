@@ -94,12 +94,12 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                         {session.createdAt || session.created_at
                           ? new Date(
                               session.createdAt || session.created_at
-                            ).toLocaleDateString("en-IN", {
+                            ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
                             })
-                          : "N/A"}
+                          : t.na}
                       </span>
                     </div>
                     <div>
@@ -128,7 +128,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                     >
                       {session.terminatedBy === "admin"
                         ? t.terminatedByAdmin
-                        : session.status || t.scheduled}
+                        : t.statusMap?.[session.status as keyof typeof t.statusMap] || session.status || t.scheduled}
                     </span>
                     <button
                       className={`w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm transition-transform duration-300 ${

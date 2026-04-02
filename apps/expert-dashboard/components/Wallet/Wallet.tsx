@@ -20,29 +20,44 @@ export default function Wallet() {
         try {
             // Fetch balance
             try {
+<<<<<<< Updated upstream
                 const [balance, balanceError] = await getWalletBalance();
                 if (balance) setStats(balance);
                 if (balanceError) console.error("[Wallet] Balance error:", balanceError);
+=======
+                const [balance, balanceErr] = await getWalletBalance();
+                if (balance) setStats(balance);
+>>>>>>> Stashed changes
             } catch (error) {
                 console.error("[Wallet] Failed to fetch balance:", error);
             }
 
             // Fetch transactions
             try {
+<<<<<<< Updated upstream
                 const [txData, txError] = await getWalletTransactions();
                 if (txData) setTransactions(txData.transactions || []);
                 if (txError) console.error("[Wallet] Transaction error:", txError);
+=======
+                const [txData, txErr] = await getWalletTransactions();
+                if (txData) setTransactions(txData.transactions || []);
+>>>>>>> Stashed changes
             } catch (error) {
                 console.error("[Wallet] Failed to fetch transactions:", error);
             }
 
             // Fetch bank accounts
             try {
+<<<<<<< Updated upstream
                 const [accounts, accountsError] = await getBankAccounts();
                 if (accountsError) {
                     console.error("[Wallet] Bank accounts error:", accountsError);
                 } else {
                     // Check if response has data nested (some endpoints do)
+=======
+                const [accounts, accountsErr] = await getBankAccounts();
+                if (accounts) {
+>>>>>>> Stashed changes
                     const accountsData = (accounts as any)?.data || accounts;
                     setBankAccounts(Array.isArray(accountsData) ? accountsData : []);
                 }

@@ -165,7 +165,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
               className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
               style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
             >
-              Full Name
+              {t.personalDetails.fullName}
             </label>
             {editing ? (
               <input

@@ -16,6 +16,8 @@ import CalculatorHero from "./common/hero";
 import BreakupPatchupForm from "./BreakupPatchupForm.component";
 
 import { BreakupPatchupResult } from "@/lib/types";
+import { useLanguageStore } from "@/store/languageStore";
+import { breakupPatchupTranslations } from "@/lib/translations/calculators/breakup-patchup";
 
 const premiumCardStyles = `
   .glass-card {
@@ -53,13 +55,11 @@ const hashSeed = (str: string): number => {
   return Math.abs(hash);
 };
 
-const getAdvice = (patchup: number) => {
-  if (patchup >= 70) return "Small issues can be fixed easily. Talk calmly.";
-  if (patchup >= 50) return "Mixed phase. Communication will decide the future.";
-  return "Emotions may clash. Give space and avoid ego fights.";
-};
-
 const BreakupPatchupCalculator: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = breakupPatchupTranslations[lang as keyof typeof breakupPatchupTranslations] || breakupPatchupTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [yourName, setYourName] = useState("");
   const [partnerName, setPartnerName] = useState("");
 
@@ -101,7 +101,7 @@ const BreakupPatchupCalculator: React.FC = () => {
     const patchup = (seed % 51) + 40; // 40–90
     const breakup = clamp(100 - patchup + ((seed % 11) - 5), 5, 60); // 5–60
 
-    const advice = getAdvice(patchup);
+    const advice = patchup >= 70 ? t.results.advice.high : (patchup >= 50 ? t.results.advice.medium : t.results.advice.low);
 
     setResult({ patchup, breakup, advice });
 
@@ -118,10 +118,10 @@ const BreakupPatchupCalculator: React.FC = () => {
 
       {/* Hero */}
       <CalculatorHero
-        badgeText="Fun Relationship Insight"
-        titleMain="Breakup"
-        titleAccent="Patchup"
-        paragraph="Enter both names and ages to reveal breakup vs patchup chances with quick advice."
+        badgeText={t.hero.badge}
+        titleMain={t.hero.titleMain}
+        titleAccent={t.hero.titleAccent}
+        paragraph={t.hero.paragraph}
       />
 
       <BreakupPatchupForm
@@ -136,6 +136,8 @@ const BreakupPatchupCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result */}
@@ -144,19 +146,19 @@ const BreakupPatchupCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Chances Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Breakup / <span className="text-primary">Patchup</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -164,14 +166,14 @@ const BreakupPatchupCalculator: React.FC = () => {
 
                     <div className="grid md:grid-cols-2 gap-10">
                       {/* Patchup */}
-                      <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-orange-50">
+                      <div className="bg-white rounded-[3.5rem] p-10 shadow-sm border border-orange-50">
                         <div className="flex items-center gap-4 mb-6">
                           <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center">
                             <FaHeart className="text-green-600" size={22} />
                           </div>
                           <div>
-                            <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400">
-                              Patchup Chance
+                            <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400" style={fontStyle}>
+                              {t.results.patchupLabel}
                             </p>
                             <h3 className="m-0 text-3xl font-black text-burgundy">
                               {result.patchup}%
@@ -188,14 +190,14 @@ const BreakupPatchupCalculator: React.FC = () => {
                       </div>
 
                       {/* Breakup */}
-                      <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-orange-50">
+                      <div className="bg-white rounded-[3.5rem] p-10 shadow-sm border border-orange-50">
                         <div className="flex items-center gap-4 mb-6">
                           <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center">
                             <FaHeartBroken className="text-red-600" size={22} />
                           </div>
                           <div>
-                            <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400">
-                              Breakup Chance
+                            <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400" style={fontStyle}>
+                              {t.results.breakupLabel}
                             </p>
                             <h3 className="m-0 text-3xl font-black text-burgundy">
                               {result.breakup}%
@@ -219,13 +221,13 @@ const BreakupPatchupCalculator: React.FC = () => {
                           <GiSparkles size={28} />
                         </div>
 
-                        <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
+                        <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
                           "{result.advice}"
                         </p>
 
                         <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                          <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                            For fun & entertainment only
+                          <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                            {t.results.disclaimer}
                           </span>
                         </div>
                       </div>
@@ -243,5 +245,3 @@ const BreakupPatchupCalculator: React.FC = () => {
 };
 
 export default BreakupPatchupCalculator;
-
-

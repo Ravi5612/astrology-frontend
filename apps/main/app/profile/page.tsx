@@ -97,10 +97,10 @@ const ProfileContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden relative">
+    <div className="min-h-screen bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat relative">
       <div className="relative z-10 font-outfit">
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Sidebar Column */}
             <div className="lg:col-span-1">
               <ProfileSidebar

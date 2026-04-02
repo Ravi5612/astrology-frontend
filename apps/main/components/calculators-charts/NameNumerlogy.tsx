@@ -13,14 +13,10 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import NameNumerologyForm from "./NameNumerologyForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { nameNumerologyTranslations } from "@/lib/translations/calculators/name-numerology";
 
-type NameNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 22;
-
-type NameResult = {
-  nameNumber: NameNumber;
-  vibe: string;
-  totalBeforeReduce: number;
-};
+import { NameNumber, NameResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -37,22 +33,8 @@ const premiumCardStyles = `
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
-  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+  .animate-spin-slow { animation: spin-slow 2s linear infinite; }
 `;
-
-const vibeMap: Record<number, string> = {
-  1: "Leader",
-  2: "Calm",
-  3: "Creative",
-  4: "Practical",
-  5: "Energetic",
-  6: "Caring",
-  7: "Deep thinker",
-  8: "Ambitious",
-  9: "Helpful",
-  11: "Visionary (Master)",
-  22: "Master Builder",
-};
 
 const isMasterNumber = (n: number) => n === 11 || n === 22;
 
@@ -61,23 +43,14 @@ const letterValue = (ch: string): number => {
   const c = ch.toUpperCase();
   if (!/[A-Z]/.test(c)) return 0;
 
-  // 1: A J S
   if ("AJS".includes(c)) return 1;
-  // 2: B K T
   if ("BKT".includes(c)) return 2;
-  // 3: C L U
   if ("CLU".includes(c)) return 3;
-  // 4: D M V
   if ("DMV".includes(c)) return 4;
-  // 5: E N W
   if ("ENW".includes(c)) return 5;
-  // 6: F O X
   if ("FOX".includes(c)) return 6;
-  // 7: G P Y
   if ("GPY".includes(c)) return 7;
-  // 8: H Q Z
   if ("HQZ".includes(c)) return 8;
-  // 9: I R
   if ("IR".includes(c)) return 9;
 
   return 0;
@@ -96,24 +69,27 @@ const reduceNumber = (n: number): NameNumber => {
     current = sumDigits(current);
   }
 
-  // final must be 1–9 or master
   return current as NameNumber;
 };
 
 const NameNumerologyCalculator: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = nameNumerologyTranslations[lang as keyof typeof nameNumerologyTranslations] || nameNumerologyTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [fullName, setFullName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<NameResult | null>(null);
 
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  const normalizedName = useMemo(() => {
+  const normalizedNameValue = useMemo(() => {
     return fullName.trim();
   }, [fullName]);
 
   const canCalculate = useMemo(() => {
-    return normalizedName.length > 0;
-  }, [normalizedName]);
+    return normalizedNameValue.length > 0;
+  }, [normalizedNameValue]);
 
   const handleCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,17 +98,15 @@ const NameNumerologyCalculator: React.FC = () => {
     setLoading(true);
     setResult(null);
 
-    // premium feel
     await new Promise((r) => setTimeout(r, 650));
 
-    // Sum values of all letters
     let total = 0;
-    for (const ch of normalizedName) {
+    for (const ch of normalizedNameValue) {
       total += letterValue(ch);
     }
 
     const reduced = reduceNumber(total);
-    const vibe = vibeMap[reduced] || "Balanced";
+    const vibe = (t.results.vibes as any)[reduced] || t.results.vibes.default;
 
     setResult({
       nameNumber: reduced,
@@ -152,12 +126,24 @@ const NameNumerologyCalculator: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Hero */}
-      <CalculatorHero
-        badgeText="Pythagorean Numerology"
-        titleMain="Name"
-        titleAccent="Numerology"
-        paragraph="Enter your full name to reveal your Name Number and your personality vibe based on classic Pythagorean numerology."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       <NameNumerologyForm
         fullName={fullName}
@@ -165,6 +151,8 @@ const NameNumerologyCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result */}
@@ -173,19 +161,19 @@ const NameNumerologyCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Your Numerology Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Name <span className="text-primary">Number</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -201,8 +189,8 @@ const NameNumerologyCalculator: React.FC = () => {
                             <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                               {result.nameNumber}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Your vibe: {result.vibe}
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.vibeLabel} {result.vibe}
                             </span>
                           </div>
 
@@ -217,23 +205,23 @@ const NameNumerologyCalculator: React.FC = () => {
                             <GiSparkles size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
-                            Your vibe:{" "}
-                            <span className="font-black text-white">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
+                            {t.results.vibeLabel}{" "}
+                            <span className="font-black text-white ml-2">
                               {result.vibe}
                             </span>
                           </p>
 
-                          <p className="m-0 mt-6 text-sm text-orange-100/60 italic">
-                            Total letters score:{" "}
-                            <span className="font-black text-white">
+                          <p className="m-0 mt-6 text-sm text-orange-100/60 italic" style={fontStyle}>
+                            {t.results.scoreLabel}{" "}
+                            <span className="font-black text-white ml-1">
                               {result.totalBeforeReduce}
                             </span>
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              Pythagorean Numerology System
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.system}
                             </span>
                           </div>
                         </div>
@@ -252,5 +240,6 @@ const NameNumerologyCalculator: React.FC = () => {
 };
 
 export default NameNumerologyCalculator;
+
 
 

@@ -77,11 +77,9 @@ export const getExperts = async (
       throw new Error(`API Error: ${fetchError.message}`);
     }
 
-    console.log(`🔍 [API Experts] List response keys:`, Object.keys(result || {}));
 
     const finalData = Array.isArray(result) ? result : (result.data || result.experts || []);
     if (finalData.length > 0) {
-      console.log(`🔍 [API Experts] Sample data structure (Expert 0):`, JSON.stringify(finalData[0], null, 2));
     }
     const finalPagination = result.pagination || { total: finalData.length, hasMore: false };
 

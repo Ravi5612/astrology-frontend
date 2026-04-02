@@ -96,12 +96,12 @@ const DisputesTab: React.FC<DisputesTabProps> = ({ disputes, loading, onViewChat
                       {dispute.createdAt || dispute.created_at
                         ? new Date(
                             dispute.createdAt || dispute.created_at
-                          ).toLocaleDateString("en-IN", {
+                          ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
                             day: "numeric",
                             month: "short",
                             year: "numeric"
                           })
-                        : "N/A"}
+                        : t.na}
                     </span>
                   </td>
                   <td className="px-6 py-5">
@@ -127,7 +127,7 @@ const DisputesTab: React.FC<DisputesTabProps> = ({ disputes, loading, onViewChat
                               : "bg-gray-50 text-gray-600 border-gray-100 shadow-sm"
                       }`}
                     >
-                      {dispute.status}
+                      {t.statusMap?.[dispute.status?.toLowerCase() as keyof typeof t.statusMap] || dispute.status}
                     </span>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-right">

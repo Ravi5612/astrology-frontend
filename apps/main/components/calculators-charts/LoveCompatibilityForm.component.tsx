@@ -3,16 +3,7 @@ import { FaUser, FaHeart, FaArrowRight, FaSpinner } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 
-interface LoveCompatibilityFormProps {
-  maleName: string;
-  setMaleName: (val: string) => void;
-  femaleName: string;
-  setFemaleName: (val: string) => void;
-  loading: boolean;
-  canCalculate: boolean;
-  handleCalculate: (e: React.FormEvent) => void;
-  t: any;
-}
+import { LoveCompatibilityFormProps } from "@/lib/types/calculator";
 
 const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
   maleName,
@@ -23,42 +14,43 @@ const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
   canCalculate,
   handleCalculate,
   t,
+  fontStyle,
 }) => {
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="container px-6">
-        <div className="glass-card rounded-[3rem] p-8 md:p-16 shadow-[0_20px_50px_rgba(48,17,24,0.1)] border-t-4 border-t-primary/50 relative overflow-hidden">
+        <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_20px_60px_rgba(48,17,24,0.12)] border-t-4 border-t-primary/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
             <GiLotus size={150} />
           </div>
 
           <div className="text-center mb-10">
-            <h2 className="text-xl md:text-3xl font-black text-[#301118] mb-2 tracking-tight">
+            <h2 className="text-xl md:text-3xl font-black text-[#301118] mb-2 tracking-tight" style={fontStyle}>
               {t.form.title.replace("{percentage}", t.form.percentage)}
             </h2>
             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto mt-2"></div>
           </div>
 
           <form onSubmit={handleCalculate} className="max-w-3xl mx-auto">
-            <div className="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-[0_15px_40px_rgba(48,17,24,0.08)] border border-[#301118]/5 relative overflow-hidden bg-white">
+            <div className="glass-card rounded-[3rem] p-6 md:p-10 shadow-[0_15px_45px_rgba(48,17,24,0.1)] border border-[#301118]/5 relative overflow-hidden bg-white">
               <div className="flex flex-col md:flex-row items-center gap-0 md:gap-4 relative">
                 {/* Male */}
                 <div className="flex-1 w-full space-y-5">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
+                    <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1" style={fontStyle}>
                       {t.form.maleName}
                     </label>
                     <div className="relative">
                       <input
                         type="text"
                         required
-                        style={{ borderRadius: "9999px" }}
-                        className="w-full bg-[#fdf2f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                        style={{ borderRadius: "9999px", ...fontStyle }}
+                        className="w-full bg-[#fdf2f2] border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
                         placeholder={t.form.malePlaceholder}
                         value={maleName}
                         onChange={(e) => setMaleName(e.target.value)}
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
                         <FaUser size={14} />
                       </div>
                     </div>
@@ -84,20 +76,20 @@ const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
                 {/* Female */}
                 <div className="flex-1 w-full space-y-5">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
+                    <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1" style={fontStyle}>
                       {t.form.femaleName}
                     </label>
                     <div className="relative">
                       <input
                         type="text"
                         required
-                        style={{ borderRadius: "9999px" }}
-                        className="w-full bg-[#fdf2f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                        style={{ borderRadius: "9999px", ...fontStyle }}
+                        className="w-full bg-[#fdf2f2] border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
                         placeholder={t.form.femalePlaceholder}
                         value={femaleName}
                         onChange={(e) => setFemaleName(e.target.value)}
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
                         <FaUser size={14} />
                       </div>
                     </div>
@@ -110,14 +102,16 @@ const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
                   type="submit"
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
-                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
                   ) : (
                     <TbCrystalBall size={18} />
                   )}
-                  {loading ? t.form.calculating : t.form.calculate}
+                  <span style={fontStyle}>
+                    {loading ? t.form.calculating : t.form.calculateBtn}
+                  </span>
                   <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -134,3 +128,4 @@ const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
 };
 
 export default LoveCompatibilityForm;
+

@@ -13,6 +13,8 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import LifePathForm from "./LifePathForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { lifePathTranslations } from "@/lib/translations/calculators/life-path";
 
 import { LifePathNumber, LifePathResult } from "@/lib/types";
 
@@ -33,21 +35,6 @@ const premiumCardStyles = `
   }
   .animate-spin-slow { animation: spin-slow 20s linear infinite; }
 `;
-
-const lifePathMap: Record<LifePathNumber, { title: string; message: string }> = {
-  1: { title: "Leader", message: "Independent, strong will, and born to take initiative. Career hint: leadership, business, management." },
-  2: { title: "Peace Maker", message: "Emotionally intelligent, supportive, and cooperative. Career hint: counseling, HR, teamwork roles." },
-  3: { title: "Creative Soul", message: "Expressive, social, and full of artistic energy. Career hint: media, writing, design, communication." },
-  4: { title: "Builder", message: "Practical, disciplined, and stable mindset. Career hint: engineering, planning, operations, systems." },
-  5: { title: "Freedom Lover", message: "Adventurous, energetic, and loves change. Career hint: travel, sales, marketing, entrepreneurship." },
-  6: { title: "Caretaker", message: "Caring, responsible, and family-focused. Career hint: teaching, healthcare, service-based fields." },
-  7: { title: "Spiritual Thinker", message: "Deep thinker, researcher, and spiritually aware. Career hint: analysis, research, IT, psychology." },
-  8: { title: "Achiever", message: "Ambitious with strong money/power management energy. Career hint: finance, leadership, corporate growth." },
-  9: { title: "Humanitarian", message: "Emotional depth, compassion, and big-hearted nature. Career hint: NGO, healing, public service, arts." },
-  11: { title: "Intuitive Visionary", message: "Inspirational, intuitive, and spiritually gifted. Career hint: mentoring, creative leadership, guidance roles." },
-  22: { title: "Master Builder", message: "Big achievements, long-term success, and powerful execution. Career hint: large projects, business empires, systems." },
-  33: { title: "Compassionate Healer", message: "Teacher energy, healing nature, and strong emotional wisdom. Career hint: spiritual teaching, healing, coaching." },
-};
 
 const isMasterNumber = (n: number) => n === 11 || n === 22 || n === 33;
 
@@ -70,6 +57,10 @@ const reduceLifePath = (n: number): LifePathNumber => {
 };
 
 const NumerologyLifePathCalculator: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = lifePathTranslations[lang as keyof typeof lifePathTranslations] || lifePathTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [dob, setDob] = useState<string>(""); // required
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<LifePathResult | null>(null);
@@ -104,7 +95,7 @@ const NumerologyLifePathCalculator: React.FC = () => {
     // Reduce to single digit except master numbers
     const lifePath = reduceLifePath(total);
 
-    const info = lifePathMap[lifePath];
+    const info = t.results.meanings[lifePath as keyof typeof t.results.meanings];
 
     setResult({
       lifePath,
@@ -125,10 +116,10 @@ const NumerologyLifePathCalculator: React.FC = () => {
 
       {/* Hero */}
       <CalculatorHero
-        badgeText="Real Numerology Calculator"
-        titleMain="Life Path"
-        titleAccent="Number"
-        paragraph="Enter your date of birth to discover your Life Path Number and a quick personality + career hint."
+        badgeText={t.hero.badge}
+        titleMain={t.hero.titleMain}
+        titleAccent={t.hero.titleAccent}
+        paragraph={t.hero.paragraph}
       />
 
       <LifePathForm
@@ -137,6 +128,8 @@ const NumerologyLifePathCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result */}
@@ -145,19 +138,19 @@ const NumerologyLifePathCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Your Numerology Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Life Path <span className="text-primary">Number</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -173,7 +166,7 @@ const NumerologyLifePathCalculator: React.FC = () => {
                             <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                               {result.lifePath}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
                               {result.title}
                             </span>
                           </div>
@@ -189,13 +182,13 @@ const NumerologyLifePathCalculator: React.FC = () => {
                             <GiSparkles size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
                             {result.message}
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              Based on Real Numerology Reduction
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.disclaimer}
                             </span>
                           </div>
                         </div>
@@ -214,5 +207,3 @@ const NumerologyLifePathCalculator: React.FC = () => {
 };
 
 export default NumerologyLifePathCalculator;
-
-

@@ -14,13 +14,10 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import MarriageAgeForm from "./MarriageAgeForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { marriageAgeTranslations } from "@/lib/translations/calculators/marriage-age";
 
-type MarriageResult = {
-  startAge: number;
-  endAge: number;
-  bestYear: number;
-  hasDob: boolean;
-};
+import { MarriageResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -54,7 +51,6 @@ const hashSeed = (str: string): number => {
 };
 
 const getBirthYearFromDob = (dob: string): number | null => {
-  // dob expected "YYYY-MM-DD"
   if (!dob) return null;
   const year = Number(dob.split("-")[0]);
   if (!year || Number.isNaN(year)) return null;
@@ -62,6 +58,10 @@ const getBirthYearFromDob = (dob: string): number | null => {
 };
 
 const MarriageAgeCalculator: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = marriageAgeTranslations[lang as keyof typeof marriageAgeTranslations] || marriageAgeTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [name, setName] = useState<string>("");
   const [dob, setDob] = useState<string>(""); // optional
   const [loading, setLoading] = useState<boolean>(false);
@@ -69,17 +69,16 @@ const MarriageAgeCalculator: React.FC = () => {
 
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  const normalizedName = useMemo(() => normalizeName(name), [name]);
+  const normalizedNameValue = useMemo(() => normalizeName(name), [name]);
 
   const canCalculate = useMemo(() => {
-    return normalizedName.length > 0;
-  }, [normalizedName]);
+    return normalizedNameValue.length > 0;
+  }, [normalizedNameValue]);
 
   const stableKey = useMemo(() => {
-    // key = name + "|" + dob(optional)
     const safeDob = dob ? dob : "";
-    return `${normalizedName}|${safeDob}`;
-  }, [normalizedName, dob]);
+    return `${normalizedNameValue}|${safeDob}`;
+  }, [normalizedNameValue, dob]);
 
   const handleCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,30 +87,24 @@ const MarriageAgeCalculator: React.FC = () => {
     setLoading(true);
     setResult(null);
 
-    // premium feel
     await new Promise((r) => setTimeout(r, 650));
 
     const seed = hashSeed(stableKey);
-
-    // startAge = 22 + (seed % 8) -> 22–29
     const startAge = 22 + (seed % 8);
-
-    // endAge = startAge + 2 + (seed % 3) -> +2 to +4
     const endAge = startAge + 2 + (seed % 3);
 
     const currentYear = new Date().getFullYear();
     const birthYear = getBirthYearFromDob(dob);
 
-    let bestYear = currentYear + (seed % 5); // default if no dob
-    let hasDob = false;
+    let bestYear = currentYear + (seed % 5);
+    let hasDobValue = false;
 
     if (birthYear) {
-      hasDob = true;
-      // bestYear = birthYear + startAge + (seed % 2)
+      hasDobValue = true;
       bestYear = birthYear + startAge + (seed % 2);
     }
 
-    setResult({ startAge, endAge, bestYear, hasDob });
+    setResult({ startAge, endAge, bestYear, hasDob: hasDobValue });
 
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -125,12 +118,24 @@ const MarriageAgeCalculator: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Hero */}
-      <CalculatorHero
-        badgeText="Entertainment Prediction"
-        titleMain="Marriage"
-        titleAccent="Age Calculator"
-        paragraph="Enter your name and optionally your DOB to get a fun marriage age window and best year prediction."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       <MarriageAgeForm
         name={name}
@@ -140,6 +145,8 @@ const MarriageAgeCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result Section */}
@@ -148,22 +155,22 @@ const MarriageAgeCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Your Prediction
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Marriage <span className="text-primary">Window</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
-                      <div className="w-32 h-1 bg-linear-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
+                      <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
                     </div>
 
                     <div className="flex flex-col items-center">
@@ -176,8 +183,8 @@ const MarriageAgeCalculator: React.FC = () => {
                             <span className="block text-5xl md:text-7xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                               {result.startAge}–{result.endAge}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Age Window
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.ageWindow}
                             </span>
                           </div>
 
@@ -192,36 +199,35 @@ const MarriageAgeCalculator: React.FC = () => {
                             <GiSparkles size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
-                            Your marriage window:{" "}
-                            <span className="font-black text-white">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
+                            {t.results.windowLabel}{" "}
+                            <span className="font-black text-white ml-2">
                               {result.startAge}–{result.endAge}
                             </span>
                           </p>
 
-                          <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/80 mt-6 m-0">
-                            Best year:{" "}
-                            <span className="font-black text-white">
+                          <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/80 mt-6 m-0" style={fontStyle}>
+                            {t.results.bestYearLabel}{" "}
+                            <span className="font-black text-white ml-2">
                               {result.bestYear}
                             </span>
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              For fun & entertainment only
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.disclaimer}
                             </span>
                           </div>
 
                           {!result.hasDob && (
-                            <p className="m-0 mt-6 text-xs text-orange-100/50 italic">
-                              Note: Add DOB for a more personalized best year.
+                            <p className="m-0 mt-6 text-xs text-orange-100/50 italic" style={fontStyle}>
+                              {t.results.dobNote}
                             </p>
                           )}
                         </div>
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>

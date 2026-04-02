@@ -13,11 +13,10 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import SoulmateNameInitialsForm from "./SoulmateNameInitialsForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { soulmateInitialsTranslations } from "@/lib/translations/calculators/soulmate-initials";
 
-type SoulmateResult = {
-  initials: string[];
-  luckyMonth: string;
-};
+import { SoulmateResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -35,6 +34,7 @@ const premiumCardStyles = `
     to { transform: rotate(360deg); }
   }
   .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+  .animate-spin-fast { animation: spin-slow 3s linear infinite; }
 `;
 
 const normalizeName = (name: string): string => {
@@ -53,21 +53,6 @@ const hashSeed = (str: string): number => {
 const letters = Array.from({ length: 26 }, (_, i) =>
   String.fromCharCode(65 + i)
 );
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 const pickUniqueInitials = (seed: number): string[] => {
   const i1 = letters[seed % 26] as string;
@@ -102,6 +87,10 @@ const pickUniqueInitials = (seed: number): string[] => {
 };
 
 const SoulmateInitialFinder: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = soulmateInitialsTranslations[lang as keyof typeof soulmateInitialsTranslations] || soulmateInitialsTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [name, setName] = useState<string>("");
   const [dob, setDob] = useState<string>(""); // optional
   const [loading, setLoading] = useState<boolean>(false);
@@ -135,7 +124,7 @@ const SoulmateInitialFinder: React.FC = () => {
     const initials = pickUniqueInitials(seed);
 
     const monthIndex = seed % 12; // 0–11
-    const luckyMonth = months[monthIndex];
+    const luckyMonth = t.months[monthIndex];
 
     setResult({ initials, luckyMonth: luckyMonth as string });
 
@@ -152,10 +141,10 @@ const SoulmateInitialFinder: React.FC = () => {
 
       {/* Hero */}
       <CalculatorHero
-        badgeText="Fun Soulmate Prediction"
-        titleMain="Soulmate"
-        titleAccent="Initial Finder"
-        paragraph="Enter your name (and optional DOB) to reveal 3 possible soulmate initials and your lucky meeting month."
+        badgeText={t.hero.badge}
+        titleMain={t.hero.titleMain}
+        titleAccent={t.hero.titleAccent}
+        paragraph={t.hero.paragraph}
       />
 
       <SoulmateNameInitialsForm
@@ -166,6 +155,8 @@ const SoulmateInitialFinder: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Results */}
@@ -174,19 +165,19 @@ const SoulmateInitialFinder: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Your Prediction
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Soulmate <span className="text-primary">Initials</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -202,8 +193,8 @@ const SoulmateInitialFinder: React.FC = () => {
                             <span className="block text-4xl md:text-6xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                               {result.initials.join(", ")}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Possible Initials
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.possibleInitials}
                             </span>
                           </div>
 
@@ -218,23 +209,23 @@ const SoulmateInitialFinder: React.FC = () => {
                             <TbCrystalBall size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
-                            Your soulmate initials might be:{" "}
-                            <span className="font-black text-white">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
+                            {t.results.message}{" "}
+                            <span className="font-black text-white not-italic">
                               {result.initials.join(", ")}
                             </span>
                           </p>
 
-                          <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/80 mt-6 m-0">
-                            Lucky meeting month:{" "}
-                            <span className="font-black text-white">
+                          <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/80 mt-6 m-0" style={fontStyle}>
+                            {t.results.luckyMonth}{" "}
+                            <span className="font-black text-white not-italic">
                               {result.luckyMonth}
                             </span>
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              For fun & entertainment only
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.disclaimer}
                             </span>
                           </div>
                         </div>
@@ -253,5 +244,3 @@ const SoulmateInitialFinder: React.FC = () => {
 };
 
 export default SoulmateInitialFinder;
-
-

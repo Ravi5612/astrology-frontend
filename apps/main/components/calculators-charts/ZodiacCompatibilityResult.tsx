@@ -4,13 +4,7 @@ import React from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus, GiSparkles } from "react-icons/gi";
-import { CompatibilityResult, ZodiacSign } from "./useZodiacCompatibility";
-
-interface ZodiacCompatibilityResultProps {
-  result: CompatibilityResult;
-  yourSign: ZodiacSign;
-  partnerSign: ZodiacSign;
-}
+import { ZodiacCompatibilityResultProps } from "@/lib/types/calculator";
 
 const ZodiacCompatibilityResult: React.FC<ZodiacCompatibilityResultProps> = ({
   result,

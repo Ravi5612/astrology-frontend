@@ -14,15 +14,9 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import FlamesForm from "./FlamesForm.component";
-
-type FlamesLetter = "F" | "L" | "A" | "M" | "E" | "S";
-
-type FlamesResult = {
-  letter: FlamesLetter;
-  word: string;
-  count: number;
-  message: string;
-};
+import { useLanguageStore } from "@/store/languageStore";
+import { flamesTranslations } from "@/lib/translations/calculators/flames";
+import { FlamesLetter, FlamesResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -49,33 +43,6 @@ const normalizeName = (name: string): string => {
     .replace(/[^a-z0-9]/g, ""); // remove special chars
 };
 
-const flamesMap: Record<FlamesLetter, { word: string; message: string }> = {
-  F: {
-    word: "Friends",
-    message: "Strong friendship vibes. Best support system for each other.",
-  },
-  L: {
-    word: "Love",
-    message: "Romantic energy is high. This match can turn serious.",
-  },
-  A: {
-    word: "Affection",
-    message: "Caring and emotional bonding is strong between you two.",
-  },
-  M: {
-    word: "Marriage",
-    message: "Long-term potential is strong. Family-style bonding is seen.",
-  },
-  E: {
-    word: "Enemy",
-    message: "Too many clashes. Better to avoid ego fights and misunderstandings.",
-  },
-  S: {
-    word: "Sister",
-    message: "Pure bond and respect. More like a protective connection.",
-  },
-};
-
 // Remove common letters one-by-one matching
 const getRemainingLetterCount = (boy: string, girl: string): number => {
   const boyArr = boy.split("");
@@ -85,7 +52,6 @@ const getRemainingLetterCount = (boy: string, girl: string): number => {
     const ch = boyArr[i] as string;
     const idx = girlArr.indexOf(ch);
     if (idx !== -1) {
-      // remove from both
       boyArr[i] = "";
       girlArr[idx] = "";
     }
@@ -100,8 +66,6 @@ const getRemainingLetterCount = (boy: string, girl: string): number => {
 // Circular elimination using count
 const getFlamesLetter = (count: number): FlamesLetter => {
   let flames: FlamesLetter[] = ["F", "L", "A", "M", "E", "S"];
-
-  // Edge case: if count is 0, treat as 1 to avoid infinite loop
   let step = count === 0 ? 1 : count;
 
   while (flames.length > 1) {
@@ -114,6 +78,10 @@ const getFlamesLetter = (count: number): FlamesLetter => {
 };
 
 const FlamesCalculator: React.FC = () => {
+  const { lang } = useLanguageStore();
+  const t = flamesTranslations[lang as keyof typeof flamesTranslations] || flamesTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [boyName, setBoyName] = useState<string>("");
   const [girlName, setGirlName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -139,13 +107,12 @@ const FlamesCalculator: React.FC = () => {
     setLoading(true);
     setResult(null);
 
-    // premium feel
     await new Promise((r) => setTimeout(r, 650));
 
     const count = getRemainingLetterCount(normalized.boy, normalized.girl);
     const letter = getFlamesLetter(count);
-    const word = flamesMap[letter].word;
-    const message = flamesMap[letter].message;
+    const word = t.results.meanings[letter].word;
+    const message = t.results.meanings[letter].message;
 
     setResult({ letter, word, count, message });
 
@@ -160,12 +127,12 @@ const FlamesCalculator: React.FC = () => {
     <div className="min-h-screen bg-[#fffaf7] selection:bg-primary/20">
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
-      {/* Reusable Hero */}
+      {/* Hero */}
       <CalculatorHero
-        badgeText="Classic FLAMES Match"
-        titleMain="FLAMES"
-        titleAccent="Calculator"
-        paragraph="Enter two names and discover your fun FLAMES destiny using the classic elimination method."
+        badgeText={t.hero.badge}
+        titleMain={t.hero.titleMain}
+        titleAccent={t.hero.titleAccent}
+        paragraph={t.hero.paragraph}
       />
 
       <FlamesForm
@@ -176,6 +143,8 @@ const FlamesCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result Section */}
@@ -184,19 +153,19 @@ const FlamesCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        FLAMES Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Your <span className="text-primary">{result.word}</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.titlePrefix} <span className="text-primary">{result.word}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -212,8 +181,8 @@ const FlamesCalculator: React.FC = () => {
                             <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                               {result.letter}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              {result.word}
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.possibleInitials}
                             </span>
                           </div>
 
@@ -228,18 +197,17 @@ const FlamesCalculator: React.FC = () => {
                             <GiSparkles size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
                             "{result.message}"
                           </p>
 
-                          <p className="text-xs text-orange-100/50 font-bold uppercase tracking-[3px] mt-6 m-0">
-                            Remaining Letters Count: <span className="text-white">{result.count}</span>
+                          <p className="text-[10px] text-orange-100/50 font-bold uppercase tracking-[3px] mt-6 m-0" style={fontStyle}>
+                            {t.results.remainingCount} <span className="text-white">{result.count}</span>
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -251,5 +219,6 @@ const FlamesCalculator: React.FC = () => {
 };
 
 export default FlamesCalculator;
+
 
 

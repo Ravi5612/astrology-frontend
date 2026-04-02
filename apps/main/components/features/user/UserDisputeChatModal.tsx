@@ -45,14 +45,12 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         const socket = getSupportSocket();
 
         const joinRoom = () => {
-            console.log("🏠 [UserSocket] Joining dispute room:", disputeId);
             socket.emit('join_dispute_room', { disputeId });
         };
 
         if (socket.connected) {
             joinRoom();
         } else {
-            console.log("🔌 [UserSocket] Connecting...");
             socket.on('connect', joinRoom);
             socket.connect();
         }
@@ -68,7 +66,6 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         };
 
         const handleEndChatBroadcast = (data: any) => {
-            console.log("🚨 [UserSocket] End chat broadcast received:", data);
             if (Number(data.disputeId) === Number(disputeId)) {
                 setUserEndRequestedAt(new Date().toISOString());
                 // No longer injecting manually - backend will send a 'new_message' 
@@ -81,7 +78,6 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         socket.on('dispute_close_requested', handleEndChatBroadcast);
 
         return () => {
-            console.log("👋 [UserSocket] Cleanup");
             socket.off('connect', joinRoom);
             socket.off('new_message', handleNewMessage);
             socket.off('dispute_close_requested', handleEndChatBroadcast);
@@ -96,7 +92,6 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
             const [response, disputeErr] = await getDisputeById(disputeId);
             const disputeData = (response as any)?.data || (response as any)?.dispute || response;
 
-            console.log("📄 [UserAPI] Dispute status:", disputeData?.status);
 
             // 2. Fetch Messages
             const [data, msgsErr] = await getDisputeMessages(disputeId);
@@ -182,7 +177,6 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
     const handleRequestEndChat = () => {
         if (window.confirm("Are you sure you want to request to end this chat?")) {
             const socket = getSupportSocket();
-            console.log("📣 [UserChat] Emitting request_end_chat", { disputeId, userId: clientUser?.id });
             socket.emit('request_end_chat', { disputeId, userId: clientUser?.id });
             toast.info("End chat request sent to admin");
         }

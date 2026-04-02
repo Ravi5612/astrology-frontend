@@ -8,17 +8,8 @@ import {
 } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
-import { ZodiacSign, SIGNS, signToElement } from "./useZodiacCompatibility";
-
-interface ZodiacCompatibilityFormProps {
-  yourSign: ZodiacSign;
-  partnerSign: ZodiacSign;
-  loading: boolean;
-  setYourSign: (sign: ZodiacSign) => void;
-  setPartnerSign: (sign: ZodiacSign) => void;
-  handleSwap: () => void;
-  handleCalculate: (e: React.FormEvent) => void;
-}
+import { ZodiacCompatibilityFormProps, ZodiacSign } from "@/lib/types/calculator";
+import { SIGNS, signToElement } from "./useZodiacCompatibility";
 
 const ZodiacCompatibilityForm: React.FC<ZodiacCompatibilityFormProps> = ({
   yourSign,

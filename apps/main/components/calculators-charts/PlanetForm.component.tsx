@@ -2,25 +2,7 @@ import React from "react";
 import { Calendar, Compass, Loader2 } from "lucide-react";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 
-interface PlanetFormProps {
-  formData: {
-    year: number;
-    month: number;
-    date: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-    latitude: string;
-    longitude: string;
-    timezone: number;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  handleLocationSelect: (loc: { name: string; lat: string; lon: string }) => void;
-  locationName: string;
-  loading: boolean;
-  handleSubmit: (e: React.FormEvent) => void;
-  renderIcon: (IconComponent: any, props?: any) => React.ReactNode;
-}
+import { PlanetFormProps } from "@/lib/types/calculator";
 
 const PlanetForm: React.FC<PlanetFormProps> = ({
   formData,
@@ -30,6 +12,8 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
   loading,
   handleSubmit,
   renderIcon,
+  t,
+  fontStyle,
 }) => {
   return (
     <div className="w-full lg:w-1/3">
@@ -38,13 +22,13 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
           <div className="bg-orange-50 p-3 rounded-2xl">
             {renderIcon(Calendar, { className: "text-primary", size: 24 })}
           </div>
-          <h2 className="text-2xl font-bold text-slate-800">Birth Details</h2>
+          <h2 className="text-2xl font-bold text-slate-800" style={fontStyle}>{t.title}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1">Date</label>
+              <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1" style={fontStyle}>{t.date}</label>
               <input
                 type="number"
                 name="date"
@@ -56,7 +40,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1">Month</label>
+              <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1" style={fontStyle}>{t.month}</label>
               <input
                 type="number"
                 name="month"
@@ -70,7 +54,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1">Year</label>
+            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1" style={fontStyle}>{t.year}</label>
             <input
               type="number"
               name="year"
@@ -84,7 +68,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1">Hour</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1" style={fontStyle}>{t.hour}</label>
               <input
                 type="number"
                 name="hours"
@@ -96,7 +80,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1">Min</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1" style={fontStyle}>{t.min}</label>
               <input
                 type="number"
                 name="minutes"
@@ -108,7 +92,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1">Sec</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-2 ml-1" style={fontStyle}>{t.sec}</label>
               <input
                 type="number"
                 name="seconds"
@@ -122,16 +106,16 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1">Location</label>
+            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1" style={fontStyle}>{t.location}</label>
             <LocationAutocomplete
               onSelect={handleLocationSelect}
               initialValue={locationName}
-              placeholder="Search city..."
+              placeholder={t.locationPlaceholder}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1">Timezone (GMT)</label>
+            <label className="block text-sm font-semibold text-slate-500 mb-2 ml-1" style={fontStyle}>{t.timezone}</label>
             <input
               type="number"
               step="0.1"
@@ -152,7 +136,7 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
               renderIcon(Loader2, { className: "animate-spin", size: 20 })
             ) : (
               <>
-                <span>Get Results</span>
+                <span style={fontStyle}>{t.submit}</span>
                 {renderIcon(Compass, { size: 18, className: "group-hover:rotate-45 transition-transform" })}
               </>
             )}
@@ -164,3 +148,4 @@ const PlanetForm: React.FC<PlanetFormProps> = ({
 };
 
 export default PlanetForm;
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Header, Footer } from "@repo/ui";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -14,10 +14,15 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const isAdminRoute = pathname?.startsWith("/admin");
   const isChatRoom = pathname?.includes("/chat/room");
   const { isClientAuthenticated, clientUser, clientLogout, clientBalance } = useAuthStore();
   const { cartCount } = useCartStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load Bootstrap JS for modal functionality
   useEffect(() => {
@@ -29,7 +34,7 @@ export default function ClientLayout({
   return (
     <>
       <ToastProvider />
-      {!isAdminRoute && !isChatRoom && (
+      {mounted && !isAdminRoute && !isChatRoom && (
         <Header
           authState={isClientAuthenticated}
           userData={clientUser}
@@ -39,8 +44,8 @@ export default function ClientLayout({
         />
       )}
       <main suppressHydrationWarning>{children}</main>
-      {!isAdminRoute && !isChatRoom && <FloatingChatButton />}
-      {!isAdminRoute && !isChatRoom && <Footer />}
+      {mounted && !isAdminRoute && !isChatRoom && <FloatingChatButton />}
+      {mounted && !isAdminRoute && !isChatRoom && <Footer />}
     </>
   );
 }

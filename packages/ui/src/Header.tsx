@@ -132,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     return `${legacyUploadsOrigin}/uploads/${value}`;
   };
 
-  const avatarSrc = normalizeImagePath(clientUser?.profile_picture || clientUser?.avatar);
+  const avatarSrc = normalizeImagePath(clientUser?.profile_picture);
 
   const unwrapResponse = (res: any) => res?.data ?? res;
   const normalizeNotification = (notif: any) => ({
@@ -433,14 +433,14 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                             }}
                           >
                             <div className="px-3 py-3 border-b bg-gray-50 flex justify-between items-center">
-                              <p className="mb-0 font-bold text-gray-900 text-lg">Notifications</p>
+                              <p className="mb-0 font-bold text-gray-900 text-lg">{t.notifications}</p>
                               {notifications.length > 0 && (
                                 <button
                                   onClick={handleClearAll}
                                   className="text-red-500 text-sm font-bold hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1.5"
                                 >
                                   <i className="fa-solid fa-trash-can text-xs"></i>
-                                  Clear All
+                                  {t.clearAll}
                                 </button>
                               )}
                             </div>
@@ -451,10 +451,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                     <i className="fa-solid fa-bell-slash text-2xl text-orange/60"></i>
                                   </div>
                                   <h6 className="font-bold text-gray-900 text-base mb-2">
-                                    No Notifications Yet
+                                    {t.noNotificationsYet}
                                   </h6>
                                   <p className="text-gray-500 text-sm max-w-[250px] m-0 mx-auto leading-relaxed">
-                                    You'll see alerts about your orders and consultations here.
+                                    {t.noNotificationsDesc}
                                   </p>
                                 </div>
                               ) : (
@@ -470,7 +470,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                     </div>
                                     <p className="mb-0 text-gray-500" style={{ fontSize: '13px', lineHeight: '1.5' }}>{notif.message}</p>
                                     <p className="mb-0 mt-2 text-orange-500 font-medium" style={{ fontSize: '11px' }}>
-                                      {notif.createdAt ? new Date(notif.createdAt).toLocaleString() : 'Just now'}
+                                      {notif.createdAt ? new Date(notif.createdAt).toLocaleString() : t.justNow}
                                     </p>
                                   </div>
                                 ))
@@ -482,7 +482,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 className="no-underline text-orange-500 font-bold text-sm hover:text-orange-600"
                                 onClick={() => setShowNotificationDropdown(false)}
                               >
-                                View All
+                                {t.viewAll}
                               </Link>
                             </div>
                           </div>
