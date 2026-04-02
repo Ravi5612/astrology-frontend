@@ -32,7 +32,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Astrology in Bharat",
-  description: "Find the best astrologers in Bharat",
+  description: "Find the best experts in Bharat",
 };
 
 export default async function RootLayout({

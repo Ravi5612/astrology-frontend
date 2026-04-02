@@ -93,6 +93,10 @@ async function executeFetch<T>(
 
   const mergedHeaders = mergeHeaders(instanceConfig.headers, initHeaders);
 
+  if (rest.body instanceof FormData) {
+    mergedHeaders.delete("Content-Type");
+  }
+
   const timeoutController = new AbortController();
   const signal = userController
     ? anySignal([userController.signal, timeoutController.signal])
@@ -141,7 +145,6 @@ async function executeFetch<T>(
 
 function withBody(method: string, body?: unknown): Partial<SafeFetchInit> {
   if (body === undefined) return { method };
-
   // Handle FormData separately
   if (typeof FormData !== "undefined" && body instanceof FormData) {
     return {

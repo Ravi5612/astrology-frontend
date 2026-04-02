@@ -10,7 +10,7 @@ type Props = {
   buyNowInfo: any;
   directProduct: any;
   cartItems: any[];
-  astrologerName: string;
+  expertName: string;
   date: string;
   time: string;
   duration: string;
@@ -32,7 +32,7 @@ const OrderSummary = ({
   buyNowInfo,
   directProduct,
   cartItems,
-  astrologerName,
+  expertName,
   date,
   time,
   duration,
@@ -172,7 +172,7 @@ const OrderSummary = ({
               </div>
               <div>
                 <h6 className="text-[10px] font-black text-orange uppercase tracking-widest mb-0.5">Expert Consulting</h6>
-                <p className="font-black text-gray-900">{astrologerName}</p>
+                <p className="font-black text-gray-900">{expertName}</p>
               </div>
             </div>
           )}

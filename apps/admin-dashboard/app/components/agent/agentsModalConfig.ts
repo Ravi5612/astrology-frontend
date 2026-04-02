@@ -39,7 +39,7 @@ export const getAgentProfileModalProps = (agent: Agent) => ({
         { label: "Account No.", isComplete: !!agent.account_number, value: agent.account_number || "—" },
         { label: "IFSC Code", isComplete: !!agent.ifsc_code, value: agent.ifsc_code || "—" },
         { label: "UPI ID", isComplete: !!agent.upi_id, value: agent.upi_id || "—" },
-        { label: "Commission (Astrologer)", isComplete: true, value: `${agent.commission_astrologer}%` },
+        { label: "Commission (Expert)", isComplete: true, value: `${agent.commission_expert}%` },
         { label: "Commission (Mandir)", isComplete: true, value: `${agent.commission_mandir}%` },
         { label: "Commission (Puja Shop)", isComplete: true, value: `${agent.commission_puja_shop}%` },
         { label: "Total Listings", isComplete: agent.total_listings > 0, value: String(agent.total_listings) },

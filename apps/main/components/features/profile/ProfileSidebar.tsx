@@ -27,6 +27,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 }) => {
     const { lang } = useLanguageStore();
     const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
     const menuItems = [
         { icon: "fa-regular fa-user", label: t.sidebar.tabs.profile, id: "profile" },
@@ -43,7 +44,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     ];
 
     return (
-        <div className="flex flex-col gap-0 sticky top-24">
+        <div className="flex flex-col gap-0 sticky top-[140px] z-30 self-start">
             <div className="bg-white rounded-t-2xl p-4 shadow-premium border-b border-gray-100">
                 <div className="flex items-center gap-4">
                     <div className="relative flex-shrink-0">
@@ -83,11 +84,13 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0">
+                        <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0" style={fontStyle}>
                             {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
                             <i className="fa-solid fa-check-circle text-orange/80 text-[12px]"></i>
                         </h6>
-                        <p className="text-xs text-gray-500 mt-0.5 truncate">User Account</p>
+                        <p className="text-xs text-gray-500 mt-0.5 truncate" style={fontStyle}>
+                            {lang === "hi" ? "उपयोगकर्ता खाता" : "User Account"}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -96,7 +99,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <div
                 className="bg-brown rounded-b-2xl shadow-premium overflow-y-auto custom-scrollbar"
                 style={{
-                    maxHeight: "calc(100vh - 160px)",
+                    maxHeight: "calc(100vh - 200px)",
                 }}
                 data-lenis-prevent
             >
@@ -120,7 +123,6 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                                         ? 'bg-orange text-white shadow-gold font-bold'
                                         : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white'
                                 }`}
-                                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
                                 onClick={() => setActiveTab(item.id)}
                             >
                                 <i className={`${item.icon} w-5 mr-3 text-lg transition-transform group-hover:scale-110`}></i>

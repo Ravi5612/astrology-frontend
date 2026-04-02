@@ -116,8 +116,8 @@ export const ClientAuthProvider = ({
           name: data.user?.name || data.full_name,
           email: data.user?.email,
           roles: data.user?.roles || [],
-          profile_picture: data.profile_picture || data.user?.profile_picture,
-          avatar: data.profile_picture || data.user?.avatar,
+          profile_picture: data.profile_picture,
+          avatar: data.profile_picture,
         });
         setIsClientAuthenticated(true);
       } else {
@@ -153,8 +153,8 @@ export const ClientAuthProvider = ({
             name: data.user?.name || data.full_name,
             email: data.user?.email,
             roles: data.user?.roles || [],
-            profile_picture: data.profile_picture || data.user?.profile_picture,
-            avatar: data.profile_picture || data.user?.avatar,
+            profile_picture: data.profile_picture,
+            avatar: data.profile_picture,
           });
           setIsClientAuthenticated(true);
         } else {

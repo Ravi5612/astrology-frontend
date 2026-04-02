@@ -14,22 +14,10 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import RelationshipFutureTimelineForm from "./RelationshipFutureTimelineForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { relationshipFutureTranslations } from "@/lib/translations/calculators/relationship-future";
 
-type RelationshipType = "Crush" | "Dating" | "Married";
-
-type TimelineItem = {
-  title: string;
-  percent: number;
-  label: string;
-  message: string;
-};
-
-type TimelineResult = {
-  mood7: TimelineItem;
-  bond30: TimelineItem;
-  stability180: TimelineItem;
-  summary: string;
-};
+import { RelationshipType, TimelineItem, TimelineResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -65,22 +53,22 @@ const hashSeed = (str: string): number => {
   return Math.abs(hash);
 };
 
-const getLabelAndMessage = (percent: number) => {
+const getLabelAndMessage = (percent: number, t: any) => {
   if (percent <= 40) {
     return {
-      label: "Low Phase",
-      message: "Low phase — avoid misunderstandings, stay calm.",
+      label: t.labels.low,
+      message: t.messages.low,
     };
   }
   if (percent <= 70) {
     return {
-      label: "Balanced",
-      message: "Balanced — small efforts will improve the connection.",
+      label: t.labels.balanced,
+      message: t.messages.balanced,
     };
   }
   return {
-    label: "Strong",
-    message: "Strong — positive growth and smooth bonding ahead.",
+    label: t.labels.strong,
+    message: t.messages.strong,
   };
 };
 
@@ -93,7 +81,9 @@ const getWeights = (type: RelationshipType) => {
 const TimelineCard: React.FC<{
   item: TimelineItem;
   icon?: React.ReactNode;
-}> = ({ item, icon }) => {
+  tPredictionWindow?: string;
+  fontStyle?: React.CSSProperties;
+}> = ({ item, icon, tPredictionWindow, fontStyle }) => {
   return (
     <div className="glass-card rounded-[2.5rem] p-8 border border-orange-100 bg-white shadow-[0_15px_40px_rgba(48,17,24,0.06)] relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
       <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity">
@@ -103,10 +93,10 @@ const TimelineCard: React.FC<{
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="m-0 text-[10px] font-black uppercase tracking-[4px] text-primary">
-              Prediction Window
+            <p className="m-0 text-[10px] font-black uppercase tracking-[4px] text-primary" style={fontStyle}>
+              {tPredictionWindow}
             </p>
-            <h3 className="m-0 text-xl font-black text-burgundy">{item.title}</h3>
+            <h3 className="m-0 text-xl font-black text-burgundy" style={fontStyle}>{item.title}</h3>
           </div>
 
           <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -126,6 +116,7 @@ const TimelineCard: React.FC<{
 
           <div className="flex-1">
             <span
+              style={fontStyle}
               className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.percent <= 40
                   ? "bg-red-50 text-red-600"
                   : item.percent <= 70
@@ -136,7 +127,7 @@ const TimelineCard: React.FC<{
               {item.label}
             </span>
 
-            <p className="m-0 mt-3 text-sm text-gray-500 italic leading-relaxed">
+            <p className="m-0 mt-3 text-sm text-gray-500 italic leading-relaxed" style={fontStyle}>
               {item.message}
             </p>
           </div>
@@ -147,6 +138,10 @@ const TimelineCard: React.FC<{
 };
 
 const RelationshipFutureTimeline: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = relationshipFutureTranslations[lang as keyof typeof relationshipFutureTranslations] || relationshipFutureTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [yourName, setYourName] = useState<string>("");
   const [partnerName, setPartnerName] = useState<string>("");
   const [relationshipType, setRelationshipType] =
@@ -198,32 +193,33 @@ const RelationshipFutureTimeline: React.FC = () => {
     // Realism rule
     stability180 = Math.min(stability180, bond30 + 15);
 
-    const moodInfo = getLabelAndMessage(mood7);
-    const bondInfo = getLabelAndMessage(bond30);
-    const stabilityInfo = getLabelAndMessage(stability180);
+    const tResults = t.results;
+    const moodInfo = getLabelAndMessage(mood7, tResults);
+    const bondInfo = getLabelAndMessage(bond30, tResults);
+    const stabilityInfo = getLabelAndMessage(stability180, tResults);
 
     const summary =
       mood7 <= 40 || bond30 <= 40 || stability180 <= 40
-        ? "This phase needs patience. Avoid ego clashes and focus on calm communication."
+        ? tResults.summaries.needsPatience
         : mood7 <= 70 || bond30 <= 70 || stability180 <= 70
-          ? "A balanced period ahead. Small consistent efforts can make your bond stronger."
-          : "Strong growth is visible. Your connection feels smooth, supportive, and positive.";
+          ? tResults.summaries.balanced
+          : tResults.summaries.strong;
 
     setResult({
       mood7: {
-        title: "Next 7 Days (Mood)",
+        title: tResults.periods.mood,
         percent: mood7,
         label: moodInfo.label,
         message: moodInfo.message,
       },
       bond30: {
-        title: "Next 30 Days (Bond)",
+        title: tResults.periods.bond,
         percent: bond30,
         label: bondInfo.label,
         message: bondInfo.message,
       },
       stability180: {
-        title: "Next 6 Months (Stability)",
+        title: tResults.periods.stability,
         percent: stability180,
         label: stabilityInfo.label,
         message: stabilityInfo.message,
@@ -243,12 +239,24 @@ const RelationshipFutureTimeline: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Hero */}
-      <CalculatorHero
-        badgeText="Fun Relationship Prediction"
-        titleMain="Future"
-        titleAccent="Timeline"
-        paragraph="Get a fun prediction for your next 7 days, 30 days, and 6 months based on your names and relationship type."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       <RelationshipFutureTimelineForm
         yourName={yourName}
@@ -260,6 +268,8 @@ const RelationshipFutureTimeline: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Results */}
@@ -268,19 +278,19 @@ const RelationshipFutureTimeline: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Timeline Report
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Relationship <span className="text-primary">Forecast</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-10"></div>
@@ -289,7 +299,7 @@ const RelationshipFutureTimeline: React.FC = () => {
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary p-4 rounded-2xl shadow-lg">
                           <GiSparkles size={28} />
                         </div>
-                        <p className="m-0 text-lg md:text-xl font-light italic text-orange-100/90">
+                        <p className="m-0 text-lg md:text-xl font-light italic text-orange-100/90" style={fontStyle}>
                           "{result.summary}"
                         </p>
                       </div>
@@ -299,14 +309,20 @@ const RelationshipFutureTimeline: React.FC = () => {
                       <TimelineCard
                         item={result.mood7}
                         icon={<FaHeart size={18} />}
+                        tPredictionWindow={t.results.predictionWindow}
+                        fontStyle={fontStyle}
                       />
                       <TimelineCard
                         item={result.bond30}
                         icon={<FaCalendar size={18} />}
+                        tPredictionWindow={t.results.predictionWindow}
+                        fontStyle={fontStyle}
                       />
                       <TimelineCard
                         item={result.stability180}
                         icon={<TbCrystalBall size={18} />}
+                        tPredictionWindow={t.results.predictionWindow}
+                        fontStyle={fontStyle}
                       />
                     </div>
                   </div>
@@ -322,5 +338,6 @@ const RelationshipFutureTimeline: React.FC = () => {
 };
 
 export default RelationshipFutureTimeline;
+
 
 

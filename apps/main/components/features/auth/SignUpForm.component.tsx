@@ -74,7 +74,6 @@ const SignUpForm: React.FC = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        console.log("Submit clicked, validating...");
 
         if (!validateForm()) {
             return;

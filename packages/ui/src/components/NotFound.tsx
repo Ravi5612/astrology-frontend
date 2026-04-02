@@ -28,7 +28,7 @@ export const NotFound: React.FC<NotFoundProps> = ({
   returnUrl = "/admin/dashboard",
   returnLabel = "Go Home",
   title = "Page Not Found",
-  imagePath = "/images/Astrologer.png",
+  imagePath = "/images/Expert.png",
 }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -131,7 +131,7 @@ export const NotFound: React.FC<NotFoundProps> = ({
           <div className="relative z-20 flex justify-center notfound-image">
             <img
               src={imagePath}
-              alt="Astrologer Sage"
+              alt="Expert Sage"
               className="w-64 h-64 md:w-88 md:h-88 lg:w-[420px] lg:h-[420px] object-contain drop-shadow-2xl"
               onError={(e) => {
                 e.currentTarget.style.display = "none";

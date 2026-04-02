@@ -147,7 +147,6 @@ export default function SessionSummaryModal({
                                         comment: reviewComment.trim()
                                     };
 
-                                    console.log("[UserChatDebug] Submitting Review Payload:", payload);
 
                                     setReviewSubmitted(true);
                                     

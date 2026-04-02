@@ -4,6 +4,8 @@ import React from "react";
 import { FaMars, FaVenus, FaSpinner, FaChevronRight } from "react-icons/fa";
 import { MdOutlineSecurity } from "react-icons/md";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
+import { useLanguageStore } from "@/store/languageStore";
+import { matchingTranslations } from "@/lib/translations/calculators/matching";
 
 import { MatchFormProps } from "@/lib/types";
 
@@ -16,6 +18,10 @@ const MatchingForm = ({
   loading,
   error,
 }: MatchFormProps) => {
+  const { lang } = useLanguageStore();
+  const t = (matchingTranslations[lang as keyof typeof matchingTranslations] || matchingTranslations.en).form;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="py-20 bg-gray-50/50">
       <div className="max-w-7xl mx-auto px-4">
@@ -28,30 +34,31 @@ const MatchingForm = ({
                   <FaMars />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 leading-none">
-                    Boy&apos;s Details
+                  <h3 className="text-2xl font-black text-gray-900 leading-none" style={fontStyle}>
+                    {t.boyTitle}
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2">
-                    The Groom&apos;s Profile
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2" style={fontStyle}>
+                    {t.boySubtitle}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.name}</label>
                   <input
                     type="text"
                     className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300"
-                    placeholder="Enter boy's name"
+                    placeholder={t.placeholders.boyName}
                     value={boyDetails.name}
                     onChange={(e) => handleInputChange("boy", "name", e.target.value)}
+                    style={fontStyle}
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Date</label>
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.date}</label>
                     <input
                       type="date"
                       className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
@@ -60,7 +67,7 @@ const MatchingForm = ({
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Time</label>
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.time}</label>
                     <input
                       type="time"
                       className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
@@ -71,9 +78,9 @@ const MatchingForm = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Place</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.place}</label>
                   <LocationAutocomplete
-                    placeholder="Search city or location"
+                    placeholder={t.placeholders.searchPlace}
                     onSelect={(val) => handleLocationSelect("boy", val)}
                   />
                 </div>
@@ -89,30 +96,31 @@ const MatchingForm = ({
                   <FaVenus />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 leading-none">
-                    Girl&apos;s Details
+                  <h3 className="text-2xl font-black text-gray-900 leading-none" style={fontStyle}>
+                    {t.girlTitle}
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2">
-                    The Bride&apos;s Profile
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2" style={fontStyle}>
+                    {t.girlSubtitle}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.name}</label>
                   <input
                     type="text"
                     className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300"
-                    placeholder="Enter girl's name"
+                    placeholder={t.placeholders.girlName}
                     value={girlDetails.name}
                     onChange={(e) => handleInputChange("girl", "name", e.target.value)}
+                    style={fontStyle}
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Date</label>
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.date}</label>
                     <input
                       type="date"
                       className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
@@ -121,7 +129,7 @@ const MatchingForm = ({
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Time</label>
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.time}</label>
                     <input
                       type="time"
                       className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:border-orange/30 focus:ring-4 focus:ring-orange/5 transition-all outline-none text-sm font-bold text-gray-900"
@@ -132,9 +140,9 @@ const MatchingForm = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Birth Place</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1" style={fontStyle}>{t.labels.place}</label>
                   <LocationAutocomplete
-                    placeholder="Search city or location"
+                    placeholder={t.placeholders.searchPlace}
                     onSelect={(val) => handleLocationSelect("girl", val)}
                   />
                 </div>
@@ -147,7 +155,7 @@ const MatchingForm = ({
           {error && (
             <div className="mb-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
                <i className="fa-solid fa-circle-exclamation text-red-500"></i>
-               <p className="text-sm font-black text-red-600 uppercase tracking-widest">{error}</p>
+               <p className="text-sm font-black text-red-600 uppercase tracking-widest" style={fontStyle}>{error}</p>
             </div>
           )}
 
@@ -157,15 +165,15 @@ const MatchingForm = ({
             className="group relative px-12 py-6 bg-gray-900 text-white rounded-3xl font-black text-xs uppercase tracking-[0.4em] shadow-premium hover:shadow-2xl hover:bg-orange transition-all duration-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-            <div className="relative flex items-center justify-center gap-4">
+            <div className="relative flex items-center justify-center gap-4" style={fontStyle}>
               {loading ? (
                 <>
-                  <span>Analyzing Astral Alignment</span>
+                  <span>{t.btnLoading}</span>
                   <FaSpinner className="animate-spin text-orange" />
                 </>
               ) : (
                 <>
-                  <span>Generate Compatibility Report</span>
+                  <span>{t.btnDefault}</span>
                   <i className="fa-solid fa-sparkles text-orange animate-pulse"></i>
                 </>
               )}
@@ -173,14 +181,14 @@ const MatchingForm = ({
           </button>
 
           <div className="mt-8 flex items-center gap-6 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
-             <div className="flex items-center gap-2">
+             <div className="flex items-center gap-2" style={fontStyle}>
                <MdOutlineSecurity size={16} className="text-orange" />
-               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">100% Private & Secure Analysis</span>
+               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">{t.footerPrivacy}</span>
              </div>
              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-             <div className="flex items-center gap-2">
+             <div className="flex items-center gap-2" style={fontStyle}>
                <i className="fa-solid fa-user-shield text-orange text-xs"></i>
-               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">Data Encrypted</span>
+               <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">{t.footerEncrypted}</span>
              </div>
           </div>
         </div>

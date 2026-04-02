@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
 import { useLanguageStore } from "@/store/languageStore";
+import { profileTranslations } from "../../../lib/translations/profile";
 
 interface PujaBookingsTabProps {
   loading: boolean;
@@ -35,6 +38,9 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   onUpdateStatus
 }) => {
   const { lang } = useLanguageStore();
+  const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+  
   const [isProcessing, setIsProcessing] = useState<number | null>(null);
   const [showRescheduleForm, setShowRescheduleForm] = useState<number | null>(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
@@ -57,14 +63,14 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
       rejected: "bg-red-50 text-red-600 border-red-100",
     };
     const label: any = {
-      pending: "Waiting for Expert",
-      accepted: "Expert Accepted",
-      confirmed: "Confirmed & Paid",
-      on_hold: "Expert Proposed Date",
-      rejected: "Rejected",
+      pending: t.pujas.status.pending,
+      accepted: t.pujas.status.accepted,
+      confirmed: t.pujas.status.confirmed,
+      on_hold: t.pujas.status.onHold,
+      rejected: t.pujas.status.rejected,
     };
     return (
-      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${styles[status] || styles.pending}`}>
+      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${styles[status] || styles.pending}`} style={fontStyle}>
         {label[status] || status}
       </span>
     );
@@ -74,7 +80,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
         <div className="w-12 h-12 border-4 border-orange/10 border-t-orange animate-spin rounded-full mb-4"></div>
-        <p className="text-gray-500 font-medium tracking-wide">Loading your ritual bookings...</p>
+        <p className="text-gray-500 font-medium tracking-wide" style={fontStyle}>{t.pujas.loading}</p>
       </div>
     );
   }
@@ -85,10 +91,10 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
         <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-6 border border-orange-100">
           <i className="fa-solid fa-om text-3xl text-orange-400"></i>
         </div>
-        <h6 className="font-bold text-gray-900 text-lg mb-2">No Puja Bookings yet</h6>
-        <p className="text-gray-500 text-sm max-w-xs m-0">Your ritual requests and confirmed bookings will appear here.</p>
-        <a href="/online-puja" className="mt-6 px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl text-sm hover:bg-orange-700 transition-all shadow-lg shadow-orange-100">
-          Explore Online Puja
+        <h6 className="font-bold text-gray-900 text-lg mb-2" style={fontStyle}>{t.pujas.noBookings}</h6>
+        <p className="text-gray-500 text-sm max-w-xs m-0" style={fontStyle}>{t.pujas.noBookingsHint}</p>
+        <a href="/online-puja" className="mt-6 px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl text-sm hover:bg-orange-700 transition-all shadow-lg shadow-orange-100" style={fontStyle}>
+          {t.pujas.exploreBtn}
         </a>
       </div>
     );
@@ -105,7 +111,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-full border-4 border-orange-50 overflow-hidden bg-orange-50 shadow-inner">
                     <Image
-                      src={booking.expert?.user?.profile_picture || booking.expert?.user?.avatar || "/images/dummy-astrologer.jpg"}
+                      src={booking.expert?.user?.profile_picture || booking.expert?.user?.avatar || "/images/dummy-expert.jpg"}
                       width={96}
                       height={96}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -117,14 +123,18 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                   </div>
                 </div>
                 <h4 className="mt-4 font-bold text-gray-900 text-lg leading-tight">{booking.expert?.user?.name}</h4>
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mt-1">Vedic Expert</p>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mt-1" style={fontStyle}>
+                    {t.pujas.vedicExpert}
+                </p>
               </div>
 
               {/* Middle: Booking Details */}
               <div className="flex-1 space-y-5">
                 <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-50 pb-5">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-1">{booking.puja?.name || "Ritual"}</h3>
+                    <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-1 leading-tight" style={fontStyle}>
+                        {booking.puja?.name || t.pujas.ritual}
+                    </h3>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
                        {getStatusBadge(booking.status)}
                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded">#{booking.id}</span>
@@ -132,7 +142,9 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-black text-emerald-600">₹{booking.price}</div>
-                    <span className="text-[10px] font-black uppercase text-gray-300 tracking-[0.2em]">Ritual Fee</span>
+                    <span className="text-[10px] font-black uppercase text-gray-300 tracking-[0.2em]" style={fontStyle}>
+                        {t.pujas.ritualFee}
+                    </span>
                   </div>
                 </div>
 
@@ -142,7 +154,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                       <i className="fa-solid fa-calendar-day"></i>
                     </div>
                     <div>
-                      <span className="block text-[8px] font-black text-gray-400 uppercase tracking-widest">Scheduled For</span>
+                      <span className="block text-[8px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.pujas.scheduledFor}</span>
                       <span className="text-sm font-bold text-gray-700">
                         {formatDate(booking.scheduled_date)}
                       </span>
@@ -153,23 +165,23 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                       <i className="fa-solid fa-clock"></i>
                     </div>
                     <div>
-                      <span className="block text-[8px] font-black text-gray-400 uppercase tracking-widest">Time Slot</span>
+                      <span className="block text-[8px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.pujas.timeSlot}</span>
                       <span className="text-sm font-bold text-gray-700">{booking.scheduled_time || "TBD"}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-4 py-1.5 bg-yellow-50 text-yellow-700 border border-yellow-100 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                  <span className="px-4 py-1.5 bg-yellow-50 text-yellow-700 border border-yellow-100 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={fontStyle}>
                     <i className="fa-solid fa-video text-xs"></i>
-                    {booking.mode === 'online' ? 'Online Ritual' : (booking.mode === 'home_visit_with' ? 'Home Visit (With Samagri)' : 'Home Visit (Basic)')}
+                    {booking.mode === 'online' ? t.pujas.onlineRitual : (booking.mode === 'home_visit_with' ? t.pujas.homeVisitWith : t.pujas.homeVisitBasic)}
                   </span>
                 </div>
 
                 {booking.expert_message && (
                   <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100 relative overflow-hidden group">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400"></div>
-                    <span className="block text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Message from Expert</span>
+                    <span className="block text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1" style={fontStyle}>{t.pujas.expertMessage}</span>
                     <p className="text-sm text-blue-700 font-medium italic">" {booking.expert_message} "</p>
                   </div>
                 )}
@@ -178,9 +190,9 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
 
             {/* Bottom Actions */}
             <div className="mt-8 pt-8 border-t border-gray-50 flex flex-wrap gap-4 items-center justify-between">
-              <div className="text-xs text-gray-400 flex items-center gap-2">
+              <div className="text-xs text-gray-400 flex items-center gap-2" style={fontStyle}>
                 <i className="fa-solid fa-circle-info"></i>
-                Request sent on {formatDate(booking.created_at, true)}
+                {t.pujas.requestSentOn} {formatDate(booking.created_at, true)}
               </div>
 
               <div className="flex flex-wrap gap-3 w-full sm:w-auto">
@@ -190,16 +202,18 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                       disabled={isProcessing === booking.id}
                       onClick={() => handleAction(booking.id, 'accepted')}
                       className="flex-1 sm:flex-none px-8 py-3 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-2"
+                      style={fontStyle}
                     >
                       {isProcessing === booking.id ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-credit-card"></i>}
-                      Accept & Pay to Confirm
+                      {t.pujas.btnAcceptPay}
                     </button>
                     <button
                       disabled={isProcessing === booking.id}
                       onClick={() => setShowRescheduleForm(booking.id)}
                       className="flex-1 sm:flex-none px-8 py-3 bg-gray-100 text-gray-700 font-bold rounded-2xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                      style={fontStyle}
                     >
-                      Reschedule Ritual
+                      {t.pujas.btnReschedule}
                     </button>
                   </>
                 )}
@@ -208,9 +222,10 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                    <button
                     disabled={true}
                     className="w-full sm:w-auto px-8 py-3 bg-gray-50 text-gray-400 font-bold rounded-2xl border border-gray-100 cursor-not-allowed flex items-center justify-center gap-2"
+                    style={fontStyle}
                   >
                     <i className="fa-solid fa-hourglass-half animate-spin"></i>
-                    Awaiting Expert Response
+                    {t.pujas.btnAwaiting}
                   </button>
                 )}
 
@@ -219,9 +234,10 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     disabled={isProcessing === booking.id}
                     onClick={() => handleAction(booking.id, 'confirmed')}
                     className="w-full sm:w-auto px-10 py-4 bg-orange-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-orange-700 shadow-xl shadow-orange-100 transition-all flex items-center justify-center gap-3"
+                    style={fontStyle}
                   >
                     <i className="fa-solid fa-shield-halved text-lg"></i>
-                    Pay Now to Confirm Ritual
+                    {t.pujas.btnPayNow}
                   </button>
                 )}
               </div>
@@ -230,12 +246,12 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
             {/* Reschedule Inline Form */}
             {showRescheduleForm === booking.id && (
               <div className="mt-8 p-6 bg-orange-50 rounded-3xl border border-orange-100 animate-in slide-in-from-top-4 duration-300">
-                <h5 className="font-bold text-orange-900 mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-calendar-plus"></i> Propose Different Date/Time
+                <h5 className="font-bold text-orange-900 mb-4 flex items-center gap-2" style={fontStyle}>
+                  <i className="fa-solid fa-calendar-plus"></i> {t.pujas.rescheduleTitle}
                 </h5>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1">New Date</label>
+                    <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1" style={fontStyle}>{t.pujas.newDate}</label>
                     <input 
                       type="date" 
                       value={rescheduleDate} 
@@ -244,7 +260,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1">New Time</label>
+                    <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1" style={fontStyle}>{t.pujas.newTime}</label>
                     <input 
                       type="time" 
                       value={rescheduleTime} 
@@ -254,9 +270,9 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                   </div>
                 </div>
                 <div className="mb-6">
-                  <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1">Message to Expert</label>
+                  <label className="block text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5 ml-1" style={fontStyle}>{t.pujas.messageToExpert}</label>
                   <textarea 
-                    placeholder="E.g. I am not available on your suggested date, can we do it on this time?"
+                    placeholder={t.pujas.messagePlaceholder}
                     value={rescheduleMessage}
                     onChange={(e) => setRescheduleMessage(e.target.value)}
                     className="w-full h-24 px-4 py-3 rounded-2xl border-2 border-orange-100 focus:border-orange-300 focus:ring-0 outline-none text-sm transition-all resize-none"
@@ -266,14 +282,16 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                   <button
                     onClick={() => handleAction(booking.id, 'pending', { scheduled_date: rescheduleDate, scheduled_time: rescheduleTime, user_message: rescheduleMessage })}
                     className="flex-1 bg-orange-600 text-white font-bold py-3 rounded-2xl hover:bg-orange-700 shadow-lg shadow-orange-100 transition-all active:scale-95"
+                    style={fontStyle}
                   >
-                    Send Proposal
+                    {t.pujas.btnSendProposal}
                   </button>
                   <button
                     onClick={() => setShowRescheduleForm(null)}
                     className="flex-1 bg-white text-gray-500 font-bold py-3 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all"
+                    style={fontStyle}
                   >
-                    Cancel
+                    {t.pujas.btnCancel}
                   </button>
                 </div>
               </div>

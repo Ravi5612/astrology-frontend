@@ -55,7 +55,7 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h3 className="font-semibold text-gray-800">{review.user}</h3>
               <span className="text-gray-500 text-sm">reviewed</span>
-              <span className="font-medium text-orange">{review.astrologer}</span>
+              <span className="font-medium text-orange">{review.expert}</span>
             </div>
 
             {/* Rating */}

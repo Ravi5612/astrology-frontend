@@ -18,7 +18,7 @@ export default function AdminNotFoundPage() {
       <NotFound
         returnUrl="/admin/dashboard"
         returnLabel="Back to Admin Dashboard"
-        imagePath="/images/Astrologer.png"
+        imagePath="/images/Expert.png"
       />
     );
   }
@@ -27,7 +27,7 @@ export default function AdminNotFoundPage() {
     <NotFound
       returnUrl="/"
       returnLabel="Back to Home"
-      imagePath="/images/Astrologer.png"
+      imagePath="/images/Expert.png"
     />
   );
 }

@@ -31,7 +31,7 @@ export const useCheckout = () => {
   } | null>(null);
 
   const isOrder = searchParams.get("type") === "order";
-  const astrologerName = searchParams.get("name") || "Astrologer";
+  const expertName = searchParams.get("name") || "Expert";
   const date = searchParams.get("date") || "";
   const time = searchParams.get("time") || "";
   const duration = searchParams.get("duration") || "15";
@@ -211,7 +211,7 @@ export const useCheckout = () => {
         endpoint = "/order";
       } else {
         payload = {
-          astrologer_name: astrologerName,
+          expert_name: expertName,
           expert_id: expertId ? parseInt(expertId) : undefined,
           amount: total,
           coupon_code: appliedCoupon?.code || undefined,
@@ -236,7 +236,7 @@ export const useCheckout = () => {
         if (isOrder) {
           router.push("/profile?tab=orders");
         } else {
-          const params = new URLSearchParams({ name: astrologerName });
+          const params = new URLSearchParams({ name: expertName });
           router.push(`/chat?${params.toString()}`);
         }
       }
@@ -282,7 +282,7 @@ export const useCheckout = () => {
         type: isOrder ? "product" : "consultation",
         coupon_code: appliedCoupon?.code,
         notes: {
-          astrologer_name: astrologerName,
+          expert_name: expertName,
           is_order: isOrder,
           order_id: dbOrderId,
           discount_applied: discountAmount,
@@ -315,7 +315,7 @@ export const useCheckout = () => {
         name: "Astrology in Bharat",
         description: isOrder
           ? "Product Purchase"
-          : `Consultation with ${astrologerName}`,
+          : `Consultation with ${expertName}`,
         order_id: order_id,
         handler: async (response: any) => {
           try {
@@ -345,7 +345,7 @@ export const useCheckout = () => {
               if (isOrder) {
                 router.push("/profile?tab=orders");
               } else {
-                const params = new URLSearchParams({ name: astrologerName });
+                const params = new URLSearchParams({ name: expertName });
                 router.push(`/chat?${params.toString()}`);
               }
             } else {
@@ -392,7 +392,7 @@ export const useCheckout = () => {
     buyNowInfo,
     directProduct,
     cartItems,
-    astrologerName,
+    expertName,
     date,
     time,
     duration,

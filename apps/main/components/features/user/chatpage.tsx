@@ -8,15 +8,15 @@ import { ChatMessage } from "@/lib/types";
 type Message = {
     id: number;
     text: string;
-    sender: "user" | "astrologer" | "expert";
+    sender: "user" | "expert" | "expert";
     time: string;
 } & Record<string, any>;
 
 const ChatPage = () => {
-    const astrologerName = "Astrologer";
+    const expertName = "Expert";
 
     const [messages, setMessages] = useState<Message[]>([
-        { id: 1, text: `Hello! I am ${astrologerName}. How can I help you today?`, sender: "astrologer", time: "10:00 AM" }
+        { id: 1, text: `Hello! I am ${expertName}. How can I help you today?`, sender: "expert", time: "10:00 AM" }
     ]);
     const [inputText, setInputText] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -103,7 +103,7 @@ const ChatPage = () => {
                             }}></span>
                     </div>
                     <div className="ms-3">
-                        <h6 className="mb-0 fw-bold" style={{ letterSpacing: "0.3px" }}>{astrologerName}</h6>
+                        <h6 className="mb-0 fw-bold" style={{ letterSpacing: "0.3px" }}>{expertName}</h6>
                         <small className="text-warning d-flex align-items-center" style={{ fontSize: "12px", fontWeight: "500" }}>
                             <i className="fa-solid fa-clock me-1"></i>00:15:00 Remaining
                         </small>
@@ -162,7 +162,7 @@ const ChatPage = () => {
                                         animationDelay: `${index * 0.05}s`,
                                         animationFillMode: "both"
                                     }}>
-                                    {msg.sender === 'astrologer' && (
+                                    {msg.sender === 'expert' && (
                                         <Image
                                             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                                             width={38}

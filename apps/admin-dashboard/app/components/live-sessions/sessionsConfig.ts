@@ -11,7 +11,7 @@ export const mockLiveSessions: LiveSession[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
       rating: 4.8
     },
-    astrologer: {
+    expert: {
       id: "AST001",
       name: "Pandit Ji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pandit",
@@ -35,7 +35,7 @@ export const mockLiveSessions: LiveSession[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
       rating: 4.5
     },
-    astrologer: {
+    expert: {
       id: "AST002",
       name: "Guruji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Guruji",
@@ -59,7 +59,7 @@ export const mockLiveSessions: LiveSession[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amit",
       rating: 4.2
     },
-    astrologer: {
+    expert: {
       id: "AST003",
       name: "Swamiji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Swamiji",
@@ -83,7 +83,7 @@ export const mockLiveSessions: LiveSession[] = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Neha",
       rating: 4.9
     },
-    astrologer: {
+    expert: {
       id: "AST004",
       name: "Acharya",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Acharya",

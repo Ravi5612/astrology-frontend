@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import PlanetForm from "./PlanetForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { planetTranslations } from "@/lib/translations/calculators/planet";
 
 // Planet Color and Icon Mapping
 const PLANET_META: Record<string, { color: string; icon: any }> = {
@@ -22,12 +24,11 @@ const PLANET_META: Record<string, { color: string; icon: any }> = {
     "Ascendant": { color: "#b45309", icon: MapPin },
 };
 
-const ZODIAC_SIGNS = [
-    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-];
-
 const Planet = () => {
+    const { lang, toggleLang } = useLanguageStore();
+    const t = planetTranslations[lang as keyof typeof planetTranslations] || planetTranslations.en;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
     const [formData, setFormData] = useState({
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
@@ -69,7 +70,7 @@ const Planet = () => {
         const lon = parseFloat(formData.longitude);
 
         if (isNaN(lat) || isNaN(lon)) {
-            setError("Please select a valid location from the search results.");
+            setError(t.results.invalidLocationResponse);
             setLoading(false);
             return;
         }
@@ -107,11 +108,11 @@ const Planet = () => {
                 const formattedData = Object.values(outputObj).filter((item: any) => item && typeof item === 'object' && item.name);
                 setPlanetData(formattedData);
             } else {
-                setError("Invalid response from API. Please check your details and API key.");
+                setError(t.results.invalidApiResponse);
             }
         } catch (err: any) {
             console.error("API Error:", err);
-            setError(err.response?.data?.message || "Failed to fetch planet data. Please try again later.");
+            setError(err.response?.data?.message || t.results.defaultApiError);
         } finally {
             setLoading(false);
         }
@@ -123,17 +124,25 @@ const Planet = () => {
     };
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen py-10 px-4 font-sans">
-            <div className="container mx-auto">
+        <div className="bg-[#f8fafc] min-h-screen py-10 px-4 font-sans relative">
+            <div className="absolute top-6 right-6 z-50">
+                <button
+                    onClick={toggleLang}
+                    className="flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-sm"
+                >
+                    <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+                    {lang === "en" ? "हिंदी" : "English"}
+                </button>
+            </div>
+            <div className="container mx-auto mt-8">
                 {/* Header Section */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
-                        Planet Positions <span className="text-primary">&</span> Analysis
+                <div className="text-center mb-12 relative z-10">
+                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight" style={fontStyle}>
+                        {t.hero.titlePart1} <span className="text-primary">{t.hero.titlePart2}</span> {t.hero.titlePart3}
                     </h1>
                     <div className="h-1 w-24 bg-primary mx-auto mb-6 rounded-full"></div>
-                    <p className="text-slate-600 max-w-2xl mx-auto text-lg">
-                        Unlock cosmic insights with accurate planetary positions. Enter your birth details
-                        below to analyze the celestial alignment.
+                    <p className="text-slate-600 max-w-2xl mx-auto text-lg" style={fontStyle}>
+                        {t.hero.paragraph}
                     </p>
                 </div>
 
@@ -146,6 +155,8 @@ const Planet = () => {
                         loading={loading}
                         handleSubmit={handleSubmit}
                         renderIcon={renderIcon}
+                        t={t.form}
+                        fontStyle={fontStyle}
                     />
 
                     {/* Results Side */}
@@ -156,8 +167,8 @@ const Planet = () => {
                                     {renderIcon(Info, { size: 20 })}
                                 </div>
                                 <div>
-                                    <h3 className="text-red-800 font-bold mb-1">Calculation Error</h3>
-                                    <p className="text-red-600 text-sm leading-relaxed">{error}</p>
+                                    <h3 className="text-red-800 font-bold mb-1" style={fontStyle}>{t.results.errorTitle}</h3>
+                                    <p className="text-red-600 text-sm leading-relaxed" style={fontStyle}>{error}</p>
                                 </div>
                             </div>
                         )}
@@ -167,10 +178,9 @@ const Planet = () => {
                                 <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8">
                                     {renderIcon(Compass, { size: 48, className: "text-slate-300" })}
                                 </div>
-                                <h3 className="text-2xl font-bold text-slate-800 mb-3">Begin Your Journey</h3>
-                                <p className="text-slate-500 max-w-md mx-auto">
-                                    Fill in your birth details and click 'Get Results' to discover the planetary
-                                    alignments influencing your life.
+                                <h3 className="text-2xl font-bold text-slate-800 mb-3" style={fontStyle}>{t.results.emptyStateTitle}</h3>
+                                <p className="text-slate-500 max-w-md mx-auto" style={fontStyle}>
+                                    {t.results.emptyStateDesc}
                                 </p>
                             </div>
                         )}
@@ -199,7 +209,8 @@ const Planet = () => {
 
                                 const meta = PLANET_META[planet.name] || { color: "#f25e0a", icon: Compass };
                                 const signIndex = parseInt(planet.current_sign || 0);
-                                const signName = ZODIAC_SIGNS[signIndex - 1] || "Unknown";
+                                const signName = t.zodiacs[signIndex - 1] || t.planets["Unknown"];
+                                const translatedPlanetName = (t.planets as any)[planet.name] || planet.name;
 
                                 // Defensive value extraction
                                 const normDegree = typeof planet.normDegree === 'number' ? planet.normDegree : 0;
@@ -218,27 +229,27 @@ const Planet = () => {
                                                 {renderIcon(meta.icon, { size: 28 })}
                                             </div>
                                             {planet.isRetro === "true" && (
-                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-full text-xs font-bold uppercase tracking-wider">
+                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-full text-xs font-bold uppercase tracking-wider" style={fontStyle}>
                                                     {renderIcon(RotateCw, { size: 12, className: "animate-spin-slow" })}
-                                                    Retrograde
+                                                    {t.results.retrograde}
                                                 </div>
                                             )}
                                         </div>
 
                                         <div className="mb-6">
-                                            <h3 className="text-xl font-black text-slate-800 mb-1">{planet.name || "Unknown"}</h3>
-                                            <p className="font-bold text-lg" style={{ color: meta.color }}>{signName}</p>
+                                            <h3 className="text-xl font-black text-slate-800 mb-1" style={fontStyle}>{translatedPlanetName}</h3>
+                                            <p className="font-bold text-lg" style={{ color: meta.color, ...fontStyle }}>{signName}</p>
                                         </div>
 
                                         <div className="space-y-4">
                                             <div className="bg-slate-50 rounded-2xl p-4 space-y-3">
                                                 <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-slate-400 font-medium tracking-wide">Normalized</span>
+                                                    <span className="text-slate-400 font-medium tracking-wide" style={fontStyle}>{t.results.normalized}</span>
                                                     <span className="text-slate-700 font-bold">{normDegree.toFixed(2)}°</span>
                                                 </div>
                                                 <div className="h-px bg-slate-100 w-full"></div>
                                                 <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-slate-400 font-medium tracking-wide">Full Degree</span>
+                                                    <span className="text-slate-400 font-medium tracking-wide" style={fontStyle}>{t.results.fullDegree}</span>
                                                     <span className="text-slate-700 font-bold truncate max-w-[120px] ml-2 text-right">
                                                         {fullDegree.toFixed(2)}°
                                                     </span>
@@ -258,10 +269,9 @@ const Planet = () => {
                                         {renderIcon(Star, { className: "text-primary", size: 32 })}
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold mb-1">Celestial Insight</h4>
-                                        <p className="text-slate-400 italic">
-                                            "Planets are the instruments of fate. By understanding their positions,
-                                            we decode the unique vibration of our life's purpose."
+                                        <h4 className="text-xl font-bold mb-1" style={fontStyle}>{t.results.insightTitle}</h4>
+                                        <p className="text-slate-400 italic" style={fontStyle}>
+                                            {t.results.insightDesc}
                                         </p>
                                     </div>
                                 </div>
@@ -286,5 +296,6 @@ const Planet = () => {
 };
 
 export default Planet;
+
 
 

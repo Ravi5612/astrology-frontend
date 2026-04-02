@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { VerificationPopup } from "@repo/ui";
 import { UserX } from "lucide-react";
 
-import { Astrologer } from "@/lib/types";
+import { Expert } from "@/lib/types";
 import HeroInfo from "./hero-info.component";
 import ExpertPreview from "./expert-preview.component";
 import SecurityTipsModal from "./security-modal.component";
@@ -22,7 +22,7 @@ export default function ConsultationPrep() {
   const router = useRouter();
   const id = params.id as string;
 
-  const [astrologer, setAstrologer] = useState<Astrologer | null>(null);
+  const [expert, setExpert] = useState<Expert | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [askSomeoneElse, setAskSomeoneElse] = useState(true);
@@ -80,15 +80,15 @@ export default function ConsultationPrep() {
       );
 
       if (fetchError) {
-        console.error("Failed to fetch astrologer for prep:", fetchError);
-        setAstrologer(null);
+        console.error("Failed to fetch expert for prep:", fetchError);
+        setExpert(null);
       } else if (res) {
         const data = res?.data || res;
-        setAstrologer({
+        setExpert({
           id: data.id,
           userId: data.user?.id,
-          name: data.user?.name || "Astrologer",
-          image: data.user?.avatar || "/images/dummy-astrologer.jpg",
+          name: data.user?.name || "Expert",
+          image: data.user?.avatar || "/images/dummy-expert.jpg",
           expertise: data.specialization || "",
           experience: data.experience_in_years || 0,
           price: data.price || 0,
@@ -100,7 +100,7 @@ export default function ConsultationPrep() {
           is_available: data.isAvailable ?? data.is_available ?? false,
         });
       } else {
-        setAstrologer(null);
+        setExpert(null);
       }
       setLoading(false);
     };
@@ -125,7 +125,7 @@ export default function ConsultationPrep() {
       return;
     }
 
-    if (astrologer && !astrologer.is_available) {
+    if (expert && !expert.is_available) {
       setShowOfflinePopup(true);
       return;
     }
@@ -135,7 +135,7 @@ export default function ConsultationPrep() {
 
   const proceedToChat = async () => {
     setShowSecurityModal(false);
-    if (astrologer && !astrologer.is_available) {
+    if (expert && !expert.is_available) {
       setShowOfflinePopup(true);
       return;
     }
@@ -143,46 +143,13 @@ export default function ConsultationPrep() {
 
     const [response, error] = await http.post<any>("/chat/initiate", {
       expertId: parseInt(id),
+      metadata: !askSomeoneElse ? someoneElseData : null,
     });
 
     if (error) {
       console.error("Initiation error:", error);
       toast.error(error.message || "Failed to start consultation");
     } else if (response && response.id) {
-      localStorage.setItem(
-        "activeChatSession",
-        JSON.stringify({
-          id: response.id,
-          expertId: id,
-          status: "pending",
-          timestamp: Date.now(),
-        }),
-      );
-
-      if (askSomeoneElse) {
-        if (clientProfile) {
-          const profileData = clientProfile?.data || clientProfile;
-          const introData = {
-            name: profileData.full_name || profileData.user?.name || "User",
-            dob: profileData.date_of_birth || "",
-            tob: profileData.time_of_birth || "",
-            pob: profileData.place_of_birth || "",
-            gender: profileData.gender || "",
-          };
-          localStorage.setItem("pendingIntroCard", JSON.stringify(introData));
-        }
-      } else {
-        if (!someoneElseData.name || !someoneElseData.dob) {
-          toast.error("Please fill Name and DOB for the consultation");
-          setActionLoading(false);
-          return;
-        }
-        localStorage.setItem(
-          "pendingIntroCard",
-          JSON.stringify(someoneElseData),
-        );
-      }
-
       toast.success("Connecting to expert...");
       router.push(`/chat/room/${id}?sessionId=${response.id}`);
     }
@@ -196,7 +163,7 @@ export default function ConsultationPrep() {
       </div>
     );
 
-  if (!astrologer)
+  if (!expert)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
         <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
@@ -206,7 +173,7 @@ export default function ConsultationPrep() {
           Expert Not Found
         </h2>
         <p className="text-gray-500 max-w-sm mb-8">
-          The astrologer you are looking for might be unavailable or does not
+          The expert you are looking for might be unavailable or does not
           exist.
         </p>
         <button
@@ -267,10 +234,10 @@ export default function ConsultationPrep() {
 
       <main className="max-w-6xl mx-auto px-4 pt-10 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <HeroInfo astrologerName={astrologer?.name} />
+          <HeroInfo expertName={expert?.name} />
 
           <ExpertPreview
-            astrologer={astrologer}
+            expert={expert}
             askSomeoneElse={askSomeoneElse}
             setAskSomeoneElse={setAskSomeoneElse}
             someoneElseData={someoneElseData}
@@ -290,15 +257,15 @@ export default function ConsultationPrep() {
       <VerificationPopup
         isOpen={showOfflinePopup}
         onClose={() => setShowOfflinePopup(false)}
-        title="Astrologer is Offline"
+        title="Expert is Offline"
         buttonText="I Understand"
         icon={<UserX className="w-10 h-10 text-orange-500" />}
         description={
           <>
             Right now{" "}
-            <span className="font-bold text-gray-900">{astrologer?.name}</span>{" "}
+            <span className="font-bold text-gray-900">{expert?.name}</span>{" "}
             is offline. <br />
-            Please try again later when the astrologer is available.
+            Please try again later when the expert is available.
           </>
         }
       />

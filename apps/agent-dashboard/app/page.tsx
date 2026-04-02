@@ -160,7 +160,7 @@ export default function AgentLoginPage() {
                 <div className="relative hidden lg:block h-[500px]">
                     <div className="absolute inset-0 bg-primary bg-opacity-70 flex flex-col items-center justify-center text-white p-8 z-10">
                         <img
-                            src="/images/Astrologer.png"
+                            src="/images/Expert.png"
                             alt="Agent Portal"
                             className="w-56 h-56 object-contain mb-6 drop-shadow-2xl"
                         />
@@ -170,7 +170,7 @@ export default function AgentLoginPage() {
                                 Welcome, Agent!
                             </h1>
                             <p className="text-xl text-left text-gray-200">
-                                Manage your astrologer, mandir and puja shop listings. Track commissions in real-time.
+                                Manage your expert, mandir and puja shop listings. Track commissions in real-time.
                             </p>
                         </div>
                     </div>

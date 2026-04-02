@@ -5,7 +5,7 @@ export const reviewsData: Review[] = [
   {
     id: 1,
     user: "Rahul Sharma",
-    astrologer: "Priya Joshi",
+    expert: "Priya Joshi",
     rating: 5,
     comment: "Excellent consultation! Very accurate predictions.",
     date: "2024-01-15",
@@ -15,7 +15,7 @@ export const reviewsData: Review[] = [
   {
     id: 2,
     user: "Sneha Patel",
-    astrologer: "Amit Kumar",
+    expert: "Amit Kumar",
     rating: 4,
     comment: "Good service, helped me a lot.",
     date: "2024-01-14",
@@ -25,7 +25,7 @@ export const reviewsData: Review[] = [
   {
     id: 3,
     user: "Vikram Singh",
-    astrologer: "Priya Joshi",
+    expert: "Priya Joshi",
     rating: 1,
     comment: "Completely fake! Waste of money and time.",
     date: "2024-01-13",
@@ -35,7 +35,7 @@ export const reviewsData: Review[] = [
   {
     id: 4,
     user: "Anjali Verma",
-    astrologer: "Rajesh Sharma",
+    expert: "Rajesh Sharma",
     rating: 5,
     comment: "Amazing experience! Highly recommended.",
     date: "2024-01-12",
@@ -45,7 +45,7 @@ export const reviewsData: Review[] = [
   {
     id: 5,
     user: "Karan Mehta",
-    astrologer: "Amit Kumar",
+    expert: "Amit Kumar",
     rating: 3,
     comment: "Average service, nothing special.",
     date: "2024-01-11",

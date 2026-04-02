@@ -40,7 +40,7 @@ const CTABanner: React.FC = () => {
         </p>
         <div className="d-flex justify-content-center gap-3 flex-wrap">
           <Link
-            href="/our-astrologers"
+            href="/our-experts"
             className="btn px-5 py-3 fw-bold rounded-pill"
             style={{
               background: "linear-gradient(135deg, #f97316, #ea580c)",

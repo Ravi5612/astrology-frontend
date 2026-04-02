@@ -393,7 +393,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                               {tx.createdAt || tx.created_at
                                 ? new Date(
                                     tx.createdAt || tx.created_at
-                                  ).toLocaleDateString("en-IN", {
+                                  ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
                                     day: "2-digit",
                                     month: "short",
                                     year: "numeric",
@@ -402,10 +402,10 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             </td>
                             <td className="px-8 py-6">
                               <p className="text-sm font-bold text-gray-800 m-0">
-                                {tx.description || tx.reason || tx.purpose || "Transaction"}
+                                {tx.description || tx.reason || tx.purpose || t.defaultTransaction}
                               </p>
                               <p className="text-[10px] font-medium text-gray-400 mt-0.5 m-0 uppercase tracking-wider">
-                                Ref: #{tx.id ? String(tx.id).slice(-8).toUpperCase() : "INTERNAL"}
+                                {t.ref}: #{tx.id ? String(tx.id).slice(-8).toUpperCase() : "INTERNAL"}
                               </p>
                             </td>
                             <td className="px-8 py-6 text-center">
@@ -445,7 +445,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                                       : "bg-emerald-500"
                                   }`}
                                 ></span>
-                                {tx.status || "Success"}
+                                {tx.status || t.defaultStatus}
                               </span>
                             </td>
                           </tr>

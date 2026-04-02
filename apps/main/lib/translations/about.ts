@@ -4,13 +4,13 @@ export const aboutTranslations = {
     badgeText: "India's Trusted Astrology Platform",
     titleStart: "About",
     titleHighlight: "Astrology in Bharat",
-    heroDesc: "We bring the ancient wisdom of Indian astrology to your fingertips — connecting you with verified, experienced astrologers for life's most meaningful questions.",
-    btnConsult: "Consult an Astrologer",
+    heroDesc: "We bring the ancient wisdom of Indian astrology to your fingertips — connecting you with verified, experienced experts for life's most meaningful questions.",
+    btnConsult: "Consult an Expert",
     btnContact: "Contact Us",
 
     // Stats Bar
     statUsers: "Happy Users",
-    statAstrologers: "Verified Astrologers",
+    statExperts: "Verified Experts",
     statServices: "Astrology Services",
     statRating: "Average Rating",
 
@@ -18,7 +18,7 @@ export const aboutTranslations = {
     missionTag: "Our Mission",
     missionTitle: "Bridging Ancient Wisdom\nwith Modern Seekers",
     missionDesc1: "Astrology in Bharat was founded with one simple mission — to make authentic Indian astrology accessible to everyone. For thousands of years, Vedic astrology has guided people through life's uncertainties. We're on a mission to bring that timeless wisdom to modern India through technology.",
-    missionDesc2: "We partner only with deeply experienced, verified astrologers who uphold the integrity of this sacred science. Whether it's your career, marriage, health, or finances — our astrologers provide personalized guidance rooted in your unique birth chart.",
+    missionDesc2: "We partner only with deeply experienced, verified experts who uphold the integrity of this sacred science. Whether it's your career, marriage, health, or finances — our experts provide personalized guidance rooted in your unique birth chart.",
     missionFeature1: "Verified Experts Only",
     missionFeature2: "100% Confidential",
     missionFeature3: "Available 24/7",
@@ -30,40 +30,40 @@ export const aboutTranslations = {
     valuesTag: "Our Values",
     valuesTitle: "What We Stand For",
     value1Title: "Trust & Authenticity",
-    value1Desc: "Every astrologer on our platform is verified and follows authentic Indian astrology traditions — Vedic, KP, Lal Kitab, and more.",
+    value1Desc: "Every expert on our platform is verified and follows authentic Indian astrology traditions — Vedic, KP, Lal Kitab, and more.",
     value2Title: "Privacy First",
     value2Desc: "Your personal data and consultations are 100% confidential. We never share your birth details or session data with anyone.",
     value3Title: "Quality Guidance",
-    value3Desc: "We handpick astrologers based on experience, accuracy, and user feedback — ensuring you always receive the best guidance.",
+    value3Desc: "We handpick experts based on experience, accuracy, and user feedback — ensuring you always receive the best guidance.",
     value4Title: "Accessible to All",
     value4Desc: "Whether you're in a metro city or a small town, our platform is available 24/7 in Hindi and English so guidance is never out of reach.",
 
     // Story Section
     storyTag: "Our Story",
     storyTitle: "How It All Began",
-    storyDesc1: "Astrology in Bharat was born from a simple frustration — finding a trustworthy astrologer in India was hard. Between fake gurus, overpriced pujas, and one-size-fits-all predictions, millions of people were left without genuine guidance.",
-    storyDesc2: "Our founders, passionate about both technology and Indian spiritual traditions, decided to build a platform that would change this. A platform where every astrologer is verified, every consultation is personal, and every user feels heard and respected.",
+    storyDesc1: "Astrology in Bharat was born from a simple frustration — finding a trustworthy expert in India was hard. Between fake gurus, overpriced pujas, and one-size-fits-all predictions, millions of people were left without genuine guidance.",
+    storyDesc2: "Our founders, passionate about both technology and Indian spiritual traditions, decided to build a platform that would change this. A platform where every expert is verified, every consultation is personal, and every user feels heard and respected.",
     storyDesc3: "Since our launch, we have helped over a lakh Indians find clarity on questions about marriage, career, health, finances, and more — through the time-tested lens of Vedic, KP, Lal Kitab, and Numerological astrology.",
-    milestone1: "Platform founded with 20 hand-verified astrologers.",
+    milestone1: "Platform founded with 20 hand-verified experts.",
     milestone2: "Launched real-time chat & call consultations. Crossed 10,000 users.",
     milestone3: "Added Kundli matching, gemstone shop & online puja services.",
-    milestone4: "Crossed 1 lakh happy users. Expanded to 500+ astrologers.",
+    milestone4: "Crossed 1 lakh happy users. Expanded to 500+ experts.",
 
     // Expert Section
     expertTag: "Meet Our Experts",
-    expertTitle: "Trusted Astrologers",
-    expertDesc: "Each astrologer on our platform goes through rigorous verification to ensure authentic and accurate guidance.",
-    expertBtn: "View All Astrologers",
+    expertTitle: "Trusted Experts",
+    expertDesc: "Each expert on our platform goes through rigorous verification to ensure authentic and accurate guidance.",
+    expertBtn: "View All Experts",
 
     // Services Section
     servicesTag: "What We Offer",
     servicesTitle: "Our Astrology Services",
     service1Label: "Chat Consultation",
-    service1Desc: "Text-based sessions with expert astrologers",
+    service1Desc: "Text-based sessions with expert experts",
     service2Label: "Call Consultation",
     service2Desc: "Live voice sessions for personal guidance",
     service3Label: "Video Consultation",
-    service3Desc: "Face-to-face sessions with top astrologers",
+    service3Desc: "Face-to-face sessions with top experts",
     service4Label: "Kundli Generation",
     service4Desc: "Detailed personalized birth chart analysis",
     service5Label: "Kundli Matching",
@@ -77,8 +77,8 @@ export const aboutTranslations = {
 
     // CTA Banner
     ctaTitle: "Start Your Cosmic Journey Today",
-    ctaDesc: "Connect with a verified astrologer right now and get personalized guidance for life's most important questions.",
-    ctaBtn1: "Talk to an Astrologer",
+    ctaDesc: "Connect with a verified expert right now and get personalized guidance for life's most important questions.",
+    ctaBtn1: "Talk to an Expert",
     ctaBtn2: "Free Calculators",
   },
   hi: {
@@ -92,7 +92,7 @@ export const aboutTranslations = {
 
     // Stats Bar
     statUsers: "संतुष्ट उपयोगकर्ता",
-    statAstrologers: "सत्यापित ज्योतिषी",
+    statExperts: "सत्यापित ज्योतिषी",
     statServices: "ज्योतिष सेवाएँ",
     statRating: "औसत रेटिंग",
 

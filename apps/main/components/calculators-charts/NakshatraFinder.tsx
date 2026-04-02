@@ -13,12 +13,9 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import NakshatraFinderForm from "./NakshatraFinderForm.component";
-
-type NakshatraResult = {
-  name: string;
-  nature: string;
-  index: number;
-};
+import { useLanguageStore } from "@/store/languageStore";
+import { nakshatraFinderTranslations } from "@/lib/translations/calculators/nakshatra-finder";
+import { NakshatraResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -35,7 +32,7 @@ const premiumCardStyles = `
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
-  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+  .animate-spin-slow { animation: spin-slow 2s linear infinite; }
 `;
 
 const hashSeed = (str: string): number => {
@@ -47,37 +44,11 @@ const hashSeed = (str: string): number => {
   return Math.abs(hash);
 };
 
-const nakshatras: { name: string; nature: string }[] = [
-  { name: "Ashwini", nature: "Fast, energetic, healing nature. Quick decision maker with a bold spirit." },
-  { name: "Bharani", nature: "Strong will, intense emotions, and transformation energy. Deep responsibility vibes." },
-  { name: "Krittika", nature: "Sharp, fearless, and goal-focused. Natural leader with a powerful presence." },
-  { name: "Rohini", nature: "Charming, creative, and comfort-loving. Strong attraction and emotional warmth." },
-  { name: "Mrigashira", nature: "Curious, playful, and always searching for meaning. Intelligent and adaptable." },
-  { name: "Ardra", nature: "Intense thinker with strong emotions. Powerful growth after challenges." },
-  { name: "Punarvasu", nature: "Optimistic, pure-hearted, and calm. Brings stability and fresh starts." },
-  { name: "Pushya", nature: "Supportive, disciplined, and nurturing. Strong spiritual and family values." },
-  { name: "Ashlesha", nature: "Mystical, strategic, and emotionally deep. Highly intuitive and protective." },
-  { name: "Magha", nature: "Royal mindset, proud, and traditional. Strong respect for ancestors and legacy." },
-  { name: "Purva Phalguni", nature: "Romantic, fun-loving, and artistic. Loves luxury, creativity, and comfort." },
-  { name: "Uttara Phalguni", nature: "Reliable, loyal, and partnership-focused. Strong responsibility and leadership." },
-  { name: "Hasta", nature: "Skillful, clever, and practical. Great communication and hardworking energy." },
-  { name: "Chitra", nature: "Creative, stylish, and ambitious. Strong desire to build something unique." },
-  { name: "Swati", nature: "Independent, flexible, and freedom-loving. Balanced mindset and diplomatic nature." },
-  { name: "Vishakha", nature: "Goal-driven, determined, and competitive. Strong focus on success and growth." },
-  { name: "Anuradha", nature: "Loyal, friendly, and spiritually aligned. Strong bonding and supportive nature." },
-  { name: "Jyeshtha", nature: "Protective, powerful, and mature. Strong leadership with deep emotions." },
-  { name: "Mula", nature: "Truth seeker, intense, and transformational. Removes negativity and rebuilds stronger." },
-  { name: "Purva Ashadha", nature: "Confident, persuasive, and proud. Strong belief system and unstoppable energy." },
-  { name: "Uttara Ashadha", nature: "Disciplined, responsible, and victory-minded. Strong ethics and leadership." },
-  { name: "Shravana", nature: "Wise listener, calm, and learning-focused. Strong spiritual intelligence." },
-  { name: "Dhanishta", nature: "Ambitious, energetic, and socially active. Strong rhythm, music, and success vibes." },
-  { name: "Shatabhisha", nature: "Mysterious, healing, and independent. Deep thinker with strong intuition." },
-  { name: "Purva Bhadrapada", nature: "Intense, visionary, and spiritual. Powerful transformation and inner strength." },
-  { name: "Uttara Bhadrapada", nature: "Calm, wise, and stable. Strong patience, maturity, and spiritual depth." },
-  { name: "Revati", nature: "Gentle, caring, and protective. Brings emotional peace and guidance energy." },
-];
-
 const NakshatraFinder: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = nakshatraFinderTranslations[lang as keyof typeof nakshatraFinderTranslations] || nakshatraFinderTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [dob, setDob] = useState<string>("");
   const [birthTime, setBirthTime] = useState<string>(""); // optional
   const [loading, setLoading] = useState<boolean>(false);
@@ -101,9 +72,8 @@ const NakshatraFinder: React.FC = () => {
     await new Promise((r) => setTimeout(r, 650));
 
     const seed = hashSeed(stableKey);
-
     const index = seed % 27;
-    const selected = nakshatras[index];
+    const selected = t.results.nakshatras[index];
 
     setResult({
       name: selected!.name,
@@ -123,12 +93,24 @@ const NakshatraFinder: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Hero */}
-      <CalculatorHero
-        badgeText="Approximate Finder"
-        titleMain="Nakshatra"
-        titleAccent="Finder"
-        paragraph="Enter your date of birth and optional birth time to get an approximate Nakshatra prediction with nature insights."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       <NakshatraFinderForm
         dob={dob}
@@ -138,6 +120,8 @@ const NakshatraFinder: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result */}
@@ -146,19 +130,19 @@ const NakshatraFinder: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Your Nakshatra Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Nakshatra <span className="text-primary">Name</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -171,11 +155,11 @@ const NakshatraFinder: React.FC = () => {
                           <div className="absolute inset-0 rounded-full border-8 border-primary border-t-transparent animate-spin-slow opacity-20"></div>
 
                           <div className="text-center">
-                            <span className="block text-4xl md:text-6xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
+                            <span className="block text-4xl md:text-6xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500" style={fontStyle}>
                               {result.name}
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Nakshatra #{result.index + 1} / 27
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.label.replace("{index}", (result.index + 1).toString())}
                             </span>
                           </div>
 
@@ -190,18 +174,18 @@ const NakshatraFinder: React.FC = () => {
                             <TbCrystalBall size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
                             {result.nature}
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              Approximate result (DOB-only)
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.disclaimer}
                             </span>
                           </div>
 
-                          <p className="m-0 mt-6 text-xs text-orange-100/50 italic">
-                            For accurate Nakshatra, Moon position (kundli calculation) is required.
+                          <p className="m-0 mt-6 text-xs text-orange-100/50 italic" style={fontStyle}>
+                            {t.results.note}
                           </p>
                         </div>
                       </div>
@@ -219,5 +203,6 @@ const NakshatraFinder: React.FC = () => {
 };
 
 export default NakshatraFinder;
+
 
 

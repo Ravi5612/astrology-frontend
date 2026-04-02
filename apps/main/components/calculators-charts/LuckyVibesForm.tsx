@@ -9,18 +9,7 @@ import {
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 import { ZodiacSign, SIGNS, elementBySign } from "./useLuckyVibes";
-
-interface LuckyVibesFormProps {
-  fullName: string;
-  dob: string;
-  zodiac: ZodiacSign;
-  loading: boolean;
-  canCalculate: boolean;
-  setFullName: (name: string) => void;
-  setDob: (dob: string) => void;
-  setZodiac: (zodiac: ZodiacSign) => void;
-  handleCalculate: (e: React.FormEvent) => void;
-}
+import { LuckyVibesFormProps } from "@/lib/types/calculator";
 
 const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
   fullName,

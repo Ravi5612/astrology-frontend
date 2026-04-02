@@ -26,8 +26,44 @@ export const profileTranslations = {
             updatePhoto: "Update Profile Picture",
             userNameFallback: "User Name"
         },
+        pujas: {
+            title: "Puja Bookings",
+            loading: "Loading your ritual bookings...",
+            noBookings: "No Puja Bookings yet",
+            noBookingsHint: "Your ritual requests and confirmed bookings will appear here.",
+            exploreBtn: "Explore Online Puja",
+            status: {
+                pending: "Waiting for Expert",
+                accepted: "Expert Accepted",
+                confirmed: "Confirmed & Paid",
+                onHold: "Expert Proposed Date",
+                rejected: "Rejected"
+            },
+            scheduledFor: "Scheduled For",
+            timeSlot: "Time Slot",
+            expertMessage: "Message from Expert",
+            requestSentOn: "Request sent on",
+            btnAcceptPay: "Accept & Pay to Confirm",
+            btnReschedule: "Reschedule Ritual",
+            btnAwaiting: "Awaiting Expert Response",
+            btnPayNow: "Pay Now to Confirm Ritual",
+            rescheduleTitle: "Propose Different Date/Time",
+            newDate: "New Date",
+            newTime: "New Time",
+            messageToExpert: "Message to Expert",
+            messagePlaceholder: "E.g. I am not available on your suggested date, can we do it on this time?",
+            btnSendProposal: "Send Proposal",
+            btnCancel: "Cancel",
+            ritual: "Ritual",
+            ritualFee: "Ritual Fee",
+            vedicExpert: "Vedic Expert",
+            onlineRitual: "Online Ritual",
+            homeVisitWith: "Home Visit (With Samagri)",
+            homeVisitBasic: "Home Visit (Basic)"
+        },
         personalDetails: {
             title: "Personal Details",
+            fullName: "Full Name",
             edit: "Edit Profile",
             cancel: "Cancel",
             save: "Save Changes",
@@ -58,9 +94,9 @@ export const profileTranslations = {
             },
             occupation: "Occupation",
             occupationPlaceholder: "e.g. Software Engineer, Business Owner",
-            aboutMe: "About Me / Notes for Astrologer",
+            aboutMe: "About Me / Notes for Expert",
             aboutMePlaceholder: "Share your spiritual journey or specific problems you're seeking guidance for...",
-            aboutMeFallback: "Share details about yourself to help astrologers provide better guidance.",
+            aboutMeFallback: "Share details about yourself to help experts provide better guidance.",
             notSet: "Not set"
         },
         addressDetails: {
@@ -88,7 +124,20 @@ export const profileTranslations = {
             notSet: "Not set"
         },
         wishlist: {
-            title: "My Wishlist"
+            title: "My Wishlist",
+            loading: "Finding your saved stars",
+            emptyTitle: "Your wishlist is silent",
+            emptyDesc: "Start exploring and save your favorite experts and products to see them here.",
+            savedItems: "Saved Items",
+            likedProducts: "Liked Products",
+            itemsSaved: "items saved",
+            favoriteExperts: "Favorite Experts",
+            likedExperts: "Liked Experts",
+            expertsSaved: "experts saved",
+            divineRituals: "Divine Rituals",
+            likedPujas: "Liked Pujas",
+            pujasSaved: "pujas saved",
+            syncNote: "Your preferences are synced across all devices"
         },
         rewards: {
             title: "My Rewards & Coupons",
@@ -103,7 +152,8 @@ export const profileTranslations = {
             copyCode: "Copy Code",
             alreadyRedeemed: "Already Redeemed",
             copied: "Coupon code copied!",
-            infoBox: "Rewards are automatically visible here when assigned by our experts or admin."
+            infoBox: "Rewards are automatically visible here when assigned by our experts or admin.",
+            off: "OFF"
         },
         history: {
             title: "Consultation History",
@@ -119,7 +169,13 @@ export const profileTranslations = {
             rating: "Rating",
             viewChat: "View Chat History",
             reportIssue: "Report Issue",
-            issueReported: "Issue Reported"
+            issueReported: "Issue Reported",
+            na: "N/A",
+            statusMap: {
+                completed: "Completed",
+                scheduled: "Scheduled",
+                cancelled: "Cancelled"
+            }
         },
         orders: {
             title: "My Orders",
@@ -144,7 +200,19 @@ export const profileTranslations = {
             shipping: "Shipping",
             free: "FREE",
             total: "Total",
-            paidVia: "Paid via Razorpay Online"
+            paidVia: "Paid via Razorpay Online",
+            na: "N/A",
+            productName: "Product Name",
+            statusMap: {
+                pending: "Pending",
+                paid: "Paid",
+                delivered: "Delivered",
+                cancelled: "Cancelled",
+                failed: "Failed",
+                shipped: "Shipped",
+                processing: "Processing",
+                success: "Success"
+            }
         },
         disputes: {
             title: "My Support Tickets",
@@ -156,14 +224,22 @@ export const profileTranslations = {
             status: "Status",
             action: "Action",
             defaultCategory: "Support Ticket",
-            viewChat: "View Chat"
+            viewChat: "View Chat",
+            na: "N/A",
+            statusMap: {
+                open: "Open",
+                pending: "Pending",
+                resolved: "Resolved",
+                closed: "Closed"
+            }
         },
         notifications: {
             title: "Notifications",
             clearAll: "Clear All",
             loading: "Loading notifications...",
             noNotifications: "No Notifications Yet",
-            noNotificationsHint: "You'll see alerts about your orders and consultations here."
+            noNotificationsHint: "You'll see alerts about your orders and consultations here.",
+            na: "N/A"
         },
         support: {
             title: "Help & Support",
@@ -205,7 +281,15 @@ export const profileTranslations = {
             tableAmount: "Amount",
             tableStatus: "Status",
             loadingTransactions: "Loading transactions...",
-            noTransactions: "No transactions found."
+            noTransactions: "No transactions found.",
+            defaultTransaction: "Transaction",
+            defaultStatus: "Success",
+            ref: "Ref"
+        },
+        reports: {
+            title: "My Kundli Reports",
+            noReports: "No Reports Available",
+            noReportsHint: "Generate your first Kundali report to see it here."
         },
         loading: {
             title: "Loading profile...",
@@ -239,8 +323,44 @@ export const profileTranslations = {
             updatePhoto: "प्रोफ़ाइल चित्र अपडेट करें",
             userNameFallback: "उपयोगकर्ता का नाम"
         },
+        pujas: {
+            title: "पूजा बुकिंग",
+            loading: "आपकी अनुष्ठान बुकिंग लोड हो रही है...",
+            noBookings: "अभी कोई पूजा बुकिंग नहीं है",
+            noBookingsHint: "आपके अनुष्ठान अनुरोध और पुष्टि की गई बुकिंग यहाँ दिखाई देंगी।",
+            exploreBtn: "ऑनलाइन पूजा देखें",
+            status: {
+                pending: "विशेषज्ञ की प्रतीक्षा है",
+                accepted: "विशेषज्ञ ने स्वीकार किया",
+                confirmed: "पुष्टि और भुगतान किया गया",
+                onHold: "विशेषज्ञ ने तिथि प्रस्तावित की",
+                rejected: "अस्वीकृत"
+            },
+            scheduledFor: "निर्धारित तिथि",
+            timeSlot: "समय स्लॉट",
+            expertMessage: "विशेषज्ञ का संदेश",
+            requestSentOn: "अनुरोध भेजा गया",
+            btnAcceptPay: "स्वीकार करें और पुष्टि के लिए भुगतान करें",
+            btnReschedule: "अनुष्ठान पुनर्निर्धारित करें",
+            btnAwaiting: "विशेषज्ञ की प्रतिक्रिया की प्रतीक्षा है",
+            btnPayNow: "अनुष्ठान की पुष्टि के लिए अभी भुगतान करें",
+            rescheduleTitle: "अलग तिथि/समय प्रस्तावित करें",
+            newDate: "नई तिथि",
+            newTime: "नया समय",
+            messageToExpert: "विशेषज्ञ के लिए संदेश",
+            messagePlaceholder: "जैसे: मैं आपकी सुझाई गई तिथि पर उपलब्ध नहीं हूँ, क्या हम इस समय कर सकते हैं?",
+            btnSendProposal: "प्रस्ताव भेजें",
+            btnCancel: "रद्द करें",
+            ritual: "अनुष्ठान",
+            ritualFee: "अनुष्ठान शुल्क",
+            vedicExpert: "वैदिक विशेषज्ञ",
+            onlineRitual: "ऑनलाइन अनुष्ठान",
+            homeVisitWith: "होम विजिट (सामग्री के साथ)",
+            homeVisitBasic: "होम विजिट (बुनियादी)"
+        },
         personalDetails: {
             title: "व्यक्तिगत विवरण",
+            fullName: "पूरा नाम",
             edit: "प्रोफ़ाइल संपादित करें",
             cancel: "रद्द करें",
             save: "परिवर्तन सहेजें",
@@ -301,7 +421,20 @@ export const profileTranslations = {
             notSet: "सेट नहीं है"
         },
         wishlist: {
-            title: "मेरी विशलिस्ट"
+            title: "मेरी विशलिस्ट",
+            loading: "आपके सहेजे गए सितारे खोज रहे हैं",
+            emptyTitle: "आपकी विशलिस्ट अभी शांत है",
+            emptyDesc: "खोजना शुरू करें और अपने पसंदीदा विशेषज्ञों और उत्पादों को यहाँ देखने के लिए सहेजें।",
+            savedItems: "सहेजे गए आइटम",
+            likedProducts: "पसंद किए गए उत्पाद",
+            itemsSaved: "आइटम सहेजे गए",
+            favoriteExperts: "पसंदीदा विशेषज्ञ",
+            likedExperts: "पसंद किए गए विशेषज्ञ",
+            expertsSaved: "विशेषज्ञ सहेजे गए",
+            divineRituals: "दिव्य अनुष्ठान",
+            likedPujas: "पसंद की गई पूजा",
+            pujasSaved: "पूजा सहेजी गई",
+            syncNote: "आपकी प्राथमिकताएं सभी डिवाइस पर सिंक की गई हैं"
         },
         rewards: {
             title: "मेरे पुरस्कार और कूपन",
@@ -316,7 +449,8 @@ export const profileTranslations = {
             copyCode: "कोड कॉपी करें",
             alreadyRedeemed: "पहले से उपयोग हो चुका है",
             copied: "कूपन कोड कॉपी हो गया!",
-            infoBox: "पुरस्कार तब यहाँ दिखाई देते हैं जब हमारे विशेषज्ञों या व्यवस्थापक द्वारा असाइन किए जाते हैं।"
+            infoBox: "पुरस्कार तब यहाँ दिखाई देते हैं जब हमारे विशेषज्ञों या व्यवस्थापक द्वारा असाइन किए जाते हैं।",
+            off: "छूट"
         },
         history: {
             title: "परामर्श इतिहास",
@@ -332,7 +466,13 @@ export const profileTranslations = {
             rating: "रेटिंग",
             viewChat: "चैट इतिहास देखें",
             reportIssue: "समस्या रिपोर्ट करें",
-            issueReported: "समस्या रिपोर्ट की गई"
+            issueReported: "समस्या रिपोर्ट की गई",
+            na: "N/A",
+            statusMap: {
+                completed: "पूरा हुआ",
+                scheduled: "निर्धारित",
+                cancelled: "रद्द"
+            }
         },
         orders: {
             title: "मेरे ऑर्डर",
@@ -357,7 +497,19 @@ export const profileTranslations = {
             shipping: "शिपिंग",
             free: "मुफ़्त",
             total: "कुल",
-            paidVia: "Razorpay ओनलाइन से भुगतान किया"
+            paidVia: "Razorpay ओनलाइन से भुगतान किया",
+            na: "N/A",
+            productName: "उत्पाद का नाम",
+            statusMap: {
+                pending: "लंबित",
+                paid: "भुगतान किया गया",
+                delivered: "डिलिवर किया गया",
+                cancelled: "रद्द",
+                failed: "विफल",
+                shipped: "भेज दिया गया",
+                processing: "प्रसंस्करण",
+                success: "सफल"
+            }
         },
         disputes: {
             title: "मेरे सहायता टिकट",
@@ -369,14 +521,22 @@ export const profileTranslations = {
             status: "स्थिति",
             action: "कार्रवाई",
             defaultCategory: "सहायता टिकट",
-            viewChat: "चैट देखें"
+            viewChat: "चैट देखें",
+            na: "N/A",
+            statusMap: {
+                open: "खुला है",
+                pending: "लंबित",
+                resolved: "हल हो गया",
+                closed: "बंद"
+            }
         },
         notifications: {
             title: "सूचनाएं",
             clearAll: "सभी हटाएं",
             loading: "सूचनाएं लोड हो रही हैं...",
             noNotifications: "अभी कोई सूचना नहीं",
-            noNotificationsHint: "आपके ऑर्डर और परामर्श से संबंधित अलर्ट यहाँ दिखाई देंगे।"
+            noNotificationsHint: "आपके ऑर्डर और परामर्श से संबंधित अलर्ट यहाँ दिखाई देंगे।",
+            na: "N/A"
         },
         support: {
             title: "सहायता और समर्थन",
@@ -418,7 +578,15 @@ export const profileTranslations = {
             tableAmount: "राशि",
             tableStatus: "स्थिति",
             loadingTransactions: "लेनदेन लोड हो रहे हैं...",
-            noTransactions: "कोई लेनदेन नहीं मिला।"
+            noTransactions: "कोई लेनदेन नहीं मिला.",
+            defaultTransaction: "लेनदेन",
+            defaultStatus: "सफल",
+            ref: "संदर्भ"
+        },
+        reports: {
+            title: "मेरी कुंडली रिपोर्ट",
+            noReports: "कोई रिपोर्ट उपलब्ध नहीं",
+            noReportsHint: "अपनी पहली कुंडली रिपोर्ट यहाँ देखने के लिए जेनरेट करें।"
         },
         loading: {
             title: "प्रोफ़ाइल लोड हो रही है...",

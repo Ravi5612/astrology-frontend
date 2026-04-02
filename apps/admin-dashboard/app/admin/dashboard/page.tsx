@@ -59,7 +59,7 @@ export default function DashboardPage() {
         trend: { value: dashboardData?.trends?.new?.value || "+0%", isPositive: true, period: "last week" },
       },
       {
-        title: "Total Astrologers",
+        title: "Total Experts",
         value: loading ? "..." : (dashboardData?.totalExperts?.toString() || "0"),
         icon: Clock,
         iconColor: "text-orange-600",
@@ -94,7 +94,7 @@ export default function DashboardPage() {
 
   return (
     <main className="space-y-6" role="main">
-      {/* Stats cards - Consultations, Astrologers, Users, Earnings */}
+      {/* Stats cards - Consultations, Experts, Users, Earnings */}
       <StatsCards stats={stats} columns={4} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

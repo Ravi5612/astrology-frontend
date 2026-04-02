@@ -1,10 +1,10 @@
 {
     "hero": {
-        "title": "Connect with Verified Astrologers Online",
+        "title": "Connect with Verified Experts Online",
         "subtitle": "Instant Chat, Call, or Video Consultations",
-        "description": "At Astrology in Bharat, find trusted astrologers for love, career, health, or life guidance. Connect anytime via chat, audio, or video and get personalized solutions with full privacy.",
+        "description": "At Astrology in Bharat, find trusted experts for love, career, health, or life guidance. Connect anytime via chat, audio, or video and get personalized solutions with full privacy.",
         "benefits": [
-            "Verified & Experienced Astrologers",
+            "Verified & Experienced Experts",
             "Instant Chat, Call & Video Support",
             "100% Privacy & Confidentiality",
             "Accurate Predictions & Remedies",
@@ -15,13 +15,13 @@
                 "id": 1,
                 "image": "/images/icon1.png",
                 "title": "Live Chat Support",
-                "description": "Get instant answers from expert astrologers through live chat sessions.",
+                "description": "Get instant answers from expert experts through live chat sessions.",
                 "link": "#"
             },
             {
                 "id": 2,
                 "image": "/images/icon2.png",
-                "title": "Speak with Astrologer",
+                "title": "Speak with Expert",
                 "description": "Connect via phone call for personal guidance on your life questions.",
                 "link": "#"
             },
@@ -42,7 +42,7 @@
         ]
     },
     "whyChooseUs": {
-        "title": "Why Talk to Our Astrologer?",
+        "title": "Why Talk to Our Expert?",
         "promises": [
             {
                 "icon": "fas fa-chart-line",
@@ -72,7 +72,7 @@
             {
                 "icon": "fas fa-comments",
                 "title": "Accessible Anytime",
-                "description": "Connect with our astrologers on your schedule."
+                "description": "Connect with our experts on your schedule."
             }
         ]
     }

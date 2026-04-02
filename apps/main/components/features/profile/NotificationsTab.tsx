@@ -96,27 +96,28 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
                         className={`text-base mb-1 truncate ${
                           notif.isRead ? "text-gray-600" : "text-gray-900 font-bold"
                         }`}
+                        style={fontStyle}
                       >
                         {notif.title}
                       </h6>
                       <p
                         className="text-gray-500 text-sm mb-3 leading-relaxed line-clamp-2"
-                        style={{ lineHeight: "1.5" }}
+                        style={{ ...fontStyle, lineHeight: "1.5" }}
                       >
                         {notif.message}
                       </p>
-                      <span className="flex items-center gap-2 text-[10px] text-orange font-bold uppercase tracking-widest">
+                      <span className="flex items-center gap-2 text-[10px] text-orange font-bold uppercase tracking-widest" style={fontStyle}>
                         <i className="fa-regular fa-clock text-[10px]"></i>
                         {notif.createdAt || notif.created_at
                           ? new Date(
                               notif.createdAt || notif.created_at
-                            ).toLocaleString("en-IN", {
+                            ).toLocaleString(lang === "hi" ? "hi-IN" : "en-IN", {
                               day: "numeric",
                               month: "short",
                               hour: "numeric",
                               minute: "numeric",
                             })
-                          : "N/A"}
+                          : t.na || "N/A"}
                       </span>
                     </div>
                   </div>

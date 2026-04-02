@@ -29,7 +29,7 @@ export default function ReviewsPage() {
       const matchesFilter = filter === "all" || review.status === filter;
       const matchesSearch =
         review.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        review.astrologer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        review.expert.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.comment.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesFilter && matchesSearch;
     });

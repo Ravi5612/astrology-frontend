@@ -149,7 +149,7 @@ export function ProfileModal({
 
             <div className="flex-1 pb-4 text-center lg:text-left">
               <h3 className="text-4xl font-black text-gray-900 tracking-tight mb-2">{name}</h3>
-              <p className="text-orange-600 font-black uppercase text-sm tracking-[0.3em] mb-4">{subtitle || "Astrologer"}</p>
+              <p className="text-orange-600 font-black uppercase text-sm tracking-[0.3em] mb-4">{subtitle || "Expert"}</p>
               <div className="flex items-center justify-center lg:justify-start flex-wrap gap-3">
                 {badges?.map((badge, idx) => (
                   <span key={idx} className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border border-black/5 ${badge.color}`}>

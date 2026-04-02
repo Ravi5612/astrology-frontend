@@ -6,7 +6,7 @@ const AstrologyServicesSection = () => {
       icon: "fa-user-tie",
       title: "Personal Consultation",
       description:
-        "Get personalized guidance from expert astrologers to choose the right products for you",
+        "Get personalized guidance from expert experts to choose the right products for you",
       features: [
         "Kundli Analysis",
         "Gemstone Recommendation",
@@ -108,7 +108,7 @@ const AstrologyServicesSection = () => {
             Not Sure Which Product to Buy?
           </h3>
           <p className="text-gray-300 mb-6 font-outfit text-lg">
-            Connect with our expert astrologers for personalized recommendations
+            Connect with our expert experts for personalized recommendations
           </p>
           <button className="bg-theme-orange hover:bg-white hover:text-theme-orange text-white px-8 py-4 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl font-pl text-lg">
             Book Free Consultation

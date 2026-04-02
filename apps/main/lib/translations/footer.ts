@@ -1,6 +1,6 @@
 export const footerTranslations = {
     en: {
-        aboutText: "Astrology in Bharat is India’s trusted astrology platform offering accurate guidance through verified astrologers using authentic Indian astrology systems.",
+        aboutText: "Astrology in Bharat is India’s trusted astrology platform offering accurate guidance through verified experts using authentic Indian astrology systems.",
         freeCalculator: "Free Calculator",
         astrologyServices: "Astrology Services",
         importantLinks: "Important Links",
@@ -16,15 +16,15 @@ export const footerTranslations = {
 
         // Service Links
         onlinePuja: "Online Puja",
-        talkToAstrologer: "Talk to Astrologer",
+        talkToExpert: "Talk to Expert",
         videoConsultation: "Video Consultation",
         kundliMatching: "Kundli Matching",
         kundliPrediction: "Kundli Prediction",
         numerologyReport: "Numerology Report",
 
         // Important Links
-        astrologerLogin: "Astrologer Login",
-        astrologerRegistration: "Astrologer Registration",
+        expertLogin: "Expert Login",
+        expertRegistration: "Expert Registration",
         shubhMuhurat: "Hindu Calendar",
         shopProducts: "Shop Our Products",
         aboutUs: "About Us",
@@ -57,15 +57,15 @@ export const footerTranslations = {
 
         // Service Links
         onlinePuja: "ऑनलाइन पूजा",
-        talkToAstrologer: "ज्योतिषी से बात करें",
+        talkToExpert: "ज्योतिषी से बात करें",
         videoConsultation: "वीडियो परामर्श",
         kundliMatching: "कुंडली मिलान",
         kundliPrediction: "कुंडली भविष्यवाणी",
         numerologyReport: "अंकशास्त्र रिपोर्ट",
 
         // Important Links
-        astrologerLogin: "ज्योतिषी लॉगिन",
-        astrologerRegistration: "ज्योतिषी पंजीकरण",
+        expertLogin: "ज्योतिषी लॉगिन",
+        expertRegistration: "ज्योतिषी पंजीकरण",
         shubhMuhurat: "हिन्दू पंचांग",
         shopProducts: "हमारे उत्पाद खरीदें",
         aboutUs: "हमारे बारे में",

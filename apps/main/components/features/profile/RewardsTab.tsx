@@ -121,8 +121,8 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
                         style={fontStyle}
                       >
                         {d_type === "percentage"
-                          ? `${d_value}% OFF`
-                          : `${t.flatOff} ₹${d_value} OFF`}
+                          ? `${d_value}% ${t.off}`
+                          : `${t.flatOff} ₹${d_value} ${t.off}`}
                       </p>
                     </div>
                   </div>
@@ -135,7 +135,7 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
                     {d_expiry && (
                       <span className="flex items-center gap-1.5" style={fontStyle}>
                         <i className="fa-regular fa-clock text-gray-300"></i>
-                        {t.exp}: {new Date(d_expiry).toLocaleDateString()}
+                        {t.exp}: {new Date(d_expiry).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN")}
                       </span>
                     )}
                   </div>
@@ -154,7 +154,7 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
                       }
                     }}
                   >
-                    <i className="fa-regular fa-copy text-lg"></i>
+                   <i className="fa-regular fa-copy text-lg"></i>
                     <span style={fontStyle}>
                       {d_isUsed ? t.alreadyRedeemed : t.copyCode}
                     </span>

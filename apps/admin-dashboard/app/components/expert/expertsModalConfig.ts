@@ -23,7 +23,7 @@ export const getProfileModalProps = (expert: Expert) => {
   const gallery = expert.gallery || profile?.gallery || [];
   const documents = expert.documents || profile?.documents || [];
   const intro_video_url = expert.intro_video_url || profile?.intro_video_url;
-  const specialization = expert.specialization || profile?.specialization || "Expert Astrologer";
+  const specialization = expert.specialization || profile?.specialization || "Expert Expert";
   const experience = expert.experience_in_years ?? profile?.experience_in_years ?? 0;
   const rating = expert.rating ?? profile?.rating ?? "0.0";
   const consultation_count = expert.consultation_count ?? profile?.consultation_count ?? 0;

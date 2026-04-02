@@ -3,17 +3,17 @@
 
 import React from "react";
 import { User, Mail, Calendar, Star } from "lucide-react";
-import { User as UserType, Astrologer } from "./types";
+import { User as UserType, Expert } from "./types";
 
 interface UserInfoCardProps {
   user: UserType;
-  astrologer: Astrologer;
-  type: "user" | "astrologer";
+  expert: Expert;
+  type: "user" | "expert";
 }
 
-export function UserInfoCard({ user, astrologer, type }: UserInfoCardProps) {
+export function UserInfoCard({ user, expert, type }: UserInfoCardProps) {
   const isUser = type === "user";
-  const person = isUser ? user : astrologer;
+  const person = isUser ? user : expert;
   
   return (
     <div className={`p-3 rounded-lg border transition-all duration-200 hover:shadow-sm ${
@@ -32,7 +32,7 @@ export function UserInfoCard({ user, astrologer, type }: UserInfoCardProps) {
             }`} />
           </div>
           <span className="text-sm font-medium text-gray-700">
-            {isUser ? "User" : "Astrologer"}
+            {isUser ? "User" : "Expert"}
           </span>
         </div>
         
@@ -91,13 +91,13 @@ export function UserInfoCard({ user, astrologer, type }: UserInfoCardProps) {
               <div className="flex items-center gap-1.5 mt-1">
                 <Calendar className="w-3 h-3 text-gray-500" />
                 <span className="text-xs text-gray-600">
-                  {astrologer.specialty}
+                  {expert.specialty}
                 </span>
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <span className="text-xs text-gray-500">Expertise:</span>
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
-                  {astrologer.specialty}
+                  {expert.specialty}
                 </span>
               </div>
             </>

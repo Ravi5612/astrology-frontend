@@ -29,9 +29,9 @@ export default function TermsAndConditionsPage() {
             <h2>4. User Conduct</h2>
             <p>By using the platform, you agree not to:</p>
             <ul>
-                <li>Abuse, harass, or threaten astrologers or other users.</li>
+                <li>Abuse, harass, or threaten experts or other users.</li>
                 <li>Post any content that is defamatory, obscene, or violates any law.</li>
-                <li>Attempt to circumvent the payment system or share personal contact details with astrologers for direct transactions.</li>
+                <li>Attempt to circumvent the payment system or share personal contact details with experts for direct transactions.</li>
                 <li>Use the platform for any fraudulent or illegal activities.</li>
             </ul>
 
@@ -47,7 +47,7 @@ export default function TermsAndConditionsPage() {
 
             <h2>7. Limitation of Liability</h2>
             <p>
-                Astrology in Bharat and its astrologers shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the services or from any advice or predictions provided during a consultation.
+                Astrology in Bharat and its experts shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the services or from any advice or predictions provided during a consultation.
             </p>
 
             <h2>8. Disclaimer</h2>

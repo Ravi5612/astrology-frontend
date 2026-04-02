@@ -183,7 +183,7 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = memo(
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-yellow-500/20 blur-xl rounded-full animate-pulse" />
                                     <img
-                                        src="/images/Astrologer.png"
+                                        src="/images/Expert.png"
                                         alt="AstrologyInBharat"
                                         className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                                         style={{ transform: "scaleX(-1)" }}

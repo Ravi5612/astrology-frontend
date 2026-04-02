@@ -7,9 +7,13 @@ import { useCartStore } from "@/store/useCartStore";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { api } from "@/lib/api";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
   const { isClientAuthenticated, clientLoading } = useAuthStore();
   const {
     cartItems,
@@ -44,7 +48,7 @@ const CartPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-orange/20 border-t-orange rounded-full animate-spin"></div>
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Verifying Session...</p>
+          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">{t.cart.verifyingSession}</p>
         </div>
       </div>
     );
@@ -58,7 +62,7 @@ const CartPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-orange/20 border-t-orange rounded-full animate-spin"></div>
-          <p className="text-gray-400 font-black uppercase tracking-widest text-xs">Loading your cart...</p>
+          <p className="text-gray-400 font-black uppercase tracking-widest text-xs">{t.cart.loadingCart}</p>
         </div>
       </div>
     );
@@ -88,14 +92,14 @@ const CartPage: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange/10 text-orange rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
               <i className="fa-solid fa-shopping-bag text-[10px]"></i>
-              Checkout Securely
+              {t.cart.checkoutSecurely}
             </div>
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-none">
-              Your Shopping Bag
+              {t.cart.shoppingBagTitle}
             </h1>
           </div>
           <div className="text-gray-400 font-bold text-sm tracking-wide bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100">
-            {cartItems.length} Items in Cart
+            {cartItems.length} {t.cart.itemsInCart}
           </div>
         </div>
 
@@ -104,13 +108,13 @@ const CartPage: React.FC = () => {
             <div className="w-24 h-24 bg-orange/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-orange">
               <i className="fa-solid fa-cart-shopping-slash text-4xl"></i>
             </div>
-            <h2 className="text-2xl font-black text-gray-900 mb-4">Your bag is empty</h2>
-            <p className="text-gray-500 font-bold mb-10 max-w-xs mx-auto">Looks like you haven't added anything to your cart yet.</p>
+            <h2 className="text-2xl font-black text-gray-900 mb-4">{t.cart.emptyBagTitle}</h2>
+            <p className="text-gray-500 font-bold mb-10 max-w-xs mx-auto">{t.cart.emptyBagDesc}</p>
             <button 
               onClick={() => router.push("/product")}
               className="px-10 py-4 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all font-bold"
             >
-              Start Shopping
+              {t.cart.startShopping}
             </button>
           </div>
         ) : (
@@ -141,7 +145,7 @@ const CartPage: React.FC = () => {
                             {item.product?.name || "Product Name"}
                           </h3>
                           <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 text-gray-400 rounded-lg text-[10px] font-black uppercase tracking-widest">
-                            ₹{item.product?.sale_price || item.product?.price} per unit
+                            ₹{item.product?.sale_price || item.product?.price} {t.cart.perUnit}
                           </div>
                         </div>
                       </div>
@@ -196,24 +200,24 @@ const CartPage: React.FC = () => {
               <div className="sticky top-24 space-y-6">
                 <div className="bg-white rounded-[3rem] shadow-premium border border-gray-100 p-10 overflow-hidden relative">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-orange/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-                  <h2 className="text-2xl font-black text-gray-900 mb-8 z-10 relative">Order Summary</h2>
+                  <h2 className="text-2xl font-black text-gray-900 mb-8 z-10 relative">{t.cart.orderSummary}</h2>
                   
                   <div className="space-y-4 mb-8 z-10 relative">
                     <div className="flex justify-between items-center text-gray-500 font-bold">
-                      <span className="text-sm">Subtotal</span>
+                      <span className="text-sm">{t.cart.subtotal}</span>
                       <span className="text-gray-900">₹{subtotal}</span>
                     </div>
                     <div className="flex justify-between items-center text-gray-500 font-bold">
-                      <span className="text-sm">Shipping</span>
-                      <span className="text-emerald-500 uppercase text-xs font-black tracking-widest">{shipping === 0 ? "Free" : `₹${shipping}`}</span>
+                      <span className="text-sm">{t.cart.shipping}</span>
+                      <span className="text-emerald-500 uppercase text-xs font-black tracking-widest">{shipping === 0 ? t.cart.shippingFree : `₹${shipping}`}</span>
                     </div>
                     <div className="flex justify-between items-center text-gray-500 font-bold">
-                      <span className="text-sm">Estimated Tax (10%)</span>
+                      <span className="text-sm">{t.cart.estimatedTax}</span>
                       <span className="text-gray-900">₹{tax.toFixed(0)}</span>
                     </div>
                     <div className="h-px w-full bg-gray-100 my-4"></div>
                     <div className="flex justify-between items-center pt-2">
-                      <span className="text-lg font-black text-gray-900">Total</span>
+                      <span className="text-lg font-black text-gray-900">{t.cart.total}</span>
                       <span className="text-3xl font-black text-orange italic">₹{grandTotal.toFixed(0)}</span>
                     </div>
                   </div>
@@ -222,7 +226,7 @@ const CartPage: React.FC = () => {
                     className="w-full py-5 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
                     onClick={() => router.push("/checkout?type=order")}
                   >
-                    Checkout Now
+                    {t.cart.checkoutNow}
                     <i className="fa-solid fa-arrow-right-long animate-bounce-x" />
                   </button>
                 </div>
@@ -231,11 +235,11 @@ const CartPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                    <div className="p-4 bg-white rounded-2xl border border-gray-100 flex flex-col items-center text-center gap-1">
                     <i className="fa-solid fa-shield-check text-emerald-500 text-lg"></i>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Secure Payments</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.cart.securePayments}</p>
                   </div>
                    <div className="p-4 bg-white rounded-2xl border border-gray-100 flex flex-col items-center text-center gap-1">
                     <i className="fa-solid fa-rotate-left text-blue-500 text-lg"></i>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Easy Returns</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.cart.easyReturns}</p>
                   </div>
                 </div>
               </div>
@@ -247,10 +251,10 @@ const CartPage: React.FC = () => {
         <div className="mt-32">
           <div className="flex items-center gap-6 mb-12">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 leading-none">
-              Complete Your Journey
+              {t.cart.completeJourney}
             </h2>
             <div className="h-1.5 flex-grow bg-gray-100 rounded-full"></div>
-            <p className="text-gray-400 font-black text-xs uppercase tracking-widest shrink-0">Personalized Recommendations</p>
+            <p className="text-gray-400 font-black text-xs uppercase tracking-widest shrink-0">{t.cart.personalizedRecs}</p>
           </div>
           <ProductCarousel products={suggestedProducts} />
         </div>

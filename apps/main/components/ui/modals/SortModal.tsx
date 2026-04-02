@@ -52,7 +52,7 @@ const SortModal: React.FC<SortModalProps> = ({ isOpen, onClose, onApply }) => {
               <i className="fa-solid fa-sort"></i>
             </div>
             <div>
-              <h2 className="text-xl font-black text-gray-900 m-0">Sort Astrologers</h2>
+              <h2 className="text-xl font-black text-gray-900 m-0">Sort Experts</h2>
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">Order by preference</p>
             </div>
           </div>

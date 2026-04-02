@@ -38,7 +38,7 @@ export default function ProfilePage() {
     ];
 
     const COMMISSION_RATES = [
-        { label: "Astrologer Referral", rate: "10%", className: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+        { label: "Expert Referral", rate: "10%", className: "bg-yellow-50 text-yellow-700 border-yellow-200" },
         { label: "Mandir Listing", rate: "8%", className: "bg-orange-50 text-orange-700 border-orange-200" },
         { label: "Puja Shop Referral", rate: "12%", className: "bg-purple-50 text-purple-700 border-purple-200" },
     ];

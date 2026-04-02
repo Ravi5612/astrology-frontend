@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
         <div className="relative hidden lg:block h-[500px]">
           <div className="absolute inset-0 bg-primary bg-opacity-70 flex flex-col items-center justify-center text-white p-8 z-10">
             <img
-              src="/images/Astrologer.png"
+              src="/images/Expert.png"
               alt="Logo"
               className="w-56 h-56 object-contain mb-6 drop-shadow-2xl"
             />

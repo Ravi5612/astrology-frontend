@@ -5,14 +5,14 @@ import StatsBar from "./StatsBar";
 import MissionSection from "./MissionSection";
 import ValuesSection from "./ValuesSection";
 import StorySection from "./StorySection";
-import AstrologerListWrapper from "@/components/features/astrologers/AstrologerListWrapper";
+import ExpertListWrapper from "@/components/features/experts/ExpertListWrapper";
 import ServicesSection from "./ServicesSection";
 import CTABanner from "./CTABanner";
 
 export const metadata: Metadata = {
   title: "About Us | Astrology in Bharat",
   description:
-    "Learn about Astrology in Bharat — India's trusted astrology platform offering accurate guidance through verified astrologers using authentic Indian astrology systems.",
+    "Learn about Astrology in Bharat — India's trusted astrology platform offering accurate guidance through verified experts using authentic Indian astrology systems.",
 };
 
 export default function AboutPage() {
@@ -23,7 +23,7 @@ export default function AboutPage() {
       <MissionSection />
       <ValuesSection />
       <StorySection />
-      <AstrologerListWrapper searchParams={{}} layout="slider" title="Trusted Astrologers" />
+      <ExpertListWrapper searchParams={{}} layout="slider" title="Trusted Experts" />
       <ServicesSection />
       <CTABanner />
     </main>

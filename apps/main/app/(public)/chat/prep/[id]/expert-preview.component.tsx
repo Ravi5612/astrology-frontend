@@ -3,13 +3,13 @@
 import React from "react";
 import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
-import { Astrologer } from "@/lib/types";
+import { Expert } from "@/lib/types";
 
 const Image = NextImage as any;
 const { MessageSquare, MapPin } = LucideIcons as any;
 
 type Props = {
-  astrologer: Astrologer | null;
+  expert: Expert | null;
   askSomeoneElse: boolean;
   setAskSomeoneElse: (val: boolean) => void;
   someoneElseData: any;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const ExpertPreview = ({
-  astrologer,
+  expert,
   askSomeoneElse,
   setAskSomeoneElse,
   someoneElseData,
@@ -34,8 +34,8 @@ const ExpertPreview = ({
           {/* Expert Image Section */}
           <div className="relative h-[480px] rounded-[3rem] overflow-hidden group">
             <Image
-              src={astrologer?.image || "/images/dummy-astrologer.jpg"}
-              alt={astrologer?.name || "Astrologer"}
+              src={expert?.image || "/images/dummy-expert.jpg"}
+              alt={expert?.name || "Expert"}
               fill
               className="object-cover transition-transform duration-1000 group-hover:scale-110"
             />
@@ -44,31 +44,31 @@ const ExpertPreview = ({
             {/* Availability Badge */}
             <div
               className={`absolute top-6 left-6 px-4 py-2 backdrop-blur-md rounded-full border shadow-sm flex items-center gap-2 ${
-                astrologer?.is_available
+                expert?.is_available
                   ? "bg-orange border-white/20"
                   : "bg-white border-gray-200"
               }`}
             >
               <div
                 className={`w-2 h-2 rounded-full ${
-                  astrologer?.is_available
+                  expert?.is_available
                     ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]"
                     : "bg-gray-400"
                 }`}
               ></div>
               <span
                 className={`${
-                  astrologer?.is_available ? "text-white" : "text-gray-400"
+                  expert?.is_available ? "text-white" : "text-gray-400"
                 } text-[10px] font-black uppercase tracking-widest`}
               >
-                {astrologer?.is_available ? "Available Now" : "Offline"}
+                {expert?.is_available ? "Available Now" : "Offline"}
               </span>
             </div>
 
             {/* Price Badge */}
             <div className="absolute top-6 right-6 px-4 py-2 bg-orange rounded-full shadow-lg flex items-center gap-2">
               <span className="text-white text-xs font-black uppercase tracking-widest">
-                ₹{astrologer?.chat_price || astrologer?.price || 0} / min
+                ₹{expert?.chat_price || expert?.price || 0} / min
               </span>
             </div>
 
@@ -80,7 +80,7 @@ const ExpertPreview = ({
                     Experience
                   </span>
                   <span className="text-white font-bold">
-                    {astrologer?.experience}+ Years
+                    {expert?.experience}+ Years
                   </span>
                 </div>
                 <div className="w-[1px] h-8 bg-white/20"></div>
@@ -89,7 +89,7 @@ const ExpertPreview = ({
                     Expertise
                   </span>
                   <span className="text-white font-bold">
-                    {astrologer?.expertise}
+                    {expert?.expertise}
                   </span>
                 </div>
               </div>

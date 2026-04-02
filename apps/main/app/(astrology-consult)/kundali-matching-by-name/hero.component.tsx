@@ -1,7 +1,13 @@
 import React from "react";
 import Image from "next/image";
+import { useLanguageStore } from "@/store/languageStore";
+import { matchingTranslations } from "@/lib/translations/calculators/matching";
 
 const HeroComponent = () => {
+  const { lang } = useLanguageStore();
+  const t = (matchingTranslations[lang as keyof typeof matchingTranslations] || matchingTranslations.en).hero;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="relative pt-32 pb-20 overflow-hidden bg-gray-900 border-b border-white/5 min-h-[80vh] flex items-center">
       {/* Decorative Background Elements */}
@@ -16,31 +22,26 @@ const HeroComponent = () => {
           {/* Left Content */}
           <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 backdrop-blur-md rounded-full border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-700">
-               <i className="fa-solid fa-sparkles text-orange text-xs"></i>
-               <span className="text-[10px] font-black text-white/80 uppercase tracking-[0.3em]">Advanced Compatibility Analysis</span>
+               <i className="fa-solid fa-sparkles text-orange text-[10px]"></i>
+               <span className="text-[10px] font-black text-white/80 uppercase tracking-[0.3em]" style={fontStyle}>{t.badge}</span>
             </div>
             
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-7xl font-black text-white leading-none tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-                Detailed Kundali <span className="text-orange italic">Matching</span>
+              <h1 className="text-4xl md:text-7xl font-black text-white leading-none tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100" style={fontStyle}>
+                {t.title1} <span className="text-orange italic">{t.titleHighlight}</span>
               </h1>
-              <p className="text-gray-400 font-bold max-w-2xl mx-auto lg:mx-0 text-lg leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-                Get deep insights into relationship harmony with Guna Milan, Ashtakoot Analysis, and detailed Mangal Dosha verification for both partners.
+              <p className="text-gray-400 font-bold max-w-2xl mx-auto lg:mx-0 text-lg leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200" style={fontStyle}>
+                {t.description}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-              {[
-                { icon: "fa-star-shooting", text: "8-Point Ashtakoot Milan" },
-                { icon: "fa-shield-halved", text: "Advanced Mangal Dosha Check" },
-                { icon: "fa-wand-magic-sparkles", text: "Dosha Exceptions & Remedies" },
-                { icon: "fa-comment-dots", text: "Conclusion & Expert Advice" },
-              ].map((item, idx) => (
+              {t.features.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl group hover:bg-white/10 transition-all duration-300">
                   <div className="w-10 h-10 rounded-xl bg-orange/20 flex items-center justify-center text-orange group-hover:scale-110 transition-transform">
                     <i className={`fa-solid ${item.icon}`}></i>
                   </div>
-                  <span className="text-sm font-black text-white/90 uppercase tracking-widest">{item.text}</span>
+                  <span className="text-sm font-black text-white/90 uppercase tracking-widest" style={fontStyle}>{item.text}</span>
                 </div>
               ))}
             </div>
@@ -50,8 +51,8 @@ const HeroComponent = () => {
               onClick={() => window.scrollTo({ top: 800, behavior: "smooth" })}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-              <span className="relative flex items-center justify-center gap-3">
-                Check Detail Compatibility
+              <span className="relative flex items-center justify-center gap-3" style={fontStyle}>
+                {t.cta}
                 <i className="fa-solid fa-arrow-right-long group-hover:translate-x-1 transition-transform"></i>
               </span>
             </button>
@@ -84,10 +85,10 @@ const HeroComponent = () => {
               
               {/* Floating Badges */}
               <div className="absolute -top-4 -right-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl animate-bounce-slow">
-                 <div className="flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                   <span className="text-[10px] font-black text-white uppercase tracking-widest">99.9% Accurate</span>
-                 </div>
+                  <div className="flex items-center gap-2" style={fontStyle}>
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{t.accuracyBadge}</span>
+                  </div>
               </div>
             </div>
           </div>

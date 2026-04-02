@@ -6,10 +6,10 @@ import * as LucideIcons from "lucide-react";
 const { MessageSquare, User, Calendar } = LucideIcons as any;
 
 type Props = {
-  astrologerName?: string;
+  expertName?: string;
 };
 
-const HeroInfo = ({ astrologerName }: Props) => {
+const HeroInfo = ({ expertName }: Props) => {
   return (
     <div className="lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-left duration-1000">
       <div className="space-y-4">
@@ -19,7 +19,7 @@ const HeroInfo = ({ astrologerName }: Props) => {
         <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
           Talk to <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange to-orange">
-            {astrologerName}
+            {expertName}
           </span>
         </h1>
         <p className="text-gray-500 text-lg md:text-xl font-medium max-w-lg leading-relaxed">

@@ -48,7 +48,6 @@ export async function fetchPlaces(
     }
 
     const data = await response.json();
-    console.log("Places API Raw Data:", data);
     
     // Normalized Backend Response: { places: [...] }
     const rawPlaces = data?.places;
@@ -64,7 +63,6 @@ export async function fetchPlaces(
       thumbnailUrl: p.thumbnailUrl && p.thumbnailUrl.includes("via.placeholder.com") ? null : p.thumbnailUrl,
     }));
 
-    console.log(`Successfully mapped ${places.length} places for query: ${query}`);
     return places;
   } catch (error) {
     console.error("Error fetching places:", error);

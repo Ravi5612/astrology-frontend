@@ -2,16 +2,7 @@ import React from "react";
 import { FaArrowRight, FaSpinner, FaRegCalendarAlt as FaCalendar, FaRegClock as FaClock } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
-
-interface NakshatraFinderFormProps {
-  dob: string;
-  setDob: (val: string) => void;
-  birthTime: string;
-  setBirthTime: (val: string) => void;
-  loading: boolean;
-  canCalculate: boolean;
-  handleCalculate: (e: React.FormEvent) => void;
-}
+import { NakshatraFinderFormProps } from "@/lib/types/calculator";
 
 const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
   dob,
@@ -21,39 +12,41 @@ const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
   loading,
   canCalculate,
   handleCalculate,
+  t,
+  fontStyle,
 }) => {
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="container px-6">
-        <div className="glass-card rounded-[3rem] p-8 md:p-16 shadow-[0_20px_50px_rgba(48,17,24,0.1)] border-t-4 border-t-primary/50 relative overflow-hidden">
+        <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_20px_60px_rgba(48,17,24,0.12)] border-t-4 border-t-primary/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
             <GiLotus size={150} />
           </div>
 
           <div className="text-center mb-10">
-            <h2 className="text-xl md:text-3xl font-black text-[#301118] mb-2 tracking-tight">
-              Find Your <span className="text-primary">Nakshatra</span>
+            <h2 className="text-xl md:text-3xl font-black text-[#301118] mb-2 tracking-tight" style={fontStyle}>
+              {t.title} <span className="text-primary">{t.titleAccent}</span>
             </h2>
             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-2"></div>
           </div>
 
           <form onSubmit={handleCalculate} className="max-w-3xl mx-auto">
-            <div className="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-[0_15px_40px_rgba(48,17,24,0.08)] border border-[#301118]/5 relative overflow-hidden bg-white space-y-6">
+            <div className="glass-card rounded-[3rem] p-6 md:p-10 shadow-[0_15px_45px_rgba(48,17,24,0.1)] border border-[#301118]/5 relative overflow-hidden bg-white space-y-6">
               {/* DOB */}
               <div>
-                <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                  Date of Birth (Required)
+                <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1" style={fontStyle}>
+                  {t.dobLabel}
                 </label>
                 <div className="relative mt-2">
                   <input
                     type="date"
                     required
-                    style={{ borderRadius: "9999px" }}
-                    className="w-full bg-white border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
+                    style={{ borderRadius: "9999px", ...fontStyle }}
+                    className="w-full bg-white border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
                   />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
                     <FaCalendar size={14} />
                   </div>
                 </div>
@@ -61,24 +54,24 @@ const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
 
               {/* Birth Time */}
               <div>
-                <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1">
-                  Birth Time (Optional)
+                <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1" style={fontStyle}>
+                  {t.timeLabel}
                 </label>
                 <div className="relative mt-2">
                   <input
                     type="time"
-                    style={{ borderRadius: "9999px" }}
-                    className="w-full bg-white border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
+                    style={{ borderRadius: "9999px", ...fontStyle }}
+                    className="w-full bg-white border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
                     value={birthTime}
                     onChange={(e) => setBirthTime(e.target.value)}
                   />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
                     <FaClock size={14} />
                   </div>
                 </div>
 
-                <p className="m-0 mt-3 text-xs text-gray-400 italic">
-                  Adding time can slightly change the seed, but result is still approximate.
+                <p className="m-0 mt-3 text-xs text-gray-400 italic" style={fontStyle}>
+                  {t.timeTip}
                 </p>
               </div>
 
@@ -88,14 +81,16 @@ const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
                   type="submit"
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
-                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
                   ) : (
                     <TbCrystalBall size={18} />
                   )}
-                  {loading ? "Finding..." : "Find Nakshatra"}
+                  <span style={fontStyle}>
+                    {loading ? t.calculating : t.calculate}
+                  </span>
                   <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -112,3 +107,4 @@ const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
 };
 
 export default NakshatraFinderForm;
+

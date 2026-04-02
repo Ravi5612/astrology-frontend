@@ -14,14 +14,14 @@ export const featuredCardsHeroSection: CardData[] = [
         altText: "Live Chat Support icon",
         title: "Live Chat Support",
         description:
-            "Get instant answers from expert astrologers through live chat sessions.",
+            "Get instant answers from expert experts through live chat sessions.",
         link: "#",
     },
     {
         id: 2,
         image: "/images/icon2.png",
-        altText: "Speak with Astrologer icon",
-        title: "Speak with Astrologer",
+        altText: "Speak with Expert icon",
+        title: "Speak with Expert",
         description:
             "Connect via phone call for personal guidance on your life questions.",
         link: "#",

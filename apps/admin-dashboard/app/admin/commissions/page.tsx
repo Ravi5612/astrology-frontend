@@ -49,7 +49,7 @@ const getCommissionStats = (data: Commission[]) => {
 
 // ── Type badge ────────────────────────────────────────────────
 const TYPE_LABEL: Record<string, { label: string; className: string }> = {
-    astrologer: { label: "Astrologer", className: "bg-yellow-100 text-yellow-700" },
+    expert: { label: "Expert", className: "bg-yellow-100 text-yellow-700" },
     mandir: { label: "Mandir", className: "bg-orange-100 text-orange-700" },
     puja_shop: { label: "Puja Shop", className: "bg-purple-100 text-purple-700" },
 };

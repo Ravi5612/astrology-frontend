@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  ListOfAllAstrologers,
+  ListOfAllExperts,
   ZodiacSignsData,
   AstrologyServicesData,
   ClientsTestimoinialData,
@@ -11,7 +11,7 @@ import NextLink from "next/link";
 import Image from "next/image";
 const Link = NextLink as any;
 import ProductsCarousel from "@/components/features/shop/ProductsCarousel";
-import AstrologerCard from "@/components/features/astrologers/AstrologerCard";
+import ExpertCard from "@/components/features/experts/ExpertCard";
 import homePageData from "@/public/data/home-page-data.json";
 
 const HomePage: React.FC = () => {
@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6 text-gray-900">
                 Connect with
                 <span className="text-orange block mt-2">
-                  Verified Astrologers
+                  Verified Experts
                 </span>
                 Online
               </h1>
@@ -62,8 +62,8 @@ const HomePage: React.FC = () => {
             <div className="lg:w-5/12 w-full relative">
               <div className="relative z-10 animate-float translate-y-4">
                 <Image
-                  src="/images/Astrologer.png"
-                  alt="Astrologer"
+                  src="/images/Expert.png"
+                  alt="Expert"
                   width={500}
                   height={600}
                   priority
@@ -102,13 +102,13 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Astrologer Listing */}
+      {/* Expert Listing */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
             <div className="max-w-xl">
               <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 pb-4 relative inline-block">
-                Find Your Astrologer
+                Find Your Expert
                 <div className="absolute bottom-0 left-0 w-20 h-1.5 bg-orange rounded-full"></div>
               </h2>
               <p className="text-gray-500 font-bold text-sm">
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
             <div className="w-full md:w-96 relative group">
               <input
                 type="text"
-                placeholder="Search Astrologer By Name..."
+                placeholder="Search Expert By Name..."
                 className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-orange focus:bg-white focus:ring-4 focus:ring-orange/5 transition-all outline-none font-bold text-sm"
               />
               <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange transition-colors"></i>
@@ -130,10 +130,10 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
-            {ListOfAllAstrologers.map((item) => (
-              <AstrologerCard
+            {ListOfAllExperts.map((item) => (
+              <ExpertCard
                 key={item.id}
-                astrologerData={{
+                expertData={{
                   ...item,
                   is_available: true,
                   video: item.video || "",
@@ -147,7 +147,7 @@ const HomePage: React.FC = () => {
               href="#"
               className="group inline-flex items-center gap-3 px-12 py-4 bg-white border-2 border-orange text-orange rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-orange hover:text-white transition-all duration-300 shadow-premium no-underline"
             >
-              <span>View All Astrologers</span>
+              <span>View All Experts</span>
               <i className="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
             </a>
           </div>
@@ -292,8 +292,8 @@ const HomePage: React.FC = () => {
               <div className="relative">
                 <div className="w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-orange/5 p-4 flex items-center justify-center relative z-10 bg-white shadow-2xl overflow-hidden">
                   <Image
-                    src="/images/Astrologer.png"
-                    alt="Astrologer talking"
+                    src="/images/Expert.png"
+                    alt="Expert talking"
                     width={400}
                     height={400}
                     className="w-full h-full object-cover translate-y-4"
@@ -352,7 +352,7 @@ const HomePage: React.FC = () => {
                   <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                       <Image
-                        src="/images/dummy-astrologer.jpg"
+                        src="/images/dummy-expert.jpg"
                         alt={client.name}
                         width={64}
                         height={64}
@@ -385,7 +385,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Astrologers Section */}
+      {/* Featured Experts Section */}
       <section className="py-24 bg-white relative overflow-hidden">
         {/* Decorative Background Element */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange/5 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
@@ -393,18 +393,18 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-20 font-black">
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 inline-block relative">
-              Meet Our Trusted Astrologers
+              Meet Our Trusted Experts
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-orange rounded-full"></div>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ListOfAllAstrologers.filter((astro) => astro.ratings >= 4.5)
+            {ListOfAllExperts.filter((astro) => astro.ratings >= 4.5)
               .slice(0, 3)
               .map((item) => (
-                <AstrologerCard
+                <ExpertCard
                   key={item.id}
-                  astrologerData={{
+                  expertData={{
                     ...item,
                     is_available: true,
                     video: item.video || "",

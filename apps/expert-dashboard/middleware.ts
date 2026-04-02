@@ -1,0 +1,137 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import safeFetch from '@repo/safe-fetch';
+
+// Simple JWT parser for middleware
+function parseJwt(token: string) {
+    try {
+        const base64Url = token.split('.')[1];
+        if (!base64Url) return null;
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+// 🚀 Standardized API URL (Sushant Sir's Standard)
+const API_BASE_URL = "http://localhost:6543/api/v1";
+
+export async function middleware(request: NextRequest) {
+    const { pathname, searchParams } = request.nextUrl;
+    console.log("[MiddlewareLog] Pathname:", pathname);
+
+    // 0. Define Protected Routes
+    const isDashboardRoute = pathname.startsWith('/dashboard');
+
+    // 1. Capture tokens from URL (e.g. from Social Login or Redirects)
+    const urlAccessToken = searchParams.get('accessToken') || searchParams.get('token');
+    const urlRefreshToken = searchParams.get('refreshToken') || searchParams.get('refresh_token');
+
+    // EXCLUDE verification and reset-password routes from stripping token
+    const isAuthRoute = pathname.includes('/verify-email') || pathname.includes('/reset-password');
+
+    if (urlAccessToken && !isAuthRoute) {
+        const nextResponse = NextResponse.redirect(new URL(pathname, request.url));
+        nextResponse.cookies.set('accessToken', urlAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+        if (urlRefreshToken) {
+            nextResponse.cookies.set('refreshToken', urlRefreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                path: '/',
+                maxAge: 60 * 60 * 24 * 30,
+            });
+        }
+        return nextResponse;
+    }
+
+    // 2. Get tokens from cookies
+    let accessToken = request.cookies.get('accessToken')?.value;
+    const refreshToken = request.cookies.get('refreshToken')?.value;
+
+    let shouldRefresh = false;
+
+    // 3. Expiry Check (5-minute rule)
+    if (accessToken) {
+        const payload = parseJwt(accessToken);
+        if (payload && payload.exp) {
+            const expiryTime = payload.exp * 1000;
+            const currentTime = Date.now();
+            const fiveMinutesInMs = 5 * 60 * 1000;
+
+            if (expiryTime - currentTime < fiveMinutesInMs) {
+                console.log("🕒 Expert token expiring soon, triggering refresh...");
+                shouldRefresh = true;
+            }
+        }
+    } else if (refreshToken) {
+        shouldRefresh = true;
+    }
+
+    // 4. Logic for Refreshing Token
+    if (shouldRefresh && refreshToken) {
+        // Updated to use standardized URL directly
+        const [data, error] = await safeFetch<any>(`${API_BASE_URL}/auth/refresh`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `refreshToken=${refreshToken}`
+            },
+        });
+
+        if (data && !error) {
+            accessToken = data.accessToken;
+
+            const nextResponse = NextResponse.next();
+            if (accessToken) {
+                nextResponse.cookies.set('accessToken', accessToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    path: '/',
+                    maxAge: 60 * 60 * 24 * 7,
+                });
+            }
+            return nextResponse;
+        } else if (error) {
+            console.error("Expert Middleware refresh error:", error);
+            // If refresh fails (e.g. 401 Unauthorized), clear cookies and force redirect to login
+            const loginUrl = new URL('/', request.url);
+            const response = NextResponse.redirect(loginUrl);
+            response.cookies.delete('accessToken');
+            response.cookies.delete('refreshToken');
+            return response;
+        }
+    }
+
+    // 5. Redirect to login if still no accessToken on protected route
+    if (isDashboardRoute && !accessToken) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // 6. Redirect to dashboard if logged in and trying to access login page (root)
+    const isLoginPage = pathname === '/';
+    if (isLoginPage && accessToken) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    return NextResponse.next();
+}
+
+// Matcher config
+export const config = {
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images).*)'],
+};

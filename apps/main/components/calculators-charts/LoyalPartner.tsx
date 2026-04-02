@@ -15,11 +15,10 @@ import { GiLotus, GiSparkles } from "react-icons/gi";
 
 import CalculatorHero from "./common/hero";
 import LoyalPartnerForm from "./LoyalPartnerForm.component";
+import { useLanguageStore } from "@/store/languageStore";
+import { loyalPartnerTranslations } from "@/lib/translations/calculators/loyal-partner";
 
-type LoyaltyResult = {
-  loyalty: number; // 50–100
-  reason: string;
-};
+import { LoyaltyResult } from "@/lib/types/calculator";
 
 const premiumCardStyles = `
   .glass-card {
@@ -36,7 +35,7 @@ const premiumCardStyles = `
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
-  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+  .animate-spin-slow { animation: spin-slow 2s linear infinite; }
 `;
 
 const hashSeed = (str: string): number => {
@@ -52,24 +51,27 @@ const normalizeName = (name: string) => {
   return name
     .toLowerCase()
     .trim()
-    .replace(/[^a-z]/g, ""); // keep only letters
+    .replace(/[^a-z]/g, "");
 };
 
-const getReasonByScore = (score: number) => {
+const getReasonByScore = (score: number, t: any) => {
   if (score >= 50 && score <= 65) {
-    return "Loyal but needs reassurance and clarity.";
+    return t.results.reasons.low;
   }
   if (score >= 66 && score <= 80) {
-    return "Strong loyalty signs. Trust is naturally good.";
+    return t.results.reasons.medium;
   }
-  return "Very loyal energy. Protective and committed vibe.";
+  return t.results.reasons.high;
 };
 
 const LoyalPartnerCalculator: React.FC = () => {
+  const { lang, toggleLang } = useLanguageStore();
+  const t = loyalPartnerTranslations[lang as keyof typeof loyalPartnerTranslations] || loyalPartnerTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [yourName, setYourName] = useState("");
   const [partnerName, setPartnerName] = useState("");
 
-  // required inputs but not used
   const [yourDob, setYourDob] = useState("");
   const [partnerDob, setPartnerDob] = useState("");
 
@@ -100,12 +102,11 @@ const LoyalPartnerCalculator: React.FC = () => {
     setLoading(true);
     setResult(null);
 
-    // premium feel delay
     await new Promise((r) => setTimeout(r, 650));
 
     const seed = hashSeed(stableKey);
     const loyalty = (seed % 51) + 50; // 50–100
-    const reason = getReasonByScore(loyalty);
+    const reason = getReasonByScore(loyalty, t);
 
     setResult({ loyalty, reason });
 
@@ -121,12 +122,24 @@ const LoyalPartnerCalculator: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       {/* Hero */}
-      <CalculatorHero
-        badgeText="Trust & Loyalty Insight"
-        titleMain="Loyal"
-        titleAccent="Partner"
-        paragraph="Enter both names and DOBs to reveal a fun loyalty percentage and a quick trust message."
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.paragraph}
+        />
+
+        <div className="absolute top-6 right-6 z-50">
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+          >
+            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
+      </section>
 
       <LoyalPartnerForm
         yourName={yourName}
@@ -140,6 +153,8 @@ const LoyalPartnerCalculator: React.FC = () => {
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}
+        t={t.form}
+        fontStyle={fontStyle}
       />
 
       {/* Result */}
@@ -148,19 +163,19 @@ const LoyalPartnerCalculator: React.FC = () => {
           <section className="py-24 bg-white relative overflow-hidden">
             <div className="container px-6">
               <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
+                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
                     <GiLotus size={300} className="animate-spin-slow" />
                   </div>
 
                   <div className="relative z-10">
                     <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                        Loyalty Result
+                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                        {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                        Loyalty <span className="text-primary">Score</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
                       </h2>
 
                       <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -177,8 +192,8 @@ const LoyalPartnerCalculator: React.FC = () => {
                               {result.loyalty}
                               <span className="text-4xl text-primary">%</span>
                             </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                              Loyalty Energy
+                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                              {t.results.energyLabel}
                             </span>
                           </div>
 
@@ -190,23 +205,22 @@ const LoyalPartnerCalculator: React.FC = () => {
                       <div className="max-w-2xl text-center">
                         <div className="bg-burgundy text-white p-10 rounded-[3rem] shadow-2xl relative">
                           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary p-4 rounded-2xl shadow-lg">
-                            <TbCrystalBall size={28} />
+                            <GiSparkles size={28} />
                           </div>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
+                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
                             "{result.reason}"
                           </p>
 
                           <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70">
-                              For fun & entertainment only
+                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
+                              {t.results.disclaimer}
                             </span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>

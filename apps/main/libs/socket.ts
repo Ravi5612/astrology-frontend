@@ -29,17 +29,13 @@ export const chatSocket: Socket = isBrowser
     : createDummySocket();
 
 if (isBrowser) {
-    socket.on("connect", () => {
-        console.log("[Socket] ✅ Main App Connected! ID:", socket.id);
-    });
+    socket.on("connect", () => { });
 
     socket.on("connect_error", (err) => {
         console.error("[Socket] ❌ Main App Connection Error:", err.message);
     });
 
-    chatSocket.on("connect", () => {
-        console.log("[ChatSocket] ✅ Connected! ID:", chatSocket.id);
-    });
+    chatSocket.on("connect", () => { });
 
     chatSocket.on("connect_error", (err) => {
         console.error("[ChatSocket] ❌ Connection Error:", err.message);

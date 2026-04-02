@@ -119,7 +119,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
                 <i className="fa-regular fa-calendar mr-2.5 text-orange/70"></i>
                 {profileData.date_of_birth
                   ? new Date(profileData.date_of_birth).toLocaleDateString(
-                      "en-IN",
+                      lang === "hi" ? "hi-IN" : "en-IN",
                       {
                         day: "numeric",
                         month: "short",

@@ -1,8 +1,14 @@
 import React from "react";
 import Image from "next/image";
 import { FaPray } from "react-icons/fa";
+import { useLanguageStore } from "@/store/languageStore";
+import { pujaTranslations } from "@/lib/translations/puja";
 
 const HeroSection = () => {
+  const { lang } = useLanguageStore();
+  const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en).hero;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="banner-part light-back">
       <div className="overlay-hero">
@@ -12,35 +18,25 @@ const HeroSection = () => {
               <div className="col-lg-7 col-md-12">
                 <div className="hero-card shine">
                   <div className="card-z">
-                    <span className="aib-trust-badge">
-                      Sacred Digital Rituals
+                    <span className="aib-trust-badge" style={fontStyle}>
+                      {t.badge}
                     </span>
-                    <h1>Online Puja</h1>
-                    <h4 className="card-title">
-                      Connect with Divine Energies
+                    <h1 style={fontStyle}>{t.title}</h1>
+                    <h4 className="card-title" style={fontStyle}>
+                      {t.subtitle}
                     </h4>
-                    <p>
-                      Experience the power of Vedic rituals from the comfort
-                      of your home. We are establishing sacred digital portals
-                      for expert-led spiritual ceremonies.
+                    <p style={fontStyle}>
+                      {t.description}
                     </p>
                     <ul className="list-check">
-                      <li>
-                        <i className="fa-solid fa-check"></i> Authentic Vedic
-                        Rituals
-                      </li>
-                      <li>
-                        <i className="fa-solid fa-check"></i> Expert Pandits
-                      </li>
-                      <li>
-                        <i className="fa-solid fa-check"></i> Live Streaming
-                      </li>
-                      <li>
-                        <i className="fa-solid fa-check"></i> Prasad Delivery
-                      </li>
+                      {t.features.map((feature, i) => (
+                        <li key={i} style={fontStyle}>
+                          <i className="fa-solid fa-check"></i> {feature}
+                        </li>
+                      ))}
                     </ul>
-                    <button className="btn-link wfc mt-4 mb-4 border-0 bg-transparent text-[#fd6410] font-bold uppercase tracking-widest text-xs">
-                      Book a Puja
+                    <button className="btn-link wfc mt-4 mb-4 border-0 bg-transparent text-[#fd6410] font-bold uppercase tracking-widest text-xs" style={fontStyle}>
+                      {t.btnBook}
                     </button>
                   </div>
                 </div>

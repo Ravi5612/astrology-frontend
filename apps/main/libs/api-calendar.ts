@@ -27,16 +27,18 @@ export interface FestivalItem {
 export const getMonthlyCalendar = async (
   year: number,
   month: number,
-  locationId?: string,
+  lat: string = '28.6139',
+  lon: string = '77.2090',
   lang: string = 'hi'
 ): Promise<{ success: boolean; data: CalendarDay[]; error?: string }> => {
   try {
     const query = new URLSearchParams({
       year: year.toString(),
       month: month.toString(),
+      lat,
+      lon,
       lang,
     });
-    if (locationId) query.set('locationId', locationId);
 
     const [result, error] = await api.get<any>(`/calendar/monthly?${query.toString()}`, { cache: 'no-store' } as any);
 

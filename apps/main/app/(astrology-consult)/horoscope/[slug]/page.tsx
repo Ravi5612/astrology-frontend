@@ -372,11 +372,11 @@ export default function ZodiacDetailsPage() {
 
                     <div className="lg:w-1/3 w-full">
                       <Link
-                        href="/our-astrologers"
+                        href="/our-experts"
                         className="group/btn relative w-full inline-flex items-center justify-center gap-6 bg-white hover:bg-orange-500 text-slate-950 hover:text-white px-10 py-8 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] no-underline transition-all shadow-2xl hover:-translate-y-2 overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                        <span className="relative z-10">Consult Astrologer</span>
+                        <span className="relative z-10">Consult Expert</span>
                         <FaArrowRight className="relative z-10 group-hover/btn:translate-x-2 transition-transform" />
                       </Link>
                     </div>

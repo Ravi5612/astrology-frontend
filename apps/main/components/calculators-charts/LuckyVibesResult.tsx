@@ -8,11 +8,7 @@ import {
 } from "react-icons/fa";
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus, GiSparkles } from "react-icons/gi";
-import { LuckyResult } from "./useLuckyVibes";
-
-interface LuckyVibesResultProps {
-  result: LuckyResult;
-}
+import { LuckyVibesResultProps } from "@/lib/types/calculator";
 
 const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
   return (

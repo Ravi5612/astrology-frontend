@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";
 import { ProductCard } from "./ProductCard";
+import { useLanguageStore } from "../../../store/languageStore";
+import { homeTranslations } from "../../../lib/translations/home";
 
 const SearchIcon = Search as any;
 const XIcon = X as any;
@@ -15,6 +17,8 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const { lang } = useLanguageStore();
+    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
 
     // Filter products based on search query
     const filteredProducts = products.filter((product) =>
@@ -34,11 +38,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
           <div className="max-w-2xl">
             <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 inline-block relative">
-              Our Products
+              {t.products.pageTitle}
               <div className="absolute -bottom-2 left-0 w-24 h-1.5 bg-orange rounded-full"></div>
             </h2>
             <p className="text-gray-500 font-bold mt-4 leading-relaxed">
-              Explore our curated collection of spiritual tools, energized crystals, and ancient Vedic remedies designed to bring balance and prosperity to your life.
+              {t.products.pageDescription}
             </p>
           </div>
           
@@ -50,7 +54,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
+                placeholder={t.products.searchPlaceholder}
                 className="w-full pl-12 pr-12 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-orange focus:bg-white focus:ring-4 focus:ring-orange/5 transition-all outline-none font-bold text-sm shadow-sm"
               />
               {searchQuery && (
@@ -71,7 +75,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-6 text-gray-300">
                 <i className="fa-solid fa-box-open text-3xl"></i>
               </div>
-              <p className="text-gray-500 font-black uppercase tracking-widest text-sm">No products available at the moment.</p>
+              <p className="text-gray-500 font-black uppercase tracking-widest text-sm">{t.products.noProductsAvailable}</p>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-24 bg-orange/5 rounded-[3rem] border-2 border-dashed border-orange/20 animate-in fade-in zoom-in duration-500">
@@ -79,16 +83,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                 <i className="fa-solid fa-magnifying-glass text-3xl"></i>
               </div>
               <p className="text-gray-900 font-black text-xl mb-2">
-                No results found
+                {t.products.noResultsFound}
               </p>
               <p className="text-gray-500 font-bold">
-                We couldn't find any products matching "{searchQuery}"
+                {t.products.noResultsDesc.replace('"{query}"', `"${searchQuery}"`)}
               </p>
               <button 
                 onClick={handleClear}
                 className="mt-8 px-8 py-3 bg-white border-2 border-orange/20 text-orange rounded-xl font-black text-xs uppercase tracking-widest hover:bg-orange hover:text-white transition-all shadow-sm"
               >
-                Clear Search
+                {t.products.clearSearch}
               </button>
             </div>
           ) : (
@@ -105,5 +109,3 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
 };
 
 export default ProductGrid;
-
-

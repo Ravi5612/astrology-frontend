@@ -11,7 +11,7 @@ export const BASE_URLS = {
   MAIN: getBaseUrl("NEXT_PUBLIC_MAIN_URL", ""),
   ECOMMERCE: getBaseUrl("NEXT_PUBLIC_ECOMMERCE_URL", ""),
   ADMIN: getBaseUrl("NEXT_PUBLIC_ADMIN_URL", ""),
-  ASTROLOGER: getBaseUrl("NEXT_PUBLIC_ASTROLOGER_URL", ""),
+  EXPERT: getBaseUrl("NEXT_PUBLIC_EXPERT_URL", ""),
 } as const;
 
 export const URLS = {

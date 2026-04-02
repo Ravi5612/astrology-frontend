@@ -5,7 +5,7 @@ const WhyChooseUs = () => {
     {
       title: "Verified Astrological Products",
       description:
-        "Direct from the astrologers, authentic and energized products to bring positive energy.",
+        "Direct from the experts, authentic and energized products to bring positive energy.",
       icon: "/images/icon1.png", // Using existing icon assets
     },
     {

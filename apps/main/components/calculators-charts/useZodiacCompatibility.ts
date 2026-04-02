@@ -1,35 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
-export type ElementType = "Fire" | "Earth" | "Air" | "Water";
-
-export type ZodiacSign =
-  | "Aries"
-  | "Taurus"
-  | "Gemini"
-  | "Cancer"
-  | "Leo"
-  | "Virgo"
-  | "Libra"
-  | "Scorpio"
-  | "Sagittarius"
-  | "Capricorn"
-  | "Aquarius"
-  | "Pisces";
-
-export type CompatibilityResult = {
-  percentage: number;
-  category: string;
-  message: string;
-  trust: number;
-  romance: number;
-  communication: number;
-  strengths: string[];
-  challenges: string[];
-  yourElement: ElementType;
-  partnerElement: ElementType;
-};
+import { ElementType, ZodiacSign, CompatibilityResult } from "@/lib/types/calculator";
 
 export const SIGNS: ZodiacSign[] = [
   "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
@@ -42,6 +14,7 @@ export const signToElement = (sign: ZodiacSign): ElementType => {
   if (["Gemini", "Libra", "Aquarius"].includes(sign)) return "Air";
   return "Water";
 };
+
 
 const hashSeed = (str: string): number => {
   let hash = 0;

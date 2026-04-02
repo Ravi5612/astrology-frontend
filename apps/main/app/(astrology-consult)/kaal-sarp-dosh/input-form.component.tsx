@@ -132,7 +132,7 @@ const InputFormSection = () => {
                     </div>
                     
                     <p className="text-gray-400 text-lg font-bold leading-relaxed italic border-l-4 border-orange-500/20 pl-8">
-                        &quot;Talk to our premium astrologers and get instant remedies for
+                        &quot;Talk to our premium experts and get instant remedies for
                         Kaal Sarp Dosh. Understand the placement of Rahu and Ketu in
                         your chart.&quot;
                     </p>

@@ -6,7 +6,7 @@ export interface User {
   rating: number;
 }
 
-export interface Astrologer {
+export interface Expert {
   id: string;
   name: string;
   avatar: string;
@@ -22,7 +22,7 @@ export type ConnectionQuality = "excellent" | "good" | "fair" | "poor";
 export interface LiveSession {
   id: string;
   user: User;
-  astrologer: Astrologer;
+  expert: Expert;
   sessionType: SessionType;
   status: SessionStatus;
   startTime: Date;

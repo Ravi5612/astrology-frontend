@@ -14,19 +14,19 @@ const ServicesSection: React.FC = () => {
       icon: "fa-comments",
       label: t.service1Label,
       desc: t.service1Desc,
-      link: "/our-astrologers",
+      link: "/our-experts",
     },
     {
       icon: "fa-phone",
       label: t.service2Label,
       desc: t.service2Desc,
-      link: "/our-astrologers",
+      link: "/our-experts",
     },
     {
       icon: "fa-video",
       label: t.service3Label,
       desc: t.service3Desc,
-      link: "/our-astrologers",
+      link: "/our-experts",
     },
     {
       icon: "fa-scroll",

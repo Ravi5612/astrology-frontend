@@ -1,11 +1,6 @@
 import { create } from "zustand";
 import { AuthService, ClientUser } from "../services/auth.service";
 import { api } from "../lib/api";
-const authDebug = (...args: unknown[]) => {
-    if (process.env.NODE_ENV !== "production") {
-        console.log("[AuthDebug][store]", ...args);
-    }
-};
 
 interface AuthState {
     clientUser: ClientUser | null;
@@ -54,7 +49,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             await fetch("/api/auth/logout", { method: "POST" });
         } catch {
-            console.warn("[Logout] Failed to clear server cookies.");
+            // Silently fail logout cleanup
         }
 
         // 3. Reset Zustand state — always happens regardless of above failures
@@ -99,10 +94,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (!get().isClientAuthenticated) {
             set({ clientLoading: true });
         }
-        authDebug("refreshAuth:start", {
-            isClientAuthenticated: get().isClientAuthenticated,
-            hasClientUser: Boolean(get().clientUser),
-        });
 
         // Priority: Try fetching the more detailed client profile first
         let [res, error] = await api.get<any>('/client/profile');
@@ -113,10 +104,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
 
         if (error) {
-            authDebug("refreshAuth:error", {
-                status: error.status,
-                message: error.message,
-            });
             set({
                 isClientAuthenticated: false,
                 clientUser: null,
@@ -132,13 +119,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         let user: ClientUser | null = null;
         
-        authDebug("refreshAuth:response", {
-            hasResponse: Boolean(res),
-            isNullRaw: raw == null,
-            rawType: typeof raw,
-            hasRawUser: Boolean(raw?.user),
-            hasRawId: Boolean(raw?.id),
-        });
 
         if (raw?.user?.id) {
             user = {
@@ -146,8 +126,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 name: raw.user.name,
                 email: raw.user.email,
                 roles: raw.user.roles || [],
-                profile_picture: raw.profile_picture || raw.user.profile_picture,
-                avatar: raw.profile_picture || raw.user.avatar,
+                profile_picture: raw.profile_picture,
+                avatar: raw.profile_picture,
             };
         } else if (raw?.id) {
             user = {
@@ -156,7 +136,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 email: raw.email || "",
                 roles: raw.roles || [],
                 profile_picture: raw.profile_picture,
-                avatar: raw.profile_picture || raw.avatar,
+                avatar: raw.profile_picture,
             };
         }
 
@@ -169,7 +149,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isClientAuthenticated: true,
                 clientLoading: false
             });
-            authDebug("refreshAuth:user resolved", { id: user.id, name: user.name });
             get().refreshBalance();
         } else {
             set({
@@ -177,7 +156,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 clientUser: null,
                 clientLoading: false
             });
-            authDebug("refreshAuth:2xx with non-user payload -> unauthenticated");
         }
     },
 

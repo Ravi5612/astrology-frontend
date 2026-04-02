@@ -89,12 +89,12 @@ const SecurityTipsModal = ({
               {
                 icon: "📵",
                 title: "Do Not Share Contact Details",
-                desc: "NEVER share your mobile number, email, WhatsApp, or any social media handles with the astrologer. All communication must happen only on our platform.",
+                desc: "NEVER share your mobile number, email, WhatsApp, or any social media handles with the expert. All communication must happen only on our platform.",
               },
               {
                 icon: "⛔",
                 title: "No Direct Contact Outside Platform",
-                desc: "Do NOT contact astrologers directly outside this platform. If you do so and face any issues, Astrology in Bharat will NOT be responsible or liable.",
+                desc: "Do NOT contact experts directly outside this platform. If you do so and face any issues, Astrology in Bharat will NOT be responsible or liable.",
               },
               {
                 icon: "⚠️",
@@ -104,7 +104,7 @@ const SecurityTipsModal = ({
               {
                 icon: "✅",
                 title: "Verified Experts Only",
-                desc: "All our astrologers are verified professionals. However, use your judgment and stay alert during consultations.",
+                desc: "All our experts are verified professionals. However, use your judgment and stay alert during consultations.",
               },
             ].map((tip, index) => (
               <div
@@ -141,7 +141,7 @@ const SecurityTipsModal = ({
                     We will NOT be held responsible or liable for any issues,
                     fraud, or losses
                   </span>{" "}
-                  arising from direct contact with astrologers outside our
+                  arising from direct contact with experts outside our
                   official platform.
                 </p>
               </div>

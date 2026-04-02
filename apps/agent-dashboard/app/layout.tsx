@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
     title: "Agent Dashboard – AstrologyInBharat",
-    description: "Manage your astrologer, mandir and puja shop listings and track your commissions.",
+    description: "Manage your expert, mandir and puja shop listings and track your commissions.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

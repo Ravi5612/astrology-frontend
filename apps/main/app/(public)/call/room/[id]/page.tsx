@@ -54,7 +54,7 @@ export default function CallRoomPage() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-white drop-shadow-lg">Waiting for expert...</h3>
-                    <p className="text-white/70 font-bold mt-1">Please wait for the astrologer to pick the call</p>
+                    <p className="text-white/70 font-bold mt-1">Please wait for the expert to pick the call</p>
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/20">
                     <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -112,7 +112,7 @@ export default function CallRoomPage() {
             </div>
 
             <div className="text-center">
-              <h2 className="text-2xl font-black">{sessionData?.expert?.user?.name || "Expert Astrologer"}</h2>
+              <h2 className="text-2xl font-black">{sessionData?.expert?.user?.name || "Expert Expert"}</h2>
               <div className="flex items-center justify-center gap-2 mt-2 text-primary text-sm font-bold">
                 {(status === "ringing" || status === "connecting") && <Loader2 className="w-4 h-4 animate-spin" />}
                 {status === "connected" && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />}

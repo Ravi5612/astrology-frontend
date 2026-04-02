@@ -14,7 +14,7 @@ import { Loading } from "@repo/ui";
 
 // ── Mock summary ─────────────────────────────────────────────
 const SUMMARY = {
-    astrologers: 3,
+    experts: 3,
     mandirs: 2,
     pujaShops: 2,
     totalEarned: 14500,
@@ -23,7 +23,7 @@ const SUMMARY = {
     totalListings: 7,
     recentActivity: [
         { id: 1, text: "Commission ₹450 from Pt. Rajendra Joshi", time: "2h ago", status: "paid" },
-        { id: 2, text: "New astrologer listing approved", time: "5h ago", status: "approved" },
+        { id: 2, text: "New expert listing approved", time: "5h ago", status: "approved" },
         { id: 3, text: "Commission ₹780 from Shiv Puja Bhandar", time: "1d ago", status: "pending" },
         { id: 4, text: "Mandir listing – Kashi Vishwanath", time: "2d ago", status: "approved" },
         { id: 5, text: "Commission ₹320 from Kashi Vishwanath Mandir", time: "3d ago", status: "paid" },
@@ -51,8 +51,8 @@ export default function AgentDashboardHome() {
 
     const stats: StatConfig[] = useMemo(() => [
         {
-            title: "Astrologers Listed",
-            value: loading ? "..." : (statsData?.astrologersCount || 0),
+            title: "Experts Listed",
+            value: loading ? "..." : (statsData?.expertsCount || 0),
             icon: Star,
             iconColor: "text-yellow-600",
             iconBgColor: "bg-yellow-100",

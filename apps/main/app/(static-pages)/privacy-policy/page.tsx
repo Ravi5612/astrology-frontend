@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>5. Privacy of Consultations</h2>
             <p>
-                We understand that astrological consultations are personal and private. All chats, calls, and video sessions are strictly confidential between the user and the astrologer. We do not record or share your consultation details with third parties without your explicit consent.
+                We understand that astrological consultations are personal and private. All chats, calls, and video sessions are strictly confidential between the user and the expert. We do not record or share your consultation details with third parties without your explicit consent.
             </p>
 
             <h2>6. Data Protection Rights</h2>

@@ -3,8 +3,10 @@ export const headerTranslations = {
         welcomeText: "Connect with Verified Astrology Experts for Online Predictions.",
         notifications: "Notifications",
         clearAll: "Clear All",
-        noNotifications: "No new notifications",
+        noNotificationsYet: "No Notifications Yet",
+        noNotificationsDesc: "You'll see alerts about your orders and consultations here.",
         viewAll: "View All",
+        justNow: "Just now",
         myProfile: "My Profile",
         myWallet: "My Wallet",
         logout: "Logout Session",
@@ -37,7 +39,7 @@ export const headerTranslations = {
 
 
         // Buttons
-        askAstrologer: "Ask Astrologer",
+        askExpert: "Ask Expert",
 
         // Services Carousel
         serviceMatchmaking: "Matchmaking",
@@ -51,8 +53,10 @@ export const headerTranslations = {
         welcomeText: "ऑनलाइन भविष्यवाणियों के लिए सत्यापित ज्योतिष विशेषज्ञों से जुड़ें।",
         notifications: "सूचनाएं",
         clearAll: "सभी साफ़ करें",
-        noNotifications: "कोई नई सूचना नहीं",
+        noNotificationsYet: "अभी कोई सूचना नहीं",
+        noNotificationsDesc: "आपके ऑर्डर और परामर्श से संबंधित अलर्ट यहाँ दिखेंगे।",
         viewAll: "सभी देखें",
+        justNow: "अभी",
         myProfile: "मेरी प्रोफ़ाइल",
         myWallet: "मेरा वॉलेट",
         logout: "लॉगआउट करें",
@@ -84,7 +88,7 @@ export const headerTranslations = {
         dropOnlinePuja: "ऑनलाइन पूजा",
 
         // Buttons
-        askAstrologer: "ज्योतिषी से पूछें",
+        askExpert: "ज्योतिषी से पूछें",
 
         // Services Carousel
         serviceMatchmaking: "कुंडली मिलान",

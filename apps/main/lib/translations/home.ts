@@ -2,11 +2,11 @@ export const homeTranslations = {
     en: {
         hero: {
             trustBadge: "India's Trusted Astrology Platform",
-            title: "Connect with Verified Astrologers Online",
+            title: "Connect with Verified Experts Online",
             subtitle: "Instant Chat, Call, or Video Consultations",
-            description: "At Astrology in Bharat, find trusted astrologers for love, career, health, or life guidance. Connect anytime via chat, audio, or video and get personalized solutions with full privacy.",
+            description: "At Astrology in Bharat, find trusted experts for love, career, health, or life guidance. Connect anytime via chat, audio, or video and get personalized solutions with full privacy.",
             features: [
-                "Verified & Experienced Astrologers",
+                "Verified & Experienced Experts",
                 "Instant Chat, Call & Video Support",
                 "100% Privacy & Confidentiality",
                 "Accurate Predictions & Remedies",
@@ -17,10 +17,10 @@ export const homeTranslations = {
         featuredCards: {
             liveChat: {
                 title: "Live Chat Support",
-                desc: "Get instant answers from expert astrologers through live chat sessions.",
+                desc: "Get instant answers from expert experts through live chat sessions.",
             },
             speak: {
-                title: "Speak with Astrologer",
+                title: "Speak with Expert",
                 desc: "Connect via phone call for personal guidance on your life questions.",
             },
             store: {
@@ -32,9 +32,9 @@ export const homeTranslations = {
                 desc: "Book religious ceremonies & rituals performed by experienced priests.",
             }
         },
-        astrologerSection: {
-            title: "Find Your Astrologer",
-            searchPlaceholder: "Search Astrologer by Name...",
+        expertSection: {
+            title: "Find Your Expert",
+            searchPlaceholder: "Search Expert by Name...",
             searchBtn: "Search",
             filterBtn: "Filter",
             sortBtn: "Sort",
@@ -47,7 +47,7 @@ export const homeTranslations = {
                 priceDesc: "Price: High to Low",
                 priceAsc: "Price: Low to High",
             },
-            filterTitle: "Filter Astrologers",
+            filterTitle: "Filter Experts",
             filterLabels: {
                 language: "Language",
                 languagePlaceholder: "e.g. Hindi, English",
@@ -57,7 +57,7 @@ export const homeTranslations = {
                 upTo: "Up to",
                 perMin: "/min",
                 showOnlineOnly: "Show Online Only",
-                availableOnly: "Only show available astrologers",
+                availableOnly: "Only show available experts",
                 minRating: "Minimum Rating",
                 any: "Any",
                 anyPrice: "Any Price",
@@ -68,14 +68,14 @@ export const homeTranslations = {
                 resetAll: "Reset All",
             },
             noResults: {
-                title: "No Astrologers Match Your Selection",
+                title: "No Experts Match Your Selection",
                 desc: "Try clearing some filters or searching with different keywords.",
                 resetBtn: "Reset All Filters",
             },
             loadMore: "Load More Experts",
-            failedToLoad: "Failed to load astrologers",
+            failedToLoad: "Failed to load experts",
             retry: "Retry",
-            viewAllAstrologers: "View All Astrologers",
+            viewAllExperts: "View All Experts",
             specializations: {
                 numerology: "Numerology",
                 vedic: "Vedic",
@@ -93,7 +93,7 @@ export const homeTranslations = {
                 businessProblem: "Business Problem Solution"
             },
         },
-        astrologerCard: {
+        expertCard: {
             online: "Online",
             offline: "Offline",
             exp: "Exp:",
@@ -104,7 +104,7 @@ export const homeTranslations = {
             videoCall: "Video Call",
             free: "Free",
             perMin: "/min",
-            videoModalTitle: "Meet Astrologer {name} Introduction Video",
+            videoModalTitle: "Meet Expert {name} Introduction Video",
             noVideo: "No introduction video available yet.",
         },
         services: {
@@ -121,7 +121,7 @@ export const homeTranslations = {
             }
         },
         consultant: {
-            title: "Consult The Right Astrologer For You",
+            title: "Consult The Right Expert For You",
             items: {
                 "Love Problem Solution": "Love Problem Solution",
                 "Marriage Problem": "Marriage Problem",
@@ -144,7 +144,7 @@ export const homeTranslations = {
             title: "Why Choose Astrology in Bharat",
             subtitle: "Trusted Astrology. Accurate Guidance. Complete Privacy.",
             reasons: [
-                "Verified & Experienced Astrologers",
+                "Verified & Experienced Experts",
                 "Instant Chat, Call & Video Support",
                 "100% Privacy & Confidentiality",
                 "Accurate Predictions & Effective Remedies",
@@ -158,7 +158,7 @@ export const homeTranslations = {
                 {
                     name: "Rahul Sharma",
                     location: "Delhi, India",
-                    text: "I had a great experience with Astrology in Bharat. The astrologer was very accurate and guided me properly about my career and future decisions."
+                    text: "I had a great experience with Astrology in Bharat. The expert was very accurate and guided me properly about my career and future decisions."
                 },
                 {
                     name: "Sandeep Kumar",
@@ -174,18 +174,46 @@ export const homeTranslations = {
         },
         cta: {
             title: "Ready to Get Accurate Astrology Guidance?",
-            subtitle: "Connect with verified astrologers today and get personalized solutions for love, career, health, and life problems.",
+            subtitle: "Connect with verified experts today and get personalized solutions for love, career, health, and life problems.",
             btn: "Consult Now",
         },
         products: {
             title: "Astrology Products",
             subtitle: "Energized & Expert-Recommended Astrology Products for Positive Life Changes",
+            pageTitle: "Our Products",
+            pageDescription: "Explore our curated collection of spiritual tools, energized crystals, and ancient Vedic remedies designed to bring balance and prosperity to your life.",
             searchPlaceholder: "Search products...",
+            noProductsAvailable: "No products available at the moment.",
+            noResultsFound: "No results found",
+            noResultsDesc: 'We couldn\'t find any products matching "{query}"',
+            clearSearch: "Clear Search",
             noResults: 'No products found for "{query}"',
             viewAll: "View All Products",
             addToCart: "Add to Cart",
             buyNow: "Buy Now",
             off: "OFF",
+        },
+        cart: {
+            checkoutSecurely: "Checkout Securely",
+            shoppingBagTitle: "Your Shopping Bag",
+            itemsInCart: "Items in Cart",
+            verifyingSession: "Verifying Session...",
+            loadingCart: "Loading your cart...",
+            emptyBagTitle: "Your bag is empty",
+            emptyBagDesc: "Looks like you haven't added anything to your cart yet.",
+            startShopping: "Start Shopping",
+            perUnit: "per unit",
+            orderSummary: "Order Summary",
+            subtotal: "Subtotal",
+            shipping: "Shipping",
+            shippingFree: "Free",
+            estimatedTax: "Estimated Tax (10%)",
+            total: "Total",
+            checkoutNow: "Checkout Now",
+            securePayments: "Secure Payments",
+            easyReturns: "Easy Returns",
+            completeJourney: "Complete Your Journey",
+            personalizedRecs: "Personalized Recommendations",
         },
 
     },
@@ -222,7 +250,7 @@ export const homeTranslations = {
                 desc: "अनुभवी पुजारियों द्वारा आयोजित धार्मिक समारोहों और अनुष्ठानों को बुक करें।",
             }
         },
-        astrologerSection: {
+        expertSection: {
             title: "अपना ज्योतिषी खोजें",
             searchPlaceholder: "नाम से ज्योतिषी खोजें...",
             searchBtn: "खोजें",
@@ -265,7 +293,7 @@ export const homeTranslations = {
             loadMore: "और विशेषज्ञ लोड करें",
             failedToLoad: "ज्योतिषियों को लोड करने में विफल",
             retry: "पुन: प्रयास करें",
-            viewAllAstrologers: "सभी ज्योतिषी देखें",
+            viewAllExperts: "सभी ज्योतिषी देखें",
             specializations: {
                 numerology: "अंकज्योतिष",
                 vedic: "वैदिक",
@@ -283,7 +311,7 @@ export const homeTranslations = {
                 businessProblem: "व्यापार समस्या समाधान"
             },
         },
-        astrologerCard: {
+        expertCard: {
             online: "ऑनलाइन",
             offline: "ऑफलाइन",
             exp: "अनुभव:",
@@ -370,12 +398,40 @@ export const homeTranslations = {
         products: {
             title: "ज्योतिष उत्पाद",
             subtitle: "सकारात्मक जीवन परिवर्तनों के लिए ऊर्जावान और विशेषज्ञ-अनुशंसित ज्योतिष उत्पाद",
+            pageTitle: "हमारे उत्पाद",
+            pageDescription: "आध्यात्मिक उपकरणों, ऊर्जावान क्रिस्टलों और प्राचीन वैदिक उपचारों का हमारा चुना हुआ संग्रह देखें, जो आपके जीवन में संतुलन और समृद्धि लाने के लिए तैयार किया गया है।",
             searchPlaceholder: "उत्पाद खोजें...",
+            noProductsAvailable: "अभी कोई उत्पाद उपलब्ध नहीं है।",
+            noResultsFound: "कोई परिणाम नहीं मिला",
+            noResultsDesc: '"{query}" से मेल खाने वाला कोई उत्पाद नहीं मिला',
+            clearSearch: "खोज साफ़ करें",
             noResults: '"{query}" के लिए कोई उत्पाद नहीं मिला',
             viewAll: "सभी उत्पाद देखें",
             addToCart: "कार्ट में जोड़ें",
             buyNow: "अभी खरीदें",
             off: "छूट",
+        },
+        cart: {
+            checkoutSecurely: "सुरक्षित चेकआउट",
+            shoppingBagTitle: "आपका शॉपिंग बैग",
+            itemsInCart: "कार्ट में आइटम",
+            verifyingSession: "सत्र सत्यापित हो रहा है...",
+            loadingCart: "आपका कार्ट लोड हो रहा है...",
+            emptyBagTitle: "आपका बैग खाली है",
+            emptyBagDesc: "लगता है आपने अभी तक कार्ट में कुछ नहीं जोड़ा है।",
+            startShopping: "खरीदारी शुरू करें",
+            perUnit: "प्रति इकाई",
+            orderSummary: "ऑर्डर सारांश",
+            subtotal: "उप-योग",
+            shipping: "शिपिंग",
+            shippingFree: "मुफ्त",
+            estimatedTax: "अनुमानित कर (10%)",
+            total: "कुल",
+            checkoutNow: "अभी चेकआउट करें",
+            securePayments: "सुरक्षित भुगतान",
+            easyReturns: "आसान वापसी",
+            completeJourney: "अपनी यात्रा पूरी करें",
+            personalizedRecs: "व्यक्तिगत सिफारिशें",
         },
 
     }

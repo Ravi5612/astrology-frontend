@@ -10,8 +10,8 @@ import { HiOutlineSparkles } from "react-icons/hi";
 const MOCK_SESSIONS = [
     {
         id: 1,
-        astrologerName: "Acharya Vinod",
-        astrologerImage: "https://randomuser.me/api/portraits/men/32.jpg",
+        expertName: "Acharya Vinod",
+        expertImage: "https://randomuser.me/api/portraits/men/32.jpg",
         date: "20 Dec 2025",
         time: "10:30 AM",
         duration: "30 mins",
@@ -22,8 +22,8 @@ const MOCK_SESSIONS = [
     },
     {
         id: 2,
-        astrologerName: "Sushmita Sen",
-        astrologerImage: "https://randomuser.me/api/portraits/women/44.jpg",
+        expertName: "Sushmita Sen",
+        expertImage: "https://randomuser.me/api/portraits/women/44.jpg",
         date: "22 Dec 2025",
         time: "02:00 PM",
         duration: "15 mins",
@@ -34,8 +34,8 @@ const MOCK_SESSIONS = [
     },
     {
         id: 3,
-        astrologerName: "Pt. Rahul Shastri",
-        astrologerImage: "https://randomuser.me/api/portraits/men/11.jpg",
+        expertName: "Pt. Rahul Shastri",
+        expertImage: "https://randomuser.me/api/portraits/men/11.jpg",
         date: "15 Dec 2025",
         time: "05:00 PM",
         duration: "45 mins",
@@ -46,8 +46,8 @@ const MOCK_SESSIONS = [
     },
     {
         id: 4,
-        astrologerName: "Tarot Anita",
-        astrologerImage: "https://randomuser.me/api/portraits/women/68.jpg",
+        expertName: "Tarot Anita",
+        expertImage: "https://randomuser.me/api/portraits/women/68.jpg",
         date: "10 Dec 2025",
         time: "11:00 AM",
         duration: "20 mins",
@@ -133,14 +133,14 @@ const SessionHistory = () => {
                                 style={{ animationDelay: `${idx * 100}ms` }}
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-                                    {/* Astrologer Info */}
+                                    {/* Expert Info */}
                                     <div className="md:col-span-5 flex items-center gap-8">
                                         <div className="relative w-24 h-24 shrink-0 group-hover:scale-110 transition-transform duration-700">
                                             <div className="absolute -inset-1.5 bg-gradient-to-r from-orange-500 to-indigo-500 rounded-full blur-[5px] group-hover:blur-[8px] transition-all duration-700 opacity-20 group-hover:opacity-40"></div>
                                             <div className="relative w-full h-full rounded-full border-2 border-white overflow-hidden shadow-2xl">
                                                 <Image
-                                                    src={session.astrologerImage}
-                                                    alt={session.astrologerName}
+                                                    src={session.expertImage}
+                                                    alt={session.expertName}
                                                     fill
                                                     className="object-cover"
                                                 />
@@ -152,7 +152,7 @@ const SessionHistory = () => {
                                         </div>
                                         <div>
                                             <h3 className="text-2xl font-black text-slate-950 mb-1 group-hover:text-orange-600 transition-colors uppercase tracking-tight">
-                                                {session.astrologerName}
+                                                {session.expertName}
                                             </h3>
                                             <div className="flex items-center gap-3 mt-1">
                                                 <span className="w-1.5 h-1.5 bg-orange-500 rounded-full opacity-50"></span>
@@ -189,7 +189,7 @@ const SessionHistory = () => {
                                         <div className="w-full md:w-auto">
                                             {session.status === "Completed" && (
                                                 <Link 
-                                                    href={`/astrologer-details?id=${session.id}`} 
+                                                    href={`/expert-details?id=${session.id}`} 
                                                     className="group/btn relative w-full inline-flex items-center justify-center gap-4 bg-slate-950 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all overflow-hidden"
                                                 >
                                                     <span className="relative z-10">Rebook Expert</span>
@@ -215,7 +215,7 @@ const SessionHistory = () => {
                             <h4 className="text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4">No sessions found</h4>
                             <p className="text-lg text-slate-400 font-bold italic mb-12 max-w-sm mx-auto">You haven&apos;t booked any consultations in this category yet.</p>
                             <Link 
-                                href="/our-astrologers" 
+                                href="/our-experts" 
                                 className="inline-flex items-center gap-6 bg-slate-950 text-white px-12 py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all"
                             >
                                 Book a Consultation <FaArrowRight />
