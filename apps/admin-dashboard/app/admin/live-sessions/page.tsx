@@ -52,9 +52,14 @@ export default function LiveSessionsPage() {
       // Use a large limit for live sessions to show all, and 12 for expired as requested
       const limit = activeFilter === "expired" ? 12 : 100;
 
-      const response = await getLiveSessions(apiFilter, { page: pageToFetch, limit });
-      const items = response?.items || [];
-      const total = response?.total || 0;
+      const [response, error] = await getLiveSessions(apiFilter, { page: pageToFetch, limit });
+
+      if (error) {
+        throw error;
+      }
+
+      const items = response?.items || response?.data || (Array.isArray(response) ? response : []);
+      const total = response?.total || response?.count || 0;
 
       const mappedSessions: LiveSession[] = items.map((s: any) => ({
         id: (s.id || "").toString(),
@@ -83,9 +88,17 @@ export default function LiveSessionsPage() {
         connectionQuality: s.connection_quality || s.connectionQuality || "excellent",
         chatMessages: s.message_count || s.messageCount || 0,
         recording: s.is_recording || s.recording || false,
-        lastActive: new Date(s.updated_at || s.updatedAt || s.created_at || s.createdAt || Date.now()),
+        lastActive: new Date(s.end_time || s.endTime || s.updated_at || s.updatedAt || s.created_at || s.createdAt || Date.now()),
         issues: s.issues || []
       }));
+
+      // Calculate missing durations based on timestamps
+      mappedSessions.forEach(session => {
+        if (!session.duration && session.status !== 'live') {
+          const diffMs = session.lastActive.getTime() - session.startTime.getTime();
+          session.duration = Math.max(0, Math.floor(diffMs / 1000)); // duration in seconds
+        }
+      });
 
       if (isLoadMore) {
         setSessions(prev => [...prev, ...mappedSessions]);
@@ -206,8 +219,13 @@ export default function LiveSessionsPage() {
 
     try {
       setViewingSession(session);
-      const history = await getChatHistory(parseInt(session.id));
-      setSelectedSessionMessages(history);
+      const [history, error] = await getChatHistory(parseInt(session.id));
+      
+      if (error) {
+        throw error;
+      }
+      
+      setSelectedSessionMessages(history?.data || history || []);
       setIsHistoryModalOpen(true);
     } catch (error) {
       console.error("Failed to fetch chat history:", error);

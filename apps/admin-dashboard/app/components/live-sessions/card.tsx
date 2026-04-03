@@ -40,7 +40,16 @@ export function LiveSessionCard({
     }
   };
 
-  const [elapsed, setElapsed] = useState(
+  const formatDuration = (seconds: number) => {
+    if (seconds <= 0) return "0 min";
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (mins === 0) return `${secs} sec`;
+    if (secs === 0) return `${mins} min`;
+    return `${mins} min ${secs} sec`;
+  };
+
+  const [elapsed, setElapsed] = useState<any>(
     session.status === 'live'
       ? Math.floor((Date.now() - session.startTime.getTime()) / 60000)
       : session.duration
@@ -70,7 +79,7 @@ export function LiveSessionCard({
             <div>
               <h3 className="font-semibold text-gray-900">Session #{session.id}</h3>
               <p className="text-sm text-gray-600 capitalize">
-                {session.sessionType} Session • {elapsed} mins
+                {session.sessionType} Session • {session.status === 'live' ? `${elapsed} mins` : formatDuration(elapsed)}
               </p>
             </div>
           </div>
@@ -103,7 +112,7 @@ export function LiveSessionCard({
               <ClockComp className="w-4 h-4 text-gray-500" />
             </div>
             <p className="text-lg font-semibold text-gray-900 mt-1">
-              {elapsed} min
+              {session.status === 'live' ? `${elapsed} min` : formatDuration(elapsed)}
             </p>
           </div>
 

@@ -64,25 +64,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }, 10000);
 
         try {
-
-            let res: any;
-            try {
-                // Try fetching user profile
-                res = await api.get('/users/me');
-            } catch (firstErr: any) {
-                // If 401/404, try with admin prefix just in case
-                const status = firstErr?.status ?? firstErr?.response?.status;
-                if (status === 404) {
-                    res = await api.get('/admin/users/me');
+            let [userPayload, error]: [any, any] = await api.get('/users/me');
+            
+            if (error) {
+                // If 404, try with admin prefix just in case
+                if (error.status === 404) {
+                    const [adminRes, adminErr] = await api.get('/admin/users/me');
+                    if (adminErr) throw adminErr;
+                    userPayload = adminRes;
                 } else {
-                    throw firstErr;
+                    throw error;
                 }
             }
 
-            const userPayload = res?.data ?? res;
-            if (userPayload) {
+            // userPayload is the data portion [0] of the result tuple
+            const userData = userPayload?.data ?? userPayload;
+            
+            if (userData) {
                 set({
-                    user: userPayload,
+                    user: userData,
                     isAuthenticated: true,
                     loading: false
                 });
@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 throw new Error("No user data");
             }
         } catch (err: any) {
-            console.error("Auth refresh failed:", err?.body?.message || err?.response?.data?.message || err.message);
+            console.error("Auth refresh failed:", err?.body?.message || err?.message);
             set({ isAuthenticated: false, user: null, loading: false });
         } finally {
             clearTimeout(safetyTimeout);
