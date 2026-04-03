@@ -24,7 +24,8 @@ import { ChatHistoryModal } from "@/app/components/live-sessions/ChatHistoryModa
 // Config
 import { filters } from "@/app/components/live-sessions/sessionsConfig";
 import type { LiveSession } from "@/app/components/live-sessions/session";
-import { getLiveSessions, getChatHistory } from "@/src/services/admin.service";
+import { getLiveSessions, getLiveSessionStats, getChatHistory } from "@/src/services/admin.service";
+import { History, ShieldAlert } from "lucide-react";
 
 export default function LiveSessionsPage() {
   // Simple state
@@ -34,6 +35,12 @@ export default function LiveSessionsPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [expiredPage, setExpiredPage] = useState(1);
   const [hasMoreExpired, setHasMoreExpired] = useState(false);
+  const [sessionStats, setSessionStats] = useState({
+    total: 0,
+    live: 0,
+    expired: 0,
+    adminTerminated: 0
+  });
 
   // Modal State
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -44,6 +51,17 @@ export default function LiveSessionsPage() {
     try {
       if (isLoadMore) setIsLoadingMore(true);
       else setIsRefreshing(true);
+
+      // Fetch overall stats
+      const [statsData, statsErr] = await getLiveSessionStats();
+      if (!statsErr && statsData) {
+        setSessionStats({
+          total: statsData.total || 0,
+          live: statsData.live || 0,
+          expired: statsData.expired || 0,
+          adminTerminated: statsData.adminTerminated || 0
+        });
+      }
 
       const supportedFilters = ["chat_live", "expired", "admin_terminated"];
       const apiFilter = supportedFilters.includes(activeFilter) ? activeFilter : undefined;
@@ -139,47 +157,41 @@ export default function LiveSessionsPage() {
 
   // Simple calculations
   const stats = useMemo(() => {
-    // Note: Stats are based on the current visible sessions.
-    const total = sessions.length;
-    const live = sessions.filter(s => s.status === "live").length;
-    const withIssues = sessions.filter(s => s.status === "technical-issue").length;
-    const recording = sessions.filter(s => s.recording).length;
-
     return [
       {
-        title: "Total Active Sessions",
-        value: total.toString(),
+        title: "Total Sessions",
+        value: sessionStats.total.toString(),
         icon: Activity,
         iconColor: "text-blue-600",
         iconBgColor: "bg-blue-100",
-        trend: { value: "Now", isPositive: true, period: "" }
+        trend: { value: "All time", isPositive: true, period: "" }
       },
       {
-        title: "Live Now",
-        value: live.toString(),
+        title: "Live Sessions",
+        value: sessionStats.live.toString(),
         icon: Activity,
         iconColor: "text-green-600",
         iconBgColor: "bg-green-100",
-        trend: { value: "Live", isPositive: true, period: "" }
+        trend: { value: "Now", isPositive: true, period: "" }
       },
       {
-        title: "Recording",
-        value: recording.toString(),
-        icon: Video,
-        iconColor: "text-purple-600",
-        iconBgColor: "bg-purple-100",
-        trend: { value: "Auto", isPositive: true, period: "" }
+        title: "Expired Sessions",
+        value: sessionStats.expired.toString(),
+        icon: History,
+        iconColor: "text-orange-600",
+        iconBgColor: "bg-orange-100",
+        trend: { value: "Ended", isPositive: true, period: "" }
       },
       {
-        title: "Issues",
-        value: withIssues.toString(),
-        icon: AlertCircle,
+        title: "Admin Terminated",
+        value: sessionStats.adminTerminated.toString(),
+        icon: ShieldAlert,
         iconColor: "text-red-600",
         iconBgColor: "bg-red-100",
-        trend: { value: "All Good", isPositive: true, period: "" }
+        trend: { value: "Forced", isPositive: false, period: "" }
       },
     ];
-  }, [sessions]);
+  }, [sessionStats]);
 
   // Filter logic aligned with sessionsConfig.ts
   const filteredSessions = useMemo(() => {

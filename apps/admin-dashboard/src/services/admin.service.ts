@@ -124,6 +124,10 @@ export const getLiveSessions = async (type?: string, params?: { page?: number; l
   return await api.get("/admin/live-sessions", { params: { type, ...params } });
 };
 
+export const getLiveSessionStats = async (): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/live-sessions/stats");
+};
+
 
 export const getChatHistory = async (id: number): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/live-sessions/${id}/history`);
