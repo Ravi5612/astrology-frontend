@@ -64,8 +64,8 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
   const wishlistTargetId = userId ? Number(userId) : Number(id);
   const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId) : false;
 
-  // For chat/consultation, we use id (expert profile ID)
-  const expertProfileId = Number(id);
+  // For chat/consultation, we use id (expert profile ID) - safe fallback check
+  const expertProfileId = Number(id || (expertData as any).expert_id || expertData.userId);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -91,6 +91,13 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
   const handleChatClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!expertProfileId || isNaN(expertProfileId)) {
+        console.error("[ExpertCard] Invalid ID:", expertData);
+        toast.error("Expert details not found. Please try again.");
+        return;
+    }
+
     // Use expert profile ID for chat
     router.push(`/chat/prep/${expertProfileId}`);
   };

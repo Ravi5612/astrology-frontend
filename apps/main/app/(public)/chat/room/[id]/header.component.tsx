@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
 
@@ -34,6 +34,12 @@ export default function Header({
     isDarkMode,
     setIsDarkMode
 }: HeaderProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     if (!expertData) return null;
 
     return (
@@ -67,7 +73,9 @@ export default function Header({
                         {/* Active Duration - High Contrast */}
                         <div className="hidden sm:flex flex-col items-end gap-0.5">
                             <span className="text-[9px] font-black uppercase tracking-[0.1em] text-white/80 whitespace-nowrap leading-none">Elapsed</span>
-                            <span className="text-sm md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">{formatTime(elapsedTime)}</span>
+                            <span className="text-sm md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">
+                                {mounted ? formatTime(elapsedTime) : "--:--"}
+                            </span>
                         </div>
 
                         {/* Divider */}
@@ -83,7 +91,9 @@ export default function Header({
                                 <span className="text-[9px] font-black uppercase tracking-[0.1em] text-white/80 whitespace-nowrap leading-none">
                                     {isFree ? 'Free Time' : 'Time Left'}
                                 </span>
-                                <span className="text-sm md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">{formatTime(timeLeft)}</span>
+                                <span className="text-sm md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">
+                                    {mounted ? formatTime(timeLeft) : "--:--"}
+                                </span>
                             </div>
                         </div>
                     </div>

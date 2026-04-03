@@ -132,7 +132,13 @@ export default function FloatingChatButton() {
                     onMouseDown={handleMouseDown}
                     onClick={() => {
                         if (!isDragging) {
-                            router.push(`/chat/room/${activeSession.expertId}?sessionId=${activeSession.id}`);
+                            const eId = activeSession.expertId || activeSession.expert_id || activeSession.expert?.id;
+                            if (eId) {
+                                router.push(`/chat/room/${eId}?sessionId=${activeSession.id}`);
+                            } else {
+                                console.error("Could not find expertId in session:", activeSession);
+                                // Fallback to a safe redirect or show warning if needed
+                            }
                         }
                     }}
                     className={`relative w-16 h-16 bg-gradient-to-tr from-primary to-primary-hover rounded-full flex items-center justify-center shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/60 transition-all active:scale-90 cursor-grab active:cursor-grabbing border-4 border-white overflow-visible`}

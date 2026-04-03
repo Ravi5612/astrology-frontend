@@ -8,6 +8,8 @@ import { uploadClientDocument } from "@/libs/api-profile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 
+import * as LucideIcons from "lucide-react";
+import { Button } from "@repo/ui";
 import { ChatMessage, ChatSession, Expert } from "@/lib/types";
 
 import WaitingCountdown from "./waiting-countdown.component";
@@ -54,10 +56,17 @@ function ChatRoomContent() {
 
     const isEndingSession = useRef(false);
 
+    const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
-        if (!isClientAuthenticated) return;
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isClientAuthenticated || !mounted) return;
 
         const fetchData = async () => {
+            if (!id || id === 'undefined') return;
             const [res, error] = await http.get<any>(`/chat/user-session/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
             if (error) {
                 toast.error(error.message || "Failed to load chat session");
@@ -87,7 +96,7 @@ function ChatRoomContent() {
         };
 
         fetchData();
-    }, [id, sessionId, isClientAuthenticated]);
+    }, [id, sessionId, isClientAuthenticated, mounted]);
 
     useEffect(() => {
         if (!sessionId) return;
@@ -158,13 +167,7 @@ function ChatRoomContent() {
 
         const timer = setInterval(() => {
             setElapsedTime(prev => prev + 1);
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prev - 1;
-            });
+            setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
         }, 1000);
 
         return () => clearInterval(timer);
@@ -258,7 +261,29 @@ function ChatRoomContent() {
         if (e.target) e.target.value = "";
     };
 
-    if (!expertData) {
+    const [loadError, setLoadError] = useState(false);
+
+    useEffect(() => {
+        if (!expertData && mounted) {
+            const timer = setTimeout(() => {
+                if (!expertData) setLoadError(true);
+            }, 10000); // 10 second timeout
+            return () => clearTimeout(timer);
+        }
+    }, [expertData, mounted]);
+
+    if (loadError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-screen bg-[#1a0c0c] p-6 text-center">
+                <LucideIcons.AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                <h2 className="text-white font-bold text-xl mb-2">Failed to Load Session</h2>
+                <p className="text-white/60 mb-6">We couldn't retrieve your chat details. Please try again or go back to home.</p>
+                <Button onClick={() => window.location.reload()} className="bg-[#fd6410]">Retry</Button>
+            </div>
+        );
+    }
+
+    if (!expertData || !mounted) {
         return (
             <div className="flex items-center justify-center h-screen bg-[#1a0c0c]">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fd6410]"></div>

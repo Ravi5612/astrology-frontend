@@ -151,13 +151,16 @@ export default function AppointmentsPage() {
           isFree: !!(session.is_free ?? session.isFree),
           freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
           durationMins: isPuja ? 0 : (() => {
-            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? session.duration_seconds / 60 ?? 0;
-            if (d === 0 && (currentStatus === 'completed' || currentStatus === 'expired')) {
+            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? ((session.duration_seconds || 0) / 60);
+            if ((!d || isNaN(d)) && (currentStatus === 'completed' || currentStatus === 'expired')) {
               const start = (session.activated_at || session.activatedAt || session.start_time) ? new Date(session.activated_at || session.activatedAt || session.start_time).getTime() : 0;
               const end = (session.ended_at || session.endedAt || session.end_time) ? new Date(session.ended_at || session.endedAt || session.end_time).getTime() : 0;
-              if (start > 0 && end > 0) return Math.ceil((end - start) / (1000 * 60));
+              if (start > 0 && end > 0) {
+                const diff = Math.ceil((end - start) / (1000 * 60));
+                return isNaN(diff) ? 0 : diff;
+              }
             }
-            return Math.ceil(d);
+            return isNaN(d) ? 0 : Math.ceil(d);
           })(),
           review: sessionReview ? {
             rating: sessionReview.rating || 0,
