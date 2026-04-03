@@ -6,7 +6,6 @@ import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 import { getNotifications, deleteAllNotifications } from "@/lib/notifications";
 
-import { SearchInput } from "@repo/ui";
 import { Avatar } from "@repo/ui";
 import { NotificationBell } from "@repo/ui";
 
@@ -20,7 +19,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const { user, isAuthenticated, loading: authLoading } = useAuthStore();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(false); // Toggle state
-  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -239,16 +237,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Search and Icons */}
           <div className="flex items-center gap-3 sm:gap-6">
-            {/* Search Bar */}
-            <div className="hidden md:block w-40 sm:w-64">
-              <SearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search..."
-                className="w-full"
-              />
-            </div>
-
             {/* Toggle Button */}
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium text-gray-700 hidden sm:inline">
