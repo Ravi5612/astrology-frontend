@@ -84,7 +84,7 @@ export default function LiveSessionsPage() {
         user: {
           id: (s.user?.id || s.user_id || "0").toString(),
           name: s.user?.name || s.user?.full_name || s.userName || s.user_name || "Unknown User",
-          avatar: s.user?.avatar || s.userAvatar || s.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.user?.id || s.user_id || s.id}`,
+          avatar: s.user?.profile_client?.profile_picture || s.user?.avatar || s.userAvatar || s.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.user?.id || s.user_id || s.id}`,
           rating: s.user?.rating || 4.5
         },
         expert: {
