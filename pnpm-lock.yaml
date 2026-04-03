@@ -161,94 +161,6 @@ importers:
         specifier: ^5
         version: 5.8.3
 
-  apps/astrologer-dashboard:
-    dependencies:
-      '@repo/safe-fetch':
-        specifier: workspace:*
-        version: link:../../packages/safe-fetch
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@twilio/voice-sdk':
-        specifier: ^2.18.0
-        version: 2.18.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.19
-      framer-motion:
-        specifier: ^12.23.12
-        version: 12.34.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      lucide-react:
-        specifier: ^0.539.0
-        version: 0.539.0(react@19.2.4)
-      next:
-        specifier: 16.1.6
-        version: 16.1.6(@babel/core@7.29.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react:
-        specifier: 19.2.4
-        version: 19.2.4
-      react-calendar:
-        specifier: ^6.0.0
-        version: 6.0.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-dom:
-        specifier: 19.2.4
-        version: 19.2.4(react@19.2.4)
-      react-icons:
-        specifier: ^5.5.0
-        version: 5.5.0(react@19.2.4)
-      react-toastify:
-        specifier: ^11.0.5
-        version: 11.0.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      recharts:
-        specifier: ^3.1.2
-        version: 3.7.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@16.13.1)(react@19.2.4)(redux@5.0.1)
-      socket.io-client:
-        specifier: ^4.8.3
-        version: 4.8.3
-      tailwind-merge:
-        specifier: ^3.3.1
-        version: 3.4.1
-      twilio-video:
-        specifier: ^2.34.0
-        version: 2.34.0
-      zustand:
-        specifier: ^5.0.11
-        version: 5.0.11(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
-    devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3
-        version: 3.3.3
-      '@tailwindcss/postcss':
-        specifier: ^4
-        version: 4.1.18
-      '@types/node':
-        specifier: ^20
-        version: 20.19.33
-      '@types/react':
-        specifier: ^19.2.3
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.14)
-      eslint:
-        specifier: ^9
-        version: 9.39.2(jiti@2.6.1)
-      eslint-config-next:
-        specifier: 16.1.6
-        version: 16.1.6(@typescript-eslint/parser@8.55.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)
-      tailwindcss:
-        specifier: ^4
-        version: 4.1.18
-      typescript:
-        specifier: ^5
-        version: 5.8.3
-
   apps/consultation:
     dependencies:
       '@repo/eslint-config':
@@ -352,6 +264,94 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.1
+      typescript:
+        specifier: ^5
+        version: 5.8.3
+
+  apps/expert-dashboard:
+    dependencies:
+      '@repo/safe-fetch':
+        specifier: workspace:*
+        version: link:../../packages/safe-fetch
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@twilio/voice-sdk':
+        specifier: ^2.18.0
+        version: 2.18.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.19
+      framer-motion:
+        specifier: ^12.23.12
+        version: 12.34.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      lucide-react:
+        specifier: ^0.539.0
+        version: 0.539.0(react@19.2.4)
+      next:
+        specifier: 16.1.6
+        version: 16.1.6(@babel/core@7.29.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: 19.2.4
+        version: 19.2.4
+      react-calendar:
+        specifier: ^6.0.0
+        version: 6.0.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-dom:
+        specifier: 19.2.4
+        version: 19.2.4(react@19.2.4)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.2.4)
+      react-toastify:
+        specifier: ^11.0.5
+        version: 11.0.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      recharts:
+        specifier: ^3.1.2
+        version: 3.7.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@16.13.1)(react@19.2.4)(redux@5.0.1)
+      socket.io-client:
+        specifier: ^4.8.3
+        version: 4.8.3
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.1
+      twilio-video:
+        specifier: ^2.34.0
+        version: 2.34.0
+      zustand:
+        specifier: ^5.0.11
+        version: 5.0.11(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.3
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.18
+      '@types/node':
+        specifier: ^20
+        version: 20.19.33
+      '@types/react':
+        specifier: ^19.2.3
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      eslint:
+        specifier: ^9
+        version: 9.39.2(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 16.1.6
+        version: 16.1.6(@typescript-eslint/parser@8.55.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.18
       typescript:
         specifier: ^5
         version: 5.8.3
@@ -521,6 +521,9 @@ importers:
 
   packages/lib:
     dependencies:
+      '@repo/safe-fetch':
+        specifier: workspace:*
+        version: link:../safe-fetch
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
