@@ -1,9 +1,11 @@
 import parseBody from "./body-parser";
 import anySignal from "./any-signal";
 
-export interface SafeFetchInit extends RequestInit {
+export interface SafeFetchInit extends Omit<RequestInit, 'body'> {
+  body?: any;
   timeoutMs?: number;
   controller?: AbortController;
+  params?: Record<string, any>;
 }
 
 export interface SafeFetchInstanceConfig {
@@ -86,10 +88,24 @@ async function executeFetch<T>(
     timeoutMs = instanceConfig.timeoutMs ?? 15000,
     controller: userController,
     headers: initHeaders,
+    params,
     ...rest
   } = init || {};
 
-  const resolvedUrl = resolveUrl(instanceConfig.baseUrl, url);
+  let resolvedUrl = resolveUrl(instanceConfig.baseUrl, url);
+
+  if (params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      resolvedUrl += (resolvedUrl.includes("?") ? "&" : "?") + queryString;
+    }
+  }
 
   const mergedHeaders = mergeHeaders(instanceConfig.headers, initHeaders);
 
