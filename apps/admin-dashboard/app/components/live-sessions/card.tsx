@@ -182,14 +182,16 @@ export function LiveSessionCard({
             </Button>
           )}
 
-          <Button
-            variant="danger"
-            size="sm"
-            icon={PhoneOffComp}
-            onClick={() => onEndSession(session.id)}
-          >
-            End
-          </Button>
+          {session.status === 'live' && (
+            <Button
+              variant="danger"
+              size="sm"
+              icon={PhoneOffComp}
+              onClick={() => onEndSession(session.id)}
+            >
+              End
+            </Button>
+          )}
         </div>
       </div>
     </div>
