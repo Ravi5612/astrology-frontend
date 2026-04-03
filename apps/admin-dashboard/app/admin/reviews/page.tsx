@@ -1,55 +1,136 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 // Components
 import { StatsCards } from "@repo/ui";
 import { SearchInput } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { ReviewCard } from "@/app/components/reviews/ReviewCard";
+import { getReviews, getReviewStats } from "@/src/services/admin.service";
+import { toast } from "react-toastify";
 
 // Icons
-import { MessageSquare } from "lucide-react";
-
-// Data config
-import { reviewsData, getStatsConfig } from "@/app/components/reviews/reviewsConfig";
+import { MessageSquare, Loader2, Star, ThumbsUp, ThumbsDown, Meh } from "lucide-react";
+import type { Review } from "@/app/components/reviews/review";
 
 export default function ReviewsPage() {
-  // Filter state (all, pending, flagged, approved)
   const [filter, setFilter] = useState("all");
-
-  // Search query state
   const [searchQuery, setSearchQuery] = useState("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    good: 0,
+    moderate: 0,
+    bad: 0,
+  });
 
-  // Get stats config (memoized)
-  const statsConfig = useMemo(() => getStatsConfig(reviewsData), []);
+  const fetchStats = useCallback(async () => {
+    const [data, error] = await getReviewStats();
+    if (!error && data) {
+      setStats(data);
+    }
+  }, []);
 
-  // Filter reviews based on status and search query
-  const filteredReviews = useMemo(() => {
-    return reviewsData.filter((review) => {
-      const matchesFilter = filter === "all" || review.status === filter;
-      const matchesSearch =
-        review.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        review.expert.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        review.comment.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesFilter && matchesSearch;
-    });
+  const fetchReviews = useCallback(async (pageNum: number, isNewSearch = false) => {
+    if (pageNum === 1) setLoading(true);
+    else setLoadingMore(true);
+
+    try {
+      const [data, error] = await getReviews({
+        page: pageNum,
+        limit: 15,
+        ratingType: filter === "all" ? undefined : filter,
+        search: searchQuery || undefined,
+      });
+
+      if (error) throw new Error(error.message);
+// ... mapping logic remains same ...
+
+      const newReviews: Review[] = (data?.reviews || data || []).map((r: any) => ({
+        id: r.id,
+        user: r.user?.name || "Unknown",
+        expert: r.expert?.user?.name || r.expert?.name || "Unknown",
+        rating: r.rating,
+        comment: r.comment || "",
+        date: r.created_at || r.createdAt || r.date,
+        status: r.status || "pending",
+        avatar: (r.user?.name || "U").charAt(0).toUpperCase(),
+        sessionId: r.session_id || r.sessionId || r.orderId,
+      }));
+
+      if (isNewSearch) {
+        setReviews(newReviews);
+      } else {
+        setReviews(prev => [...prev, ...newReviews]);
+      }
+      setHasMore(newReviews.length === 15);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to fetch reviews");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }, [filter, searchQuery]);
 
-  // Filter button configs
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  useEffect(() => {
+    setPage(1);
+    fetchReviews(1, true);
+  }, [filter, searchQuery, fetchReviews]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchReviews(nextPage);
+  };
+
+  const statsConfig = useMemo(() => [
+    {
+      title: "Total Reviews",
+      value: stats.total.toLocaleString(),
+      icon: MessageSquare,
+      iconColor: "text-blue-600",
+      iconBgColor: "bg-blue-100",
+    },
+    {
+      title: "Good Reviews (4-5★)",
+      value: stats.good.toLocaleString(),
+      icon: ThumbsUp,
+      iconColor: "text-green-600",
+      iconBgColor: "bg-green-100",
+    },
+    {
+      title: "Moderate (3★)",
+      value: stats.moderate.toLocaleString(),
+      icon: Meh,
+      iconColor: "text-yellow-600",
+      iconBgColor: "bg-yellow-600/10",
+    },
+    {
+      title: "Bad Reviews (1-2★)",
+      value: stats.bad.toLocaleString(),
+      icon: ThumbsDown,
+      iconColor: "text-red-600",
+      iconBgColor: "bg-red-100",
+    },
+  ], [stats]);
+
   const filterButtons = [
     { value: "all", label: "All Reviews", variant: "primary" },
-    { value: "pending", label: "Pending", variant: "warning" },
-    { value: "flagged", label: "Flagged", variant: "danger" },
-    { value: "approved", label: "Approved", variant: "success" },
+    { value: "good", label: "Good Reviews", variant: "success" },
+    { value: "moderate", label: "Moderate Reviews", variant: "warning" },
+    { value: "bad", label: "Bad Reviews", variant: "danger" },
   ];
-
-  // Get review count for each filter
-  const getCount = (status: string) =>
-    status === "all" ? "" : ` (${reviewsData.filter((r) => r.status === status).length})`;
 
   return (
     <main className="space-y-6">
-      {/* Header with search */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Reviews Moderation</h1>
@@ -64,29 +145,32 @@ export default function ReviewsPage() {
         />
       </header>
 
-      {/* Stats cards - Total, Pending, Flagged, Approved */}
       <StatsCards stats={statsConfig} columns={4} />
 
-      {/* Filter buttons */}
       <div className="flex flex-wrap gap-2">
         {filterButtons.map(({ value, label, variant }) => (
           <Button
             key={value}
             variant={filter === value ? (variant as any) : "outline"}
             size="md"
-            onClick={() => setFilter(value)}
+            onClick={() => {
+              setFilter(value);
+              setPage(1);
+            }}
           >
             {label}
-            {getCount(value)}
           </Button>
         ))}
       </div>
 
-      {/* Reviews list or empty state */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="p-6 space-y-4">
-          {filteredReviews.length === 0 ? (
-            // Empty state
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+              <Loader2 className="w-10 h-10 animate-spin mb-4" />
+              <p>Loading reviews...</p>
+            </div>
+          ) : reviews.length === 0 ? (
             <div className="text-center py-12">
               <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 text-lg font-medium">No reviews found</p>
@@ -95,14 +179,37 @@ export default function ReviewsPage() {
               </p>
             </div>
           ) : (
-            // Review cards
-            filteredReviews.map((review, index) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                isLast={index === filteredReviews.length - 1}
-              />
-            ))
+            <>
+              <div className="space-y-4">
+                {reviews.map((review, index) => (
+                  <ReviewCard
+                    key={`${review.id}-${index}`}
+                    review={review}
+                    isLast={index === reviews.length - 1}
+                    onUpdate={() => {
+                      fetchStats();
+                      fetchReviews(1, true);
+                    }}
+                  />
+                ))}
+              </div>
+
+              {hasMore && (
+                <div className="pt-6 flex justify-center border-t border-gray-100">
+                  <Button
+                    variant="outline"
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="w-full md:w-auto px-8"
+                  >
+                    {loadingMore ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
+                    {loadingMore ? "Loading..." : "Load More Reviews"}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

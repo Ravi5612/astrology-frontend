@@ -12,7 +12,6 @@ export const getUserById = async (id: number): Promise<[any | null, any | null]>
   return await api.get(`/admin/users/${id}`);
 };
 
-
 export const getExperts = async (params?: { page?: number; limit?: number; search?: string; status?: string }): Promise<[any | null, any | null]> => {
   return await api.get("/admin/experts", { params });
 };
@@ -25,7 +24,6 @@ export const getExpertById = async (id: number): Promise<[any | null, any | null
   return await api.get(`/admin/experts/${id}`);
 };
 
-
 export const updateExpertStatus = async (id: number, data: { status: string; reason?: string }): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/experts/${id}/status`, data);
 };
@@ -34,16 +32,13 @@ export const toggleUserBlock = async (id: number, isBlocked: boolean): Promise<[
   return await api.patch(`/admin/users/${id}/block`, { isBlocked });
 };
 
-
 export const getDashboardStats = async (): Promise<[any | null, any | null]> => {
   return await api.get("/admin/dashboard/stats");
 };
 
-
-export const getUserGrowthStats = async (days: number): Promise<[any | null, any | null]> => {
+export const getUserGrowthStats = async (days: number = 7): Promise<[any | null, any | null]> => {
   return await api.get("/admin/analytics/user-growth", { params: { days } });
 };
-
 
 // Coupons Management
 export const createCoupon = async (data: any): Promise<[any | null, any | null]> => {
@@ -70,22 +65,18 @@ export const deleteCoupon = async (id: number): Promise<[any | null, any | null]
   return await api.delete(`/admin/coupons/${id}`);
 };
 
-
 // Bulk Coupon Assignment
 export const assignCouponBulk = async (data: { couponCode: string; filters: any }): Promise<[any | null, any | null]> => {
   return await api.post("/admin/coupons/assign-bulk", data);
 };
 
-// Get count of users matching filters (for preview)
 export const getFilteredUsersCount = async (filters: any): Promise<[any | null, any | null]> => {
   return await api.post("/admin/users/filter-count", filters);
 };
 
-// Get list of users matching filters (for preview)
 export const getFilteredUsers = async (params: any): Promise<[any | null, any | null]> => {
   return await api.post("/admin/users/filtered-list", params);
 };
-
 
 // Disputes / Support Tickets Management
 export const getDisputes = async (params?: { page?: number; limit?: number; status?: string }): Promise<[any | null, any | null]> => {
@@ -128,9 +119,12 @@ export const getLiveSessionStats = async (): Promise<[any | null, any | null]> =
   return await api.get("/admin/live-sessions/stats");
 };
 
-
 export const getChatHistory = async (id: number): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/live-sessions/${id}/history`);
+};
+
+export const terminateSession = async (id: number, data: { userMessage?: string; expertMessage?: string }): Promise<[any | null, any | null]> => {
+  return await api.post(`/admin/live-sessions/${id}/terminate`, data);
 };
 
 // Payouts / Withdrawals
@@ -146,7 +140,23 @@ export const getWithdrawalStats = async (): Promise<[any | null, any | null]> =>
   return await api.get("/admin/withdrawals/stats");
 };
 
+// Review Management
+export const getReviews = async (params?: { page?: number; limit?: number; rating?: number; ratingType?: string; status?: string; search?: string }): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/reviews", { params });
+};
 
+export const getReviewStats = async (): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/reviews/stats");
+};
 
+export const updateReviewStatus = async (id: number, status: string): Promise<[any | null, any | null]> => {
+  return await api.patch(`/admin/reviews/${id}/status`, { status });
+};
 
+export const deleteReviewResource = async (id: number): Promise<[any | null, any | null]> => {
+  return await api.delete(`/admin/reviews/${id}`);
+};
 
+export const sendReviewResponse = async (id: number, message: string): Promise<[any | null, any | null]> => {
+  return await api.post(`/admin/reviews/${id}/response`, { message });
+};

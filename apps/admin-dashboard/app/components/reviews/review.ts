@@ -7,6 +7,7 @@ export interface Review {
   date: string;
   status: "approved" | "pending" | "flagged";
   avatar: string;
+  sessionId?: string | number;
 }
 
 

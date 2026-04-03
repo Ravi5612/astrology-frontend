@@ -57,7 +57,11 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
     useEffect(() => {
         const loadCoupons = async () => {
             try {
-                const data = await getCoupons({ isActive: true });
+                const [data, error] = await getCoupons({ isActive: true });
+                if (error || !data) {
+                    toast.error("Failed to load available coupons");
+                    return;
+                }
                 const list = Array.isArray(data) ? data : (data.data || []);
                 // Directly use the list from backend, no frontend filtering logic!
                 setAvailableCoupons(list);
@@ -76,7 +80,12 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
         const fetchCount = async () => {
             setFetchingCount(true);
             try {
-                const count = await getFilteredUsersCount(filters);
+                const [count, error] = await getFilteredUsersCount(filters);
+                if (error) {
+                    console.error("Failed to fetch user count:", error);
+                    setMatchedUsersCount(0);
+                    return;
+                }
                 setMatchedUsersCount(count);
             } catch (error) {
                 console.error("Failed to fetch user count:", error);
@@ -107,10 +116,15 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
 
         setLoading(true);
         try {
-            const result = await assignCouponBulk({
+            const [result, error] = await assignCouponBulk({
                 couponCode: selectedCouponCode,
                 filters: filters,
             });
+
+            if (error) {
+                toast.error(error.message || "Failed to assign coupon");
+                return;
+            }
 
             toast.success(
                 `Coupon "${selectedCouponCode}" assigned to ${result.assignedCount || matchedUsersCount} users successfully!`
@@ -133,12 +147,17 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
     const fetchFilteredUsers = async () => {
         setFetchingUsers(true);
         try {
-            const users = await getFilteredUsers({
+            const [users, error] = await getFilteredUsers({
                 ...filters,
                 page: previewPage,
                 limit: USERS_PER_PAGE,
             });
-            setFilteredUsers(users);
+            if (error) {
+                console.error("Failed to fetch filtered users:", error);
+                toast.error("Failed to load user preview");
+                return;
+            }
+            setFilteredUsers(users || []);
             setShowPreview(true);
         } catch (error) {
             console.error("Failed to fetch filtered users:", error);
