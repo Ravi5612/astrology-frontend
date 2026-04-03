@@ -766,7 +766,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         </>
                       ) : (
                         <>
-                          {/* Desktop hover dropdown — no Bootstrap JS needed */}
+                          {/* Desktop hover dropdown — no external JS needed */}
                           <a
                             className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium flex items-center gap-1 cursor-pointer hover:text-orange-600 transition-colors"
                             href="#"

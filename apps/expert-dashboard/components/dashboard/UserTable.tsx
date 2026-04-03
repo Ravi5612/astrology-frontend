@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from "react";
 import { Search, CalendarDays, Loader2 } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { format } from "date-fns";

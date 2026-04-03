@@ -1,6 +1,5 @@
 import { Poppins, Outfit } from "next/font/google";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import "@repo/styles";
 import { Header, Footer, ClientAuthProvider } from "@repo/ui";

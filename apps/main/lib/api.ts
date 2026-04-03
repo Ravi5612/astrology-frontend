@@ -1,4 +1,6 @@
 import { createSafeFetchInstance } from '@repo/safe-fetch';
+import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from 'react-toastify';
 
 /**
  * 🚀 Simplified API Client (Sushant Sir's Standard)
@@ -12,6 +14,16 @@ export const api = createSafeFetchInstance({
     'Content-Type': 'application/json',
   },
   timeoutMs: 10_000,
+  onError: async (error) => {
+    // If backend rejects the token (Session Expired)
+    if (error.status === 401) {
+      if (typeof window !== 'undefined') {
+        const logout = useAuthStore.getState().clientLogout;
+        logout();
+        toast.error("Session expired. Please login again.");
+      }
+    }
+  }
 });
 
 export default api;

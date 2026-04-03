@@ -1,127 +1,179 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { expertVerifyEmailAction } from "@/src/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 
-const VerifyEmailContent = () => {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const { login } = useAuthStore();
-    const token = searchParams.get("verification_token") || searchParams.get("token");
-    const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
-    const [message, setMessage] = useState("Verifying your email...");
-    const [countdown, setCountdown] = useState(3);
+// ─── Sub-Components ──────────────────────────────────────────────────────────
 
-    useEffect(() => {
-        if (!token) {
-            setStatus("error");
-            setMessage("Invalid verification link. Please check your email for the correct link.");
-            return;
+const BrandingSection = () => (
+  <div className="relative hidden lg:block h-full min-h-[500px]">
+    <div className="absolute inset-0 bg-yellow-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
+      <div className="relative w-48 h-48 mb-8 drop-shadow-2xl">
+        <Image
+          src="/images/Expert.png"
+          alt="Expert Community"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
+      <h1 className="text-3xl font-black mb-4 tracking-tight">Email Verified</h1>
+      <p className="text-white/80 font-medium max-w-xs italic">
+        "Your journey as an expert begins here. Secure your legacy and connect with seekers."
+      </p>
+    </div>
+  </div>
+);
+
+const VerifyEmailContent = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login } = useAuthStore();
+  const token = searchParams.get("verification_token") || searchParams.get("token");
+  
+  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [message, setMessage] = useState("Verifying your stellar alignment...");
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (!token) {
+      setStatus("error");
+      setMessage("Missing verification token. Please check your email link.");
+      return;
+    }
+
+    const verifyEmail = async () => {
+      try {
+        const result = await expertVerifyEmailAction(token);
+
+        if (result.error) {
+          throw new Error(result.error);
         }
 
-        const verifyEmail = async () => {
-            try {
-                // Using server action for Httponly cookies
-                const result = await expertVerifyEmailAction(token);
+        if (result.success) {
+          if (result.user) {
+            await login("", result.user);
+          }
+          setStatus("success");
+          setMessage("Your email has been successfully verified! Prepare for takeoff.");
+          toast.success("Verification successful!");
 
-                if (result.error) {
-                    throw new Error(result.error);
+          const timer = setInterval(() => {
+            setCountdown((prev) => {
+              if (prev <= 1) {
+                clearInterval(timer);
+                const roles = result.user?.roles || [];
+                const isExpert = roles.some((r: any) => {
+                   const roleName = String(typeof r === 'object' ? r.name : r).toLowerCase();
+                   return roleName === "expert";
+                });
+
+                if (isExpert) {
+                  router.push("/dashboard");
+                } else {
+                  const mainUrl = process.env.NEXT_PUBLIC_MAIN_APP_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin.replace('expert.', 'www.'));
+                  window.location.href = `${mainUrl}/profile`;
                 }
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        }
+      } catch (err: any) {
+        console.error("Verification error:", err);
+        setStatus("error");
+        setMessage(err.message || "Verification link may be expired or invalid.");
+        toast.error("Verification failed.");
+      }
+    };
 
-                if (result.success) {
-                    if (result.user) {
-                        await login("", result.user);
-                    }
-                    setStatus("success");
-                    setMessage("Email verified successfully!");
-                    toast.success("Email verified successfully!");
-                    
-                    const timer = setInterval(() => {
-                        setCountdown((prev) => {
-                            if (prev <= 1) {
-                                clearInterval(timer);
-                                const roles = result.user?.roles || [];
-                                const isExpert = roles.some((r: any) => 
-                                    ["expert", "expert", "Expert", "Expert", "EXPERT"].includes(String(typeof r === 'object' ? r.name : r))
-                                );
+    verifyEmail();
+  }, [token, router, login]);
 
-                                if (isExpert) {
-                                    router.push("/dashboard");
-                                } else {
-                                    const mainUrl = process.env.NEXT_PUBLIC_MAIN_APP_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin.replace('expert.', 'www.'));
-                                    window.location.href = `${mainUrl}/profile`;
-                                }
-                                return 0;
-                            }
-                            return prev - 1;
-                        });
-                    }, 1000);
-                }
-            } catch (err: any) {
-                console.error("Verification error:", err);
-                setStatus("error");
-                const backendMsg = err.message || "Verification failed. The link may be expired or invalid.";
-                setMessage(backendMsg);
-                toast.error(backendMsg);
-            }
-        };
+  return (
+    <div className="flex min-h-screen bg-[#FFF9F4] items-center justify-center p-4 sm:p-6 font-poppins">
+      <Head>
+        <title>Verify Email | Astrology in Bharat</title>
+      </Head>
 
-        verifyEmail();
-    }, [token, router, login]);
+      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 rounded-[32px] overflow-hidden shadow-premium bg-white border border-gray-100">
+        <BrandingSection />
 
-    return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-2xl text-center border border-gray-100">
-                {status === "verifying" && (
-                    <div className="flex flex-col items-center">
-                        <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-yellow-500 mb-6"></div>
-                        <h2 className="text-2xl font-bold text-gray-800">Verifying Email...</h2>
-                        <p className="text-gray-500 mt-3">Aligning your profile with our stellar database.</p>
-                    </div>
-                )}
-
-                {status === "success" && (
-                    <div className="flex flex-col items-center animate-in zoom-in duration-500">
-                        <div className="h-20 w-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 text-3xl shadow-inner">
-                            ✓
-                        </div>
-                        <h2 className="text-3xl font-black text-gray-800 uppercase tracking-tight">Verified!</h2>
-                        <p className="text-gray-600 mt-4 font-medium">{message}</p>
-                        
-                        <div className="mt-8 px-8 py-3 bg-green-500 text-white rounded-full text-sm font-black uppercase tracking-widest shadow-xl shadow-green-200">
-                            Redirecting in {countdown}s
-                        </div>
-                    </div>
-                )}
-
-                {status === "error" && (
-                    <div className="flex flex-col items-center animate-in fade-in duration-500">
-                        <div className="h-20 w-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6 text-3xl shadow-inner">
-                            ✕
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800">Verification Failed</h2>
-                        <p className="text-red-500 mt-4 leading-relaxed px-4">{message}</p>
-                        <button
-                            onClick={() => router.push("/")}
-                            className="mt-8 w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg"
-                        >
-                            Back to Login
-                        </button>
-                    </div>
-                )}
+        <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center bg-white text-center sm:text-left">
+          {status === "verifying" && (
+            <div className="flex flex-col items-center sm:items-start animate-pulse">
+              <Loader2 className="w-14 h-14 text-yellow-500 animate-spin mb-8" />
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Authenticating</h2>
+              <p className="mt-4 text-gray-500 font-medium italic">{message}</p>
             </div>
+          )}
+
+          {status === "success" && (
+            <div className="flex flex-col items-center sm:items-start animate-in zoom-in slide-in-from-bottom-4 duration-500">
+              <div className="h-20 w-20 bg-emerald-50 text-emerald-500 rounded-[24px] flex items-center justify-center mb-8 border border-emerald-100 shadow-sm">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Registration Complete</h2>
+              <p className="mt-4 text-gray-600 font-medium leading-relaxed italic">{message}</p>
+              
+              <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full">
+                <div className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
+                  Redirecting in {countdown}s
+                </div>
+                <Link 
+                  href="/dashboard"
+                  className="flex items-center text-xs font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors group"
+                >
+                  Go to Dashboard 
+                  <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {status === "error" && (
+            <div className="flex flex-col items-center sm:items-start animate-in fade-in duration-500">
+              <div className="h-20 w-20 bg-rose-50 text-rose-500 rounded-[24px] flex items-center justify-center mb-8 border border-rose-100 shadow-sm">
+                <XCircle className="w-10 h-10" />
+              </div>
+              <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-tight uppercase">Access Denied</h2>
+              <p className="mt-4 text-rose-600 font-bold bg-rose-50 px-4 py-3 rounded-2xl border border-rose-100 text-sm leading-relaxed">
+                {message}
+              </p>
+              
+              <div className="mt-10 w-full space-y-4">
+                <Link 
+                  href="/"
+                  className="block w-full py-4 text-center bg-gray-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl active:scale-95"
+                >
+                  Return to Login
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default function VerifyEmailPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-            <VerifyEmailContent />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#FFF9F4]">
+        <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-600 rounded-full animate-spin"></div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
+  );
 }
 
 

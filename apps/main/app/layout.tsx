@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { Poppins, Outfit } from "next/font/google";
 import "@fortawesome/fontawesome-free/css/all.min.css";

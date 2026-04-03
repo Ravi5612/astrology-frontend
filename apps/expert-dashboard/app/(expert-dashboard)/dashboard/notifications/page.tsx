@@ -1,174 +1,37 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Bell, BellOff, Check, Clock, Inbox, Mail, MailOpen, Trash2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/utils/cn";
-import type { FC } from "react";
-import { getNotifications, markAsRead, deleteNotification, deleteAllNotifications, Notification as ApiNotification } from "@/lib/notifications";
-import { toast } from "react-toastify";
-import { format, isToday } from "date-fns";
-
-interface Notification {
-    id: string;
-    title: string;
-    description: string;
-    createdAt: string;
-    read: boolean;
-}
-
-const NotificationItem: FC<{
-    notification: Notification;
-    onMarkRead: (id: string) => void;
-    onDelete: (id: string) => void;
-}> = ({ notification, onMarkRead, onDelete }) => {
-    
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            onClick={() => !notification.read && onMarkRead(notification.id)}
-            className={cn(
-                "p-5 rounded-2xl border transition-all duration-300 cursor-pointer group flex justify-between items-start gap-4",
-                notification.read
-                    ? "bg-white border-gray-100 opacity-70 hover:opacity-100"
-                    : "bg-orange/5 border-orange/10 shadow-sm hover:shadow-md hover:bg-orange/10"
-            )}
-        >
-            <div className="flex gap-4 flex-1 min-w-0">
-                <div
-                    className={cn(
-                        "w-12 h-12 flex items-center justify-center rounded-xl transition-transform group-hover:scale-110 shrink-0",
-                        notification.read
-                            ? "bg-gray-100 text-gray-400"
-                            : "bg-orange text-white"
-                    )}
-                >
-                    {notification.read ? (
-                        <MailOpen className="w-5 h-5" />
-                    ) : (
-                        <Mail className="w-5 h-5" />
-                    )}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <h6
-                        className={cn(
-                            "text-base mb-1 truncate",
-                            notification.read ? "text-gray-600" : "text-gray-900 font-bold"
-                        )}
-                    >
-                        {notification.title}
-                    </h6>
-                    <p
-                        className="text-gray-500 text-sm mb-3 leading-relaxed line-clamp-2"
-                        style={{ lineHeight: "1.5" }}
-                    >
-                        {notification.description}
-                    </p>
-                    <span className="flex items-center gap-2 text-[10px] text-orange font-bold uppercase tracking-widest">
-                        <Clock className="w-3.5 h-3.5" />
-                        {new Date(notification.createdAt || Date.now()).toLocaleString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            hour: "numeric",
-                            minute: "numeric",
-                        })}
-                    </span>
-                </div>
-            </div>
-
-            <div className="flex flex-col items-end gap-3 shrink-0">
-                {!notification.read && (
-                    <div className="relative flex items-center justify-center w-6 h-6">
-                        <span className="absolute w-3 h-3 rounded-full bg-orange animate-ping opacity-75"></span>
-                        <span className="relative w-2.5 h-2.5 rounded-full bg-orange shadow-lg shadow-orange/50"></span>
-                    </div>
-                )}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(notification.id);
-                    }}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
-                    title="Delete"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
-            </div>
-        </motion.div>
-    );
-};
+import React, { useState, useEffect } from "react";
+import { Bell, BellOff, Trash2 } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { useNotifications } from "@/src/hooks/useNotifications";
+import { NotificationItem } from "@/components/notifications/NotificationItem";
 
 const NotificationPage = () => {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { 
+        groupedNotifications, 
+        isLoading, 
+        handleMarkRead, 
+        handleDelete, 
+        handleClearAll,
+        notifications 
+    } = useNotifications();
+
     const [isMounted, setIsMounted] = useState(false);
-
-    const fetchNotifications = async () => {
-        setIsLoading(true);
-        const [data, error] = await getNotifications();
-        
-        if (error) {
-            toast.error("Failed to load notifications");
-            setNotifications([]);
-            setIsLoading(false);
-            return;
-        }
-
-        const mapped: Notification[] = (data || []).map((n: ApiNotification) => ({
-            id: n.id,
-            title: n.title,
-            description: n.message,
-            createdAt: n.created_at,
-            read: n.read
-        }));
-
-        setNotifications(mapped);
-        setIsLoading(false);
-    };
 
     useEffect(() => {
         setIsMounted(true);
-        fetchNotifications();
     }, []);
 
-    const handleMarkRead = async (id: string) => {
-        const [_, error] = await markAsRead(id);
-        if (error) return;
-        setNotifications((prev) =>
-            prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
-        );
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!confirm("Delete this notification?")) return;
-        const [_, error] = await deleteNotification(id);
-        if (error) return;
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-    };
-
-    const handleClearAll = async () => {
+    const onClearAll = () => {
         if (notifications.length === 0) return;
         if (!confirm("Clear all notifications?")) return;
-        const [_, error] = await deleteAllNotifications();
-        if (error) return;
-        setNotifications([]);
+        handleClearAll();
     };
 
-    const groupedNotifications = useMemo(() => {
-        const sorted = [...notifications].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        const today: Notification[] = [];
-        const earlier: Notification[] = [];
-        
-        sorted.forEach(n => {
-            if (isToday(new Date(n.createdAt))) today.push(n);
-            else earlier.push(n);
-        });
-        
-        return { today, earlier };
-    }, [notifications]);
+    const onDeleteItem = (id: string) => {
+        if (!confirm("Delete this notification?")) return;
+        handleDelete(id);
+    };
 
     if (!isMounted) return null;
 
@@ -185,7 +48,7 @@ const NotificationPage = () => {
                         </h5>
                         {notifications.length > 0 && (
                             <button
-                                onClick={handleClearAll}
+                                onClick={onClearAll}
                                 className="px-5 py-2.5 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-2xl transition-all flex items-center gap-2 border-0 shadow-sm"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -231,7 +94,7 @@ const NotificationPage = () => {
                                                         key={n.id}
                                                         notification={n}
                                                         onMarkRead={handleMarkRead}
-                                                        onDelete={handleDelete}
+                                                        onDelete={onDeleteItem}
                                                     />
                                                 ))}
                                             </AnimatePresence>
@@ -252,7 +115,7 @@ const NotificationPage = () => {
                                                         key={n.id}
                                                         notification={n}
                                                         onMarkRead={handleMarkRead}
-                                                        onDelete={handleDelete}
+                                                        onDelete={onDeleteItem}
                                                     />
                                                 ))}
                                             </AnimatePresence>

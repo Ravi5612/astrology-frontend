@@ -12,7 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { getProfile, updateProfile } from "@/lib/profile";
-import { Profile } from "@/components/ProfileManagement/types";
+import { Profile } from "@/components/profile-management/types";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
 import { toast } from "react-toastify";
 

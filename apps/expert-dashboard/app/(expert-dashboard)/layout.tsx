@@ -1,17 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
-import { Sidebar } from "@/components/common/Sidebar";
-import { Header } from "@/components/common/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { Header } from "@/components/layout/Header";
 import "react-calendar/dist/Calendar.css";
 import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
-import { ChatNotificationListener } from "@/components/ChatNotificationListener";
-import { CallNotificationListener } from "@/components/CallNotificationListener";
-
-interface LayoutProps {
-  children: React.ReactNode;
-}
+import { ChatNotificationListener } from "@/components/notifications/ChatNotificationListener";
+import { CallNotificationListener } from "@/components/notifications/CallNotificationListener";
+import { LayoutProps } from "@/types/expert";
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

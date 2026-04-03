@@ -1,5 +1,5 @@
 import React from "react";
-import ProductManager from "@/components/Product/ProductManager";
+import ProductManager from "@/components/product/ProductManager";
 
 export const metadata = {
     title: "Expert Dashboard | Manage Products",

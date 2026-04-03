@@ -20,20 +20,14 @@ export default function ClientLayout({
   const { isClientAuthenticated, clientUser, clientLogout, clientBalance } = useAuthStore();
   const { cartCount } = useCartStore();
 
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Load Bootstrap JS for modal functionality
-  useEffect(() => {
-    // Dynamically import Bootstrap JS only on client side
-    // @ts-ignore - Bootstrap JS doesn't have type declarations
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
-
   return (
-    <>
-      <ToastProvider />
+    <div className="flex flex-col min-h-screen">
+      {mounted && <ToastProvider />}
       {mounted && !isAdminRoute && !isChatRoom && (
         <Header
           authState={isClientAuthenticated}
@@ -43,10 +37,10 @@ export default function ClientLayout({
           cartCount={cartCount}
         />
       )}
-      <main suppressHydrationWarning>{children}</main>
+      <main suppressHydrationWarning className="flex-1">{children}</main>
       {mounted && !isAdminRoute && !isChatRoom && <FloatingChatButton />}
       {mounted && !isAdminRoute && !isChatRoom && <Footer />}
-    </>
+    </div>
   );
 }
 

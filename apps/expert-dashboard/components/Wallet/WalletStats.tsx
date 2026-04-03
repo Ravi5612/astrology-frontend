@@ -1,7 +1,7 @@
 import React from "react";
 import { Wallet, Landmark, Clock, ArrowUpRight } from "lucide-react";
 import { StatsCards } from "@repo/ui";
-import { WalletStatsData } from "./types";
+import { WalletStatsData } from "@/types/wallet";
 
 interface WalletStatsProps {
     stats: WalletStatsData;

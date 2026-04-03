@@ -1,5 +1,5 @@
 import React from "react";
-import LiveChat from "@/components/LiveChat";
+import LiveChat from "@/components/chat/LiveChat";
 
 const JoinLiveSessionPage = () => {
     return (

@@ -1,5 +1,5 @@
 import { api, ApiError } from "./api";
-import { WalletStatsData, WalletTransaction } from "../components/Wallet/types";
+import { WalletStatsData, WalletTransaction } from "@/types/wallet";
 
 export const getWalletBalance = async (): Promise<[WalletStatsData | null, ApiError | null]> => {
     const [res, error] = await api.get('/expert/wallet/balance');

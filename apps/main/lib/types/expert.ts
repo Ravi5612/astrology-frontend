@@ -89,7 +89,8 @@ export interface ExpertFilterState {
 }
 
 export interface ExpertFilterModalProps {
-    modalId: string;
+    show: boolean;
+    onHide: () => void;
     localFilter: ExpertFilterState;
     setLocalFilter: (filter: ExpertFilterState) => void;
     applyFilters: () => void;
@@ -97,7 +98,8 @@ export interface ExpertFilterModalProps {
 }
 
 export interface ExpertSortModalProps {
-    modalId: string;
+    show: boolean;
+    onHide: () => void;
     sortBy: string;
     setSortBy: (sort: string) => void;
     applySort: () => void;
@@ -109,8 +111,8 @@ export interface ExpertListHeaderProps {
     selectedSpecialization: string;
     setSelectedSpecialization: (s: string) => void;
     hasActiveFilters: boolean;
-    filterModalId: string;
-    sortModalId: string;
+    onOpenFilter: () => void;
+    onOpenSort: () => void;
     resetFilters: () => void;
     scrollTabs: (direction: "left" | "right") => void;
     scrollContainerRef: any; // React.RefObject<HTMLDivElement | null>;

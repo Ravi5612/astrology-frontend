@@ -18,15 +18,14 @@ const SecurityTipsModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300 pointer-events-auto"
+      className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-20 sm:p-6 sm:pt-24 bg-black/70 backdrop-blur-md animate-in fade-in duration-300 pointer-events-auto overflow-y-auto"
       onWheel={(e) => {
         e.stopPropagation();
         if (e.target === e.currentTarget) e.preventDefault();
       }}
     >
       <div
-        className="bg-white w-full max-w-lg max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative"
-        onWheel={(e) => e.stopPropagation()}
+        className="bg-white w-full max-w-lg my-auto max-h-[calc(100vh-7rem)] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative shrink-0"
       >
         {/* Header */}
         <div className="p-3 md:p-4 bg-gradient-to-br from-red-500 to-orange-500 text-white relative overflow-hidden flex-shrink-0">
@@ -58,110 +57,110 @@ const SecurityTipsModal = ({
           </div>
         </div>
 
-        {/* Content */}
         <div
-          className="p-4 md:p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar overscroll-contain min-h-0 modal-scroll-area"
+          className="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar overscroll-contain min-h-0 relative w-full"
           style={{ WebkitOverflowScrolling: "touch" }}
-          onWheel={(e) => e.stopPropagation()}
         >
-          <div className="space-y-3">
-            {[
-              {
-                icon: "🔒",
-                title: "Never Share OTPs or Passwords",
-                desc: "Our experts will NEVER ask for OTPs, passwords, bank PINs, or CVV numbers. If anyone asks, report immediately.",
-              },
-              {
-                icon: "🚫",
-                title: "Beware of External Links",
-                desc: "Do not click on any suspicious links shared during the chat. All payments are processed securely within our platform only.",
-              },
-              {
-                icon: "💳",
-                title: "Payment Security",
-                desc: "Never make payments outside our official platform. All transactions are encrypted and protected by our secure payment gateway.",
-              },
-              {
-                icon: "📱",
-                title: "Personal Information",
-                desc: "Avoid sharing sensitive personal details like Aadhaar, PAN, or credit card numbers. Only share astrological information.",
-              },
-              {
-                icon: "📵",
-                title: "Do Not Share Contact Details",
-                desc: "NEVER share your mobile number, email, WhatsApp, or any social media handles with the expert. All communication must happen only on our platform.",
-              },
-              {
-                icon: "⛔",
-                title: "No Direct Contact Outside Platform",
-                desc: "Do NOT contact experts directly outside this platform. If you do so and face any issues, Astrology in Bharat will NOT be responsible or liable.",
-              },
-              {
-                icon: "⚠️",
-                title: "Report Suspicious Activity",
-                desc: "If you notice any unusual behavior or requests, immediately end the session and contact our support team.",
-              },
-              {
-                icon: "✅",
-                title: "Verified Experts Only",
-                desc: "All our experts are verified professionals. However, use your judgment and stay alert during consultations.",
-              },
-            ].map((tip, index) => (
-              <div
-                key={index}
-                className="flex gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-orange-200 transition-colors"
-              >
-                <div className="text-3xl flex-shrink-0">{tip.icon}</div>
+          <div className="space-y-4 w-full">
+            <div className="space-y-3">
+              {[
+                {
+                  icon: "🔒",
+                  title: "Never Share OTPs or Passwords",
+                  desc: "Our experts will NEVER ask for OTPs, passwords, bank PINs, or CVV numbers. If anyone asks, report immediately.",
+                },
+                {
+                  icon: "🚫",
+                  title: "Beware of External Links",
+                  desc: "Do not click on any suspicious links shared during the chat. All payments are processed securely within our platform only.",
+                },
+                {
+                  icon: "💳",
+                  title: "Payment Security",
+                  desc: "Never make payments outside our official platform. All transactions are encrypted and protected by our secure payment gateway.",
+                },
+                {
+                  icon: "📱",
+                  title: "Personal Information",
+                  desc: "Avoid sharing sensitive personal details like Aadhaar, PAN, or credit card numbers. Only share astrological information.",
+                },
+                {
+                  icon: "📵",
+                  title: "Do Not Share Contact Details",
+                  desc: "NEVER share your mobile number, email, WhatsApp, or any social media handles with the expert. All communication must happen only on our platform.",
+                },
+                {
+                  icon: "⛔",
+                  title: "No Direct Contact Outside Platform",
+                  desc: "Do NOT contact experts directly outside this platform. If you do so and face any issues, Astrology in Bharat will NOT be responsible or liable.",
+                },
+                {
+                  icon: "⚠️",
+                  title: "Report Suspicious Activity",
+                  desc: "If you notice any unusual behavior or requests, immediately end the session and contact our support team.",
+                },
+                {
+                  icon: "✅",
+                  title: "Verified Experts Only",
+                  desc: "All our experts are verified professionals. However, use your judgment and stay alert during consultations.",
+                },
+              ].map((tip, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-orange-200 transition-colors"
+                >
+                  <div className="text-3xl flex-shrink-0">{tip.icon}</div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-1 text-sm">
+                      {tip.title}
+                    </h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">
+                      {tip.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Disclaimer Box */}
+            <div className="p-5 bg-red-50 rounded-2xl border-2 border-red-200">
+              <div className="flex gap-3">
+                <div className="text-2xl flex-shrink-0">⚖️</div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1 text-sm">
-                    {tip.title}
+                  <h3 className="font-black text-red-700 mb-2 text-sm">
+                    Important Disclaimer
                   </h3>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {tip.desc}
+                  <p className="text-xs text-red-600 leading-relaxed font-semibold">
+                    By proceeding, you acknowledge that any communication or
+                    transaction outside the Astrology in Bharat platform is
+                    strictly at your own risk.
+                    <span className="font-black">
+                      {" "}
+                      We will NOT be held responsible or liable for any issues,
+                      fraud, or losses
+                    </span>{" "}
+                    arising from direct contact with experts outside our
+                    official platform.
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Disclaimer Box */}
-          <div className="p-5 bg-red-50 rounded-2xl border-2 border-red-200">
-            <div className="flex gap-3">
-              <div className="text-2xl flex-shrink-0">⚖️</div>
-              <div>
-                <h3 className="font-black text-red-700 mb-2 text-sm">
-                  Important Disclaimer
-                </h3>
-                <p className="text-xs text-red-600 leading-relaxed font-semibold">
-                  By proceeding, you acknowledge that any communication or
-                  transaction outside the Astrology in Bharat platform is
-                  strictly at your own risk.
-                  <span className="font-black">
-                    {" "}
-                    We will NOT be held responsible or liable for any issues,
-                    fraud, or losses
-                  </span>{" "}
-                  arising from direct contact with experts outside our
-                  official platform.
-                </p>
-              </div>
             </div>
-          </div>
 
-          {/* Checkbox Agreement */}
-          <div className="p-4 bg-orange-50 rounded-2xl border-2 border-orange-200">
-            <label className="flex items-start gap-5 cursor-pointer group">
-              <input
-                type="checkbox"
-                id="agreeTerms"
-                className="m-2 w-5 h-5 rounded border-2 border-orange-400 text-orange-500 focus:ring-2 focus:ring-orange-500 cursor-pointer flex-shrink-0"
-              />
-              <span className="text-xs md:text-sm font-bold text-gray-800 transition-colors leading-relaxed">
-                I have read and understood all the safety guidelines and
-                disclaimer. I agree to follow these precautions during my
-                consultation and will not share any contact details.
-              </span>
-            </label>
+            {/* Checkbox Agreement */}
+            <div className="p-4 bg-orange-50 rounded-2xl border-2 border-orange-200">
+              <label className="flex items-start gap-5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  id="agreeTerms"
+                  className="m-2 w-5 h-5 rounded border-2 border-orange-400 text-orange-500 focus:ring-2 focus:ring-orange-500 cursor-pointer flex-shrink-0"
+                />
+                <span className="text-xs md:text-sm font-bold text-gray-800 transition-colors leading-relaxed">
+                  I have read and understood all the safety guidelines and
+                  disclaimer. I agree to follow these precautions during my
+                  consultation and will not share any contact details.
+                </span>
+              </label>
+            </div>
           </div>
         </div>
 

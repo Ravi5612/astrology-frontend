@@ -12,13 +12,14 @@ import { ReviewsModal } from "@/components/dashboard/ReviewsModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getReviewStats, getReviews, Review } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
+import { ReviewStats } from "@/types/expert";
 import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 import { AlertTriangle, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 const Page = () => {
   const { user } = useAuthStore();
-  const [ratingStats, setRatingStats] = useState<any | null>(null);
+  const [ratingStats, setRatingStats] = useState<ReviewStats | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsTotal, setReviewsTotal] = useState(0);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FaHeart, FaSpinner } from "react-icons/fa";
-import { TbCrystalBall } from "react-icons/tb";
+import { TbCrystalBall, TbSparkles } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 import { renderContent } from "./utils";
 
@@ -12,254 +12,274 @@ const Result = ({ result, t }: LoveCalculatorResultProps) => {
   if (!result) return null;
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
-      <div className="container px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="glass-card rounded-[3.5rem] p-8 md:p-16 shadow-[0_30px_70px_rgba(48,17,24,0.15)] border border-burgundy/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-12 opacity-[0.05] animate-spin-slow pointer-events-none">
-              <GiLotus size={300} />
-            </div>
+    <section className="py-24 bg-[#FFF9F4] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 w-full animate-in fade-in zoom-in duration-1000">
+        <div className="bg-white rounded-[4rem] p-10 md:p-20 shadow-[0_50px_100px_rgba(48,17,24,0.08)] border border-slate-100 relative overflow-hidden">
+          
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 p-12 opacity-[0.03] animate-[spin_60s_linear_infinite] pointer-events-none">
+            <GiLotus size={400} className="text-orange" />
+          </div>
 
-            {result.type === "simple" ? (
-              <div className="relative z-10">
-                <div className="text-center mb-16">
-                  <span className="inline-block bg-[#fd6410]/10 text-[#fd6410] px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                    {t.results.badge}
+          {result.type === "simple" ? (
+            <div className="relative z-10 space-y-16">
+              <div className="text-center space-y-6">
+                <span className="inline-flex items-center gap-2 px-6 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-lg shadow-red-950/10">
+                  <TbSparkles className="text-sm" />
+                  {t.results.badge}
+                </span>
+                <h2 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none">
+                  {t.results.title.split("{score}")[0].trim()}{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 animate-pulse">
+                    {t.results.title.split("{score}")[1]?.trim() || ""}
                   </span>
-                  <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                    {t.results.title.split("{score}")[0]}{" "}
-                    <span className="text-[#fd6410]">
-                      {t.results.title.split("{score}")[1]}
-                    </span>
-                  </h2>
-                  <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#fd6410] to-transparent mx-auto mb-16"></div>
-                </div>
+                </h2>
+                <div className="w-48 h-1.5 bg-gradient-to-r from-transparent via-red-500/20 to-transparent mx-auto"></div>
+              </div>
 
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-16">
-                    {/* Premium Gauge/Ring for Love Score */}
-                    <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl flex items-center justify-center p-8 border-8 border-orange-50 relative group">
-                      <div className="absolute inset-0 rounded-full border-8 border-[#fd6410] border-t-transparent animate-spin-slow opacity-20"></div>
-                      <div className="text-center">
-                        <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
-                          {result.score}
-                          <span className="text-4xl text-[#fd6410]">%</span>
-                        </span>
-                        <span className="text-[12px] font-black uppercase tracking-[4px] text-[#fd6410] mt-4 block">
-                          {t.results.cosmicBond}
-                        </span>
-                      </div>
-                      <FaHeart className="absolute -top-4 -right-4 text-pink-500 text-5xl animate-bounce shadow-xl" />
+              <div className="flex flex-col items-center">
+                <div className="relative mb-16">
+                  {/* Premium Gauge/Ring for Love Score */}
+                  <div className="w-72 h-72 md:w-96 md:h-96 rounded-full bg-white shadow-2xl flex items-center justify-center p-12 border-8 border-red-50/50 relative group">
+                    <div className="absolute inset-0 rounded-full border-8 border-red-500 border-t-transparent animate-[spin_10s_linear_infinite] opacity-20"></div>
+                    <div className="text-center space-y-2">
+                       <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-500 mx-auto">
+                        Love Core
+                      </p>
+                      <h3 className="block text-8xl md:text-[10rem] font-black text-slate-900 leading-none group-hover:scale-110 transition-transform duration-700">
+                        {result.score}
+                        <span className="text-4xl md:text-5xl text-red-500">%</span>
+                      </h3>
+                      <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">
+                        {t.results.cosmicBond}
+                      </p>
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white rounded-full shadow-2xl border border-red-50 flex items-center justify-center text-red-500 animate-bounce-slow">
+                       <FaHeart size={36} />
                     </div>
                   </div>
+                </div>
 
-                  <div className="max-w-2xl text-center">
-                    <div className="bg-burgundy text-white p-10 rounded-[3rem] shadow-2xl relative">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#fd6410] p-4 rounded-2xl shadow-lg">
-                        <TbCrystalBall size={32} />
+                <div className="max-w-3xl w-full">
+                  <div className="bg-slate-950 text-white p-12 md:p-16 rounded-[4rem] shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-10 opacity-[0.05] group-hover:rotate-45 transition-transform duration-1000">
+                       <TbCrystalBall size={200} />
+                    </div>
+                    <div className="absolute top-0 left-0 w-2 h-full bg-red-600"></div>
+                    
+                    <div className="relative z-10 space-y-8">
+                      <div className="inline-flex items-center gap-3 px-4 py-2 bg-red-600/10 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-600/20">
+                         <TbCrystalBall className="text-lg animate-pulse" />
+                         Cosmic Verdict
                       </div>
-                      <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90">
+                      <p className="text-2xl md:text-4xl font-bold italic leading-tight text-slate-100 decoration-red-500/30 underline underline-offset-8">
                         "{renderContent(result.message)}"
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="relative z-10">
-                <div className="text-center mb-16">
-                  <span className="inline-block bg-burgundy text-[#d4af37] px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-[4px] mb-8 shadow-xl">
-                    {t.results.vedicBadge}
+            </div>
+          ) : (
+            <div className="relative z-10 space-y-20">
+              <div className="text-center space-y-6">
+                <span className="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-orange-400 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl border border-slate-800">
+                  <TbSparkles className="text-lg" />
+                  {t.results.vedicBadge}
+                </span>
+                <h2 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none">
+                  {t.results.gunaTitle.split("{score}")[0].trim()}{" "}
+                  <span className="text-orange-500">
+                    {t.results.gunaTitle.split("{score}")[1]?.trim() || ""}
                   </span>
-                  <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                    {t.results.gunaTitle.split("{score}")[0]}{" "}
-                    <span className="text-[#fd6410]">
-                      {t.results.gunaTitle.split("{score}")[1]}
-                    </span>
-                  </h2>
-                </div>
+                </h2>
+                <div className="w-48 h-1.5 bg-gradient-to-r from-transparent via-orange-500/20 to-transparent mx-auto"></div>
+              </div>
 
-                <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-                  <div className="bg-white rounded-[4rem] p-12 shadow-sm border border-orange-50 text-center relative group">
-                    <div className="relative inline-flex items-center justify-center mb-10 overflow-visible py-4">
-                      <svg className="w-48 h-48 md:w-64 md:h-64 transform -rotate-90">
-                        <circle
-                          className="text-gray-100"
-                          strokeWidth="12"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="90"
-                          cx="128"
-                          cy="128"
-                        />
-                        <circle
-                          className="text-[#fd6410] transition-all duration-1000 ease-out"
-                          strokeWidth="12"
-                          strokeDasharray={`${(result.data.guna_milan.total_points / 36) * 565} 565`}
-                          strokeLinecap="round"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="90"
-                          cx="128"
-                          cy="128"
-                        />
-                      </svg>
-                      <div className="absolute flex flex-col items-center">
-                        <span className="text-6xl md:text-8xl font-black text-burgundy">
-                          {result.data.guna_milan.total_points}
-                        </span>
-                        <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                          {t.results.outOf36}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        className={`inline-flex items-center gap-2 px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-widest ${
-                          result.data.guna_milan.total_points >= 18
-                            ? "bg-green-500 text-white shadow-lg shadow-green-100"
-                            : "bg-burgundy text-white shadow-lg shadow-orange-100"
-                        }`}
-                      >
-                        {result.data.guna_milan.total_points >= 18
-                          ? t.results.goodComp
-                          : t.results.moderateMatch}
-                      </div>
+              <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+                <div className="bg-slate-50/50 rounded-[4rem] p-12 md:p-20 text-center relative group border border-slate-100 flex flex-col items-center justify-center">
+                  <div className="relative inline-flex items-center justify-center mb-12">
+                    <svg className="w-56 h-56 md:w-80 md:h-80 transform -rotate-90">
+                      <circle
+                        className="text-slate-100"
+                        strokeWidth="16"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="110"
+                        cx="160"
+                        cy="160"
+                      />
+                      <circle
+                        className="text-orange-500 transition-all duration-1000 ease-out"
+                        strokeWidth="16"
+                        strokeDasharray={`${(result.data.guna_milan.total_points / 36) * 690} 690`}
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="110"
+                        cx="160"
+                        cy="160"
+                      />
+                    </svg>
+                    <div className="absolute flex flex-col items-center space-y-1">
+                      <span className="text-7xl md:text-9xl font-black text-slate-900 leading-none">
+                        {result.data.guna_milan.total_points}
+                      </span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+                        {t.results.outOf36}
+                      </span>
                     </div>
                   </div>
-
-                  <div className="bg-gradient-to-br from-burgundy to-[#4a1c26] rounded-[4rem] p-10 md:p-14 text-white relative overflow-hidden shadow-2xl">
-                    <div className="absolute top-[-20%] right-[-10%] opacity-10 animate-spin-slow">
-                      <GiLotus size={200} />
+                  <div>
+                    <div
+                      className={`inline-flex items-center gap-3 px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-xl transition-all duration-500 ${
+                        result.data.guna_milan.total_points >= 18
+                          ? "bg-emerald-500 text-white shadow-emerald-500/20"
+                          : "bg-orange-500 text-white shadow-orange-500/20"
+                      }`}
+                    >
+                      {result.data.guna_milan.total_points >= 18
+                        ? t.results.goodComp
+                        : t.results.moderateMatch}
                     </div>
-                    <div className="relative z-10">
-                      <span className="text-[#fd6410] font-black uppercase tracking-[4px] text-[10px] mb-6 block">
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl flex flex-col justify-center">
+                  <div className="absolute top-0 right-0 p-12 opacity-[0.05] animate-spin-slow pointer-events-none">
+                    <GiLotus size={300} />
+                  </div>
+                  <div className="relative z-10 space-y-10">
+                    <div className="space-y-4">
+                      <span className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] block border-l-2 border-orange-500 pl-4">
                         {t.results.expertAnalysis}
                       </span>
-                      <h3 className="text-3xl font-black mb-8 leading-tight">
-                        {t.results.matchSummary.split("{summary}")[0]}{" "}
-                        <span className="text-[#fd6410]">
-                          {t.results.matchSummary.split("{summary}")[1]}
+                      <h3 className="text-3xl md:text-5xl font-black leading-[0.95] tracking-tighter">
+                        {t.results.matchSummary.split("{summary}")[0].trim()}{" "}
+                        <span className="text-orange-500">
+                          {t.results.matchSummary.split("{summary}")[1]?.trim() || ""}
                         </span>
                       </h3>
-                      <p className="text-xl font-light italic text-orange-100/80 leading-relaxed mb-10 border-l-2 border-[#fd6410]/30 pl-8">
-                        "{renderContent(result.data.message)}"
-                      </p>
-                      <div className="flex items-center gap-6 p-4 bg-white/5 rounded-3xl border border-white/5">
-                        <div className="w-12 h-12 rounded-full bg-[#fd6410] flex items-center justify-center text-white shadow-xl">
-                          <FaSpinner className="animate-pulse" />
-                        </div>
-                        <p className="text-sm font-bold text-orange-50/60 m-0">
+                    </div>
+                    
+                    <p className="text-2xl md:text-3xl font-bold italic text-slate-200/90 leading-tight border-l-4 border-orange-500/30 pl-10">
+                      "{renderContent(result.data.message)}"
+                    </p>
+                    
+                    <div className="flex items-center gap-6 p-6 bg-white/5 rounded-[2.5rem] border border-white/5 backdrop-blur-xl">
+                      <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shadow-xl shadow-orange-500/20">
+                        <FaSpinner className="animate-spin text-xl" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">System Ready</p>
+                        <p className="text-sm font-bold text-slate-400 m-0 leading-none">
                           {t.results.processedBy}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Ashta Koot Breakdown Table (Premium Styling) */}
-                <div className="bg-[#fff9f6] rounded-[3rem] p-8 md:p-12 border border-orange-100">
-                  <div className="flex items-center justify-between mb-12">
-                    <h4 className="text-xl font-black text-burgundy tracking-tight">
+              {/* Ashta Koot Breakdown Table (Super Premium) */}
+              <div className="bg-slate-50/30 rounded-[4rem] p-8 md:p-16 border border-slate-100">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-16">
+                  <div className="space-y-3">
+                    <h4 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter leading-none">
                       {t.results.breakdownTitle}
                     </h4>
-                    <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-50">
-                      <span className="text-xs font-bold text-gray-400">
-                        {t.results.accuracy.split(":")[0]}:{" "}
-                      </span>
-                      <span className="text-xs font-black text-[#fd6410]">
-                        {t.results.accuracy.split(":")[1]}
-                      </span>
-                    </div>
+                    <p className="text-slate-400 font-bold italic text-sm">Detailed vedic diagnostic analysis</p>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b-2 border-burgundy/5">
-                          <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
-                            {t.results.table.component}
-                          </th>
-                          <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
-                            {t.results.table.significance}
-                          </th>
-                          <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40">
-                            {t.results.table.score}
-                          </th>
-                          <th className="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-burgundy/40 text-right">
-                            {t.results.table.interpretation}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.entries(
-                          result.data.guna_milan.ashta_koot,
-                        ).map(([key, val]: [string, any], idx) => (
-                          <tr
-                            key={key}
-                            className={`group hover:bg-white transition-all duration-300 ${
-                              idx ===
-                              Object.entries(result.data.guna_milan.ashta_koot)
-                                .length -
-                                1
-                                ? ""
-                                : "border-b border-burgundy/5"
-                            }`}
-                          >
-                            <td className="py-6 px-4">
-                              <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-orange-100/30 flex items-center justify-center text-burgundy group-hover:bg-[#fd6410] group-hover:text-white transition-all duration-500">
-                                  <span className="text-xs font-black italic">
-                                    {idx + 1}
-                                  </span>
-                                </div>
-                                <span className="font-black text-burgundy capitalize text-sm">
-                                  {key}
+                  <div className="px-8 py-4 bg-white rounded-[2rem] shadow-xl shadow-slate-100 border border-slate-100 inline-flex items-center gap-4">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      {t.results.accuracy.split(":")[0]}
+                    </span>
+                    <span className="text-sm font-black text-orange-500 uppercase tracking-widest">
+                      {t.results.accuracy.split(":")[1]}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="overflow-x-auto -mx-8 px-8">
+                  <table className="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                      <tr className="border-b border-slate-100">
+                        <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+                          {t.results.table.component}
+                        </th>
+                        <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+                          {t.results.table.significance}
+                        </th>
+                        <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center">
+                          {t.results.table.score}
+                        </th>
+                        <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">
+                          {t.results.table.interpretation}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(
+                        result.data.guna_milan.ashta_koot,
+                      ).map(([key, val]: [string, any], idx) => (
+                        <tr
+                          key={key}
+                          className="group hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50 rounded-3xl transition-all duration-500"
+                        >
+                          <td className="py-10 px-6">
+                            <div className="flex items-center gap-6">
+                              <div className="w-12 h-12 rounded-[1rem] bg-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-lg group-hover:shadow-orange-500/20">
+                                <span className="text-xs font-black italic">
+                                  {idx + 1}
                                 </span>
                               </div>
-                            </td>
-                            <td className="py-6 px-4 text-xs text-gray-500 font-medium italic">
+                              <span className="font-black text-slate-900 capitalize text-lg tracking-tight">
+                                {key}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-10 px-6 max-w-sm">
+                            <p className="text-sm text-slate-400 font-bold italic leading-relaxed group-hover:text-slate-600 transition-colors">
                               {key === "varna" && "Personality & Ego Matching"}
-                              {key === "vashya" &&
-                                "Mutual Attraction & Power Balance"}
+                              {key === "vashya" && "Mutual Attraction & Power Balance"}
                               {key === "tara" && "Health, Longevity & Destiny"}
                               {key === "yoni" && "Physical & Emotional Intimacy"}
                               {key === "maitri" && "Friendship & Psychology"}
-                              {key === "gana" &&
-                                "Temperament & Social Affinity"}
+                              {key === "gana" && "Temperament & Social Affinity"}
                               {key === "bhakut" && "Family Harmony & Progeny"}
                               {key === "nadi" && "Biological & Genetic Sync"}
-                            </td>
-                            <td className="py-6 px-4">
-                              <div className="flex items-center gap-2">
-                                <span className="text-lg font-black text-burgundy">
-                                  {val.received_points}
-                                </span>
-                                <span className="text-gray-200">/</span>
-                                <span className="text-xs font-bold text-gray-400">
-                                  {val.maximum_points}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-6 px-4 text-right">
-                              <span
-                                className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                  val.received_points > 0
-                                    ? "bg-green-100 text-green-700 shadow-sm shadow-green-100"
-                                    : "bg-red-50 text-red-500"
-                                }`}
-                              >
-                                {val.description}
+                            </p>
+                          </td>
+                          <td className="py-10 px-6 text-center">
+                            <div className="inline-flex items-center gap-3 bg-slate-50 px-5 py-2 rounded-full border border-slate-100 group-hover:bg-white group-hover:border-orange-100 transition-all">
+                              <span className="text-xl font-black text-slate-900 group-hover:text-orange-500 transition-colors">
+                                {val.received_points}
                               </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                              <span className="text-slate-300 font-bold">/</span>
+                              <span className="text-sm font-black text-slate-400">
+                                {val.maximum_points}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-10 px-6 text-right">
+                            <span
+                              className={`inline-flex px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm transform group-hover:scale-105 transition-all duration-500 ${
+                                val.received_points > 0
+                                  ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                                  : "bg-red-500/10 text-red-500 border border-red-500/20"
+                              }`}
+                            >
+                              {val.description}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -333,7 +333,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
         </div>
       </div>
 
-      {/* VIDEO MODAL — custom Tailwind, no Bootstrap */}
+      {/* VIDEO MODAL — custom Tailwind */}
       {show && (
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"

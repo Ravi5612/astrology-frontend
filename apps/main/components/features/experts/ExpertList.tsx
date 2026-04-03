@@ -36,6 +36,9 @@ const ExpertList: React.FC<ExpertListProps> = ({
     homeTranslations[lang as keyof typeof homeTranslations] ||
     homeTranslations.en;
 
+  const [showFilterModal, setShowFilterModal] = React.useState(false);
+  const [showSortModal, setShowSortModal] = React.useState(false);
+
   const {
     experts,
     loading,
@@ -61,9 +64,6 @@ const ExpertList: React.FC<ExpertListProps> = ({
     lang,
     t,
   );
-
-  const filterModalId = "expertListFilterModal";
-  const sortModalId = "expertListSortModal";
 
   return (
     <section
@@ -91,27 +91,36 @@ const ExpertList: React.FC<ExpertListProps> = ({
           selectedSpecialization={selectedSpecialization}
           setSelectedSpecialization={setSelectedSpecialization}
           hasActiveFilters={hasActiveFilters}
-          filterModalId={filterModalId}
-          sortModalId={sortModalId}
+          onOpenFilter={() => setShowFilterModal(true)}
+          onOpenSort={() => setShowSortModal(true)}
           resetFilters={resetFilters}
           scrollTabs={scrollTabs}
           scrollContainerRef={scrollContainerRef}
         />
 
-        <ExpertFilterModal
-          modalId={filterModalId}
-          localFilter={localFilter}
-          setLocalFilter={setLocalFilter}
-          applyFilters={applyFilters}
-          resetFilters={resetFilters}
-        />
+        {showFilterModal && (
+          <ExpertFilterModal
+            show={showFilterModal}
+            onHide={() => setShowFilterModal(false)}
+            localFilter={localFilter}
+            setLocalFilter={setLocalFilter}
+            applyFilters={() => {
+              applyFilters();
+              setShowFilterModal(false);
+            }}
+            resetFilters={resetFilters}
+          />
+        )}
 
-        <ExpertSortModal
-          modalId={sortModalId}
-          sortBy={filterState.sortBy}
-          setSortBy={(val) => setFilterState({ ...filterState, sortBy: val })}
-          applySort={() => {}}
-        />
+        {showSortModal && (
+          <ExpertSortModal
+            show={showSortModal}
+            onHide={() => setShowSortModal(false)}
+            sortBy={filterState.sortBy}
+            setSortBy={(val: string) => setFilterState({ ...filterState, sortBy: val })}
+            applySort={() => setShowSortModal(false)}
+          />
+        )}
 
         {layout === "slider" ? (
           <ExpertSlider

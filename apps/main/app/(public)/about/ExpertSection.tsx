@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,88 +41,80 @@ const ExpertSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-5" style={{ background: "#fafafa" }}>
-      <div className="container py-4">
-        <div className="text-center mb-5">
-          <span
-            className="text-uppercase fw-bold small"
-            style={{ color: "#f97316", letterSpacing: "2px" }}
-          >
+    <section className="py-24 bg-[#FFF9F4] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+        <div className="text-center mb-16 space-y-4">
+          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-orange block animate-in fade-in slide-in-from-top-4 duration-700">
             {t.expertTag}
           </span>
-          <h2
-            className="fw-bold mt-2"
-            style={{ fontSize: "2rem", color: "#1a0a00" }}
-          >
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
             {t.expertTitle}
           </h2>
-          <p className="text-muted mx-auto mt-2" style={{ maxWidth: 500 }}>
-            {t.expertDesc}
+          <p className="text-slate-500 text-lg font-medium italic mx-auto max-w-xl animate-in fade-in duration-1000">
+            &quot;{t.expertDesc}&quot;
           </p>
         </div>
-        <div className="row g-4 justify-content-center">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {team.map((member, i) => (
-            <div key={i} className="col-sm-6 col-lg-3">
-              <div
-                className="rounded-4 p-4 text-center bg-white border h-100"
-                style={{ borderColor: "rgba(0,0,0,0.06) !important" }}
-              >
-                <div className="position-relative d-inline-block mb-3">
-                  <div className="rounded-circle border overflow-hidden position-relative" style={{ width: 80, height: 80, borderColor: "#fed7aa", borderWidth: "3px" }}>
+            <div key={i} className="group animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
+              <div className="bg-white rounded-[3rem] p-8 text-center border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 flex flex-col h-full active:scale-95">
+                
+                {/* Avatar with Status */}
+                <div className="relative inline-block mx-auto mb-6 transform group-hover:rotate-3 transition-transform duration-500">
+                  <div className="w-24 h-24 rounded-full border-4 border-orange-100 p-1 bg-white relative overflow-hidden shadow-lg group-hover:border-orange/20 transition-all">
                     <Image
                       src={member.avatar}
                       alt={member.name}
-                      width={80}
-                      height={80}
-                      className="object-cover w-full h-full"
+                      width={100}
+                      height={100}
+                      className="object-cover w-full h-full rounded-full grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                   </div>
-                  <div
-                    className="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center"
-                    style={{
-                      width: 22,
-                      height: 22,
-                      background: "#22c55e",
-                      border: "2px solid white",
-                    }}
-                  >
-                    <i
-                      className="fa-solid fa-check"
-                      style={{ color: "white", fontSize: "8px" }}
-                    />
+                  <div className="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full flex items-center justify-center shadow-md animate-pulse">
+                    <i className="fa-solid fa-check text-white text-[8px]" />
                   </div>
                 </div>
-                <h6 className="fw-bold mb-1" style={{ color: "#1a0a00" }}>
-                  {member.name}
-                </h6>
-                <p className="small mb-1" style={{ color: "#f97316" }}>
-                  {member.role}
-                </p>
-                <p className="text-muted small mb-2">{member.exp}</p>
-                <span
-                  className="badge rounded-pill px-3 py-1 small"
-                  style={{
-                    background: "rgba(249,115,22,0.1)",
-                    color: "#ea580c",
-                  }}
-                >
-                  {member.specialty}
-                </span>
+
+                {/* Expert Info */}
+                <div className="space-y-2 mb-6 grow">
+                  <h6 className="text-lg font-black text-slate-900 group-hover:text-orange transition-colors">
+                    {member.name}
+                  </h6>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-orange bg-orange/5 py-1 px-3 rounded-full inline-block">
+                    {member.role}
+                  </p>
+                  <p className="text-slate-400 text-xs font-bold italic py-2">
+                    {member.exp}
+                  </p>
+                </div>
+
+                {/* Specialties Container */}
+                <div className="pt-4 border-t border-slate-50">
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-3">Specialization</span>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {member.specialty.split(", ").map((s, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-wider group-hover:bg-orange/10 group-hover:text-orange-600 transition-colors">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="text-center mt-4">
+
+        {/* View All Button */}
+        <div className="text-center mt-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
           <Link
             href="/our-experts"
-            className="btn px-5 py-2 rounded-pill fw-bold"
-            style={{
-              background: "linear-gradient(135deg, #f97316, #ea580c)",
-              color: "white",
-              border: "none",
-            }}
+            className="group relative inline-flex items-center gap-4 px-12 py-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-full font-black text-xs uppercase tracking-[0.3em] shadow-xl hover:shadow-orange-500/30 hover:bg-orange transition-all duration-500 no-underline"
           >
-            {t.expertBtn} <i className="fa-solid fa-arrow-right ms-2" />
+            <span className="relative z-10 flex items-center gap-3 group-hover:text-orange transition-colors">
+              {t.expertBtn}
+              <i className="fa-solid fa-arrow-right-long group-hover:translate-x-2 transition-transform"></i>
+            </span>
           </Link>
         </div>
       </div>

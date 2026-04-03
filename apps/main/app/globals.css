@@ -10,7 +10,7 @@
   --accent-gold: #D4AF37;
   --bg-light: #FFF9F4;
 
-  /* Bootstrap Overrides */
+
   --bs-primary: #FF6B00 !important;
   --bs-primary-rgb: 255, 107, 0 !important;
   --bs-link-color: var(--primary) !important;
