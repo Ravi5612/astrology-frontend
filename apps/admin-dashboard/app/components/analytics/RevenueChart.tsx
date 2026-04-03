@@ -31,13 +31,21 @@ export function RevenueChart({ data }: RevenueChartProps) {
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={data}>
           <defs>
-            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorConsultation" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="colorProduct" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
               <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
             </linearGradient>
+            <linearGradient id="colorPuja" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+            </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis dataKey="month" stroke="#9ca3af" style={{ fontSize: "12px" }} />
+          <XAxis dataKey="date" stroke="#9ca3af" style={{ fontSize: "12px" }} />
           <YAxis stroke="#9ca3af" style={{ fontSize: "12px" }} />
           <Tooltip
             contentStyle={{
@@ -48,11 +56,30 @@ export function RevenueChart({ data }: RevenueChartProps) {
           />
           <Area
             type="monotone"
-            dataKey="revenue"
+            dataKey="consultation"
+            name="Consultation"
+            stroke="#f97316"
+            strokeWidth={2}
+            fillOpacity={1}
+            fill="url(#colorConsultation)"
+          />
+          <Area
+            type="monotone"
+            dataKey="product"
+            name="Product"
             stroke="#10b981"
             strokeWidth={2}
             fillOpacity={1}
-            fill="url(#colorRevenue)"
+            fill="url(#colorProduct)"
+          />
+          <Area
+            type="monotone"
+            dataKey="puja"
+            name="Puja"
+            stroke="#8b5cf6"
+            strokeWidth={2}
+            fillOpacity={1}
+            fill="url(#colorPuja)"
           />
         </AreaChart>
       </ResponsiveContainer>

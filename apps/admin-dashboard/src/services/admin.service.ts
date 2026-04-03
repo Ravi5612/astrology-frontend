@@ -40,6 +40,18 @@ export const getUserGrowthStats = async (days: number = 7): Promise<[any | null,
   return await api.get("/admin/analytics/user-growth", { params: { days } });
 };
 
+export const getRevenueTrend = async (days: number = 7): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/analytics/revenue-trend", { params: { days } });
+};
+
+export const getEarningsBreakdown = async (days: number = 7): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/analytics/earnings-breakdown", { params: { days } });
+};
+
+export const getTopExperts = async (limit: number = 5): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/analytics/top-experts", { params: { limit } });
+};
+
 // Coupons Management
 export const createCoupon = async (data: any): Promise<[any | null, any | null]> => {
   return await api.post("/admin/coupons", data);
