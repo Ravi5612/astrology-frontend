@@ -1,29 +1,27 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
+import { Phone, Video } from "lucide-react";
 import { callSocket } from "@/lib/socket";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import * as LucideIcons from "lucide-react";
-
-const { Phone, Video, Loader2 } = LucideIcons as any;
 
 export const CallNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
+    const registerExpert = useCallback(() => {
+        if (!user) return;
+        const expertId = user.profileId || user.id;
+        console.log("[CallSocket] Registering expert with ID:", expertId);
+        callSocket.emit('register_expert', { expertId }, (res: any) => {
+            console.log("[CallSocket] Registration response:", res);
+        });
+    }, [user]);
+
     useEffect(() => {
         if (!isAuthenticated || !user) return;
-
-        const expertId = user.profileId || user.id;
-
-        const registerExpert = () => {
-            console.log("[CallSocket] Registering expert with ID:", expertId);
-            callSocket.emit('register_expert', { expertId }, (res: any) => {
-                console.log("[CallSocket] Registration response:", res);
-            });
-        };
 
         if (!callSocket.connected) {
             console.log("[CallSocket] 🔌 Socket not connected, connecting to /call namespace...");
@@ -49,11 +47,10 @@ export const CallNotificationListener: React.FC = () => {
 
         const handleNewCall = (data: any) => {
             console.log("[CallSocket] 🚨 New CALL request received:", data);
-            const { session, token, roomName } = data;
+            const { session } = data;
             const callerName = session.user?.name || "A Client";
             const callType = session.type || 'audio';
 
-            // Show interactive toast
             toast.info(
                 (<div className="p-1">
                     <div className="flex items-center gap-3 mb-3">
@@ -96,7 +93,6 @@ export const CallNotificationListener: React.FC = () => {
                 }
             );
 
-            // Optional: Play ringtone
             const audio = new Audio('/sounds/ringtone.mp3');
             audio.play().catch(() => console.log("Audio play blocked by browser"));
         };
@@ -113,7 +109,7 @@ export const CallNotificationListener: React.FC = () => {
             callSocket.off('connect_error', onConnectError);
             callSocket.off('new_call_request', handleNewCall);
         };
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, registerExpert]);
 
     return null;
 };

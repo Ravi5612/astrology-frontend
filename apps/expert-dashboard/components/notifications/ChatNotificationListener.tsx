@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
+import { MessageSquare } from "lucide-react";
 import { chatSocket } from "@/lib/socket";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import * as LucideIcons from "lucide-react";
-
-const { MessageSquare } = LucideIcons as any;
 
 export const ChatNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
+
+    const registerExpert = useCallback(() => {
+        if (!user) return;
+        const registrationId = user.profileId || user.id;
+        console.log("[ChatNotificationDebug] Registering expert PROFILE ID:", registrationId);
+        chatSocket.emit('register_expert', { expertId: registrationId }, (res: any) => {
+            console.log("[ChatNotificationDebug] Registration acknowledgment:", res);
+        });
+    }, [user]);
 
     useEffect(() => {
         if (!isAuthenticated || !user) {
@@ -19,43 +26,28 @@ export const ChatNotificationListener: React.FC = () => {
             return;
         }
 
-        const registrationId = user.profileId || user.id;
-
-        const registerExpert = () => {
-            console.log("[ChatNotificationDebug] Registering expert PROFILE ID:", registrationId);
-            chatSocket.emit('register_expert', { expertId: registrationId }, (res: any) => {
-                console.log("[ChatNotificationDebug] Registration acknowledgment:", res);
-            });
-        };
-
         const setupSocket = () => {
             console.log("[ChatNotificationDebug] Setting up socket... Status:", chatSocket.connected ? "Connected" : "Disconnected");
 
             if (!chatSocket.connected) {
                 chatSocket.connect();
             } else {
-                // If already connected, register immediately
                 registerExpert();
             }
         };
 
         setupSocket();
 
-        // Ensure we re-register on reconnection (crucial for notifications)
         const onConnect = () => {
             console.log("[ChatNotificationDebug] Socket reconnected automatically. Re-registering expert...");
             registerExpert();
         };
 
-        chatSocket.on('connect', onConnect);
-
-        // Listen for new requests
         const handleNewRequest = (session: any) => {
             console.log("[ChatNotificationDebug] 🚨 New chat request RECEIVED:", session);
 
             const isFree = !!session.isFree;
 
-            // Show a custom toast with an action
             toast.info(
                 (<div>
                     <div className="flex items-center justify-between">
@@ -89,7 +81,7 @@ export const ChatNotificationListener: React.FC = () => {
                     </button>
                 </div>),
                 {
-                    position: "bottom-right", // Changed from top-right to bottom-right as per common dashboard UX
+                    position: "bottom-right",
                     autoClose: false,
                     closeOnClick: false,
                     draggable: false,
@@ -97,6 +89,7 @@ export const ChatNotificationListener: React.FC = () => {
             );
         };
 
+        chatSocket.on('connect', onConnect);
         chatSocket.on('new_chat_request', handleNewRequest);
 
         return () => {
@@ -104,7 +97,7 @@ export const ChatNotificationListener: React.FC = () => {
             chatSocket.off('new_chat_request', handleNewRequest);
             chatSocket.off('connect', onConnect);
         };
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, registerExpert]);
 
     return null;
 };

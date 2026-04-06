@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { X, Save, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { getProfile, updateProfile, updatePricing } from "@/lib/profile";
-import { Profile, CustomService } from "@/components/ProfileManagement/types";
+import { Profile, CustomService } from "@/components/profile-management/types";
 
 // ---------- Types ----------
 export interface ServiceModalService {

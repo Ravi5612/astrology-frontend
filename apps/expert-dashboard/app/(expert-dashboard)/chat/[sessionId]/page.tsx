@@ -13,20 +13,7 @@ const {
     MoreVertical, Power, MessageSquare, AlertCircle, X, MapPin
 } = LucideIcons as any;
 
-interface Message {
-    id: number;
-    senderId: number;
-    senderType: "user" | "expert" | "admin";
-    content: string;
-    type?: string;
-    attachmentUrl?: string;
-    attachmentType?: "image" | "document";
-    attachment_url?: string;
-    attachment_type?: string;
-    imageUrl?: string;
-    mediaUrl?: string;
-    createdAt?: string;
-}
+import { ChatMessage, ChatSessionStatus, PendingAttachment } from "@/types/chat";
 
 function ExpertChatRoomContent() {
     const params = useParams();
@@ -34,15 +21,17 @@ function ExpertChatRoomContent() {
     const sessionId = params.sessionId as string;
 
     const { user, isAuthenticated } = useAuthStore();
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [sessionStatus, setSessionStatus] = useState<'pending' | 'active' | 'completed'>('pending');
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [sessionStatus, setSessionStatus] = useState<ChatSessionStatus>('pending');
     const [timeLeft, setTimeLeft] = useState(0);
     const [elapsedTime, setElapsedTime] = useState(0); // Count-up timer
+    const [startedAt, setStartedAt] = useState<string | null>(null);
+    const [expiresAt, setExpiresAt] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState("");
     const [isActivating, setIsActivating] = useState(false);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [pendingAttachment, setPendingAttachment] = useState<{ url: string; type: "image" | "document"; name: string } | null>(null);
+    const [pendingAttachment, setPendingAttachment] = useState<PendingAttachment | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +59,9 @@ function ExpertChatRoomContent() {
                     setClientAvatar(sessionRes.user.profile_picture || sessionRes.user.avatar);
                 }
 
+                if (sessionRes.startedAt || sessionRes.started_at) setStartedAt(sessionRes.startedAt || sessionRes.started_at);
+                if (sessionRes.expiresAt || sessionRes.expires_at) setExpiresAt(sessionRes.expiresAt || sessionRes.expires_at);
+
                 if (sessionRes.remainingSeconds !== undefined) {
                     setTimeLeft(sessionRes.remainingSeconds);
                 }
@@ -96,7 +88,7 @@ function ExpertChatRoomContent() {
         const registrationId = user.profileId || user.id;
         chatSocket.emit('register_expert', { expertId: registrationId });
 
-        chatSocket.on('new_message', (msg: Message) => {
+        chatSocket.on('new_message', (msg: ChatMessage) => {
             console.log("[ExpertChatDebug] New message received:", msg);
             setMessages((prev) => [...prev, msg]);
         });
@@ -104,6 +96,9 @@ function ExpertChatRoomContent() {
         chatSocket.on('session_activated', (session: any) => {
             console.log("[ExpertChatDebug] Session activated socket event:", session);
             setSessionStatus('active');
+
+            if (session.startedAt || session.started_at) setStartedAt(session.startedAt || session.started_at);
+            if (session.expiresAt || session.expires_at) setExpiresAt(session.expiresAt || session.expires_at);
 
             if (session.remainingSeconds !== undefined) {
                 setTimeLeft(session.remainingSeconds);
@@ -142,11 +137,30 @@ function ExpertChatRoomContent() {
     useEffect(() => {
         if (sessionStatus !== 'active') return;
         const timer = setInterval(() => {
-            setTimeLeft((prev) => (prev <= 0 ? 0 : prev - 1));
-            setElapsedTime((prev) => prev + 1);
+            const now = Date.now();
+            
+            if (startedAt) {
+                const s = new Date(startedAt).getTime();
+                if (!isNaN(s)) {
+                    const elapsed = Math.floor((now - s) / 1000);
+                    setElapsedTime(elapsed > 0 ? elapsed : 0);
+                }
+            } else {
+                setElapsedTime((prev) => prev + 1);
+            }
+
+            if (expiresAt) {
+                const e = new Date(expiresAt).getTime();
+                if (!isNaN(e)) {
+                    const left = Math.floor((e - now) / 1000);
+                    setTimeLeft(left > 0 ? left : 0);
+                }
+            } else {
+                setTimeLeft((prev) => (prev <= 0 ? 0 : prev - 1));
+            }
         }, 1000);
         return () => clearInterval(timer);
-    }, [sessionStatus]);
+    }, [sessionStatus, startedAt, expiresAt]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

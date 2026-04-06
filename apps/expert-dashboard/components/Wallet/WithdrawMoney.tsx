@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Landmark, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
-import { BankAccount } from "./types";
+import { BankAccount } from "@/types/wallet";
 import { toast } from "react-toastify";
 import Button from "../ui/Button";
 
@@ -8,9 +8,10 @@ interface WithdrawMoneyProps {
     availableBalance: number;
     bankAccounts: BankAccount[];
     onWithdraw: (amount: number, bankAccountId: string) => void;
+    isLoading?: boolean;
 }
 
-export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdraw }: WithdrawMoneyProps) {
+export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdraw, isLoading }: WithdrawMoneyProps) {
     const [amount, setAmount] = useState<string>("");
     const [selectedBankId, setSelectedBankId] = useState<string>(
         bankAccounts.find(b => b.is_primary)?.id || bankAccounts[0]?.id || ""

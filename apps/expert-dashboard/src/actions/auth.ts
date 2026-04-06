@@ -100,3 +100,23 @@ export async function expertVerifyEmailAction(token: string) {
 
     return { success: true, user: data?.user, message: data?.message };
 }
+
+export async function expertForgotPasswordAction(email: string, origin: string) {
+    const [data, error] = await api.post<any>(`/auth/forgot/password`, { email, origin });
+
+    if (error) {
+        return { error: error.body?.message || error.message || "Failed to send reset link" };
+    }
+
+    return { success: true, message: "Password reset link sent successfully" };
+}
+
+export async function expertResetPasswordAction(password: string, token: string) {
+    const [data, error] = await api.post<any>(`/auth/reset/password?token=${token}`, { password });
+
+    if (error) {
+        return { error: error.body?.message || error.message || "Failed to reset password" };
+    }
+
+    return { success: true, message: "Password reset successful" };
+}

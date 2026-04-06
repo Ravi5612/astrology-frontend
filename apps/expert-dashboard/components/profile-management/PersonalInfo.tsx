@@ -1,6 +1,6 @@
 import React from "react";
 import { Edit3, Save, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
-import { Profile, Gender } from "./types";
+import { Profile, Gender } from "@/types/profile";
 import Button from "../ui/Button";
 import { Avatar } from "@repo/ui";
 

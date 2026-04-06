@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Briefcase, Plus, Trash2, Calendar, Building } from "lucide-react";
-import { ExperienceItem } from "./types";
+import { ExperienceItem } from "@/types/profile";
 import Button from "../ui/Button";
 
 interface DetailedExperienceProps {

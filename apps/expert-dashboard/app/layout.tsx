@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { CLIENT_API_URL } from '@/lib/config';
+import { ReactQueryProvider } from '@/src/providers/ReactQueryProvider';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
@@ -60,10 +61,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <AuthInitializer initialUser={initialUser}>
-          {children}
-          <ToastContainer position="top-right" />
-        </AuthInitializer>
+        <ReactQueryProvider>
+          <AuthInitializer initialUser={initialUser}>
+            {children}
+            <ToastContainer position="top-right" />
+          </AuthInitializer>
+        </ReactQueryProvider>
       </body>
     </html>
   )

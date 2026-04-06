@@ -1,4 +1,4 @@
-import ProfileManagement from '@/components/ProfileManagement/ProfileManagement'
+import ProfileManagement from '@/components/profile-management/ProfileManagement'
 import React from 'react'
 
 const page = () => {

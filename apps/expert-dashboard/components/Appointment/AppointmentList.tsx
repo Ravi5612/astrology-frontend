@@ -198,7 +198,7 @@ function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, 
         // Standard sessions usually handle status via specialized endpoints
         const endpoint = appt.service.includes("Chat") ? `/chat/session/${appt.id}/status` : `/call/session/${appt.id}/status`;
         
-        const [res, error] = await apiClientSafe.patch(endpoint, {
+        const [res, error] = await api.patch(endpoint, {
             status
         });
 

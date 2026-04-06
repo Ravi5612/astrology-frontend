@@ -12,8 +12,8 @@ const ExpertListHeader: React.FC<ExpertListHeaderProps> = ({
     selectedSpecialization,
     setSelectedSpecialization,
     hasActiveFilters,
-    filterModalId,
-    sortModalId,
+    onOpenFilter,
+    onOpenSort,
     resetFilters,
     scrollTabs,
     scrollContainerRef,
@@ -103,38 +103,45 @@ const ExpertListHeader: React.FC<ExpertListHeaderProps> = ({
         <div className="flex flex-col lg:flex-row items-center gap-6 mb-8 text-white">
             {/* Search Box */}
             <div className="w-full lg:w-5/12">
-                <div className="flex w-full shadow-lg">
+                <div className="flex w-full shadow-lg h-[50px]">
                     <input
                         type="text"
-                        className="w-full px-6 py-3 border-0 rounded-l-full outline-none text-base bg-white text-black"
+                        className="flex-1 px-6 border-0 rounded-l-full outline-none text-base bg-white text-black h-full"
                         placeholder={t.expertSection.searchPlaceholder}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button type="button" className="px-8 py-3 bg-orange text-white rounded-r-full font-bold text-base hover:opacity-90 transition-all">
+                    <button type="button" className="px-8 bg-orange text-white rounded-r-full font-bold text-base hover:opacity-90 transition-all h-full shrink-0">
                         {t.expertSection.searchBtn}
                     </button>
                 </div>
             </div>
 
-            {/* Filter & Reset */}
-            <div className="w-full lg:w-2/12 flex items-center justify-center lg:justify-end gap-6">
+            {/* Filter & Reset & Sort */}
+            <div className="w-full lg:w-3/12 flex items-center justify-center lg:justify-end gap-6 h-[50px]">
                 <button
                     type="button"
-                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all relative"
-                    data-bs-toggle="modal"
-                    data-bs-target={`#${filterModalId}`}
+                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all relative whitespace-nowrap h-full"
+                    onClick={onOpenFilter}
                 >
                     <i className="fa-solid fa-filter text-orange"></i> {t.expertSection.filterBtn}
                     {hasActiveFilters && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-orange rounded-full"></span>
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-orange rounded-full animate-pulse"></span>
                     )}
+                </button>
+
+                <button
+                    type="button"
+                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all whitespace-nowrap h-full"
+                    onClick={onOpenSort}
+                >
+                    <i className="fa-solid fa-sort text-orange"></i> {t.expertSection.sortByTitle}
                 </button>
 
                 {hasActiveFilters && (
                     <button
                         type="button"
-                        className="flex items-center gap-2 text-red-400 font-medium hover:text-red-500 transition-all text-sm"
+                        className="flex items-center gap-2 text-red-100 font-medium hover:text-red-300 transition-all text-sm whitespace-nowrap h-full"
                         onClick={resetFilters}
                     >
                         <i className="fa-solid fa-xmark"></i> {t.expertSection.applyBtns.resetAll}

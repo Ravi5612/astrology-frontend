@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Calendar as CalendarIcon, Plus, X } from "lucide-react";
-import { LeaveDate } from "./types";
+import { LeaveDate } from "@/types/profile";
 import Button from "../ui/Button";
 
 interface LeaveCalendarProps {

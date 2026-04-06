@@ -31,10 +31,10 @@ const securityHeaders = [
       // Default: only same origin
       "default-src 'self'",
 
-      // Scripts: self + Razorpay + Google APIs + Bootstrap (inline eval for Next.js)
+      // Scripts: self + Razorpay + Google APIs + Frameworks (inline eval for Next.js)
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://translate.googleapis.com https://www.youtube.com https://s.ytimg.com",
 
-      // Styles: self + inline (Tailwind/Bootstrap) + Google Fonts
+      // Styles: self + inline (Tailwind) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
 
       // Fonts: self + Google Fonts + FontAwesome + data URIs (for embedded fonts in libs like Chart.js)

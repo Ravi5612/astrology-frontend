@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CreditCard, Edit3, Save, ChevronDown, ChevronUp, Trash2, Plus, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { Profile } from "@/types/profile";
 import {
     getBankAccounts,
     addBankAccount,

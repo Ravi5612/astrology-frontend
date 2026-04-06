@@ -78,14 +78,7 @@ export default function ChatFooter({
                     <Send className={`w-6 h-6 md:w-7 md:h-7 relative z-10 transition-transform ${inputValue.trim() || pendingAttachment ? "group-hover:-translate-y-1 group-hover:translate-x-1" : ""}`} />
                 </button>
             </div>
-            <div className="mt-5 text-center flex items-center justify-center gap-4">
-                <div className="flex items-center gap-2 opacity-30">
-                    <LucideIcons.Shield className="w-3 h-3 text-[#fd6410] fill-[#fd6410]" />
-                    <span className={`text-[9px] font-black tracking-widest uppercase ${isDarkMode ? 'text-white' : 'text-black'}`}>Real-time spiritual connection</span>
-                </div>
-                <div className="w-1 h-1 bg-current opacity-10 rounded-full"></div>
-                <p className={`text-[9px] font-black tracking-widest uppercase opacity-30 ${isDarkMode ? 'text-white' : 'text-black'}`}>End-to-End Encrypted</p>
-            </div>
+
         </footer>
     );
 }

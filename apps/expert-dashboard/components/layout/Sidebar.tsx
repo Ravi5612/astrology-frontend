@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback, useState, Fragment } from "react";
+import React, { memo, useCallback, useState, Fragment, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -17,7 +17,7 @@ import {
   Wallet,
   Bell,
 } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 import { useAuthStore } from "@/store/useAuthStore";
 import expertMenu from "@/public/data/expert_menu.json";
 
@@ -157,27 +157,32 @@ export const Sidebar: React.FC<SidebarProps> = memo(
   ({ isOpen, toggleSidebar }) => {
     const pathname = usePathname();
     const router = useRouter();
-    const { logout } = useAuthStore();
+    const { logout, user } = useAuthStore();
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
       await logout();
       router.push('/');
-    };
+    }, [logout, router]);
 
-    const menuItems: MenuItem[] = expertMenu.menuItems.map((item: any) => ({
-      ...item,
-      icon: IconMap[item.icon] || User,
-      onClick: item.isLogout ? handleLogout : undefined,
-      submenu: item.submenu?.map((sub: any) => ({
-        ...sub,
-        icon: IconMap[sub.icon] || User,
-        onClick: sub.isLogout ? handleLogout : undefined,
-      })),
-    }));
+    const menuItems = useMemo((): MenuItem[] => {
+      return expertMenu.menuItems.map((item: any) => ({
+        ...item,
+        icon: IconMap[item.icon] || User,
+        onClick: item.isLogout ? handleLogout : undefined,
+        submenu: item.submenu?.map((sub: any) => ({
+          ...sub,
+          icon: IconMap[sub.icon] || User,
+          onClick: sub.isLogout ? handleLogout : undefined,
+        })),
+      }));
+    }, [handleLogout]);
 
-    const initialOpenSubmenu = menuItems.find(
-      (item) => item.submenu && item.submenu.some((sub) => sub.href === pathname)
-    )?.label || null;
+    const initialOpenSubmenu = useMemo(() => {
+      return menuItems.find(
+        (item) => item.submenu && item.submenu.some((sub) => sub.href === pathname)
+      )?.label || null;
+    }, [menuItems, pathname]);
+
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(
       initialOpenSubmenu
     );
@@ -185,6 +190,8 @@ export const Sidebar: React.FC<SidebarProps> = memo(
     const handleToggleSubmenu = useCallback((label: string) => {
       setOpenSubmenu((prev) => (prev === label ? null : label));
     }, []);
+
+    const kycStatus = (user?.kycStatus || "").toLowerCase();
 
     return (
       <>
@@ -204,7 +211,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(
           )}
           aria-label="Sidebar navigation"
         >
-          <div className="flex items-center justify-between p-6 bg-white border-b border-orange-100 shrink-0">
+          <div className="flex items-center justify-between p-6 bg-white border-b border-orange-100 shrink-0 sticky top-0 z-20">
             <img
               src="/images/web-logo.png"
               alt="Logo"
@@ -233,30 +240,23 @@ export const Sidebar: React.FC<SidebarProps> = memo(
           </nav>
 
           {/* Verification Status Banner (Sidebar Bottom) */}
-          {(() => {
-            const { user } = useAuthStore();
-            const status = (user?.kycStatus || "").toLowerCase();
-
-            if (status !== 'rejected') return null;
-
-            return (
-              <div className="mx-4 mb-8 bg-black/20 rounded-2xl p-4 border border-white/10">
-                <div className="flex items-center gap-2 text-rose-300 mb-2">
-                  <X className="w-4 h-4 shrink-0" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Profile Rejected</span>
-                </div>
-                <p className="text-[10px] text-white/70 line-clamp-2 mb-3 italic">
-                  "{user?.rejectionReason || user?.profile_expert?.rejectionReason || "Check profile"}"
-                </p>
-                <Link
-                  href="/dashboard/profilemanagement"
-                  className="block w-full py-2 bg-rose-500 text-white text-center rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-all shadow-lg shadow-rose-900/40"
-                >
-                  Edit profile
-                </Link>
+          {kycStatus === 'rejected' && (
+            <div className="mx-4 mb-8 bg-black/20 rounded-2xl p-4 border border-white/10">
+              <div className="flex items-center gap-2 text-rose-300 mb-2">
+                <X className="w-4 h-4 shrink-0" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Profile Rejected</span>
               </div>
-            );
-          })()}
+              <p className="text-[10px] text-white/70 line-clamp-2 mb-3 italic">
+                "{user?.rejectionReason || user?.profile_expert?.rejectionReason || "Check profile"}"
+              </p>
+              <Link
+                href="/dashboard/profilemanagement"
+                className="block w-full py-2 bg-rose-500 text-white text-center rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-all shadow-lg shadow-rose-900/40"
+              >
+                Edit profile
+              </Link>
+            </div>
+          )}
         </aside>
       </>
     );
@@ -265,4 +265,4 @@ export const Sidebar: React.FC<SidebarProps> = memo(
 
 Sidebar.displayName = "Sidebar";
 
-
+Sidebar.displayName = "Sidebar";

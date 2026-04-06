@@ -1,6 +1,6 @@
 import React from "react";
 import { User, Clock, Edit3, Save, Plus, X, DollarSign, Briefcase } from "lucide-react";
-import { Profile } from "./types";
+import { Profile } from "@/types/profile";
 import Button from "../ui/Button";
 
 interface ExpertiseAvailabilityProps {

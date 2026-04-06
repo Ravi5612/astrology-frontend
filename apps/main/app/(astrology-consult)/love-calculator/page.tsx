@@ -12,7 +12,6 @@ import AdvancedForm from "./advanced-form.component";
 import Result from "./result.component";
 import Educational from "./educational.component";
 import MoreServices from "./more-services.component";
-import { premiumStyles } from "./utils";
 import {
   ConsultPersonDetails,
   LoveCalculatorResult,
@@ -191,37 +190,44 @@ const LoveCalculatorPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf7] selection:bg-[#fd6410]/20">
-      <style dangerouslySetInnerHTML={{ __html: premiumStyles }} />
-
+    <div className="min-h-screen bg-[#FFF9F4] selection:bg-orange/20 overflow-hidden font-outfit">
+      
       <HeroComponent activeMode={activeMode} setActiveMode={setActiveMode} />
 
-      <section className="py-24 relative overflow-hidden">
-        <div className="container px-6">
-          <div className="glass-card rounded-[3rem] p-8 md:p-16 shadow-[0_20px_50px_rgba(48,17,24,0.1)] border-t-4 border-t-[#fd6410]/50 relative overflow-hidden">
-            {activeMode === "simple" ? (
-              <SimpleForm
-                t={t}
-                loading={loading}
-                simpleData={simpleData}
-                handleSimpleInputChange={handleSimpleInputChange}
-                calculateSimpleLove={calculateSimpleLove}
-              />
-            ) : (
-              <AdvancedForm
-                t={t}
-                loading={loading}
-                advancedData={advancedData}
-                handleAdvancedInputChange={handleAdvancedInputChange}
-                handleLocationSelect={handleLocationSelect}
-                calculateAdvancedMatch={calculateAdvancedMatch}
-              />
-            )}
+      <section className="py-24 relative">
+        {/* Decorative Background for Section */}
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#301118]/10 to-transparent pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 w-full animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="bg-white/80 backdrop-blur-3xl rounded-[4rem] p-1 md:p-2 shadow-[0_40px_100px_rgba(48,17,24,0.05)] border border-slate-100 relative overflow-hidden">
+             {/* Glowing Border effect */}
+             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400"></div>
+             
+             <div className="p-8 md:p-20">
+                {activeMode === "simple" ? (
+                  <SimpleForm
+                    t={t}
+                    loading={loading}
+                    simpleData={simpleData}
+                    handleSimpleInputChange={handleSimpleInputChange}
+                    calculateSimpleLove={calculateSimpleLove}
+                  />
+                ) : (
+                  <AdvancedForm
+                    t={t}
+                    loading={loading}
+                    advancedData={advancedData}
+                    handleAdvancedInputChange={handleAdvancedInputChange}
+                    handleLocationSelect={handleLocationSelect}
+                    calculateAdvancedMatch={calculateAdvancedMatch}
+                  />
+                )}
+             </div>
           </div>
         </div>
       </section>
 
-      <div ref={resultsRef}>
+      <div ref={resultsRef} className="scroll-mt-24">
         <Result result={result} t={t} />
       </div>
 

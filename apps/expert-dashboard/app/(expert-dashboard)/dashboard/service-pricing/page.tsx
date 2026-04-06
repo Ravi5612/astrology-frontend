@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Edit3, Gift, Loader2, Trash2, Plus, MessageSquare, Phone, Video, Sparkles } from "lucide-react";
 import { getProfile, updateProfile, deletePujaApi } from "@/lib/profile";
-import { Profile, PujaService } from "@/components/ProfileManagement/types";
+import { Profile, PujaService } from "@/components/profile-management/types";
 import { PujaModal } from "@/components/shared/PujaModal";
 import { toast } from "react-toastify";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";

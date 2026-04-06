@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, XCircle, Landmark } from "lucide-react";
-import { WalletTransaction } from "./types";
+import { WalletTransaction } from "@/types/wallet";
 import Button from "../ui/Button";
 
 interface WalletTableProps {

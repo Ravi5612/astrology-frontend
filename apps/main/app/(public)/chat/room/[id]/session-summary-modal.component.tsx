@@ -41,10 +41,10 @@ export default function SessionSummaryModal({
     if (!showModal) return null;
 
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 ${isDarkMode ? 'bg-[#0a0505]/95' : 'bg-black/60'} backdrop-blur-xl animate-in fade-in duration-500`}>
-            <div className={`${isDarkMode ? 'bg-[#1a0c0c]' : 'bg-white'} w-full max-w-md rounded-[32px] overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-[#fd6410]/20'} shadow-[0_0_50px_rgba(253,100,16,0.15)] animate-in zoom-in-95 duration-300 relative max-h-[90vh] flex flex-col`}>
-                <div className="p-6 md:p-8 flex flex-col items-center text-center relative z-10 overflow-y-auto custom-scrollbar">
-
+        <div className={`fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 md:p-6 md:pt-24 ${isDarkMode ? 'bg-[#0a0505]/95' : 'bg-black/60'} backdrop-blur-xl animate-in fade-in duration-500 overflow-y-auto`}>
+            <div className={`${isDarkMode ? 'bg-[#1a0c0c]' : 'bg-white'} w-full max-w-md my-auto max-h-[calc(100vh-7rem)] rounded-[32px] overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-[#fd6410]/20'} shadow-[0_0_50px_rgba(253,100,16,0.15)] animate-in zoom-in-95 duration-300 relative shrink-0 flex flex-col`}>
+                <div className="p-6 md:p-8 flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full min-h-0">
+                    <div className="flex flex-col items-center text-center w-full">
                     <h2 className={`text-2xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-[#2A0A0A]'} tracking-tight uppercase`}>
                         {sessionSummary?.status === 'expired' ? 'Session Expired' : sessionSummary?.status === 'terminated' ? 'Admin Terminated Session' : 'Session Summary'}
                     </h2>
@@ -195,6 +195,7 @@ export default function SessionSummaryModal({
                             </button>
                         </div>
                     )}
+                    </div>
                 </div>
             </div>
         </div>

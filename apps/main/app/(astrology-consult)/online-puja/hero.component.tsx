@@ -10,51 +10,54 @@ const HeroSection = () => {
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   return (
-    <section className="banner-part light-back">
-      <div className="overlay-hero">
-        <div className="container">
-          <div className="contant-hero">
-            <div className="row align-items-center">
-              <div className="col-lg-7 col-md-12">
-                <div className="hero-card shine">
-                  <div className="card-z">
-                    <span className="aib-trust-badge" style={fontStyle}>
-                      {t.badge}
-                    </span>
-                    <h1 style={fontStyle}>{t.title}</h1>
-                    <h4 className="card-title" style={fontStyle}>
-                      {t.subtitle}
-                    </h4>
-                    <p style={fontStyle}>
-                      {t.description}
-                    </p>
-                    <ul className="list-check">
-                      {t.features.map((feature, i) => (
-                        <li key={i} style={fontStyle}>
-                          <i className="fa-solid fa-check"></i> {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <button className="btn-link wfc mt-4 mb-4 border-0 bg-transparent text-[#fd6410] font-bold uppercase tracking-widest text-xs" style={fontStyle}>
-                      {t.btnBook}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-5 col-md-12 text-center">
-                <div className="right-illus">
-                  <Image
-                    src="/images/horoscope-round2.png"
-                    alt="Zodiac"
-                    width={500}
-                    height={500}
-                    className="w-[90%] mx-auto absolute z-0 left-[10%] top-0 animate-[spin_30s_linear_infinite] opacity-30"
-                  />
-                  <div className="relative z-10 p-5">
-                    <div className="w-[180px] h-[180px] bg-white rounded-full flex items-center justify-center border-4 border-[#fd6410] shadow-2xl mx-auto">
-                      <FaPray className="text-[#fd6410] text-7xl animate-pulse" />
-                    </div>
-                  </div>
+    <section className="relative bg-[#301118] text-white overflow-hidden">
+      {/* Background Overlay to match 'overlay-hero' */}
+      <div className="absolute inset-0 bg-black/20 pointer-events-none"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 py-20 relative z-10">
+        <div className="flex flex-wrap items-center -mx-4">
+          {/* Left Content (col-lg-7) */}
+          <div className="w-full lg:w-7/12 px-4 mb-12 lg:mb-0">
+            <div className="relative">
+              <span className="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6 shadow-sm" style={fontStyle}>
+                {t.badge}
+              </span>
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight" style={fontStyle}>
+                {t.title}
+              </h1>
+              <h4 className="text-xl md:text-2xl font-bold text-orange-100/80 mb-6" style={fontStyle}>
+                {t.subtitle}
+              </h4>
+              <p className="text-lg text-orange-100/60 mb-8 max-w-xl" style={fontStyle}>
+                {t.description}
+              </p>
+              <ul className="space-y-4 mb-10">
+                {t.features.map((feature: string, i: number) => (
+                  <li key={i} className="flex items-center gap-3 text-orange-100/70 font-medium" style={fontStyle}>
+                    <i className="fa-solid fa-check text-orange-500"></i> {feature}
+                  </li>
+                ))}
+              </ul>
+              <button className="inline-flex items-center gap-2 text-orange-500 font-black uppercase tracking-[0.2em] text-xs hover:text-orange-400 transition-colors bg-transparent border-0" style={fontStyle}>
+                {t.btnBook}
+                <i className="fa-solid fa-arrow-right-long"></i>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Illustration (col-lg-5) */}
+          <div className="w-full lg:w-5/12 px-4 text-center">
+            <div className="relative inline-block w-full max-w-[500px]">
+              <Image
+                src="/images/horoscope-round2.png"
+                alt="Zodiac"
+                width={500}
+                height={500}
+                className="w-full h-auto animate-[spin_60s_linear_infinite] opacity-30 filter invert pointer-events-none"
+              />
+              <div className="absolute inset-0 flex items-center justify-center p-8">
+                <div className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 bg-white rounded-full flex items-center justify-center border-4 border-orange-500 shadow-[0_20px_50px_rgba(253,100,16,0.3)] animate-pulse">
+                  <FaPray className="text-orange-500 text-6xl md:text-8xl" />
                 </div>
               </div>
             </div>

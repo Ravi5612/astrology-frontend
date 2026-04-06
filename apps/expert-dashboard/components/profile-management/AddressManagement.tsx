@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MapPin, Plus, X, Edit3, Save, Trash2 } from "lucide-react";
-import { Profile, Address } from "./types";
+import { Profile, Address } from "@/types/profile";
 import Button from "../ui/Button";
 
 interface AddressManagementProps {

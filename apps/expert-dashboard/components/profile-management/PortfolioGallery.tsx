@@ -3,6 +3,7 @@ import { Image as ImageIcon, Video, Trash2, Plus, Upload, Link as LinkIcon, X, P
 import Image from "next/image";
 import { toast } from "react-toastify";
 import Button from "../ui/Button";
+import { Profile } from "@/types/profile";
 
 interface PortfolioGalleryProps {
     images: string[];

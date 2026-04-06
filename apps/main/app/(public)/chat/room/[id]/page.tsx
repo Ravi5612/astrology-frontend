@@ -35,6 +35,7 @@ function ChatRoomContent() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [sessionStatus, setSessionStatus] = useState<'pending' | 'active' | 'completed'>('pending');
     const [expertData, setExpertData] = useState<Expert | null>(null);
+    const [startedAt, setStartedAt] = useState<string | null>(null);
     const [expiresAt, setExpiresAt] = useState<string | null>(null);
     const [isFree, setIsFree] = useState<boolean>(false);
     const [freeMinutes, setFreeMinutes] = useState<number>(0);
@@ -84,7 +85,21 @@ function ChatRoomContent() {
             }
 
             if (data.session.status === 'active') {
-                setMessages(data.session.messages || []);
+                if (data.session.expiresAt || data.session.expires_at) setExpiresAt(data.session.expiresAt || data.session.expires_at);
+                if (data.session.startedAt || data.session.started_at) setStartedAt(data.session.startedAt || data.session.started_at);
+                
+                const currentSessionId = sessionId || data.session.id;
+                if (currentSessionId) {
+                    const [historyRes, historyErr] = await http.get<any>(`/chat/history/${currentSessionId}`);
+                    if (!historyErr && historyRes) {
+                        setMessages(historyRes);
+                    } else {
+                        setMessages(data.session.messages || []);
+                    }
+                } else {
+                    setMessages(data.session.messages || []);
+                }
+                
                 setElapsedTime(data.session.elapsedSeconds ?? 0);
                 setTimeLeft(data.session.remainingSeconds ?? 0);
             }
@@ -115,15 +130,11 @@ function ChatRoomContent() {
 
         chatSocket.on('session_activated', (dataValue: any) => {
             setSessionStatus('active');
-            // Backend sends remainingSeconds directly — use it to avoid NaN from missing expiresAt
-            if (dataValue.remainingSeconds !== undefined) {
-                setTimeLeft(dataValue.remainingSeconds);
-                setElapsedTime(dataValue.elapsedSeconds ?? 0);
-            } else {
-                const now = new Date().getTime();
-                const end = new Date(dataValue.expiresAt || dataValue.expires_at).getTime();
-                if (!isNaN(end)) setTimeLeft(Math.floor((end - now) / 1000));
-            }
+            if (dataValue.startedAt || dataValue.started_at) setStartedAt(dataValue.startedAt || dataValue.started_at);
+            if (dataValue.expiresAt || dataValue.expires_at) setExpiresAt(dataValue.expiresAt || dataValue.expires_at);
+            
+            if (dataValue.remainingSeconds !== undefined) setTimeLeft(dataValue.remainingSeconds);
+            if (dataValue.elapsedSeconds !== undefined) setElapsedTime(dataValue.elapsedSeconds);
         });
 
         chatSocket.on('session_ended', (summary: ChatSession) => {
@@ -142,12 +153,9 @@ function ChatRoomContent() {
         chatSocket.on('paid_continuation_confirmed', (data: any) => {
             setShowFreeEndPrompt(false);
             setIsFree(false);
+            if (data.expiresAt || data.expires_at) setExpiresAt(data.expiresAt || data.expires_at);
             if (data.remainingSeconds !== undefined) {
                 setTimeLeft(data.remainingSeconds);
-            } else {
-                const now = new Date().getTime();
-                const end = new Date(data.expiresAt || data.expires_at).getTime();
-                if (!isNaN(end)) setTimeLeft(Math.floor((end - now) / 1000));
             }
             toast.success("Consultation continued as paid session");
         });
@@ -166,12 +174,31 @@ function ChatRoomContent() {
         if (sessionStatus !== 'active') return;
 
         const timer = setInterval(() => {
-            setElapsedTime(prev => prev + 1);
-            setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
+            const now = Date.now();
+            
+            if (startedAt) {
+                const s = new Date(startedAt).getTime();
+                if (!isNaN(s)) {
+                    const elapsed = Math.floor((now - s) / 1000);
+                    setElapsedTime(elapsed > 0 ? elapsed : 0);
+                }
+            } else {
+                setElapsedTime(prev => prev + 1);
+            }
+
+            if (expiresAt) {
+                const e = new Date(expiresAt).getTime();
+                if (!isNaN(e)) {
+                    const left = Math.floor((e - now) / 1000);
+                    setTimeLeft(left > 0 ? left : 0);
+                }
+            } else {
+                setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
+            }
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [sessionStatus]);
+    }, [sessionStatus, startedAt, expiresAt]);
 
     useEffect(() => {
         if (showFreeEndPrompt && continuationTimer > 0) {
@@ -191,7 +218,7 @@ function ChatRoomContent() {
     const formatTime = (seconds: number) => {
         const mins = Math.floor(Math.abs(seconds) / 60);
         const secs = Math.abs(seconds) % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
     const handleSendMessage = () => {

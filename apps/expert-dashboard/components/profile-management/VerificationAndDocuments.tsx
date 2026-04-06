@@ -1,6 +1,23 @@
 import React, { useRef, useState } from "react";
-import { Shield, CheckCircle2, FileText, Upload, Trash2, File as FileIcon, Award, ChevronRight, ChevronDown, ChevronUp, CreditCard, UserSquare2, X } from "lucide-react";
-import { DocumentItem } from "./types";
+import { 
+    Shield, 
+    CheckCircle2, 
+    FileText, 
+    Upload, 
+    Trash2, 
+    File as FileIcon, 
+    Award, 
+    ChevronRight, 
+    ChevronDown, 
+    ChevronUp, 
+    CreditCard, 
+    UserSquare2, 
+    X,
+    FileCheck,
+    ShieldAlert,
+    Plus
+} from "lucide-react";
+import { DocumentItem } from "@/types/profile";
 import Button from "../ui/Button";
 
 interface VerificationAndDocumentsProps {

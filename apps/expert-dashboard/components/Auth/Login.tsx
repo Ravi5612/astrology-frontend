@@ -1,245 +1,229 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import { Lock, User, Eye, EyeOff } from "lucide-react";
-import NextImage from "next/image";
-import NextLink from "next/link";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
-import { Button } from "@repo/ui";
+import { Lock, Mail, Eye, EyeOff, LogIn, ShieldCheck } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 
-const Image = NextImage as any;
-const Link = NextLink as any;
-const UserIcon = User as any;
-const LockIcon = Lock as any;
-const EyeIcon = Eye as any;
-const EyeOffIcon = EyeOff as any;
-
+import { Button } from "@repo/ui";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LoginSchema, LoginFormData } from "@/types/auth";
 import { expertLoginAction } from "@/src/actions/auth";
-
 import { CLIENT_API_URL } from "@/lib/config";
-const API_URL = CLIENT_API_URL;
+
+// ─── Sub-Components ──────────────────────────────────────────────────────────
+
+const BrandingSection = () => (
+  <div className="relative hidden lg:block h-full min-h-[600px]">
+    <div className="absolute inset-0 bg-yellow-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
+      <div className="relative w-56 h-56 mb-8 drop-shadow-2xl animate-float">
+        <Image
+          src="/images/Expert.png"
+          alt="Expert Community"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
+      <h1 className="text-4xl font-black mb-4 tracking-tight">Welcome Back</h1>
+      <p className="text-white/80 font-medium max-w-sm">
+        Connect with seekers, share your cosmic wisdom, and grow your spiritual practice.
+      </p>
+      
+      <div className="mt-12 grid grid-cols-2 gap-4 w-full max-w-xs">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
+          <p className="text-2xl font-black">50k+</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Seekers</p>
+        </div>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
+          <p className="text-2xl font-black">4.9/5</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Rating</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter();
-    const { login } = useAuthStore();
-    const [isMounted, setIsMounted] = React.useState(false);
+  const router = useRouter();
+  const { login } = useAuthStore();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-    React.useEffect(() => {
-        setIsMounted(true);
-        const params = new URLSearchParams(window.location.search);
-        const errorParam = params.get("error");
-        if (errorParam) {
-            const message = errorParam === 'google_auth_failed' ? 'Google login failed.' : decodeURIComponent(errorParam);
-            setError(message);
-            toast.error(message);
-            // Clean up URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    }, []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
+  });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-        setLoading(true);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const errorParam = params.get("error");
+    if (errorParam) {
+      const message = errorParam === 'google_auth_failed' ? 'Google login failed.' : decodeURIComponent(errorParam);
+      setServerError(message);
+      toast.error(message);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
-        try {
-            const result = await expertLoginAction({ email, password });
+  const onSubmit = async (data: LoginFormData) => {
+    setLoading(true);
+    setServerError("");
 
-            if (result.success) {
-                // Initial login in store (profile will be fetched by AuthInitializer)
-                await login("", result.user);
-                toast.success("Login successful!");
-                router.push("/dashboard");
-            } else {
-                setError(result.error || "Login failed");
-            }
-        } catch (err: any) {
-            console.error("Login error:", err);
-            setError("An unexpected error occurred");
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      const result = await expertLoginAction(data);
 
-    const handleGoogleLogin = () => {
-        const baseUrl = API_URL.replace(/\/api\/v1\/?$/, "");
-        const redirectUri = window.location.origin;
-        window.location.href = `${baseUrl}/api/v1/auth/google/login?role=expert&redirect_uri=${redirectUri}`;
-    };
+      if (result.success) {
+        await login("", result.user);
+        toast.success("Welcome back, Expert!");
+        router.push("/dashboard");
+      } else {
+        setServerError(result.error || "Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setServerError("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <>
-            <Head>
-                <title>Expert Login - Astrology in Bharat</title>
-            </Head>
+  const handleGoogleLogin = () => {
+    const baseUrl = CLIENT_API_URL.replace(/\/api\/v1\/?$/, "");
+    const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
+    window.location.href = `${baseUrl}/api/v1/auth/google/login?role=expert&redirect_uri=${redirectUri}`;
+  };
 
-            <div className="flex min-h-screen bg-gray-100 items-center justify-center p-4 sm:p-6 lg:p-8">
-                <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 rounded-2xl overflow-hidden shadow-2xl bg-white">
+  return (
+    <div className="h-screen bg-[#FFF9F4] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-poppins overflow-hidden">
+      <Head>
+        <title>Expert Login | Astrology in Bharat</title>
+      </Head>
 
-                    {/* Left Side: Image / Visual Section */}
-                    <div className="relative hidden lg:block h-[500px]">
-                        <div className="absolute inset-0 bg-yellow-600 bg-opacity-70 flex flex-col items-center justify-center text-white p-8 z-10">
-                            <img
-                                src="/images/Expert.png"
-                                alt="Logo"
-                                className="w-56 h-56 object-contain mb-6 drop-shadow-2xl"
-                            />
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-[32px] sm:rounded-[40px] shadow-premium bg-white border border-gray-100 max-h-[95vh] overflow-y-auto no-scrollbar">
+        <BrandingSection />
 
-                            <div className="text-left w-full">
-                                <h1 className="text-4xl font-bold font-sans mb-4 tracking-tight">Welcome Back, Expert!</h1>
-                                <p className="text-xl text-left opacity-90">
-                                    Access your personalized dashboard, manage your appointments, and grow your practice.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+        <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white min-h-fit">
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-4xl font-black text-gray-900 tracking-tight">Expert Login</h2>
+            <p className="mt-2 text-gray-500 font-medium italic">Enter the constellation of wisdom</p>
+          </div>
 
-                    {/* Right Side: Login Form */}
-                    <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white text-black">
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-gray-800">Expert Login</h2>
-                            <p className="mt-2 text-gray-500 font-medium">
-                                Please enter your credentials to sign in.
-                            </p>
-                        </div>
-
-                        {error && (
-                            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-md text-sm shadow-sm">
-                                <p className="font-semibold mb-1">Error</p>
-                                <p>{error}</p>
-                            </div>
-                        )}
-
-                        <form className="space-y-6" onSubmit={handleSubmit}>
-                            <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-semibold text-gray-700 mb-1"
-                                >
-                                    Email Address
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    </div>
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent sm:text-sm text-black transition-all"
-                                        placeholder="expert@example.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="password"
-                                    className="block text-sm font-semibold text-gray-700 mb-1"
-                                >
-                                    Password
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <LockIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    </div>
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        type={showPassword ? "text" : "password"}
-                                        autoComplete="current-password"
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent sm:text-sm text-black transition-all"
-                                        placeholder="Enter Your Password"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                                    >
-                                        {showPassword ? <EyeOffIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <input
-                                        id="remember-me"
-                                        name="remember-me"
-                                        type="checkbox"
-                                        className="h-4 w-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500 cursor-pointer"
-                                    />
-                                    <label
-                                        htmlFor="remember-me"
-                                        className="ml-2 block text-sm text-gray-700 cursor-pointer"
-                                    >
-                                        Remember me
-                                    </label>
-                                </div>
-                                <div className="text-sm">
-                                    <Link href="/forgot-password" title="Forgot Password" className="font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
-                                        Forgot password?
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="pt-2 space-y-3">
-                                <Button
-                                    type="submit"
-                                    loading={loading}
-                                    fullWidth
-                                    variant="warning"
-                                    className="bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500 shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
-                                >
-                                    Sign In
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    onClick={handleGoogleLogin}
-                                    variant="outline"
-                                    fullWidth
-                                    className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-yellow-500 transform hover:-translate-y-0.5 shadow-sm"
-                                >
-                                    <Image
-                                        src="/images/google-color-svgrepo-com.svg"
-                                        alt="Google"
-                                        height={20}
-                                        width={20}
-                                        className="mr-2"
-                                    />
-                                    Sign in with Google
-                                </Button>
-                            </div>
-
-                            <div className="text-center mt-6">
-                                <p className="text-sm text-gray-600 font-medium">
-                                    Don't have an account?{" "}
-                                    <Link href="/register" className="text-yellow-600 hover:text-yellow-700 font-bold border-b border-transparent hover:border-yellow-700 transition-all">
-                                        Sign Up here
-                                    </Link>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+          {serverError && (
+            <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+              <ShieldCheck className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <p className="text-xs text-red-700 font-bold">{serverError}</p>
             </div>
-        </>
-    );
-}
+          )}
+
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                Professional Email
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                </div>
+                <input
+                  {...register("email")}
+                  id="email"
+                  type="email"
+                  className={`block w-full pl-12 pr-4 py-4 bg-gray-50/50 border ${errors.email ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  placeholder="expert@example.com"
+                />
+              </div>
+              {errors.email && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase">{errors.email.message}</p>}
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <div className="flex items-center justify-between mb-2 ml-1">
+                <label htmlFor="password" className="block text-[11px] font-black uppercase tracking-widest text-gray-400">
+                  Secure Password
+                </label>
+                <Link href="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-yellow-600 hover:text-yellow-700 transition-colors">
+                  Forgot?
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                </div>
+                <input
+                  {...register("password")}
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className={`block w-full pl-12 pr-12 py-4 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+              {errors.password && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase">{errors.password.message}</p>}
+            </div>
+
+            <div className="pt-4 space-y-4">
+              <Button
+                type="submit"
+                loading={loading}
+                fullWidth
+                variant="warning"
+                className="bg-yellow-600 hover:bg-yellow-700 py-4.5 rounded-2xl shadow-xl shadow-yellow-600/20 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group"
+              >
+                Sign In to Dashboard
+                <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+
+              <div className="relative flex items-center justify-center py-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-100"></div>
+                </div>
+                <span className="relative px-4 bg-white text-[10px] font-black uppercase tracking-widest text-gray-400">Or continue with</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="w-full flex items-center justify-center gap-3 py-4 border-2 border-gray-100 rounded-2xl hover:border-yellow-100 hover:bg-yellow-50/30 transition-all font-black text-xs uppercase tracking-widest text-gray-600"
+              >
+                <Image
+                  src="/images/google-color-svgrepo-com.svg"
+                  alt="Google"
+                  height={18}
+                  width={18}
+                />
+                Sign in with Google
+              </button>
+            </div>
+
+            <div className="text-center mt-10">
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-tight">
+                New to the community?{" "}
+                <Link href="/register" className="text-yellow-600 hover:text-yellow-700 transition-all underline decoration-yellow-600/30 underline-offset-4 decoration-2">
+                  Apply as an Expert
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default LoginPage;

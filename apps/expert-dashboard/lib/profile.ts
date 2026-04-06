@@ -1,5 +1,5 @@
 import { api, ApiError } from "./api";
-import { Profile, Todo } from "../components/ProfileManagement/types";
+import { Profile, Todo } from "@/types/profile";
 
 export const getProfile = async (): Promise<[any | null, ApiError | null]> => {
     const [res, error] = await api.get('/expert');
