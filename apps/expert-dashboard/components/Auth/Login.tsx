@@ -8,6 +8,7 @@ import { Lock, Mail, Eye, EyeOff, LogIn, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 import { Button } from "@repo/ui";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -20,15 +21,19 @@ import { CLIENT_API_URL } from "@/lib/config";
 const BrandingSection = () => (
   <div className="relative hidden lg:block h-full min-h-[600px]">
     <div className="absolute inset-0 bg-yellow-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
-      <div className="relative w-56 h-56 mb-8 drop-shadow-2xl animate-float">
+      <motion.div 
+        animate={{ y: [-10, 10, -10] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="relative w-56 h-56 mb-8 drop-shadow-2xl"
+      >
         <Image
           src="/images/Expert.png"
           alt="Expert Community"
           fill
-          className="object-contain"
+          className="object-contain -scale-x-100"
           priority
         />
-      </div>
+      </motion.div>
       <h1 className="text-4xl font-black mb-4 tracking-tight">Welcome Back</h1>
       <p className="text-white/80 font-medium max-w-sm">
         Connect with seekers, share your cosmic wisdom, and grow your spiritual practice.

@@ -1,0 +1,125 @@
+"use client";
+
+import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import { Sidebar } from "@/features/shop-dashboard/components/Sidebar";
+import { Menu } from "lucide-react";
+import { SearchInput, Avatar, NotificationBell } from "@repo/ui";
+import Link from "next/link";
+import { ToastContainer } from "react-toastify";
+
+export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
+    const pathname = usePathname();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isOnline, setIsOnline] = useState(true);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    
+    const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+    const isAuthPage = pathname === "/" || authRoutes.some(route => pathname?.startsWith(route));
+
+    // If it's an auth page, just render the content without sidebar/header
+    if (isAuthPage) {
+        return (
+            <div className="min-h-screen bg-white font-outfit">
+                {children}
+            </div>
+        );
+    }
+
+    const notifications = [
+        { id: 1, message: "Welcome to your new Merchant Dashboard!", time: "Just now" }
+    ];
+
+    return (
+        <div className="flex bg-gray-50 min-h-screen overflow-hidden text-gray-900 font-outfit">
+            {/* Sidebar (Responsive) */}
+            <Sidebar 
+                isOpen={isSidebarOpen} 
+                toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+            />
+
+            {/* Main Content Area */}
+            <div className="flex-1 lg:ml-64 flex flex-col h-screen w-full overflow-hidden">
+                {/* Top Navigation Bar */}
+                <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-40 shadow-sm shrink-0">
+                    <div className="flex items-center justify-between gap-3">
+                        {/* Left Section */}
+                        <div className="flex items-center space-x-3 sm:space-x-4">
+                            <button
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="lg:hidden p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 shrink-0 text-gray-600"
+                            >
+                                <Menu className="w-5 h-5" />
+                            </button>
+                            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 tracking-tight truncate max-w-[120px] sm:max-w-none uppercase">
+                                {pathname === '/dashboard' ? 'Overview' : pathname?.split('/').pop()?.replace('-', ' ')}
+                            </h1>
+                        </div>
+
+                        {/* Right Section */}
+                        <div className="flex items-center gap-3 sm:gap-6">
+                            <div className="hidden md:block w-40 sm:w-64">
+                                <SearchInput
+                                    value={searchQuery}
+                                    onChange={(e: any) => setSearchQuery(e.target.value)}
+                                    placeholder="Search..."
+                                    className="w-full"
+                                />
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                                    {isOnline ? "Online" : "Offline"}
+                                </span>
+                                <button
+                                    onClick={() => setIsOnline(!isOnline)}
+                                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-all duration-300 ${
+                                        isOnline ? "bg-green-500" : "bg-red-500"
+                                    }`}
+                                >
+                                    <span className={`inline-block w-4 h-4 transform transition-transform duration-300 bg-white rounded-full shadow-md ${isOnline ? "translate-x-6" : "translate-x-1"}`} />
+                                </button>
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                                <div
+                                    className="relative"
+                                    onMouseEnter={() => setIsNotificationOpen(true)}
+                                    onMouseLeave={() => setIsNotificationOpen(false)}
+                                >
+                                    <NotificationBell count={notifications.length} className="bg-transparent hover:bg-gray-100" />
+                                    {isNotificationOpen && (
+                                        <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                            <div className="p-4">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Notifications</h3>
+                                                </div>
+                                                <ul className="space-y-3 max-h-64 overflow-y-auto no-scrollbar">
+                                                    {notifications.map((n) => (
+                                                        <li key={n.id} className="text-sm text-gray-700 border-b border-gray-50 pb-3 last:border-0">
+                                                            <p className="font-medium">{n.message}</p>
+                                                            <span className="text-[10px] text-gray-400 mt-1 block">{n.time}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <Link href="/settings" className="shrink-0">
+                                <Avatar src="/images/web-logo.png" alt="Merchant Profile" className="border-2 border-[#fd6410] shadow-md hover:scale-105 transition-transform duration-200 w-10 h-10" />
+                            </Link>
+                        </div>
+                    </div>
+                </header>
+
+                <main className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto w-full bg-gray-50/50 no-scrollbar">
+                    {children}
+                </main>
+            </div>
+        </div>
+    );
+};

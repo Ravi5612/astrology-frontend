@@ -37,11 +37,11 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
                 return (
                     <div
                         key={index}
-                        className="group group/card bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm hover:shadow-2xl hover:border-yellow-400 hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                        className="group group/card bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm hover:shadow-2xl hover:border-[#FF6B00] hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden"
                         title={`${stat.title}: ${stat.value}`}
                     >
                         {/* Hover Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 via-yellow-100/50 to-transparent opacity-0 group-hover:opacity-100 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-orange-100/30 to-transparent opacity-0 group-hover:opacity-100 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
                         {/* CONTENT */}
                         <div className="relative z-10 flex items-start gap-3">
@@ -84,10 +84,10 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
                         </div>
 
                         {/* Bottom Accent */}
-                        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 opacity-0 scale-x-0 group-hover:opacity-100 group-hover/card:opacity-100 group-hover:scale-x-100 group-hover/card:scale-x-100 transition-all duration-300 origin-left rounded-b-xl" />
+                        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 opacity-0 scale-x-0 group-hover:opacity-100 group-hover/card:opacity-100 group-hover:scale-x-100 group-hover/card:scale-x-100 transition-all duration-300 origin-left rounded-b-xl" />
 
                         {/* Corner Glow */}
-                        <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 group-hover/card:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute -top-10 -right-10 w-20 h-20 bg-orange-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 group-hover/card:opacity-100 transition-opacity duration-500" />
                     </div>
                 );
             })}
