@@ -18,9 +18,13 @@ export const api = createSafeFetchInstance({
     // If backend rejects the token (Session Expired)
     if (error.status === 401) {
       if (typeof window !== 'undefined') {
-        const logout = useAuthStore.getState().clientLogout;
-        logout();
-        toast.error("Session expired. Please login again.");
+        const state = useAuthStore.getState();
+        // Only trigger logout if the user was theoretically authenticated
+        // This prevents the infinite loop on initial load when refreshAuth fails with 401
+        if (state.isClientAuthenticated) {
+            state.clientLogout();
+            toast.error("Session expired. Please login again.");
+        }
       }
     }
   }
