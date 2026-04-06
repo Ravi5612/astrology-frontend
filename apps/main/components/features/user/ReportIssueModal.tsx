@@ -7,7 +7,7 @@ import { api as http } from "@/lib/api";
 interface ReportIssueModalProps {
     isOpen: boolean;
     onClose: () => void;
-    type: "order" | "consultation";
+    type: "order" | "consultation" | "puja";
     itemDetails: any;
     onSuccess?: (newDispute?: any) => void;
 }
@@ -48,7 +48,21 @@ export default function ReportIssueModal({
         "Other",
     ];
 
-    const categories = type === "order" ? orderCategories : consultationCategories;
+    const pujaCategories = [
+        "Expert did not perform puja",
+        "Materials not provided",
+        "Interruption during ritual",
+        "Expert was unprofessional",
+        "Payment/Refund Issue",
+        "Technical Problem (Online Puja)",
+        "Other",
+    ];
+
+    const categories = type === "order" 
+        ? orderCategories 
+        : type === "consultation" 
+            ? consultationCategories 
+            : pujaCategories;
 
     const handleSubmit = async (isChat: boolean = false) => {
         if (!category || !issue.trim()) {
@@ -59,11 +73,9 @@ export default function ReportIssueModal({
         setLoading(true);
         if (isChat) setSubmittingWithChat(true);
 
-        const payload = {
+        const payload: any = {
             type,
-            itemId: type === "order" ? itemDetails.id : itemDetails.id,
-            orderId: type === "order" ? itemDetails.id : null,
-            consultationId: type === "consultation" ? itemDetails.id : null,
+            itemId: Number(itemDetails.id),
             category,
             description: issue,
             itemDetails: {
@@ -80,8 +92,24 @@ export default function ReportIssueModal({
                     status: itemDetails.status,
                     date: itemDetails.createdAt,
                 }),
+                ...(type === "puja" && {
+                    pujaId: itemDetails.id,
+                    pujaName: itemDetails.puja?.name,
+                    expertName: itemDetails.expert?.user?.name,
+                    amount: itemDetails.price,
+                    status: itemDetails.status,
+                    date: itemDetails.scheduled_date,
+                }),
             },
         };
+
+        if (type === "order") {
+            payload.orderId = Number(itemDetails.id);
+        } else if (type === "consultation") {
+            payload.consultationId = Number(itemDetails.id);
+        } else if (type === "puja") {
+            payload.pujaId = Number(itemDetails.id);
+        }
 
         const [res, error] = await http.post<any>("/support/disputes", payload);
 
@@ -106,14 +134,14 @@ export default function ReportIssueModal({
 
         if (isChat && newDispute?.id) {
             const orderId = itemDetails.orderId || itemDetails.id;
-            const amount = itemDetails.totalAmount || itemDetails.total_amount || itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0;
-            const date = (itemDetails.createdAt || itemDetails.created_at)
-                ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+            const amount = itemDetails.price || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.totalCost || itemDetails.total_cost || itemDetails.amount || 0;
+            const date = (itemDetails.createdAt || itemDetails.created_at || itemDetails.scheduled_date)
+                ? new Date(itemDetails.createdAt || itemDetails.created_at || itemDetails.scheduled_date).toLocaleDateString("en-IN")
                 : "N/A";
 
             const summaryMessage = `📋 ISSUE SUMMARY 📋\n\n` +
                 `Issue Category: ${category}\n` +
-                `${type === "order" ? "Order ID" : "Session ID"}: #${orderId}\n` +
+                `${type === "order" ? "Order ID" : type === "consultation" ? "Session ID" : "Puja ID"}: #${orderId}\n` +
                 `Amount: ₹${amount}\n` +
                 `Date: ${date}\n\n` +
                 `Description: ${issue.trim()}`;
@@ -134,10 +162,10 @@ export default function ReportIssueModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-t-3xl">
+                <div className="sticky top-0 bg-linear-to-r from-orange-500 to-red-500 text-white p-6 rounded-t-3xl">
                     <div className="flex justify-between items-center">
                         <div>
                             <h2 className="text-2xl font-bold">Report an Issue</h2>
@@ -157,10 +185,10 @@ export default function ReportIssueModal({
                 {/* Content */}
                 <div className="p-6">
                     {/* Item Details Card */}
-                    <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-5 mb-6 border border-orange-200">
+                    <div className="bg-linear-to-br from-orange-50 to-red-50 rounded-2xl p-5 mb-6 border border-orange-200">
                         <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                             <i className="fa-solid fa-info-circle text-orange-500"></i>
-                            {type === "order" ? "Order Details" : "Consultation Details"}
+                            {type === "order" ? "Order Details" : type === "consultation" ? "Consultation Details" : "Puja Details"}
                         </h3>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                             {type === "order" ? (
@@ -192,7 +220,7 @@ export default function ReportIssueModal({
                                         </p>
                                     </div>
                                 </>
-                            ) : (
+                            ) : type === "consultation" ? (
                                 <>
                                     <div>
                                         <span className="text-gray-600">Session ID:</span>
@@ -215,6 +243,39 @@ export default function ReportIssueModal({
                                         <p className="font-bold text-gray-800">
                                             {(itemDetails.createdAt || itemDetails.created_at)
                                                 ? new Date(itemDetails.createdAt || itemDetails.created_at).toLocaleDateString("en-IN")
+                                                : "N/A"}
+                                        </p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div>
+                                        <span className="text-gray-600">Booking ID:</span>
+                                        <p className="font-bold text-gray-800">#{itemDetails.id}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-600">Ritual:</span>
+                                        <p className="font-bold text-gray-800">
+                                            {itemDetails.puja?.name || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-600">Expert:</span>
+                                        <p className="font-bold text-gray-800">
+                                            {itemDetails.expert?.user?.name || itemDetails.expertName || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-600">Amount:</span>
+                                        <p className="font-bold text-gray-800">
+                                            ₹{itemDetails.price || itemDetails.amount || 0}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-600">Date:</span>
+                                        <p className="font-bold text-gray-800">
+                                            {itemDetails.scheduled_date
+                                                ? new Date(itemDetails.scheduled_date).toLocaleDateString("en-IN")
                                                 : "N/A"}
                                         </p>
                                     </div>

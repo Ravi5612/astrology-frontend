@@ -32,7 +32,7 @@ export const useProfileOrdersHistoryLogic = (
 
     // Report Modal
     const [reportModalOpen, setReportModalOpen] = useState(false);
-    const [reportItemType, setReportItemType] = useState<"order" | "consultation">("order");
+    const [reportItemType, setReportItemType] = useState<"order" | "consultation" | "puja">("order");
     const [reportItemDetails, setReportItemDetails] = useState<any>(null);
 
     // Load History

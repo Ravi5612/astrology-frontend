@@ -9,6 +9,7 @@ interface PujaBookingsTabProps {
   loading: boolean;
   bookings: any[];
   onUpdateStatus: (id: number, status: string, extra?: any) => Promise<boolean>;
+  onReportIssue?: (booking: any) => void;
 }
 
 // Simple native date formatter to replace date-fns
@@ -35,7 +36,8 @@ const formatDate = (dateString: string, includeTime = false) => {
 const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   loading,
   bookings,
-  onUpdateStatus
+  onUpdateStatus,
+  onReportIssue
 }) => {
   const { lang } = useLanguageStore();
   const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
@@ -196,6 +198,15 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
               </div>
 
               <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+                <button
+                   onClick={() => onReportIssue && onReportIssue(booking)}
+                   className="flex-1 sm:flex-none px-6 py-2 border border-red-100 text-red-500 font-bold text-xs rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                   style={fontStyle}
+                >
+                  <i className="fa-solid fa-circle-exclamation"></i>
+                   {t.pujas.reportIssue}
+                </button>
+
                 {booking.status === 'on_hold' && (
                   <>
                     <button

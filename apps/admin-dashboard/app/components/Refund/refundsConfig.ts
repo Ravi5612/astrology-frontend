@@ -68,7 +68,7 @@ export const mockRefunds: RefundRequest[] = [
 export const filters = [
   { key: "all", label: "All Refunds" },
   { key: "pending", label: "Pending" },
-  { key: "approved", label: "Approved" },
+  { key: "refunded", label: "Refunded" },
   { key: "rejected", label: "Rejected" },
   { key: "processing", label: "Processing" },
   { key: "high", label: "High Priority" }
@@ -76,6 +76,7 @@ export const filters = [
 
 export const statusColors = {
   pending: "bg-yellow-100 text-yellow-800",
+  refunded: "bg-green-100 text-green-800",
   approved: "bg-green-100 text-green-800",
   rejected: "bg-red-100 text-red-800",
   processing: "bg-blue-100 text-blue-800",

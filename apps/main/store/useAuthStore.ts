@@ -42,7 +42,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     clientLogout: async () => {
+        // Guard to prevent multiple simultaneous logout calls or redundant loops
+        if (!get().isClientAuthenticated && !get().clientUser) {
+            return;
+        }
+
+        // Reset Zustand state IMMEDIATELY — prevents interceptors from triggering logout again
+        set({
+            clientUser: null,
+            isClientAuthenticated: false,
+            clientLoading: false,
+            clientBalance: 0,
+        });
+
         // 1. Tell the backend to invalidate the session (best-effort)
+        // Since isClientAuthenticated is now false, any 401 here won't trigger recursion.
         await AuthService.logout();
 
         // 2. Clear HttpOnly cookies via a dedicated API route
@@ -52,15 +66,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             // Silently fail logout cleanup
         }
 
-        // 3. Reset Zustand state — always happens regardless of above failures
-        set({
-            clientUser: null,
-            isClientAuthenticated: false,
-            clientLoading: false,
-            clientBalance: 0,
-        });
-
-        // 4. Full page redirect — forces server to re-render with cleared cookies
+        // 3. Full page redirect — forces server to re-render with cleared cookies
         if (typeof window !== "undefined") {
             window.location.href = "/?_logout=1"; // cache-busting param
         }
