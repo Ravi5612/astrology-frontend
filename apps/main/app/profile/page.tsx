@@ -266,6 +266,11 @@ const ProfileContent: React.FC = () => {
                         loading={loadingPuja} 
                         bookings={pujaBookings} 
                         onUpdateStatus={handleUpdatePujaStatus} 
+                        onReportIssue={(booking) => {
+                          setReportItemType("puja");
+                          setReportItemDetails(booking);
+                          setReportModalOpen(true);
+                        }}
                       />
                     </div>
                   </div>

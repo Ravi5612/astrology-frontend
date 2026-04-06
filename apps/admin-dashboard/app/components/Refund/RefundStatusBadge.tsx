@@ -11,13 +11,14 @@ interface RefundStatusBadgeProps {
 export function RefundStatusBadge({ status }: RefundStatusBadgeProps) {
   const icons = {
     pending: Clock,
+    refunded: CheckCircle,
     approved: CheckCircle,
     rejected: XCircle,
     processing: Loader,
     completed: Circle
-  };
+  } as any;
 
-  const Icon = icons[status];
+  const Icon = icons[status] || Circle;
   
   return (
     <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${statusColors[status]}`}>

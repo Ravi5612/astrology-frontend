@@ -59,7 +59,8 @@ export const profileTranslations = {
             vedicExpert: "Vedic Expert",
             onlineRitual: "Online Ritual",
             homeVisitWith: "Home Visit (With Samagri)",
-            homeVisitBasic: "Home Visit (Basic)"
+            homeVisitBasic: "Home Visit (Basic)",
+            reportIssue: "Report Puja Issue"
         },
         personalDetails: {
             title: "Personal Details",
@@ -356,7 +357,8 @@ export const profileTranslations = {
             vedicExpert: "वैदिक विशेषज्ञ",
             onlineRitual: "ऑनलाइन अनुष्ठान",
             homeVisitWith: "होम विजिट (सामग्री के साथ)",
-            homeVisitBasic: "होम विजिट (बुनियादी)"
+            homeVisitBasic: "होम विजिट (बुनियादी)",
+            reportIssue: "पूजा समस्या रिपोर्ट करें"
         },
         personalDetails: {
             title: "व्यक्तिगत विवरण",
