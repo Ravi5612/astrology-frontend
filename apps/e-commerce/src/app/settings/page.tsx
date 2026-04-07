@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Camera, 
   Store, 
   Phone, 
   MapPin, 
-  User, 
+  User as UserIcon, 
   Save, 
   ShieldCheck,
   ChevronRight,
@@ -14,23 +14,47 @@ import {
   Play,
   ShoppingBag,
   ExternalLink,
-  Eye
+  Eye,
+  Loader2
 } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
+import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
 
 export default function ShopProfileSettings() {
-  const [shopImage, setShopImage] = useState<string | null>(null);
-  const [shopVideo, setShopVideo] = useState<string | null>(null);
+  const { data: profile, isLoading: isProfileLoading } = useMerchantProfile();
+  const updateProfileMutation = useUpdateProfile();
   
+  const [shopImagePreview, setShopImagePreview] = useState<string | null>(null);
+  const [shopVideoPreview, setShopVideoPreview] = useState<string | null>(null);
+  
+  // Local state for files to be uploaded
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+
   // Real-time Preview State
   const [formData, setFormData] = useState({
-    storeName: "Jai Durga Store",
-    managerName: "Rahul Sharma",
-    phone: "+91 98765 43210",
-    address: "K-54/23, Near Kashi Vishwanath Temple, Varanasi",
-    city: "Varanasi",
-    pincode: "221001"
+    storeName: "",
+    managerName: "",
+    phone: "",
+    address: "",
+    city: "",
+    pincode: ""
   });
+
+  // Sync profile data to form on load
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        storeName: profile.name || "",
+        managerName: profile.managerName || "",
+        phone: profile.phone || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        pincode: profile.pincode || ""
+      });
+      if (profile.image) setShopImagePreview(profile.image);
+      if (profile.video) setShopVideoPreview(profile.video);
+    }
+  }, [profile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,9 +64,10 @@ export default function ShopProfileSettings() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setShopImage(reader.result as string);
+        setShopImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -51,9 +76,34 @@ export default function ShopProfileSettings() {
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-       setShopVideo(URL.createObjectURL(file));
+       setSelectedVideo(file);
+       setShopVideoPreview(URL.createObjectURL(file));
     }
   };
+
+  const handleSave = async () => {
+    const data = new FormData();
+    data.append('name', formData.storeName);
+    data.append('managerName', formData.managerName);
+    data.append('phone', formData.phone);
+    data.append('address', formData.address);
+    data.append('city', formData.city);
+    data.append('pincode', formData.pincode);
+    
+    if (selectedImage) data.append('image', selectedImage);
+    if (selectedVideo) data.append('video', selectedVideo);
+
+    updateProfileMutation.mutate(data);
+  };
+
+  if (isProfileLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-[#fd6410] animate-spin" />
+        <p className="text-gray-500 font-medium animate-pulse">Loading Shop Profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20 px-4">
@@ -68,9 +118,17 @@ export default function ShopProfileSettings() {
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Shop Profile Settings</h1>
           <p className="text-gray-500 text-sm mt-1">Manage your shop's identity and location details for customers.</p>
         </div>
-        <button className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group">
-          <Save className="w-5 h-5 group-hover:animate-pulse" />
-          <span>Save Changes</span>
+        <button 
+          onClick={handleSave}
+          disabled={updateProfileMutation.isPending}
+          className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {updateProfileMutation.isPending ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Save className="w-5 h-5 group-hover:animate-pulse" />
+          )}
+          <span>{updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}</span>
         </button>
       </div>
 
@@ -81,7 +139,7 @@ export default function ShopProfileSettings() {
           {/* Main Info Card */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8">
             <h3 className="text-sm font-black text-gray-900 uppercase tracking-[0.2em] px-2 flex items-center gap-2">
-              <User className="w-4 h-4 text-[#fd6410]" />
+              <UserIcon className="w-4 h-4 text-[#fd6410]" />
               Branding & Media
             </h3>
 
@@ -91,8 +149,8 @@ export default function ShopProfileSettings() {
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Shop Photo</label>
                 <div className="relative group w-full h-48">
                   <div className="w-full h-full rounded-[2rem] bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-[#fd6410]/50">
-                    {shopImage ? (
-                      <img src={shopImage} alt="Shop Preview" className="w-full h-full object-cover" />
+                    {shopImagePreview ? (
+                      <img src={shopImagePreview} alt="Shop Preview" className="w-full h-full object-cover" />
                     ) : (
                       <div className="text-center p-4">
                         <Store className="w-10 h-10 text-gray-300 mx-auto mb-2" />
@@ -112,8 +170,8 @@ export default function ShopProfileSettings() {
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Store Video</label>
                 <div className="relative group w-full h-48">
                   <div className="w-full h-full rounded-[2rem] bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-[#fd6410]/50">
-                    {shopVideo ? (
-                      <video src={shopVideo} className="w-full h-full object-cover" autoPlay muted loop />
+                    {shopVideoPreview ? (
+                      <video src={shopVideoPreview} className="w-full h-full object-cover" autoPlay muted loop />
                     ) : (
                       <div className="text-center p-4">
                         <Video className="w-10 h-10 text-gray-300 mx-auto mb-2" />
@@ -140,6 +198,22 @@ export default function ShopProfileSettings() {
                   <input 
                     name="storeName"
                     value={formData.storeName}
+                    onChange={handleInputChange}
+                    type="text" 
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Manager Name</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                     <UserIcon className="w-4 h-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                  </div>
+                  <input 
+                    name="managerName"
+                    value={formData.managerName}
                     onChange={handleInputChange}
                     type="text" 
                     className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
@@ -225,21 +299,21 @@ export default function ShopProfileSettings() {
            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden group">
              {/* Main Shop Header Image */}
              <div className="relative h-48 bg-gray-50 overflow-hidden">
-                {shopImage ? (
-                  <img src={shopImage} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Banner" />
+                {shopImagePreview ? (
+                  <img src={shopImagePreview} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Banner" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
                     <Store className="w-12 h-12 text-orange-200" />
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-bottom p-6 flex-col justify-end">
-                   <h2 className="text-white font-bold text-xl drop-shadow-md truncate">{formData.storeName}</h2>
+                   <h2 className="text-white font-bold text-xl drop-shadow-md truncate">{formData.storeName || "Shop Name"}</h2>
                    <div className="flex items-center text-orange-200 text-[10px] font-bold uppercase tracking-widest mt-1">
                       <MapPin className="w-3 h-3 mr-1" />
-                      {formData.city}
+                      {formData.city || "City"}
                    </div>
                 </div>
-                {shopVideo && (
+                {shopVideoPreview && (
                    <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full border border-white/30">
                       <Play className="w-4 h-4 text-white fill-current" />
                    </div>
@@ -260,19 +334,19 @@ export default function ShopProfileSettings() {
                    
                    <div className="flex items-start space-x-3 text-sm text-gray-600">
                       <MapPin className="w-4 h-4 text-[#fd6410] shrink-0 mt-0.5" />
-                      <p className="line-clamp-2 text-xs leading-relaxed">{formData.address}, {formData.pincode}</p>
+                      <p className="line-clamp-2 text-xs leading-relaxed">{formData.address || "Shop Address"}{formData.pincode ? `, ${formData.pincode}` : ""}</p>
                    </div>
                    
                    <div className="flex items-center space-x-3 text-xs text-gray-600">
                       <Phone className="w-4 h-4 text-[#fd6410] shrink-0" />
-                      <p className="font-mono">{formData.phone}</p>
+                      <p className="font-mono">{formData.phone || "+91 XXXXXXXXXX"}</p>
                    </div>
                 </div>
 
                 {/* Video/Media Integration */}
-                {shopVideo && (
+                {shopVideoPreview && (
                   <div className="rounded-2xl overflow-hidden h-32 bg-gray-900 relative group/video">
-                     <video src={shopVideo} className="w-full h-full object-cover opacity-70 group-hover/video:opacity-100 transition-opacity" muted loop autoPlay />
+                     <video src={shopVideoPreview} className="w-full h-full object-cover opacity-70 group-hover/video:opacity-100 transition-opacity" muted loop autoPlay />
                      <div className="absolute inset-0 flex items-center justify-center">
                         <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/40">
                            <Play className="w-5 h-5 text-white" />

@@ -21,9 +21,11 @@ const Image = NextImage as any;
 interface ProductCardProps {
     product: Product;
     className?: string;
+    isCompact?: boolean;
+    onView?: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, className, isCompact, onView }) => {
     const { lang } = useLanguageStore();
     const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
     const imageUrl = getProductImageUrl(product);
@@ -76,7 +78,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
     };
 
     return (
-    <div className={`group relative bg-white rounded-[2rem] shadow-premium hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col border border-gray-100/50 ${className || ""}`}>
+    <div 
+        onClick={() => onView?.(product)}
+        className={`group relative bg-white rounded-[2rem] shadow-premium hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col border border-gray-100/50 cursor-pointer ${className || ""}`}
+    >
       {/* 🔥 Top Header: Offer Tag (Left) & Heart Icon (Right) */}
       {percentageOff > 0 && (
         <div className="absolute top-4 left-4 z-10 animate-in fade-in slide-in-from-left-4 duration-500">
@@ -95,9 +100,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
       </button>
 
       {/* 🖼️ Image Area with Glow */}
-      <div className="relative w-full aspect-square bg-gray-50/50 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-white transition-colors duration-500">
+      <div className={`relative w-full ${isCompact ? 'aspect-[4/3]' : 'aspect-square'} bg-gray-50/50 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-white transition-colors duration-500`}>
         <div className="absolute inset-0 bg-gradient-to-br from-orange/5 via-transparent to-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div className="relative w-[80%] h-[80%] transition-transform duration-700 ease-out group-hover:scale-110">
+        <div className={`relative ${isCompact ? 'w-[70%] h-[70%]' : 'w-[80%] h-[80%]'} transition-transform duration-700 ease-out group-hover:scale-110`}>
           <Image
             src={imageUrl}
             alt={product.name}
@@ -109,10 +114,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
       </div>
 
       {/* 📄 Content Area */}
-      <div className="p-6 flex flex-col gap-4 flex-grow relative bg-white">
-        <div className="space-y-1">
+      <div className={`${isCompact ? 'p-4 gap-3' : 'p-6 gap-4'} flex flex-col flex-grow relative bg-white`}>
+        <div className={`${isCompact ? 'space-y-0.5' : 'space-y-1'}`}>
           <div className="flex justify-between items-start gap-2">
-            <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-orange transition-colors duration-300" title={product.name}>
+            <h3 className={`${isCompact ? 'text-sm' : 'text-lg'} font-black text-gray-900 leading-tight group-hover:text-orange transition-colors duration-300`} title={product.name}>
               {product.name}
             </h3>
             <div className="flex items-center gap-1.5 text-orange font-black bg-orange/5 px-2.5 py-1 rounded-lg text-xs shrink-0 border border-orange/10">
@@ -120,14 +125,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
               <span>4.8</span>
             </div>
           </div>
-          <p className="text-sm font-bold text-gray-400 line-clamp-2 leading-relaxed">
+          <p className={`${isCompact ? 'text-[10px]' : 'text-sm'} font-bold text-gray-400 line-clamp-2 leading-relaxed`}>
             {product.description}
           </p>
         </div>
 
         {/* 💰 Price Section */}
         <div className="flex items-baseline gap-3 mt-auto">
-          <span className="text-2xl font-black text-gray-900">
+          <span className={`${isCompact ? 'text-xl' : 'text-2xl'} font-black text-gray-900`}>
             ₹{price}
           </span>
           {originalPrice > price && (
@@ -138,12 +143,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         </div>
 
         {/* 🔘 Action Buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className={`flex gap-3 ${isCompact ? 'pt-1' : 'pt-2'}`}>
           <button
             onClick={handleAddToCart}
-            className="flex-1 h-14 rounded-2xl border-2 border-gray-100 text-gray-500 font-bold text-[10px] uppercase tracking-wider hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm hover:shadow-md px-1"
+            className={`flex-1 ${isCompact ? 'h-11 rounded-xl px-0.5' : 'h-14 rounded-2xl px-1'} border-2 border-gray-100 text-gray-500 font-bold text-[9px] uppercase tracking-wider hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-1.5 group/btn shadow-sm hover:shadow-md`}
           >
-            <i className="fa-solid fa-cart-shopping text-base translate-y-[-1px] group-hover/btn:scale-110 transition-transform"></i>
+            <i className={`${isCompact ? 'text-sm' : 'text-base'} fa-solid fa-cart-shopping translate-y-[-1px] group-hover/btn:scale-110 transition-transform`}></i>
             <span className="leading-tight text-left">
                 {t.products.addToCart.split(' ').map((word: string, i: number, arr: string[]) => (
                     <React.Fragment key={i}>
@@ -162,13 +167,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
               router.push(`/checkout?type=order`);
             }}
             disabled={isBuyLoading}
-            className="flex-1 h-14 rounded-2xl bg-orange text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-orange/40 hover:bg-orange/90 transition-all duration-300 flex items-center justify-center gap-2 px-1"
+            className={`flex-1 ${isCompact ? 'h-11 rounded-xl px-0.5' : 'h-14 rounded-2xl px-1'} bg-orange text-white font-black text-[9px] uppercase tracking-widest shadow-lg shadow-orange/20 hover:shadow-orange/40 hover:bg-orange/90 transition-all duration-300 flex items-center justify-center gap-1.5`}
           >
             {isBuyLoading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
               <>
-                <i className="fa-solid fa-bolt text-lg translate-y-[-1px]"></i>
+                <i className={`${isCompact ? 'text-base' : 'text-lg'} fa-solid fa-bolt translate-y-[-1px]`}></i>
                 <span className="leading-tight text-left">
                     {t.products.buyNow.split(' ').map((word: string, i: number, arr: string[]) => (
                         <React.Fragment key={i}>

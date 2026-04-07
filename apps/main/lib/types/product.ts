@@ -8,5 +8,6 @@ export interface Product {
     originalPrice?: number | string;
     price: number | string;
     sale_price?: number | string;
-    percentageOff?: number | string;
+    percentageOff?: any;
+    gallery?: string[];
 }

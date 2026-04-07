@@ -10,6 +10,7 @@ import HeroSection from "@/components/layout/main/HeroSection";
 import ExpertConsultant from "@/components/layout/main/ExpertConsultant";
 import ExpertListWrapper from "@/components/features/experts/ExpertListWrapper";
 import PujaListSection from "@/components/features/puja/PujaListSection";
+import StoreSection from "@/components/features/shop/StoreSection";
 
 export default async function Page(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -24,6 +25,7 @@ export default async function Page(props: {
       <PujaListSection />
       <ExpertConsultant />
       <ChooseYourZodiac />
+      <StoreSection />
       <AstrologyProduct />
       <WhyChooseUs />
       <Testimonial />
