@@ -15,7 +15,8 @@ export interface Expert {
 
 export interface Consultation {
   id: string;
-  type: "video" | "audio" | "chat";
+  type: string;
+  realType: string;
   duration: number;
   amount: number;
   date: Date;

@@ -12,6 +12,7 @@ interface ReportIssueModalProps {
     onSuccess?: (newDispute?: any) => void;
 }
 
+import { useAuthStore } from "@/store/useAuthStore";
 import UserDisputeChatModal from './UserDisputeChatModal';
 
 export default function ReportIssueModal({
@@ -25,6 +26,7 @@ export default function ReportIssueModal({
     const [category, setCategory] = useState("");
     const [loading, setLoading] = useState(false);
     const [submittingWithChat, setSubmittingWithChat] = useState(false);
+    const { user: currentUser } = useAuthStore();
 
     const orderCategories = [
         "Product Damaged/Defective",
@@ -77,28 +79,34 @@ export default function ReportIssueModal({
             type,
             itemId: Number(itemDetails.id),
             category,
-            description: issue,
+            description: issue.trim(),
             itemDetails: {
+                userAvatar: currentUser?.profile_picture || currentUser?.avatar || "",
+                userName: currentUser?.name || "Client",
                 ...(type === "order" && {
                     orderNumber: itemDetails.orderId || itemDetails.id,
-                    amount: itemDetails.totalAmount,
+                    amount: itemDetails.totalAmount || itemDetails.total_amount || itemDetails.amount || 0,
+                    expertName: "System",
+                    expertAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=System`,
                     status: itemDetails.status,
-                    date: itemDetails.createdAt,
+                    date: itemDetails.createdAt || itemDetails.created_at,
                 }),
                 ...(type === "consultation" && {
                     sessionId: itemDetails.id,
-                    expertName: itemDetails.expert?.user?.name,
-                    amount: itemDetails.totalCost,
+                    expertName: itemDetails.expert?.user?.name || itemDetails.astrologer_name || "Expert",
+                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.astrologer_name || 'E'}`,
+                    amount: itemDetails.totalCost || itemDetails.total_cost || itemDetails.price || itemDetails.amount || 0,
                     status: itemDetails.status,
-                    date: itemDetails.createdAt,
+                    date: itemDetails.createdAt || itemDetails.created_at,
                 }),
                 ...(type === "puja" && {
                     pujaId: itemDetails.id,
-                    pujaName: itemDetails.puja?.name,
-                    expertName: itemDetails.expert?.user?.name,
-                    amount: itemDetails.price,
+                    pujaName: itemDetails.puja?.name || "Puja Ritual",
+                    expertName: itemDetails.expert?.user?.name || itemDetails.expertName || "Expert",
+                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.expertName || 'P'}`,
+                    amount: itemDetails.price || itemDetails.total_amount || itemDetails.amount || 0,
                     status: itemDetails.status,
-                    date: itemDetails.scheduled_date,
+                    date: itemDetails.scheduled_date || itemDetails.created_at,
                 }),
             },
         };
