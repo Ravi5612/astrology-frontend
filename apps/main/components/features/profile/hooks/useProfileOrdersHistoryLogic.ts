@@ -26,6 +26,8 @@ export const useProfileOrdersHistoryLogic = (
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
     const [orderDisputes, setOrderDisputes] = useState<Record<number, any>>({});
+    const [consultationDisputes, setConsultationDisputes] = useState<Record<number, any>>({});
+    const [pujaDisputes, setPujaDisputes] = useState<Record<number, any>>({});
     const [allDisputes, setAllDisputes] = useState<any[]>([]);
     const [selectedDispute, setSelectedDispute] = useState<any>(null);
     const [showDisputeChat, setShowDisputeChat] = useState(false);
@@ -82,14 +84,29 @@ export const useProfileOrdersHistoryLogic = (
                     const disputes = Array.isArray(myDisputes)
                         ? myDisputes
                         : myDisputes?.data || myDisputes?.items || [];
-                    const disputeMap: Record<number, any> = {};
+                    
+                    const orderDisputeMap: Record<number, any> = {};
+                    const consultationDisputeMap: Record<number, any> = {};
+                    const pujaDisputeMap: Record<number, any> = {};
+
                     (!disputesError ? disputes : []).filter(Boolean).forEach((d: any) => {
                         const oId = d.orderId || d.order_id || d.order?.id;
+                        const cId = d.consultationId || d.consultation_id || d.consultation?.id;
+                        const pId = d.pujaBookingId || d.puja_booking_id || d.pujaBooking?.id || d.puja_id || d.puja?.id;
+
                         if (oId) {
-                            disputeMap[oId] = d;
+                            orderDisputeMap[oId] = d;
+                        }
+                        if (cId) {
+                            consultationDisputeMap[cId] = d;
+                        }
+                        if (pId) {
+                            pujaDisputeMap[pId] = d;
                         }
                     });
-                    setOrderDisputes(disputeMap);
+                    setOrderDisputes(orderDisputeMap);
+                    setConsultationDisputes(consultationDisputeMap);
+                    setPujaDisputes(pujaDisputeMap);
                     setAllDisputes(!disputesError ? disputes : []);
                 }
             } catch (error: any) {
@@ -145,6 +162,8 @@ export const useProfileOrdersHistoryLogic = (
         expandedOrders,
         toggleOrder,
         orderDisputes,
+        consultationDisputes,
+        pujaDisputes,
         allDisputes,
         selectedDispute,
         setSelectedDispute,

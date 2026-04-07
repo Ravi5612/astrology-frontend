@@ -44,7 +44,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
           className="text-lg font-bold text-gray-900 mb-0 flex items-center"
           style={fontStyle}
         >
-          <span className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mr-3 flex-shrink-0">
+          <span className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mr-3 shrink-0">
             <i className="fa-solid fa-bag-shopping"></i>
           </span>
           {t.title}
@@ -178,7 +178,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                               key={item.id || itemIdx}
                               className="flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100"
                             >
-                              <div className="w-16 h-16 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm flex-shrink-0">
+                              <div className="w-16 h-16 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm shrink-0">
                                 <Image
                                   src={productImg}
                                   alt={product?.name || t.productName}
@@ -254,7 +254,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                             style={fontStyle}
                           >
                             <i className="fa-solid fa-comments"></i>
-                            {t.chatSupport}
+                            {t.reportIssueDiscussion}
                             {orderDisputes[order.id].unreadCount > 0 && (
                               <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-sm">
                                 {orderDisputes[order.id].unreadCount}

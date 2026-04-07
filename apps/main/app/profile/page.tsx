@@ -49,7 +49,7 @@ const ProfileContent: React.FC = () => {
 
     // Orders
     orders, loadingOrders, expandedOrders, toggleOrder,
-    orderDisputes, allDisputes, selectedDispute, setSelectedDispute, showDisputeChat, setShowDisputeChat,
+    orderDisputes, consultationDisputes, pujaDisputes, allDisputes, selectedDispute, setSelectedDispute, showDisputeChat, setShowDisputeChat,
 
     // Notifications
     notifications, loadingNotifications,
@@ -202,6 +202,11 @@ const ProfileContent: React.FC = () => {
                     setReportItemDetails(session);
                     setReportModalOpen(true);
                   }}
+                  consultationDisputes={consultationDisputes}
+                  onViewDispute={(dispute) => {
+                    setSelectedDispute(dispute);
+                    setShowDisputeChat(true);
+                  }}
                 />
               )}
 
@@ -270,6 +275,11 @@ const ProfileContent: React.FC = () => {
                           setReportItemType("puja");
                           setReportItemDetails(booking);
                           setReportModalOpen(true);
+                        }}
+                        pujaDisputes={pujaDisputes}
+                        onViewDispute={(dispute) => {
+                          setSelectedDispute(dispute);
+                          setShowDisputeChat(true);
                         }}
                       />
                     </div>
