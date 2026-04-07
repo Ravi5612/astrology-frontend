@@ -60,7 +60,8 @@ export const profileTranslations = {
             onlineRitual: "Online Ritual",
             homeVisitWith: "Home Visit (With Samagri)",
             homeVisitBasic: "Home Visit (Basic)",
-            reportIssue: "Report Puja Issue"
+            reportIssue: "Report Puja Issue",
+            reportIssueDiscussion: "Report Issue Discussion"
         },
         personalDetails: {
             title: "Personal Details",
@@ -170,6 +171,7 @@ export const profileTranslations = {
             rating: "Rating",
             viewChat: "View Chat History",
             reportIssue: "Report Issue",
+            reportIssueDiscussion: "Report Issue Discussion",
             issueReported: "Issue Reported",
             na: "N/A",
             statusMap: {
@@ -192,6 +194,7 @@ export const profileTranslations = {
             writeReview: "Write Review",
             cancelOrder: "Cancel Order",
             chatSupport: "Chat Support",
+            reportIssueDiscussion: "Report Issue Discussion",
             unreadMessages: "unread messages",
             reportIssue: "Report Issue",
             shippingAddress: "Shipping Address",
@@ -358,7 +361,8 @@ export const profileTranslations = {
             onlineRitual: "ऑनलाइन अनुष्ठान",
             homeVisitWith: "होम विजिट (सामग्री के साथ)",
             homeVisitBasic: "होम विजिट (बुनियादी)",
-            reportIssue: "पूजा समस्या रिपोर्ट करें"
+            reportIssue: "पूजा समस्या रिपोर्ट करें",
+            reportIssueDiscussion: "रिपोर्ट समस्या चर्चा"
         },
         personalDetails: {
             title: "व्यक्तिगत विवरण",
@@ -468,6 +472,7 @@ export const profileTranslations = {
             rating: "रेटिंग",
             viewChat: "चैट इतिहास देखें",
             reportIssue: "समस्या रिपोर्ट करें",
+            reportIssueDiscussion: "रिपोर्ट समस्या चर्चा",
             issueReported: "समस्या रिपोर्ट की गई",
             na: "N/A",
             statusMap: {
@@ -490,6 +495,7 @@ export const profileTranslations = {
             writeReview: "समीक्षा लिखें",
             cancelOrder: "ऑर्डर रद्द करें",
             chatSupport: "चैट सहायता",
+            reportIssueDiscussion: "रिपोर्ट समस्या चर्चा",
             unreadMessages: "अपठित संदेश",
             reportIssue: "समस्या रिपोर्ट करें",
             shippingAddress: "शिपिंग पता",

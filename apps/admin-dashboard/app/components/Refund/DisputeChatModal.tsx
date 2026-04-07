@@ -40,15 +40,16 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         
         const socket = getSupportSocket();
         
-        const joinRoom = () => {
+        const onConnect = () => {
             socket.emit("join_dispute_room", { disputeId: Number(dispute.realId) });
+            socket.emit("register_admin");
         };
 
         if (socket.connected) {
-            joinRoom();
+            onConnect();
         } else {
             socket.connect();
-            socket.on("connect", joinRoom);
+            socket.on("connect", onConnect);
         }
 
         const handleNewMessage = (message: any) => {
@@ -64,7 +65,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         socket.on("new_message", handleNewMessage);
 
         return () => {
-            socket.off("connect", joinRoom);
+            socket.off("connect", onConnect);
             socket.off("new_message", handleNewMessage);
         };
     }, [isOpen, dispute.realId]);
@@ -145,7 +146,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header */}
-                <div className="px-6 py-4 border-b bg-gradient-to-r from-orange-600 to-red-600 text-white flex justify-between items-center">
+                <div className="px-6 py-4 border-b bg-gradient-to-r from-orange to-red-600 text-white flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold">Dispute Management</h2>
                         <p className="text-sm opacity-90">#{dispute.id} • {dispute.category}</p>
@@ -213,7 +214,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
                         <div className="flex-1 overflow-y-auto p-6 space-y-4">
                             {loading ? (
                                 <div className="h-full flex items-center justify-center">
-                                    <RefreshCw className="w-8 h-8 text-orange-500 animate-spin" />
+                                    <RefreshCw className="w-8 h-8 text-orange animate-spin" />
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-gray-400">
@@ -221,20 +222,23 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
                                     <p>No messages yet</p>
                                 </div>
                             ) : (
-                                messages.map((msg, idx) => (
-                                    <div key={idx} className={`flex ${msg.sender_type === 'admin' ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] p-4 rounded-2xl ${
-                                            msg.sender_type === 'admin' 
-                                            ? 'bg-orange-600 text-white rounded-br-none' 
-                                            : 'bg-gray-100 text-gray-800 rounded-bl-none'
-                                        }`}>
-                                            <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                                            <span className="text-[10px] opacity-70 mt-2 block">
-                                                {new Date(msg.created_at || '').toLocaleTimeString()}
-                                            </span>
+                                messages.map((msg, idx) => {
+                                    const isSenderAdmin = msg.sender_type === 'admin' || (msg as any).senderType === 'admin';
+                                    return (
+                                        <div key={idx} className={`flex ${isSenderAdmin ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[80%] p-4 rounded-2xl ${
+                                                isSenderAdmin 
+                                                ? 'bg-orange text-white rounded-br-none' 
+                                                : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                                            }`}>
+                                                <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                                                <span className="text-[10px] opacity-70 mt-2 block">
+                                                    {new Date(msg.created_at || (msg as any).createdAt || '').toLocaleTimeString()}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
+                                    );
+                                })
                             )}
                             <div ref={messagesEndRef} />
                         </div>

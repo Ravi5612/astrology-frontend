@@ -10,6 +10,8 @@ interface HistoryTabProps {
     toggleSession: (id: number) => void;
     onViewDetails: (session: any) => void;
     onReportIssue: (session: any) => void;
+    consultationDisputes?: Record<number, any>;
+    onViewDispute?: (dispute: any) => void;
 }
 
 const HistoryTab: React.FC<HistoryTabProps> = ({
@@ -18,7 +20,9 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
     expandedSessions,
     toggleSession,
     onViewDetails,
-    onReportIssue
+    onReportIssue,
+    consultationDisputes = {},
+    onViewDispute
 }) => {
     const { lang } = useLanguageStore();
     const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).history;
@@ -237,7 +241,16 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                         {t.viewChat}
                       </button>
 
-                      {session.status === "issue_reported" ||
+                      {consultationDisputes[session.id] ? (
+                        <button
+                          onClick={() => onViewDispute && onViewDispute(consultationDisputes[session.id])}
+                          className="w-full sm:w-auto px-8 py-3 bg-orange text-white font-bold rounded-2xl hover:bg-orange/90 shadow-lg shadow-orange/20 transition-all flex items-center justify-center gap-3"
+                          style={fontStyle}
+                        >
+                          <i className="fa-solid fa-comments text-lg"></i>
+                          {t.reportIssueDiscussion}
+                        </button>
+                      ) : session.status === "issue_reported" ||
                       session.status === "dispute_raised" ? (
                         <div
                           className="w-full sm:w-auto px-6 py-3 bg-red-50 text-red-600 font-bold rounded-2xl border border-red-100 flex items-center justify-center gap-3"

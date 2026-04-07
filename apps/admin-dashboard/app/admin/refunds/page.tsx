@@ -40,15 +40,15 @@ export default function RefundManagementPage() {
       // Map backend disputes to UI format
       const mappedRefunds = rawDisputes.map((d: any) => {
         const type = d.type || "consultation";
-        const itemDetails = d.itemDetails || {};
+        const itemDetails = d.item_details || d.itemDetails || {};
         
         let typeLabel = "Consultation";
         if (type === "order") typeLabel = "Product Order";
         else if (type === "puja") typeLabel = "Puja Booking";
 
         // Map status
-        let status = "pending";
-        if (d.status === "resolved") status = "refunded";
+        let status: any = "pending";
+        if (d.status === "resolved") status = "approved";
         else if (d.status === "closed") status = "rejected";
         else if (d.status === "pending" || d.status === "open") status = "pending";
 
@@ -56,24 +56,24 @@ export default function RefundManagementPage() {
           id: d.id.toString(),
           realId: d.id,
           user: {
-            id: d.userId || "N/A",
-            name: d.user?.name || "Unknown User",
-            avatar: d.user?.profile_picture || d.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.userId}`,
+            id: d.user_id || d.userId || "N/A",
+            name: d.user?.name || d.itemDetails?.userName || "Unknown User",
+            avatar: d.user?.profile_picture || d.user?.avatar || d.itemDetails?.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.userId}`,
             email: d.user?.email || "N/A"
           },
           expert: {
-            id: d.expertId || "N/A",
-            name: d.expert?.user?.name || d.itemDetails?.expertName || "System",
-            avatar: d.expert?.user?.profile_picture || d.expert?.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.expertId}`,
-            specialty: d.expert?.specialty || "Expert"
+            id: d.consultation?.expert?.id || d.puja?.expert?.id || d.expertId || "N/A",
+            name: d.consultation?.expert?.user?.name || d.puja?.expert?.user?.name || d.itemDetails?.expertName || "System",
+            avatar: d.consultation?.expert?.user?.profile_picture || d.consultation?.expert?.user?.avatar || d.puja?.expert?.user?.profile_picture || d.puja?.expert?.user?.avatar || d.itemDetails?.expertAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${d.itemDetails?.expertName || "E"}`,
+            specialty: d.consultation?.expert?.specialty || d.puja?.expert?.specialty || "Expert"
           },
           consultation: {
-            id: d.consultationId || d.itemId || d.orderId || d.pujaId || "N/A",
+            id: d.consultationId || d.itemId || d.orderId || d.pujaId || d.id || "N/A",
             type: typeLabel,
             realType: type,
-            duration: d.itemDetails?.duration || 0,
-            amount: d.itemDetails?.amount || 0,
-            date: new Date(d.itemDetails?.date || d.createdAt)
+            duration: d.itemDetails?.duration || itemDetails.duration || 0,
+            amount: itemDetails.amount || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.price || itemDetails.totalCost || 0,
+            date: new Date(itemDetails.date || d.item_details?.date || d.createdAt || Date.now())
           },
           reason: d.description || d.category || "No reason provided",
           category: d.category,
@@ -81,7 +81,7 @@ export default function RefundManagementPage() {
           requestedAmount: d.itemDetails?.amount || 0,
           status: status,
           priority: d.priority || "medium",
-          requestedAt: new Date(d.createdAt),
+          requestedAt: new Date(d.createdAt || Date.now()),
           attachments: d.attachments || []
         };
       });
@@ -103,7 +103,7 @@ export default function RefundManagementPage() {
   const stats = useMemo(() => {
     const total = refunds.length;
     const pending = refunds.filter(r => r.status === "pending").length;
-    const refunded = refunds.filter(r => r.status === "refunded").length;
+    const approved = refunds.filter(r => r.status === "approved").length;
     const totalAmount = refunds.reduce((sum, r) => sum + r.requestedAmount, 0);
 
     return [
@@ -124,8 +124,8 @@ export default function RefundManagementPage() {
         trend: { value: "Action", isPositive: true, period: "required" }
       },
       {
-        title: "Refunded",
-        value: refunded.toString(),
+        title: "Approved",
+        value: approved.toString(),
         icon: RefreshCw,
         iconColor: "text-green-600",
         iconBgColor: "bg-green-100",
@@ -145,7 +145,7 @@ export default function RefundManagementPage() {
   // Filter refunds
   const filteredRefunds = useMemo(() => {
     if (activeFilter === "all") return refunds;
-    if (["pending", "refunded", "rejected"].includes(activeFilter)) {
+    if (["pending", "approved", "rejected"].includes(activeFilter)) {
       return refunds.filter(r => r.status === activeFilter);
     }
     return refunds.filter(r => r.priority === activeFilter);
@@ -209,7 +209,7 @@ export default function RefundManagementPage() {
       />
 
       {/* Refunds Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {loading ? (
           <div className="col-span-full flex flex-col items-center justify-center py-20">
              <RefreshCw className="w-10 h-10 text-orange-500 animate-spin mb-4" />
@@ -224,6 +224,7 @@ export default function RefundManagementPage() {
               refund={refund}
               onApprove={() => handleUpdateStatus(refund.realId, "refunded")}
               onReject={() => handleUpdateStatus(refund.realId, "rejected")}
+              onPending={() => handleUpdateStatus(refund.realId, "pending")}
               onViewDetails={handleViewDetails}
             />
           ))
