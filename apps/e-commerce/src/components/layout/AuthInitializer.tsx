@@ -13,7 +13,7 @@ export const AuthInitializer = ({
     children: React.ReactNode,
     initialUser?: any
 }) => {
-    const { login, setUser } = useAuthStore();
+    const { login, setUser, refreshAuth } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -44,9 +44,9 @@ export const AuthInitializer = ({
                 } catch (err) {
                     console.error("[AuthInitializer] Error setting cookies:", err);
                 }
-            } else if (initialUser) {
-                // 2. Regular server-side hydration
-                setUser(initialUser);
+            } else {
+                // Regular server-side hydration (or guest state)
+                refreshAuth(initialUser);
             }
         };
 
