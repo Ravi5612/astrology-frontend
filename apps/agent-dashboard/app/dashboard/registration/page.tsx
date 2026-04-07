@@ -63,7 +63,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-purple-800",
         activeText: "text-white",
         borderColor: "border-purple-800",
-        infoText: "The merchant will receive their login credentials via email. No verification link required.",
+        infoText: "The merchant will receive their login credentials and a verification link via email.",
     },
 ];
 
@@ -138,14 +138,13 @@ function SuccessModal({
                         <span className="text-xs font-black uppercase tracking-widest">Credentials Sent</span>
                     </div>
                     <p className="text-sm text-blue-900 font-bold italic">
-                        The login password has been sent to 
+                        The login password and verification link have been sent to 
                         <span className="block mt-1 font-black underline decoration-blue-300 underline-offset-2">{registeredUser.email}</span>
-                        {roleString !== 'merchant' && <span className="block mt-1 text-xs text-blue-600">(Verification link also sent)</span>}
                     </p>
                 </div>
 
                 <p className="text-xs text-center text-slate-400 font-medium px-4 mb-6 italic">
-                    The {roleString} can now log in using the credentials provided in their inbox.
+                    The {roleString} can now log in after verifying their email using the credentials provided in their inbox.
                 </p>
 
                 <Button variant="primary" fullWidth onClick={onClose}>
@@ -242,7 +241,7 @@ function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) 
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ The login credentials {userType !== 'merchant' && 'and a verification link'} will be automatically sent to the {userType === 'expert' ? 'expert' : userType === 'merchant' ? 'merchant' : 'client'}&apos;s email address after registration.
+                    ℹ️ The login credentials and a verification link will be automatically sent to the {userType === 'expert' ? 'expert' : userType === 'merchant' ? 'merchant' : 'client'}&apos;s email address after registration.
                 </div>
 
                 <Button variant="primary" type="submit" icon={userType === 'merchant' ? ShoppingBag : UserPlus} disabled={submitting} fullWidth>
