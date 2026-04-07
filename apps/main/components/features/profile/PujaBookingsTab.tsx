@@ -10,6 +10,8 @@ interface PujaBookingsTabProps {
   bookings: any[];
   onUpdateStatus: (id: number, status: string, extra?: any) => Promise<boolean>;
   onReportIssue?: (booking: any) => void;
+  pujaDisputes?: Record<number, any>;
+  onViewDispute?: (dispute: any) => void;
 }
 
 // Simple native date formatter to replace date-fns
@@ -37,7 +39,9 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   loading,
   bookings,
   onUpdateStatus,
-  onReportIssue
+  onReportIssue,
+  pujaDisputes = {},
+  onViewDispute
 }) => {
   const { lang } = useLanguageStore();
   const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
@@ -198,14 +202,25 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
               </div>
 
               <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-                <button
-                   onClick={() => onReportIssue && onReportIssue(booking)}
-                   className="flex-1 sm:flex-none px-6 py-2 border border-red-100 text-red-500 font-bold text-xs rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
-                   style={fontStyle}
-                >
-                  <i className="fa-solid fa-circle-exclamation"></i>
-                   {t.pujas.reportIssue}
-                </button>
+                {pujaDisputes[booking.id] ? (
+                  <button
+                    onClick={() => onViewDispute && onViewDispute(pujaDisputes[booking.id])}
+                    className="flex-1 sm:flex-none px-6 py-2 bg-orange text-white font-bold text-xs rounded-xl hover:bg-orange/90 transition-all shadow-md flex items-center justify-center gap-2"
+                    style={fontStyle}
+                  >
+                    <i className="fa-solid fa-comments"></i>
+                    {t.pujas.reportIssueDiscussion}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => onReportIssue && onReportIssue(booking)}
+                    className="flex-1 sm:flex-none px-6 py-2 border border-red-100 text-red-500 font-bold text-xs rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                    style={fontStyle}
+                  >
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    {t.pujas.reportIssue}
+                  </button>
+                )}
 
                 {booking.status === 'on_hold' && (
                   <>
