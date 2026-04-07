@@ -11,7 +11,7 @@ import { registerUserByAgent, createListing } from "@/src/services/agent.service
 
 // ── Tab types ────────────────────────────────────────────────────────────────
 
-type TabId = "expert" | "client" | "mandir" | "puja_shop";
+type TabId = "expert" | "client" | "merchant" | "mandir" | "puja_shop";
 
 interface TabConfig {
     id: TabId;
@@ -63,7 +63,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-purple-800",
         activeText: "text-white",
         borderColor: "border-purple-800",
-        infoText: "Register a new puja shop listing. It will be submitted for review before going live.",
+        infoText: "The merchant will receive their login credentials and a verification link via email.",
     },
 ];
 
@@ -144,7 +144,7 @@ function SuccessModal({
                 </div>
 
                 <p className="text-xs text-center text-slate-400 font-medium px-4 mb-6 italic">
-                    The user/expert can now log in after verifying their email using the credentials provided in their inbox.
+                    The {roleString} can now log in after verifying their email using the credentials provided in their inbox.
                 </p>
 
                 <Button variant="primary" fullWidth onClick={onClose}>
@@ -184,8 +184,8 @@ function ListingSuccessModal({ name, type, onClose }: { name: string; type: stri
     );
 }
 
-// ── Expert / Client Form ──────────────────────────────────────────────────────
-function UserForm({ userType }: { userType: "expert" | "client" }) {
+// ── Expert / Client / Merchant Form ──────────────────────────────────────────
+function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) {
     const [form, setForm] = useState(EMPTY_USER_FORM);
     const [submitting, setSubmitting] = useState(false);
     const [registeredUser, setRegisteredUser] = useState<any>(null);
@@ -207,7 +207,12 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
             if (res.emailSent === false) {
                 toast.warning(`Registered, but credentials email failed: ${res.emailError || "Unknown error"}. Please check email service.`);
             } else {
-                toast.success(`${userType === "expert" ? "Expert" : "Client"} registered! Credentials sent to ${res.user.email} ✅`);
+                let successMsg = "";
+                if (userType === "expert") successMsg = "Expert registered! Credentials sent ✅";
+                else if (userType === "merchant") successMsg = "Puja Shop Merchant registered! Credentials sent ✅";
+                else successMsg = "Client registered! Credentials sent ✅";
+                
+                toast.success(successMsg);
             }
         }
         setSubmitting(false);
@@ -218,9 +223,9 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-4">
                     {[
-                        { key: "name", label: "Full Name *", placeholder: userType === "expert" ? "Pt. Ramesh Sharma" : "Rakesh Kumar", type: "text", full: true },
+                        { key: "name", label: userType === "merchant" ? "Shop / Owner Name *" : "Full Name *", placeholder: userType === "expert" ? "Pt. Ramesh Sharma" : userType === "merchant" ? "Shiv Puja Bhandar" : "Rakesh Kumar", type: "text", full: true },
                         { key: "email", label: "Email *", placeholder: "example@gmail.com", type: "email", full: false },
-                        { key: "phone", label: "Phone *", placeholder: "9876543210", type: "tel", full: false },
+                        { key: "phone", label: "Phone / Contact *", placeholder: "9876543210", type: "tel", full: false },
                     ].map(({ key, label, placeholder, type, full }) => (
                         <div key={key} className={full ? "sm:col-span-2" : ""}>
                             <FieldLabel>{label}</FieldLabel>
@@ -236,11 +241,11 @@ function UserForm({ userType }: { userType: "expert" | "client" }) {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ The login credentials and a verification link will be automatically sent to the {userType === "expert" ? "expert" : "client"}&apos;s email address after registration.
+                    ℹ️ The login credentials and a verification link will be automatically sent to the {userType === 'expert' ? 'expert' : userType === 'merchant' ? 'merchant' : 'client'}&apos;s email address after registration.
                 </div>
 
-                <Button variant="primary" type="submit" icon={UserPlus} disabled={submitting} fullWidth>
-                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : "Client"}`}
+                <Button variant="primary" type="submit" icon={userType === 'merchant' ? ShoppingBag : UserPlus} disabled={submitting} fullWidth>
+                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : userType === "merchant" ? "Puja Shop" : "Client"}`}
                 </Button>
             </form>
 
@@ -474,8 +479,10 @@ export default function RegisterUserPage() {
                     {(activeTab === "expert" || activeTab === "client") && (
                         <UserForm key={activeTab} userType={activeTab} />
                     )}
+                    {activeTab === "puja_shop" && (
+                        <UserForm key="merchant" userType="merchant" />
+                    )}
                     {activeTab === "mandir" && <PlaceForm key="mandir" type="mandir" />}
-                    {activeTab === "puja_shop" && <PlaceForm key="puja_shop" type="puja_shop" />}
                 </div>
             </div>
         </div>
