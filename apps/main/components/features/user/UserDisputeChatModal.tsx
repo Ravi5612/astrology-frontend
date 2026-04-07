@@ -185,7 +185,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
 
     return (
         <div
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-[10000]"
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-10000"
             onClick={onClose}
         >
             <div
@@ -194,7 +194,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
             >
 
                 {/* Header */}
-                <div className="px-5 py-4 border-b bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-2xl flex justify-between items-center flex-shrink-0">
+                <div className="px-5 py-4 border-b bg-linear-to-r from-orange-500 to-red-500 text-white rounded-t-2xl flex justify-between items-center shrink-0">
                     <div className="flex-1">
                         <h2 className="text-lg font-bold flex items-center gap-2">
                             Support Chat
@@ -225,8 +225,8 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                     {/* Persistent sticky status banner if request already exists (e.g. after refresh) */}
                     {userEndRequestedAt && (
                         <div className="sticky top-0 z-20 flex justify-center mb-4 transition-all animate-in fade-in slide-in-from-top-4 duration-500">
-                            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-orange-200 rounded-2xl px-5 py-3 flex items-start gap-3 shadow-lg backdrop-blur-sm max-w-[95%]">
-                                <div className="bg-orange-500 p-2 rounded-xl shadow-md flex-shrink-0">
+                            <div className="bg-linear-to-r from-amber-50 to-orange-50 border border-orange-200 rounded-2xl px-5 py-3 flex items-start gap-3 shadow-lg backdrop-blur-sm max-w-[95%]">
+                                <div className="bg-orange p-2 rounded-xl shadow-md shrink-0">
                                     <AlertCircleIcon className="w-4 h-4 text-white" />
                                 </div>
                                 <div className="flex flex-col">
@@ -261,9 +261,9 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                         if (msg.message?.includes("📋 ISSUE SUMMARY 📋")) {
                             const isMe = msg.senderType === "user" || !msg.senderType; // Automated is usually user
                             return (
-                                <div key={`summary-${idx}`} className={`flex flex-col !w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
+                                <div key={`summary-${idx}`} className={`flex flex-col w-full! mb-3 ${isMe ? "items-end" : "items-start"}`}>
                                     <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[95%]`}>
-                                        <div className="flex-shrink-0">
+                                        <div className="shrink-0">
                                             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
                                                 <Image
                                                     src={isMe
@@ -298,13 +298,13 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                         }
 
                         // CASE 2: Normal Message
-                        const isMe = msg.senderType === "user";
+                        const isMe = msg.senderType === "user" || (msg as any).sender_type === "user" || (msg as any).sender_id === clientUser?.id;
                         const msgKey = msg.id ? `msg-${msg.id}-${idx}` : `idx-${idx}`;
 
                         return (
-                            <div key={msgKey} className={`flex flex-col !w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
+                            <div key={msgKey} className={`flex flex-col w-full! mb-3 ${isMe ? "items-end" : "items-start"}`}>
                                 <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[85%]`}>
-                                    <div className="flex-shrink-0">
+                                    <div className="shrink-0">
                                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
                                             <Image
                                                 src={isMe
@@ -321,7 +321,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
 
                                     <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                                         <div className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${isMe
-                                            ? "bg-orange-500 text-white rounded-br-none"
+                                            ? "bg-orange text-white rounded-br-none"
                                             : "bg-white border text-gray-800 rounded-bl-none"
                                             }`}>
                                             {msg.attachmentUrl && (
@@ -356,7 +356,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                 </div>
 
                 {/* Input */}
-                <div className="p-3 border-t bg-white rounded-b-2xl flex-shrink-0">
+                <div className="p-3 border-t bg-white rounded-b-2xl shrink-0">
                     <div className="flex gap-2 items-center">
                         <button
                             type="button"
@@ -383,7 +383,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                                 }
                             }}
                             placeholder="Type a message..."
-                            className="flex-1 bg-gray-100 border-0 rounded-full px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                            className="flex-1 bg-gray-100 border-0 rounded-full px-4 py-3 focus:ring-2 focus:ring-orange outline-none text-sm"
                         />
 
                         <button
@@ -393,7 +393,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                                 handleSendMessage();
                             }}
                             disabled={!newMessage.trim() || loading}
-                            className="p-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
+                            className="p-3 bg-orange text-white rounded-full hover:bg-orange/90 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
                         >
                             {loading ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
