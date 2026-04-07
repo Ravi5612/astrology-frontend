@@ -56,7 +56,8 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         }
 
         const handleNewMessage = (message: any) => {
-            if (Number(message.disputeId) === Number(disputeId)) {
+            const mId = message.disputeId || message.dispute_id;
+            if (Number(mId) === Number(disputeId)) {
                 setMessages((prev) => {
                     if (prev.some(m => m.id === message.id)) return prev;
                     return [...prev, message];
