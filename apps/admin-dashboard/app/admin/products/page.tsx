@@ -26,8 +26,9 @@ export default function ProductsPage() {
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    // Search State
+    // Search & Filter State
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilter, setActiveFilter] = useState<"all" | "agent" | "astrologer" | "merchant">("all");
 
     // Form & Edit State
     const [formData, setFormData] = useState<Product>({
@@ -73,9 +74,20 @@ export default function ProductsPage() {
     }, []);
 
     // Filtered Products
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        let matchesFilter = true;
+        if (activeFilter === "agent") {
+            matchesFilter = !p.expert_id && !p.merchant_id;
+        } else if (activeFilter === "astrologer") {
+            matchesFilter = !!p.expert_id;
+        } else if (activeFilter === "merchant") {
+            matchesFilter = !!p.merchant_id;
+        }
+
+        return matchesSearch && matchesFilter;
+    });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -131,7 +143,7 @@ export default function ProductsPage() {
             toast.error("Failed to delete product");
             return;
         }
-        
+
         toast.success("Product deleted successfully");
         fetchProducts();
     };
@@ -220,6 +232,34 @@ export default function ProductsPage() {
                         {showForm ? "Cancel" : "Add Product"}
                     </Button>
                 </div>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap gap-2 mb-6">
+                <button
+                    onClick={() => setActiveFilter("all")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "all" ? "bg-yellow-100 text-yellow-700 border-2 border-yellow-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    All Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("agent")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "agent" ? "bg-blue-100 text-blue-700 border-2 border-blue-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Agent Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("astrologer")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "astrologer" ? "bg-purple-100 text-purple-700 border-2 border-purple-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Astrologer Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("merchant")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "merchant" ? "bg-green-100 text-green-700 border-2 border-green-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Merchant Products
+                </button>
             </div>
 
             {showForm && (
