@@ -16,11 +16,6 @@
             "icon": "UserCheck"
         },
         {
-            "label": "Services & Pricing",
-            "href": "/admin/services",
-            "icon": "Package"
-        },
-        {
             "label": "Coupons/Offers",
             "href": "/admin/coupons",
             "icon": "Tag"
@@ -39,11 +34,6 @@
             "label": "Refund Management",
             "href": "/admin/refunds",
             "icon": "RefreshCw"
-        },
-        {
-            "label": "Dispute Resolution",
-            "href": "/admin/disputes",
-            "icon": "AlertCircle"
         },
         {
             "label": "Reviews Moderation",

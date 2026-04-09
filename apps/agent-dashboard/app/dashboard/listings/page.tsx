@@ -114,6 +114,7 @@ function TypeBadge({ type }: { type: ReferredUser["type"] }) {
         client: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200", icon: Users, label: "Client" },
         mandir: { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-200", icon: Building2, label: "Mandir" },
         puja_shop: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-200", icon: ShoppingBag, label: "Puja Shop" },
+        merchant: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-200", icon: ShoppingBag, label: "Puja Shop" },
     };
 
     const c = config[type] ?? config.client;

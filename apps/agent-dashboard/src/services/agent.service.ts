@@ -61,7 +61,7 @@ export interface ReferredUser {
     email: string | null;
     phone: string | null;
     status: string;
-    type: 'expert' | 'client' | 'mandir' | 'puja_shop';
+    type: 'expert' | 'client' | 'merchant' | 'mandir' | 'puja_shop';
     avatar: string | null;
     createdAt: string;
     location?: string | null;
@@ -81,7 +81,7 @@ export interface ReferredUsersResponse {
 }
 
 export interface ReferredUsersParams {
-    type?: 'expert' | 'client' | 'mandir' | 'puja_shop';
+    type?: 'expert' | 'client' | 'merchant' | 'mandir' | 'puja_shop';
     search?: string;
     page?: number;
     limit?: number;
@@ -101,7 +101,7 @@ export interface RegisterUserPayload {
     name: string;
     email: string;
     phone: string;
-    userType: "expert" | "client";
+    userType: "expert" | "client" | "merchant";
 }
 
 export interface RegisterUserResponse {
@@ -123,7 +123,7 @@ export const registerUserByAgent = async (payload: RegisterUserPayload): Promise
     const { userType, ...rest } = payload;
     const body = {
         ...rest,
-        roles: [userType], // 'expert' or 'client'
+        roles: [userType], // 'expert', 'client', or 'merchant'
     };
     return api.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
 };

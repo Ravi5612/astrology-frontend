@@ -436,8 +436,8 @@ export default function AgentsPage() {
                 limit: 10,
                 status: statusFilter
             });
-            setAgents(res.data || []);
-            setTotal(res.total || 0);
+            setAgents(res?.data || []);
+            setTotal(res?.total || 0);
         } catch (error) {
             console.error("Failed to fetch agents", error);
             setAgents([]);
@@ -453,7 +453,7 @@ export default function AgentsPage() {
                 type: typeFilter,
                 search: listSearch
             });
-            setListings(res.data || []);
+            setListings(res?.data || []);
         } catch (error) {
             console.error("Failed to fetch listings", error);
         } finally {
@@ -469,7 +469,7 @@ export default function AgentsPage() {
 
     useEffect(() => {
         getAllListings({})
-            .then(r => setAllListings(r.data || []))
+            .then(r => setAllListings(r?.data || []))
             .catch(() => { });
     }, []);
 
