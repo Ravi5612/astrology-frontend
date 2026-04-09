@@ -1,5 +1,5 @@
 import { api } from "@/src/lib/api";
-import type { Agent, AgentListing, Commission } from "@/app/components/agent/agent";
+import type { Agent, AgentListing, Commission, AgentStats } from "@/app/components/agent/agent";
 import {
     MOCK_AGENTS,
     MOCK_LISTINGS,
@@ -19,7 +19,7 @@ export const getAgents = async (params?: {
     search?: string;
     status?: string;
 }) => {
-    const res: any = await api.get("/admin/agents", {
+    const [data] = await api.get<{ data: Agent[]; total: number }>("/admin/agents", {
         params: {
             page: params?.page,
             limit: params?.limit,
@@ -27,61 +27,60 @@ export const getAgents = async (params?: {
             status: params?.status === "" ? undefined : params?.status
         }
     });
-    return res.data; // Expected { data: Agent[], total: number }
+    return data as { data: Agent[]; total: number };
 };
 
 export const getAgentStats = async () => {
-    const res: any = await api.get("/admin/agents/stats");
-    return res.data; // Expected { totalAgents: number, activeAgents: number, ... }
+    const [data] = await api.get<AgentStats>("/admin/agents/stats");
+    return data as AgentStats;
 };
 
 export const getAgentById = async (id: string | number) => {
-    const res: any = await api.get(`/admin/agents/${id}`);
-    return res.data as Agent;
+    const [data] = await api.get<Agent>(`/admin/agents/${id}`);
+    return data as Agent;
 };
 
 export const createAgent = async (formData: FormData) => {
-    const res: any = await api.upload("/admin/agents", formData);
-    return res.data;
+    const [data] = await api.upload<any>("/admin/agents", formData);
+    return data;
 };
 
 export const updateAgentStatus = async (
     id: string | number,
     status: Agent["status"]
 ) => {
-    const res: any = await api.patch(`/admin/agents/${id}`, { status });
-    return res.data;
+    const [data] = await api.patch<any>(`/admin/agents/${id}`, { status });
+    return data;
 };
 
 // ─── OTP Verification ─────────────────────────────────────────────────────────
 export const sendAgentOtp = async (email: string) => {
-    const res: any = await api.post("/admin/agents/send-otp", { email });
-    return res.data;
+    const [data] = await api.post<any>("/admin/agents/send-otp", { email });
+    return data;
 };
 
 export const verifyAgentOtp = async (email: string, otp: string) => {
-    const res: any = await api.post("/admin/agents/verify-otp", { email, otp });
-    return res.data;
+    const [data] = await api.post<any>("/admin/agents/verify-otp", { email, otp });
+    return data;
 };
 
 // ─── Listings ─────────────────────────────────────────────────────────────────
 export const getListingsByAgent = async (agent_id: string) => {
-    const res: any = await api.get(`/admin/agents/${agent_id}/listings`);
-    return res.data as AgentListing[];
+    const [data] = await api.get<AgentListing[]>(`/admin/agents/${agent_id}/listings`);
+    return data as AgentListing[];
 };
 
 export const getAllListings = async (params?: {
     type?: string;
     search?: string;
 }) => {
-    // ✅ Admin must use /admin/listings to avoid role conflicts
-    const res: any = await api.get("/admin/listings", {
+    const [data] = await api.get<{ data: AgentListing[] }>("/admin/listings", {
         params: {
             type: params?.type === "" ? undefined : params?.type,
             search: params?.search
         }
     });
-    return res.data;
+    return data as { data: AgentListing[] };
 };
 
 export const updateListingStatus = async (
@@ -89,8 +88,8 @@ export const updateListingStatus = async (
     status: "approved" | "rejected" | "pending",
     reason?: string
 ) => {
-    const res: any = await api.patch(`/admin/listings/${id}/status`, { status, reason });
-    return res.data;
+    const [data] = await api.patch<any>(`/admin/listings/${id}/status`, { status, reason });
+    return data;
 };
 
 // ─── Commissions ──────────────────────────────────────────────────────────────
@@ -98,11 +97,11 @@ export const getCommissions = async (params?: {
     agent_id?: string;
     status?: string;
 }) => {
-    const res: any = await api.get("/admin/commissions", { params });
-    return res.data;
+    const [data] = await api.get<{ data: Commission[] }>("/admin/commissions", { params });
+    return data as { data: Commission[] };
 };
 
 export const markCommissionPaid = async (id: number) => {
-    const res: any = await api.patch(`/admin/commissions/${id}/pay`);
-    return res.data;
+    const [data] = await api.patch<any>(`/admin/commissions/${id}/pay`);
+    return data;
 };

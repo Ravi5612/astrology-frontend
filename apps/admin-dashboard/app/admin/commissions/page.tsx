@@ -65,7 +65,7 @@ export default function CommissionsPage() {
         try {
             setIsLoading(true);
             const res = await getCommissions({ status: statusFilter || undefined });
-            setCommissions(res.data);
+            setCommissions(res?.data || []);
         } catch (err) {
             console.error("Failed to fetch commissions:", err);
         } finally {
@@ -74,7 +74,7 @@ export default function CommissionsPage() {
     }, [statusFilter]);
 
     useEffect(() => {
-        getCommissions({}).then((r) => setAllData(r.data)).catch(console.error);
+        getCommissions({}).then((r) => setAllData(r?.data || [])).catch(console.error);
     }, []);
 
     useEffect(() => { fetchCommissions(); }, [fetchCommissions]);
@@ -86,7 +86,7 @@ export default function CommissionsPage() {
             await markCommissionPaid(commission.id);
             toast.success(`Commission ₹${commission.amount} marked as paid!`);
             fetchCommissions();
-            getCommissions({}).then((r) => setAllData(r.data)).catch(console.error);
+            getCommissions({}).then((r) => setAllData(r?.data || [])).catch(console.error);
         } catch {
             toast.error("Failed to update commission status.");
         } finally {
@@ -133,10 +133,10 @@ export default function CommissionsPage() {
             label: "Status",
             render: (c: Commission) => (
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${c.status === "paid"
-                        ? "bg-green-100 text-green-700"
-                        : c.status === "pending"
-                            ? "bg-orange-100 text-orange-700"
-                            : "bg-gray-100 text-gray-600"
+                    ? "bg-green-100 text-green-700"
+                    : c.status === "pending"
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-gray-100 text-gray-600"
                     }`}>
                     {c.status.charAt(0).toUpperCase() + c.status.slice(1)}
                 </span>
