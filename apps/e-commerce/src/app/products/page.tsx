@@ -331,7 +331,7 @@ export default function ProductListing() {
                     </span>
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                    <div className="flex items-center justify-end space-x-1 transition-all duration-300">
                       <Link href={`/products/view/${p.id}`}>
                         <button className="p-2.5 text-gray-400 hover:text-orange-500 hover:bg-orange-100/50 rounded-xl transition-all" title="View">
                           <Eye className="w-5 h-5" />
@@ -353,9 +353,6 @@ export default function ProductListing() {
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
-                    </div>
-                    <div className="block group-hover:hidden text-gray-300 transition-opacity duration-300">
-                      <MoreVertical className="w-5 h-5 ml-auto" />
                     </div>
                   </td>
                 </tr>

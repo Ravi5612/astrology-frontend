@@ -12,6 +12,13 @@ import { Store } from "@/lib/types/shop";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import Link from "next/link";
+import { useMerchantProducts } from "@/hooks/useMerchantProducts";
+import { useMemo, useEffect } from "react";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import "swiper/css";
 
@@ -20,6 +27,54 @@ interface StoreCardProps {
 }
 
 export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
+  const router = useRouter();
+  const { isClientAuthenticated } = useAuthStore();
+  const { isMerchantInWishlist } = useWishlistStore();
+  const { toggleLike } = useWishlist();
+
+  const isLiked = isMerchantInWishlist(Number(store.id));
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isClientAuthenticated) {
+      toast.error("Please login first to wishlist this shop", {
+        onClick: () => router.push("/sign-in"),
+        autoClose: 3000,
+        style: { cursor: 'pointer' }
+      });
+      return;
+    }
+
+    toggleLike({ id: Number(store.id), type: "merchant", isLiked });
+  };
+
+  // Fallback: Fetch products if popularProducts is missing or empty
+// ... (displayProducts logic kept same)
+  const shouldFetch = !store.popularProducts || store.popularProducts.length === 0;
+  
+  const { data: fetchedProducts } = useMerchantProducts(
+// ...
+    shouldFetch ? store.id : undefined,
+    1,
+    6
+  );
+
+  const displayProducts = useMemo(() => {
+    // If backend already provided popularProducts, use them
+    if (store.popularProducts && store.popularProducts.length > 0) {
+      return store.popularProducts;
+    }
+    // Otherwise use fetched products images
+    if (Array.isArray(fetchedProducts) && fetchedProducts.length > 0) {
+      return fetchedProducts
+        .map((p: any) => p.image || p.imageUrl || p.productImage)
+        .filter(Boolean) as string[];
+    }
+    return [];
+  }, [store.popularProducts, fetchedProducts]);
+
   return (
     <Link 
       href={`/stores/${store.id}`}
@@ -38,6 +93,24 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
             <StoreIcon className="w-12 h-12 text-orange-200" />
           </div>
         )}
+
+        {/* Like Button & Count Overlay */}
+        <div className="absolute top-4 left-4 z-10 flex flex-col items-center gap-2">
+          <button
+            onClick={handleLike}
+            className={`w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95 ${isLiked ? 'text-red-500 shadow-red-500/20' : 'text-gray-400 hover:text-red-500'}`}
+          >
+            <i className={`${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-lg`}></i>
+          </button>
+          
+          {store.likesCount !== undefined && (
+            <div className="px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-sm flex items-center justify-center min-w-[32px] animate-in fade-in slide-in-from-top-1 duration-500">
+              <span className="text-[10px] font-black text-white leading-none">
+                {store.likesCount > 999 ? `${(store.likesCount / 1000).toFixed(1)}k` : store.likesCount}
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Rating Badge Overlay */}
         <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl shadow-lg flex items-center gap-1.5 border border-white/20">
@@ -101,18 +174,29 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
                 }}
                 className="rounded-xl overflow-hidden pointer-events-none"
               >
-                {store.popularProducts?.map((img, idx) => (
+                {displayProducts.length > 0 ? (
+                  displayProducts.map((img, idx) => (
                     <SwiperSlide key={idx}>
-                        <div className="h-16 bg-gray-50 rounded-lg overflow-hidden relative border border-gray-100 shadow-sm">
-                            <img src={img} className="w-full h-full object-cover" alt="Product" />
-                        </div>
+                      <div className="h-16 bg-gray-50 rounded-lg overflow-hidden relative border border-gray-100 shadow-sm">
+                        <img 
+                          src={img} 
+                          className="w-full h-full object-cover" 
+                          alt="Product"
+                          onError={(e) => {
+                            // Fallback for broken images
+                            (e.target as HTMLImageElement).src = "/images/placeholder-product.png";
+                          }}
+                        />
+                      </div>
                     </SwiperSlide>
-                )) || (
-                    [1, 2, 3].map((i) => (
-                        <SwiperSlide key={i}>
-                            <div className="h-16 bg-gray-50 rounded-lg animate-pulse" />
-                        </SwiperSlide>
-                    ))
+                  ))
+                ) : (
+                  // Show skeletons while loading or if no products found
+                  [1, 2, 3].map((i) => (
+                    <SwiperSlide key={i}>
+                      <div className="h-16 bg-gray-100 rounded-lg animate-pulse border border-gray-100" />
+                    </SwiperSlide>
+                  ))
                 )}
               </Swiper>
            </div>

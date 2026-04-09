@@ -2,6 +2,8 @@ import { api } from "@/lib/api";
 import { Store } from "@/lib/types/shop";
 import { Product } from "@/lib/types";
 
+
+
 export const merchantService = {
     /**
      * Fetch all merchants with optional pagination, search and city filters
@@ -14,7 +16,9 @@ export const merchantService = {
         if (city && city !== "All Cities") url += `&city=${encodeURIComponent(city)}`;
         
         const [data, error] = await api.get<any>(url);
-        return [data?.data || data || [], error];
+        // Backend should return { merchants: [...] }
+        const merchants = data?.data?.merchants || data?.merchants || data?.data || data;
+        return [Array.isArray(merchants) ? merchants : [], error];
     },
 
     /**
@@ -22,7 +26,10 @@ export const merchantService = {
      */
     getMerchantCities: async () => {
         const [data, error] = await api.get<any>('/merchants/cities');
-        return [data?.data || data || [], error];
+        console.error('!!! Main App Cities API Response:', data);
+        // Backend might return { cities: [] } or { data: [] }
+        const cities = data?.data?.cities || data?.cities || data?.data || data;
+        return [Array.isArray(cities) ? cities : [], error];
     },
 
     /**
@@ -40,7 +47,10 @@ export const merchantService = {
      */
     getMerchantProducts: async (id: string | number, page = 1, limit = 20) => {
         const [data, error] = await api.get<any>(`/products?merchantId=${id}&page=${page}&limit=${limit}`);
-        return [data?.data || data || [], error];
+        console.error('!!! Raw Store products API Response:', data);
+        // Extract array from various possible keys
+        const products = data?.data?.products || data?.products || data?.data || data;
+        return [Array.isArray(products) ? products : [], error];
     },
 
     /**
@@ -49,5 +59,23 @@ export const merchantService = {
     getMerchantReviews: async (id: string | number) => {
         const [data, error] = await api.get<any>(`/reviews/merchant/${id}`);
         return [data?.data || data || [], error];
+    },
+
+    /**
+     * Submit a review for a merchant
+     */
+    submitMerchantReview: async (payload: { merchantId: number | string, orderId: number | string, rating: number, comment: string }) => {
+        // Based on backend plan: POST /api/v1/reviews
+        const body = {
+            merchantId: Number(payload.merchantId),
+            orderId: Number(payload.orderId),
+            rating: Number(payload.rating),
+            comment: payload.comment
+        };
+        
+        console.log("!!! NETWORK REQUEST - Submitting review to /reviews:", body);
+        
+        const [data, error] = await api.post<any>('/reviews', body);
+        return [data, error];
     }
 };

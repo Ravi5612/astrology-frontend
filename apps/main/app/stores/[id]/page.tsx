@@ -30,6 +30,7 @@ import Link from "next/link";
 
 import { useMerchant } from "@/hooks/useMerchant";
 import { useMerchantProducts } from "@/hooks/useMerchantProducts";
+import { useMerchantReviews } from "@/hooks/useMerchantReviews";
 
 const StoreSkeleton = () => (
     <div className="max-w-7xl mx-auto px-4 md:px-6 mt-10 animate-pulse">
@@ -55,6 +56,7 @@ const StoreDetailsPage = () => {
 
     const { data: store, isLoading: isStoreLoading, error: storeError } = useMerchant(id);
     const { data: storeProducts = [], isLoading: isProductsLoading } = useMerchantProducts(id);
+    const { data: storeReviews = [] } = useMerchantReviews(id);
 
     if (isStoreLoading) return <StoreSkeleton />;
 
@@ -131,7 +133,7 @@ const StoreDetailsPage = () => {
                                 <div className="text-center px-4">
                                     <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-black mb-1">Products</p>
                                     <div className="flex items-center justify-center gap-1">
-                                        <span className="text-sm font-black text-slate-900">45+</span>
+                                        <span className="text-sm font-black text-slate-900">{shop.productsCount || (storeProducts as any[]).length || "0"}</span>
                                         <ShoppingBag className="w-3.5 h-3.5 text-orange" />
                                     </div>
                                 </div>
@@ -145,7 +147,7 @@ const StoreDetailsPage = () => {
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Trust Store Score</span>
-                                        <span className="text-sm font-black text-slate-800">99.8% Reliability</span>
+                                        <span className="text-sm font-black text-slate-800">{shop.trustScore || "99.8%"} Reliability</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 group/item">
@@ -154,7 +156,7 @@ const StoreDetailsPage = () => {
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Operational Hours</span>
-                                        <span className="text-sm font-black text-slate-800">10:00 AM - 08:30 PM</span>
+                                        <span className="text-sm font-black text-slate-800">{shop.operationalHours || "10:00 AM - 08:30 PM"}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 group/item">
@@ -192,7 +194,7 @@ const StoreDetailsPage = () => {
                                 </div>
                                 <div className="flex items-center gap-3 bg-white/50 backdrop-blur-md px-4 py-2 rounded-2xl border border-orange/5">
                                     <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                                    <span className="text-sm font-black text-slate-800 tracking-tight">1.2k Likes</span>
+                                    <span className="text-sm font-black text-slate-800 tracking-tight">{shop.likesCount || "0"} Likes</span>
                                 </div>
                             </div>
 
@@ -272,19 +274,19 @@ const StoreDetailsPage = () => {
                                                 </div>
                                             ) : (
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                                                    {storeProducts.map((product) => (
+                                                    {(storeProducts as any[]).map((product) => (
                                                         <ProductCard 
                                                             key={product.id || product._id} 
                                                             product={product as any} 
                                                             isCompact={true} 
-                                                            onView={(p) => {
+                                                            onView={(p: Product) => {
                                                                 setSelectedProduct(p);
                                                                 setIsQuickViewOpen(true);
                                                             }}
                                                         />
                                                     ))}
 
-                                                    {storeProducts.length === 0 && (
+                                                    {(storeProducts as any[]).length === 0 && (
                                                         <div className="col-span-full py-20 text-center space-y-4">
                                                             <ShoppingBag className="w-12 h-12 text-gray-200 mx-auto" />
                                                             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">No products available in this collection yet.</p>
@@ -298,25 +300,40 @@ const StoreDetailsPage = () => {
 
                                 {activeTab === 'reviews' && (
                                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>
-                                        {[1, 2, 3].map((r) => (
-                                            <div key={r} className="p-8 rounded-[2.5rem] bg-white border border-orange/5 shadow-premium space-y-4 hover:shadow-xl transition-shadow group">
+                                        {storeReviews.map((r) => (
+                                            <div key={r.id} className="p-8 rounded-[2.5rem] bg-white border border-orange/5 shadow-premium space-y-4 hover:shadow-xl transition-shadow group">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-full bg-orange/10 flex items-center justify-center text-orange font-black">R{r}</div>
+                                                        {r.img ? (
+                                                            <img src={r.img} alt={r.name} className="w-12 h-12 rounded-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-12 h-12 rounded-full bg-orange/10 flex items-center justify-center text-orange font-black text-lg">
+                                                                {r.name.charAt(0)}
+                                                            </div>
+                                                        )}
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-black text-slate-900">Rahul Sharma</span>
-                                                            <span className="text-[10px] font-bold text-gray-400">Verified Journey • 2 weeks ago</span>
+                                                            <span className="text-sm font-black text-slate-900">{r.name}</span>
+                                                            <span className="text-[10px] font-bold text-gray-400">Verified Journey</span>
                                                         </div>
                                                     </div>
                                                     <div className="flex text-orange gap-0.5">
-                                                        {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-3 h-3 fill-orange" />)}
+                                                        {Array.from({ length: 5 }).map((_, i) => (
+                                                            <Star key={i} className={`w-3 h-3 ${i < r.rating ? "fill-orange" : "text-gray-200"}`} />
+                                                        ))}
                                                     </div>
                                                 </div>
                                                 <p className="text-gray-500 text-sm font-bold leading-relaxed italic group-hover:text-slate-700 transition-colors">
-                                                    "Beautiful experience buying from {shop.name}. The energy of the store and products is amazing. Highly recommended for authentic spiritual needs."
+                                                    "{r.review}"
                                                 </p>
                                             </div>
                                         ))}
+
+                                        {storeReviews.length === 0 && (
+                                            <div className="py-20 text-center space-y-4">
+                                                <MessageSquare className="w-12 h-12 text-gray-200 mx-auto" />
+                                                <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">No reviews yet for this merchant.</p>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 

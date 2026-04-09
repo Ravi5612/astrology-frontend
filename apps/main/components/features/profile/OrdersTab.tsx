@@ -5,6 +5,7 @@ import { PATHS } from "@repo/routes";
 import { getProductImageUrl } from "@/utils/image-utils";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import ReviewModal from "../../ui/modals/ReviewModal";
 
 const NextLink = Link as any;
 
@@ -20,6 +21,10 @@ interface OrdersTabProps {
     onReportIssue: (order: any) => void;
     userPhone?: string;
     userName?: string;
+    reviewModalOpen: boolean;
+    onCloseReviewModal: () => void;
+    onOpenReviewModal: (merchantId: any, orderId: any) => void;
+    onReviewSubmit: (data: any) => void;
 }
 
 const OrdersTab: React.FC<OrdersTabProps> = ({
@@ -31,7 +36,11 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
     onViewChat,
     onReportIssue,
     userPhone,
-    userName
+    userName,
+    reviewModalOpen,
+    onCloseReviewModal,
+    onOpenReviewModal,
+    onReviewSubmit
 }) => {
     const { lang } = useLanguageStore();
     const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).orders;
@@ -81,15 +90,26 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
           </div>
         ) : (
           <div className="space-y-6">
-            {orders.filter(Boolean).map((order: any, idx: number) => (
+            {(() => {
+                console.log("DEBUG: Total Orders found:", orders.length);
+                console.table(orders.map(o => ({ 
+                    id: o.trackingId || o.id, 
+                    status: o.status, 
+                    hasOTP: !!(o.deliveryOtp || o.delivery_otp || o.deliveryOTP || o.otp) 
+                })));
+                return null;
+            })()}
+            {orders.filter(Boolean).map((order: any, idx: number) => {
+              console.log(`DEBUG: Order #${order.id || idx} full data:`, order);
+              return (
               <div
-                key={order.id || idx}
+                key={order.trackingId || order.id || idx}
                 className="group border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white"
               >
                 {/* Order Summary Header */}
                 <div
                   className="bg-gray-50/50 p-4 sm:p-6 flex flex-wrap gap-6 items-center justify-between border-b border-gray-100 cursor-pointer hover:bg-gray-100/30 transition-colors"
-                  onClick={() => toggleOrder(order.id)}
+                  onClick={() => toggleOrder(order.trackingId || order.id)}
                 >
                   <div className="flex flex-wrap gap-8 items-center">
                     <div>
@@ -100,7 +120,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                         {t.orderId}
                       </span>
                       <span className="font-bold text-gray-900" style={fontStyle}>
-                        #{order.orderId || order.id}
+                        #{order.trackingId || order.orderId || order.id}
                       </span>
                     </div>
                     <div>
@@ -111,7 +131,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                         {t.date}
                       </span>
                       <span className="font-bold text-gray-900" style={fontStyle}>
-                        {order.createdAt || order.created_at
+                        {order.date || order.createdAt || order.created_at
                           ? new Date(
                               order.createdAt || order.created_at
                             ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
@@ -130,12 +150,27 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                         {t.totalAmount}
                       </span>
                       <span className="font-bold text-orange text-lg">
-                        ₹{order.totalAmount || order.total_amount || order.amount || 0}
+                        ₹{order.amount || order.totalAmount || order.total_amount || 0}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 ml-auto">
+                  <div className="flex flex-wrap items-center gap-4 ml-auto">
+                    {(() => {
+                        const otp = order.deliveryOtp || order.delivery_otp || order.deliveryOTP || order.otp;
+                        if (otp && order.status?.toLowerCase() !== 'delivered' && order.status?.toLowerCase() !== 'cancelled') {
+                            return (
+                                <div className="flex items-center gap-2 px-3 py-1 bg-orange/10 border border-orange/20 rounded-lg">
+                                  <i className="fa-solid fa-shield-halved text-orange text-[10px]"></i>
+                                  <span className="text-[10px] font-black text-orange tracking-widest leading-none">
+                                     OTP: {otp}
+                                  </span>
+                                </div>
+                            );
+                        }
+                        return null;
+                    })()}
+
                     <span
                       className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
                         order.status?.toLowerCase() === "delivered" ||
@@ -153,7 +188,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                     </span>
                     <button
                       className={`w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm transition-transform duration-300 ${
-                        expandedOrders[order.id] ? "rotate-180" : ""
+                        expandedOrders[order.trackingId || order.id] ? "rotate-180" : ""
                       }`}
                     >
                       <i className="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
@@ -162,67 +197,113 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                 </div>
 
                 {/* Expanded Details */}
-                {expandedOrders[order.id] && (
+                {expandedOrders[order.trackingId || order.id] && (
                   <div className="p-6 md:p-8 animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="space-y-4">
-                      {(order.items || order.OrderItems || []).filter(Boolean).map(
-                        (item: any, itemIdx: number) => {
-                          const product = item.product || item.Product;
-                          const productImg =
-                            getProductImageUrl(product) !== FALLBACK_IMG
-                              ? getProductImageUrl(product)
-                              : getProductImageUrl(item);
+                    {/* Specialized View for Puja/Services */}
+                    {order.type === 'puja' ? (
+                        <div className="bg-orange/5 border border-orange/10 p-6 rounded-[2rem] flex flex-col md:flex-row items-center gap-8 mb-8">
+                             <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center text-orange shadow-premium shrink-0 border border-orange/5 relative">
+                                <i className="fa-solid fa-om text-3xl"></i>
+                                <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-green-500 border-4 border-white flex items-center justify-center">
+                                    <i className="fa-solid fa-check text-[10px] text-white"></i>
+                                </div>
+                             </div>
+                             <div className="flex-1 text-center md:text-left space-y-2">
+                                <div className="flex items-center justify-center md:justify-start gap-3">
+                                    <h4 className="text-xl font-black text-slate-900 m-0 uppercase italic">{order.name || 'Spiritual Service'}</h4>
+                                    <span className="px-3 py-0.5 bg-orange text-white text-[9px] font-black uppercase tracking-widest rounded-full">Puja Booking</span>
+                                </div>
+                                <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-lg">
+                                    Your personal consultation and puja session scheduled. Our experts will connect with you shortly for the rituals and process.
+                                </p>
+                             </div>
+                             <div className="px-8 py-4 bg-white rounded-2xl border border-orange/10 shadow-sm flex flex-col items-center justify-center">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ritual Value</span>
+                                <span className="text-2xl font-black text-orange">₹{order.amount}</span>
+                             </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {/* Delivery OTP Section (New) */}
+                            {(order.deliveryOtp || order.delivery_otp || order.deliveryOTP) && 
+                             order.status?.toLowerCase() !== 'delivered' && 
+                             order.status?.toLowerCase() !== 'cancelled' && (
+                                <div className="bg-orange-50 border border-orange-100 p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 mb-6 shadow-sm relative overflow-hidden">
+                                    <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.2em] text-[10px]">
+                                        <i className="fa-solid fa-shield-halved"></i>
+                                        <span>Secure Delivery Verification</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-4xl font-black text-slate-900 tracking-[0.3em] font-mono">
+                                            {order.deliveryOtp || order.delivery_otp || order.deliveryOTP}
+                                        </span>
+                                        <p className="text-[10px] text-orange-500 font-bold mt-2 uppercase tracking-widest text-center">Share this OTP only with the delivery person</p>
+                                    </div>
+                                    <div className="absolute top-2 right-4 opacity-5 pointer-events-none">
+                                        <i className="fa-solid fa-truck-fast text-6xl"></i>
+                                    </div>
+                                </div>
+                            )}
 
-                          return (
-                            <div
-                              key={item.id || itemIdx}
-                              className="flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100"
-                            >
-                              <div className="w-16 h-16 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm shrink-0">
-                                <Image
-                                  src={productImg}
-                                  alt={product?.name || t.productName}
-                                  width={64}
-                                  height={64}
-                                  className="object-cover w-full h-full"
-                                  onError={(e) => {
-                                    (e.target as any).src = FALLBACK_IMG;
-                                  }}
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start gap-4 mb-1">
-                                  <h6 className="font-bold text-gray-900 m-0 truncate">
-                                    {product?.name || t.productName}
-                                  </h6>
-                                  <span className="font-bold text-gray-900 text-lg">
-                                    ₹{item.price || 0}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span
-                                    className="text-gray-400 text-xs font-medium"
-                                    style={fontStyle}
-                                  >
-                                    {t.qty}: {item.quantity || 1}
-                                  </span>
-                                  {order.status?.toLowerCase() ===
-                                    "delivered" && (
-                                    <NextLink
-                                      href="#"
-                                      className="text-orange font-bold text-xs no-underline hover:underline"
-                                      style={fontStyle}
+                            {(order.items || order.OrderItems || []).filter(Boolean).map(
+                                (item: any, itemIdx: number) => {
+                                const product = item.product || item.Product;
+                                const productImg =
+                                    getProductImageUrl(product) !== FALLBACK_IMG
+                                    ? getProductImageUrl(product)
+                                    : getProductImageUrl(item);
+
+                                return (
+                                    <div
+                                    key={item.id || itemIdx}
+                                    className="flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100"
                                     >
-                                      {t.writeReview}
-                                    </NextLink>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
+                                    <div className="w-16 h-16 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm shrink-0">
+                                        <Image
+                                        src={productImg}
+                                        alt={product?.name || t.productName}
+                                        width={64}
+                                        height={64}
+                                        className="object-cover w-full h-full"
+                                        onError={(e) => {
+                                            (e.target as any).src = FALLBACK_IMG;
+                                        }}
+                                        />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start gap-4 mb-1">
+                                        <h6 className="font-bold text-gray-900 m-0 truncate">
+                                            {product?.name || t.productName}
+                                        </h6>
+                                        <span className="font-bold text-gray-900 text-lg">
+                                            ₹{item.price || 0}
+                                        </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                        <span
+                                            className="text-gray-400 text-xs font-medium"
+                                            style={fontStyle}
+                                        >
+                                            {t.qty}: {item.quantity || 1}
+                                        </span>
+                                        {order.status?.toLowerCase() ===
+                                            "delivered" && (
+                                            <button
+                                                onClick={() => onOpenReviewModal(order.merchantId || order.Merchant?.id || order.merchant?.id, order.id)}
+                                                className="text-orange font-black text-xs no-underline hover:underline bg-transparent border-0 p-0 cursor-pointer"
+                                                style={fontStyle}
+                                            >
+                                                {t.writeReview}
+                                            </button>
+                                        )}
+                                        </div>
+                                    </div>
+                                    </div>
+                                );
+                                }
+                            )}
+                        </div>
+                    )}
 
                     {/* Order Footer Actions */}
                     <div className="mt-8 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center py-6 border-t border-gray-100">
@@ -247,17 +328,17 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                           </button>
                         )}
 
-                        {orderDisputes[order.id] ? (
+                        {orderDisputes[order.trackingId || order.id] ? (
                           <button
-                            onClick={() => onViewChat(orderDisputes[order.id])}
+                            onClick={() => onViewChat(orderDisputes[order.trackingId || order.id])}
                             className="flex-1 md:flex-none relative px-6 py-2 bg-orange text-white font-bold text-xs rounded-xl hover:bg-orange/90 transition-all shadow-md flex items-center justify-center gap-2"
                             style={fontStyle}
                           >
                             <i className="fa-solid fa-comments"></i>
                             {t.reportIssueDiscussion}
-                            {orderDisputes[order.id].unreadCount > 0 && (
+                            {orderDisputes[order.trackingId || order.id].unreadCount > 0 && (
                               <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-sm">
-                                {orderDisputes[order.id].unreadCount}
+                                {orderDisputes[order.trackingId || order.id].unreadCount}
                               </span>
                             )}
                           </button>
@@ -342,7 +423,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                               {t.subtotal}
                             </span>
                             <span className="text-white font-bold tracking-tight">
-                              ₹{order.totalAmount || order.total_amount || 0}
+                              ₹{order.amount || order.totalAmount || order.total_amount || 0}
                             </span>
                           </div>
                           <div className="flex justify-between items-center text-sm">
@@ -365,7 +446,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                             </span>
                             <div className="text-right">
                               <span className="block text-3xl font-black text-orange leading-none">
-                                ₹{order.totalAmount || order.total_amount || 0}
+                                ₹{order.amount || order.totalAmount || order.total_amount || 0}
                               </span>
                               <span
                                 className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-2 block"
@@ -383,10 +464,18 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+      
+      {/* Merchant Review Modal */}
+      <ReviewModal 
+        isOpen={reviewModalOpen}
+        onClose={onCloseReviewModal}
+        onSubmit={onReviewSubmit}
+      />
     </div>
   );
 };

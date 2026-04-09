@@ -3,7 +3,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { WishlistService } from "../services/wishlist.service";
 import { toast } from "react-toastify";
 
-export type WishlistType = "expert" | "product" | "puja";
+export type WishlistType = "expert" | "product" | "puja" | "merchant";
 
 export const useWishlist = () => {
     const queryClient = useQueryClient();
@@ -26,6 +26,10 @@ export const useWishlist = () => {
                 return isLiked
                     ? WishlistService.removePujaFromWishlist(id)
                     : WishlistService.addPujaToWishlist(id);
+            } else if (type === "merchant") {
+                return isLiked
+                    ? WishlistService.removeMerchantFromWishlist(id)
+                    : WishlistService.addMerchantToWishlist(id);
             } else {
                 return isLiked
                     ? WishlistService.removeFromWishlist(id)
@@ -38,6 +42,7 @@ export const useWishlist = () => {
             let queryKey = ["wishlist", "products"];
             if (type === "expert") queryKey = ["wishlist", "experts"];
             if (type === "puja") queryKey = ["wishlist", "pujas"];
+            if (type === "merchant") queryKey = ["wishlist", "merchants"];
             
             await queryClient.cancelQueries({ queryKey });
 
@@ -47,6 +52,7 @@ export const useWishlist = () => {
                 expertWishlistItems: store.expertWishlistItems,
                 wishlistItems: store.wishlistItems,
                 pujaWishlistItems: store.pujaWishlistItems,
+                merchantWishlistItems: store.merchantWishlistItems,
             };
 
             // Optimistically update Zustand store
@@ -74,6 +80,18 @@ export const useWishlist = () => {
                         pujaWishlistItems: [...state.pujaWishlistItems, { pujaId: id, puja: { id } } as any],
                     }));
                 }
+            } else if (type === "merchant") {
+                if (isLiked) {
+                    useWishlistStore.setState((state) => ({
+                        merchantWishlistItems: state.merchantWishlistItems.filter(
+                            (item) => Number(item.merchantId || item.id) !== Number(id)
+                        ),
+                    }));
+                } else {
+                    useWishlistStore.setState((state) => ({
+                        merchantWishlistItems: [...state.merchantWishlistItems, { id, merchantId: id } as any],
+                    }));
+                }
             } else {
                 if (isLiked) {
                     useWishlistStore.setState((state) => ({
@@ -99,6 +117,11 @@ export const useWishlist = () => {
             let queryKey = ["wishlist", "products"];
             if (variables.type === "expert") queryKey = ["wishlist", "experts"];
             if (variables.type === "puja") queryKey = ["wishlist", "pujas"];
+            if (variables.type === "merchant") {
+                queryKey = ["wishlist", "merchants"];
+                // Also invalidate the main merchants listing to sync likesCount and isLiked
+                queryClient.invalidateQueries({ queryKey: ["merchants"] });
+            }
             
             queryClient.invalidateQueries({ queryKey });
             // Sync store

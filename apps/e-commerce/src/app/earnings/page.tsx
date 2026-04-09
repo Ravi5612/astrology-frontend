@@ -11,7 +11,9 @@ import {
   Download,
   Calendar,
   AlertCircle,
-  Loader2
+  Loader2,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
@@ -27,6 +29,8 @@ interface Transaction {
 
 export default function EarningsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
 
   // Fetch Finance Stats
   const { data: statsData, isLoading: statsLoading } = useQuery({
@@ -40,9 +44,11 @@ export default function EarningsPage() {
 
   // Fetch Transactions List
   const { data: txData, isLoading: txLoading } = useQuery({
-    queryKey: ['merchant-transactions', searchTerm],
+    queryKey: ['merchant-transactions', searchTerm, page, limit],
     queryFn: async () => {
       const params = new URLSearchParams();
+      params.append("page", String(page));
+      params.append("limit", String(limit));
       if (searchTerm) params.append("search", searchTerm);
       const res = await fetch(`/api/v1/merchant/finance/transactions?${params.toString()}`, { credentials: "include" });
       if (!res.ok) return null;
@@ -163,7 +169,7 @@ export default function EarningsPage() {
                       <td colSpan={4} className="py-20 text-center text-gray-400 italic text-sm">No transactions found.</td>
                     </tr>
                   ) : transactions.map((txn) => (
-                    <tr key={txn.id} className="hover:bg-gray-50/50 transition-all cursor-pointer group">
+                    <tr key={txn.id} className="hover:bg-gray-50/80 transition-all cursor-default group hover:scale-[1.002] active:scale-[0.998] duration-300">
                       <td className="pl-6 py-5">
                         <div className="flex flex-col">
                            <span className="text-xs font-bold text-gray-900 group-hover:text-[#fd6410] transition-colors">{txn.id}</span>
@@ -198,6 +204,31 @@ export default function EarningsPage() {
                   ))}
                 </tbody>
              </table>
+
+             {/* Pagination Controls */}
+             {txData?.total > limit && (
+               <div className="flex items-center justify-between px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                   Showing {((page - 1) * limit) + 1} - {Math.min(page * limit, txData.total)} of {txData.total}
+                 </p>
+                 <div className="flex items-center gap-2">
+                   <button 
+                     onClick={() => setPage(p => Math.max(1, p - 1))}
+                     disabled={page === 1 || txLoading}
+                     className="p-2 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-[#fd6410] disabled:opacity-30 disabled:hover:text-gray-400 transition-all shadow-sm"
+                   >
+                     <ChevronLeft className="w-4 h-4" />
+                   </button>
+                   <button 
+                     onClick={() => setPage(p => p + 1)}
+                     disabled={page * limit >= txData?.total || txLoading}
+                     className="p-2 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-[#fd6410] disabled:opacity-30 disabled:hover:text-gray-400 transition-all shadow-sm"
+                   >
+                     <ChevronRight className="w-4 h-4" />
+                   </button>
+                 </div>
+               </div>
+             )}
           </div>
         </div>
 

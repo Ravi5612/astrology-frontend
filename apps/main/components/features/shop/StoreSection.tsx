@@ -37,7 +37,7 @@ const StoreSection = () => {
 
     // Fetch cities from backend
     const { data: citiesData = [] } = useMerchantCities();
-    const cities = useMemo(() => ["All Cities", ...citiesData], [citiesData]);
+    const cities = useMemo(() => ["All Cities", ...(Array.isArray(citiesData) ? citiesData : [])], [citiesData]);
 
     // Fetch filtered merchants from backend
     const { 
@@ -49,6 +49,10 @@ const StoreSection = () => {
         city: selectedCity === "All Cities" ? undefined : selectedCity,
         limit: 10
     });
+
+    React.useEffect(() => {
+        // StoreSection initialization logic if needed
+    }, []);
 
     return (
         <section

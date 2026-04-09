@@ -70,7 +70,10 @@ const ProfileContent: React.FC = () => {
     activeTab, setActiveTab,
 
     // Puja
-    pujaBookings, loadingPuja, handleUpdatePujaStatus
+    pujaBookings, loadingPuja, handleUpdatePujaStatus,
+
+    // Reviews
+    reviewModalOpen, setReviewModalOpen, handleOpenReviewModal, handleReviewSubmit
   } = useProfileLogic();
 
   // Only show full-page loader if we are doing initial load and have no data yet
@@ -228,6 +231,10 @@ const ProfileContent: React.FC = () => {
                   }}
                   userPhone={clientUser?.phone}
                   userName={clientUser?.name}
+                  reviewModalOpen={reviewModalOpen}
+                  onCloseReviewModal={() => setReviewModalOpen(false)}
+                  onOpenReviewModal={handleOpenReviewModal}
+                  onReviewSubmit={handleReviewSubmit}
                 />
               )}
 

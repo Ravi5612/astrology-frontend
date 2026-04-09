@@ -1,18 +1,36 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface ReviewModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: { rating: number; review: string; name: string }) => void;
+    onSubmit: (data: { rating: number; review: string }) => void;
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) => {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [review, setReview] = useState("");
-    const [name, setName] = useState("");
     const [error, setError] = useState<string | null>(null);
+
+    // Disable body scroll when modal is open
+    useEffect(() => {
+        const originalStyle = window.getComputedStyle(document.body).overflow;
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+            document.documentElement.style.overflow = "hidden";
+            document.body.style.height = "100%";
+        } else {
+            document.body.style.overflow = originalStyle;
+            document.documentElement.style.overflow = "";
+            document.body.style.height = "";
+        }
+        return () => {
+            document.body.style.overflow = originalStyle;
+            document.documentElement.style.overflow = "";
+            document.body.style.height = "";
+        };
+    }, [isOpen]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,12 +42,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) 
             setError("Please write a review.");
             return;
         }
-        if (!name.trim()) {
-            setError("Please enter your name.");
-            return;
-        }
 
-        onSubmit({ rating, review, name });
+        onSubmit({ rating, review });
         resetForm();
         onClose();
     };
@@ -38,7 +52,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) 
         setRating(0);
         setHoverRating(0);
         setReview("");
-        setName("");
         setError(null);
     };
 
@@ -50,117 +63,112 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 md:p-8">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-500"
         onClick={handleClose}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-lg bg-white rounded-[3rem] shadow-premium overflow-hidden animate-in zoom-in-95 fade-in duration-500">
-        {/* Header */}
-        <div className="px-10 py-8 border-b border-gray-100 flex justify-between items-center text-[#732882]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#732882]/10 text-[#732882] flex items-center justify-center text-xl">
-              <i className="fa-solid fa-pen-fancy"></i>
+      <div 
+        className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(249,115,22,0.3)] overflow-hidden animate-in zoom-in-95 fade-in duration-500 max-h-[90vh] flex flex-col"
+        data-lenis-prevent="true"
+      >
+        {/* Decorative Top Bar */}
+        <div className="h-2 w-full bg-gradient-to-r from-orange via-orange/80 to-orange shrink-0" />
+        
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto flex-1 custom-scrollbar overscroll-contain">
+          {/* Header */}
+          <div className="px-8 pt-10 pb-6 flex justify-between items-start sticky top-0 bg-white z-10 border-b border-slate-50">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-2xl font-black text-slate-900 m-0 tracking-tight">Post your review</h2>
+              <p className="text-[10px] font-black text-orange uppercase tracking-[0.2em] m-0">We value your honest feedback</p>
             </div>
-            <div>
-              <h2 className="text-xl font-black m-0">Share Your Story</h2>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 m-0">Rate your experience</p>
-            </div>
+            <button
+              onClick={handleClose}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-orange hover:text-white transition-all duration-300 group"
+            >
+              <i className="fa-solid fa-xmark text-lg group-hover:rotate-90 transition-transform"></i>
+            </button>
           </div>
-          <button
-            onClick={handleClose}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-[#732882] hover:text-white transition-all duration-300 hover:rotate-90"
-          >
-            <i className="fa-solid fa-xmark text-lg"></i>
-          </button>
-        </div>
 
-        {/* Body */}
-        <div className="px-10 py-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Star Rating */}
-            <div className="flex flex-col items-center">
-              <div className="flex justify-center gap-3">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    className={`text-4xl transition-all duration-300 transform hover:scale-125 ${
-                      star <= (hoverRating || rating) ? "text-orange scale-110" : "text-gray-100"
-                    }`}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    onClick={() => setRating(star)}
-                  >
-                    <i className={`${star <= (hoverRating || rating) ? "fa-solid" : "fa-regular"} fa-star`}></i>
-                  </button>
-                ))}
-              </div>
-              <div className="mt-4 px-4 py-1.5 bg-orange/10 rounded-full text-orange font-black text-xs uppercase tracking-widest">
-                {rating > 0 ? `${rating} / 5 Stars` : "Tap a star to rate"}
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {/* Name Input */}
-              <div className="group">
-                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">
-                  Your Name
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#732882]/30 focus:bg-white focus:ring-4 focus:ring-[#732882]/5 transition-all outline-none font-bold text-sm"
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
+          <div className="p-8 md:p-10">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Star Rating Section */}
+              <div className="bg-orange/5 border border-orange/10 rounded-[2rem] p-8 flex flex-col items-center group/rating">
+                <div className="flex justify-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`text-4xl transition-all duration-300 transform outline-none ${
+                          star <= (hoverRating || rating) 
+                          ? "text-orange scale-110 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]" 
+                          : "text-slate-200 hover:text-slate-300"
+                      }`}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRating(star)}
+                    >
+                      <i className="fa-solid fa-star"></i>
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-6 px-5 py-2 bg-white rounded-full shadow-sm border border-slate-100 ring-4 ring-orange/5">
+                  <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
+                    {rating > 0 ? `${rating} Stars Selected` : "Tap to rate"}
+                  </span>
                 </div>
               </div>
 
-              {/* Review Textarea */}
-              <div className="group">
-                <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">
-                  Write a Review
-                </label>
-                <textarea
-                  className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#732882]/30 focus:bg-white focus:ring-4 focus:ring-[#732882]/5 transition-all outline-none font-bold text-sm min-h-[140px] resize-none"
-                  placeholder="Tell us about your experience..."
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                />
+              <div className="space-y-6">
+                {/* Review Textarea */}
+                <div className="relative">
+                  <label className="absolute -top-2.5 left-6 px-2 bg-white text-[9px] font-black text-orange uppercase tracking-[0.2em] z-10">
+                    Share Your Story
+                  </label>
+                  <div className="relative group">
+                      <div className="absolute left-6 top-6 text-slate-400 group-focus-within:text-orange transition-colors">
+                          <i className="fa-solid fa-comment-dots text-sm"></i>
+                      </div>
+                      <textarea
+                      className="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-100 rounded-2xl focus:border-orange focus:ring-4 focus:ring-orange/5 transition-all outline-none font-bold text-sm min-h-[140px] resize-none placeholder:text-slate-300"
+                      placeholder="Tell us about the product and your experience..."
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 flex items-center gap-3 font-bold text-sm animate-in slide-in-from-top-2">
-                <i className="fa-solid fa-circle-exclamation text-lg"></i>
-                {error}
+              {error && (
+                <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 flex items-center gap-3 font-bold text-[11px] animate-in slide-in-from-top-2">
+                  <i className="fa-solid fa-triangle-exclamation text-sm"></i>
+                  <span className="uppercase tracking-wider">{error}</span>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 sticky bottom-0 bg-white z-10">
+                <button
+                  type="button"
+                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95"
+                  onClick={handleClose}
+                >
+                  Go Back
+                </button>
+                <button
+                  type="submit"
+                  className="flex-[2] py-5 bg-gradient-to-r from-orange to-orange/80 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-[0_10px_20px_rgba(249,115,22,0.2)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-3 decoration-0 border-0 outline-none"
+                >
+                  Submit Review
+                  <i className="fa-solid fa-shield-check text-sm"></i>
+                </button>
               </div>
-            )}
-
-            {/* Footer Buttons */}
-            <div className="flex flex-col gap-4">
-              <button
-                type="submit"
-                className="w-full py-5 bg-[#732882] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-[#732882]/90 transition-all flex items-center justify-center gap-3"
-              >
-                <i className="fa-solid fa-paper-plane"></i>
-                Submit Review
-              </button>
-              <button
-                type="button"
-                className="w-full py-5 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all flex items-center justify-center gap-3"
-                onClick={handleClose}
-              >
-                <i className="fa-solid fa-xmark"></i>
-                Cancel
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>

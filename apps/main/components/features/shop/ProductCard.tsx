@@ -19,68 +19,68 @@ import { Product } from "@/lib/types";
 const Image = NextImage as any;
 
 interface ProductCardProps {
-    product: Product;
-    className?: string;
-    isCompact?: boolean;
-    onView?: (product: Product) => void;
+  product: Product;
+  className?: string;
+  isCompact?: boolean;
+  onView?: (product: Product) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, className, isCompact, onView }) => {
-    const { lang } = useLanguageStore();
-    const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
-    const imageUrl = getProductImageUrl(product);
+  const { lang } = useLanguageStore();
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+  const imageUrl = getProductImageUrl(product);
 
-    const originalPrice = Number(product.originalPrice) || 0;
-    const price = Number(product.price) || 0;
-    const percentageOff = Number(product.percentageOff) || 0;
+  const originalPrice = Number(product.originalPrice) || 0;
+  const price = Number(product.price) || 0;
+  const percentageOff = Number(product.percentageOff) || 0;
 
-    // Hooks
-    const { isInWishlist } = useWishlistStore();
-    const { isClientAuthenticated } = useAuthStore();
-    const { toggleLike } = useWishlist();
-    const { addToCart: addToCartOpt, isAdding } = useCart();
-    const [isBuyLoading, setIsBuyLoading] = React.useState(false);
-    const router = useRouter();
+  // Hooks
+  const { isInWishlist } = useWishlistStore();
+  const { isClientAuthenticated } = useAuthStore();
+  const { toggleLike } = useWishlist();
+  const { addToCart: addToCartOpt, isAdding } = useCart();
+  const [isBuyLoading, setIsBuyLoading] = React.useState(false);
+  const router = useRouter();
 
-    const productId = Number(product.id || product._id);
-    const isLiked = productId ? isInWishlist(productId) : false;
+  const productId = Number(product.id || product._id);
+  const isLiked = productId ? isInWishlist(productId) : false;
 
-    const handleLike = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+  const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-        if (!isClientAuthenticated) {
-            toast.error("Please login first to use wishlist", {
-                onClick: () => router.push("/sign-in"),
-                autoClose: 3000,
-                style: { cursor: 'pointer' }
-            });
-            return;
-        }
+    if (!isClientAuthenticated) {
+      toast.error("Please login first to use wishlist", {
+        onClick: () => router.push("/sign-in"),
+        autoClose: 3000,
+        style: { cursor: 'pointer' }
+      });
+      return;
+    }
 
-        toggleLike({ id: productId, type: "product", isLiked });
-    };
+    toggleLike({ id: productId, type: "product", isLiked });
+  };
 
-    const handleAddToCart = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-        if (!isClientAuthenticated) {
-            toast.error("Please login first to buy products", {
-                onClick: () => router.push("/sign-in"),
-                autoClose: 3000,
-                style: { cursor: 'pointer' }
-            });
-            return;
-        }
+    if (!isClientAuthenticated) {
+      toast.error("Please login first to buy products", {
+        onClick: () => router.push("/sign-in"),
+        autoClose: 3000,
+        style: { cursor: 'pointer' }
+      });
+      return;
+    }
 
-        addToCartOpt({ productId: Number(product.id || product._id), quantity: 1 });
-    };
+    addToCartOpt({ productId: Number(product.id || product._id), quantity: 1 });
+  };
 
-    return (
-    <div 
-        onClick={() => onView?.(product)}
-        className={`group relative bg-white rounded-[2rem] shadow-premium hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col border border-gray-100/50 cursor-pointer ${className || ""}`}
+  return (
+    <div
+      onClick={() => onView?.(product)}
+      className={`group relative bg-white rounded-[2rem] shadow-premium hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col border border-gray-100/50 cursor-pointer ${className || ""}`}
     >
       {/* 🔥 Top Header: Offer Tag (Left) & Heart Icon (Right) */}
       {percentageOff > 0 && (
@@ -150,11 +150,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
           >
             <i className={`${isCompact ? 'text-sm' : 'text-base'} fa-solid fa-cart-shopping translate-y-[-1px] group-hover/btn:scale-110 transition-transform`}></i>
             <span className="leading-tight text-left">
-                {t.products.addToCart.split(' ').map((word: string, i: number, arr: string[]) => (
-                    <React.Fragment key={i}>
-                        {word}{i === (arr.length === 3 ? 1 : 0) ? <br /> : ' '}
-                    </React.Fragment>
-                ))}
+              {t.products.addToCart.split(' ').map((word: string, i: number, arr: string[]) => (
+                <React.Fragment key={i}>
+                  {word}{i === (arr.length === 3 ? 1 : 0) ? <br /> : ' '}
+                </React.Fragment>
+              ))}
             </span>
           </button>
           <button
@@ -175,11 +175,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
               <>
                 <i className={`${isCompact ? 'text-base' : 'text-lg'} fa-solid fa-bolt translate-y-[-1px]`}></i>
                 <span className="leading-tight text-left">
-                    {t.products.buyNow.split(' ').map((word: string, i: number, arr: string[]) => (
-                        <React.Fragment key={i}>
-                            {word}{i === 0 ? <br /> : ' '}
-                        </React.Fragment>
-                    ))}
+                  {t.products.buyNow.split(' ').map((word: string, i: number, arr: string[]) => (
+                    <React.Fragment key={i}>
+                      {word}{i === 0 ? <br /> : ' '}
+                    </React.Fragment>
+                  ))}
                 </span>
               </>
             )}
@@ -187,7 +187,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
         </div>
       </div>
     </div>
-    );
+  );
 };
 
 

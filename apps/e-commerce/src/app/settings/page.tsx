@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
   Camera, 
   Store, 
@@ -17,14 +17,49 @@ import {
   Eye,
   Loader2
 } from "lucide-react";
-import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
+import { useMerchantProfile, useUpdateProfile, useMerchantProducts } from "@/hooks/useSettings";
 
 export default function ShopProfileSettings() {
   const { data: profile, isLoading: isProfileLoading } = useMerchantProfile();
   const updateProfileMutation = useUpdateProfile();
+  const { data: productsData, isLoading: isProductsLoading } = useMerchantProducts();
+
+  const products = useMemo(() => {
+    console.log('Raw productsData in UI:', productsData);
+    if (!productsData) return [];
+    if (Array.isArray(productsData)) return productsData;
+    const data = (productsData as any);
+    const list = data?.data || data?.products || [];
+    console.log('Extracted products list:', list);
+    return Array.isArray(list) ? list : [];
+  }, [productsData]);
   
   const [shopImagePreview, setShopImagePreview] = useState<string | null>(null);
   const [shopVideoPreview, setShopVideoPreview] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-Slider Logic
+  useEffect(() => {
+    if (products.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        const maxScroll = scrollWidth - clientWidth;
+        
+        // If we are at the end (with a small buffer for subpixel rendering), reset to start
+        if (scrollLeft >= maxScroll - 5) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by roughly one product width + gap
+          scrollRef.current.scrollBy({ left: 120, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [products.length, isPaused]);
   
   // Local state for files to be uploaded
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -356,16 +391,45 @@ export default function ShopProfileSettings() {
                 )}
 
                 {/* Mock Products Grid */}
-                <div className="space-y-3">
-                   <div className="flex items-center justify-between">
-                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Popular Products</span>
-                     <ShoppingBag className="w-3.5 h-3.5 text-gray-400" />
-                   </div>
-                   <div className="grid grid-cols-2 gap-2">
-                     <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />
-                     <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />
-                   </div>
-                </div>
+                 <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Popular Products</span>
+                      <ShoppingBag className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                    {isProductsLoading ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />
+                        <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />
+                      </div>
+                    ) : products?.length > 0 ? (
+                      <div 
+                        ref={scrollRef}
+                        onMouseEnter={() => setIsPaused(true)}
+                        onMouseLeave={() => setIsPaused(false)}
+                        className="flex space-x-2 overflow-x-auto pb-2 scrollbar-none snap-x cursor-grab active:cursor-grabbing transition-all duration-500"
+                      >
+                        {products.map((product: any, idx: number) => (
+                          <div key={idx} className="h-20 w-24 shrink-0 bg-gray-50 rounded-xl overflow-hidden border border-gray-100 snap-start shadow-sm">
+                             {product.productImage ? (
+                               <img 
+                                 src={product.productImage} 
+                                 alt={product.productName} 
+                                 className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                               />
+                             ) : (
+                               <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                 <ShoppingBag className="w-4 h-4 text-gray-300" />
+                               </div>
+                             )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="h-20 bg-gray-50 rounded-xl flex items-center justify-center border border-dashed border-gray-200">
+                        <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">No Products Found</span>
+                      </div>
+                    )}
+                 </div>
 
                 <button className="w-full py-3 bg-gray-900 text-white text-[10px] font-black rounded-xl uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-black transition-all">
                   Visit Full Store <ExternalLink className="w-3 h-3" />

@@ -52,9 +52,9 @@ export default function DashboardHome() {
 
   const stats = [
     {
-      title: "Today's Orders",
-      value: statsLoading ? "..." : String(statsData?.todayOrders?.value ?? "0"),
-      trend: statsData?.todayOrders?.trend ?? "+0%",
+      title: "Total Orders",
+      value: statsLoading ? "..." : String(statsData?.totalOrders?.value ?? statsData?.todayOrders?.value ?? "0"),
+      trend: statsData?.totalOrders?.trend ?? statsData?.todayOrders?.trend ?? "+0%",
       icon: ShoppingBag, color: "text-blue-600", bgColor: "bg-blue-100",
     },
     {
@@ -64,10 +64,10 @@ export default function DashboardHome() {
       icon: Package, color: "text-purple-600", bgColor: "bg-purple-100",
     },
     {
-      title: "Shop Followers",
-      value: statsLoading ? "..." : String(statsData?.shopFollowers?.value ?? "0"),
-      trend: statsData?.shopFollowers?.trend ?? "+0",
-      icon: Users, color: "text-orange-600", bgColor: "bg-orange-100",
+      title: "Total Earnings",
+      value: statsLoading ? "..." : `₹${Number(statsData?.totalEarnings?.value ?? 0).toLocaleString("en-IN")}`,
+      trend: statsData?.totalEarnings?.trend ?? "+0%",
+      icon: TrendingUp, color: "text-orange-600", bgColor: "bg-orange-100",
     },
     {
       title: "Monthly Earnings",
@@ -156,50 +156,14 @@ export default function DashboardHome() {
       {/* Activity & Orders Grid */}
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-10">
         <div className="xl:col-span-2 space-y-8">
-          <RecentOrders orders={ordersData?.orders ?? []} isLoading={ordersLoading} />
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-[#fd6410] p-8 rounded-[2rem] text-white shadow-xl shadow-orange-500/20 group cursor-pointer overflow-hidden relative">
-              <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-150 transition-transform duration-700">
-                <TrendingUp className="w-48 h-48" />
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Weekly Target</p>
-              <div className="flex items-center justify-between mt-2">
-                <h5 className="text-3xl font-black italic tracking-tighter">{weeklyProgress}% Reached</h5>
-                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </div>
-              <div className="mt-6 h-2 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white rounded-full transition-all duration-1000" style={{ width: `${weeklyProgress}%` }} />
-              </div>
-            </div>
-            <div className="bg-gray-900 p-8 rounded-[2rem] text-white shadow-xl shadow-gray-900/10 group cursor-pointer overflow-hidden relative">
-              <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-150 transition-transform duration-700">
-                <Users className="w-48 h-48" />
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Merchant Tier</p>
-              <div className="flex items-center justify-between mt-2">
-                <h5 className="text-3xl font-black italic tracking-tighter uppercase underline decoration-orange-500 decoration-4 underline-offset-4">{merchantTier} Seller</h5>
-                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </div>
-              <p className="text-[10px] font-bold text-gray-500 mt-6 uppercase tracking-widest italic group-hover:text-white/80">Real-time tier</p>
-            </div>
-          </div>
+          <RecentOrders orders={Array.isArray(ordersData) ? ordersData : (ordersData as any)?.orders ?? []} isLoading={ordersLoading} />
         </div>
-        <div className="space-y-8">
-          <ActivityFeed activities={activityData?.activities ?? []} isLoading={activityLoading} />
-          <div className="bg-white p-8 rounded-[2rem] border border-gray-100 text-center hover:shadow-lg transition-all">
-            <div className="w-20 h-20 bg-orange-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 text-[#fd6410] animate-bounce duration-[3s]">
-              <Package className="w-10 h-10" />
-            </div>
-            <h4 className="text-lg font-black text-gray-900 italic tracking-tight">Need a boost?</h4>
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-2 px-4 leading-relaxed">Promote your spiritually crafted products to reach top seekers.</p>
-            <button className="mt-8 w-full py-4 bg-gray-50 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 hover:bg-[#fd6410] hover:text-white transition-all shadow-sm">
-              Create Ad Campaign
-            </button>
-          </div>
+        <div className="space-y-10 flex flex-col h-full">
+          <ActivityFeed activities={Array.isArray(activityData) ? activityData : (activityData as any)?.activities ?? []} isLoading={activityLoading} />
         </div>
       </section>
 
-      <section>
+      <section className="relative pt-6">
         <ReviewsOverview data={perfData} isLoading={perfLoading} />
       </section>
     </main>

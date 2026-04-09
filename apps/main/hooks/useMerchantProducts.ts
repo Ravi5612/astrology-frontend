@@ -12,8 +12,8 @@ export const useMerchantProducts = (id: string | number | undefined, page = 1, l
         queryFn: async () => {
             if (!id) return [];
             const [data, error] = await merchantService.getMerchantProducts(id, page, limit);
-            if (error) throw new Error(error.message || "Failed to fetch products");
-            return data;
+            if (error) throw new Error((error as any).message || "Failed to fetch products");
+            return (data as Product[]) || [];
         },
         enabled: !!id,
         staleTime: 1000 * 60 * 5, // 5 minutes
