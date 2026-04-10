@@ -13,24 +13,16 @@ import {
   MoreVertical,
 } from "lucide-react";
 
-import { getDashboardStats } from "@/src/services/admin.service";
+import { getDashboardStats, getRevenueTrend } from "@/src/services/admin.service";
 import adminData from "@/public/data/admin_data.json";
+import { RevenueChart } from "@/app/components/analytics/RevenueChart";
 
 const MoreVerticalIcon = MoreVertical as any;
 
-import dynamic from "next/dynamic";
-
-const ChartSection = dynamic(() => import("@/app/components/analytics/ChartSection"), {
-  loading: () => (
-    <div className="h-[400px] bg-gray-100 animate-pulse rounded-xl" />
-  ),
-  ssr: false,
-}) as any;
 
 export default function DashboardPage() {
-  // Active chart tab state (revenue, users, etc.)
-  const [activeTab, setActiveTab] = useState("revenue");
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [revenueTrend, setRevenueTrend] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,6 +32,15 @@ export default function DashboardPage() {
         console.error("Failed to fetch dashboard stats", error);
       } else {
         setDashboardData(data);
+      }
+
+      const [revData] = await getRevenueTrend(7);
+      if (revData) {
+        const formattedRev = revData.map((d: any) => ({
+          ...d,
+          date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        }));
+        setRevenueTrend(formattedRev);
       }
       setLoading(false);
     };
@@ -88,8 +89,8 @@ export default function DashboardPage() {
 
   // Recent activities data (memoized)
   const activities = useMemo(
-    () => adminData.dashboard.activities,
-    []
+    () => dashboardData?.activities || [],
+    [dashboardData]
   );
 
   return (
@@ -147,7 +148,7 @@ export default function DashboardPage() {
         {/* Analytics Charts Section (8 columns, lazy loaded) */}
         <section className="lg:col-span-8" aria-labelledby="analytics-heading">
           <Suspense fallback={<div className="h-[500px] bg-gray-100 animate-pulse rounded-xl" />}>
-            <ChartSection activeTab={activeTab} setActiveTab={setActiveTab} />
+            <RevenueChart data={revenueTrend} />
           </Suspense>
         </section>
       </div>
