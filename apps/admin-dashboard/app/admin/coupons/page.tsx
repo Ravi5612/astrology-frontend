@@ -30,12 +30,12 @@ export default function CouponsPage() {
 
   const fetchCoupons = async () => {
     setLoading(true);
-    
+
     // Fetch stats first or in parallel
     fetchStats();
 
     const [data, error] = await getCoupons();
-    
+
     if (error) {
       console.error("Failed to fetch coupons:", error);
       toast.error("Failed to load coupons");
@@ -47,15 +47,19 @@ export default function CouponsPage() {
     const rawCoupons = Array.isArray(data) ? data : ((data as any)?.data || []);
 
     // Map backend snake_case to frontend camelCase expected by CouponCard
-    const mappedCoupons = rawCoupons.map((c: any) => ({
-      ...c,
-      minOrderValue: c.min_order_value ?? c.minOrderValue,
-      maxDiscount: c.max_discount ?? c.maxDiscount,
-      maxUsageLimit: c.max_usage_limit ?? c.maxUsageLimit,
-      redemptionsCount: c.usage_count ?? c.redemptionsCount,
-      expiryDate: c.expiry_date ?? c.expiryDate,
-      isActive: c.is_active ?? c.isActive
-    }));
+    const mappedCoupons = rawCoupons.map((c: any) => {
+      const isActuallyExpired = c.expiry_date && new Date(c.expiry_date) < new Date();
+      return {
+        ...c,
+        status: isActuallyExpired ? 'expired' : (c.status || 'active'),
+        minOrderValue: c.min_order_value ?? c.minOrderValue,
+        maxDiscount: c.max_discount ?? c.maxDiscount,
+        maxUsageLimit: c.max_usage_limit ?? c.maxUsageLimit,
+        redemptionsCount: c.usage_count ?? c.redemptionsCount,
+        expiryDate: c.expiry_date ?? c.expiryDate,
+        isActive: isActuallyExpired ? false : (c.is_active ?? c.isActive)
+      };
+    });
 
     setCoupons(mappedCoupons);
     setLoading(false);
@@ -102,15 +106,15 @@ export default function CouponsPage() {
   // Delete Dialog/Logic
   const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this coupon?")) return;
-    
+
     const { deleteCoupon } = await import("@/src/services/admin.service");
     const [_, error] = await deleteCoupon(id);
-    
+
     if (error) {
       toast.error("Failed to delete coupon");
       return;
     }
-    
+
     toast.success("Coupon deleted successfully");
     fetchCoupons();
   };
