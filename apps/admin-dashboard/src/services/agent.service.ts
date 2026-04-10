@@ -73,14 +73,18 @@ export const getListingsByAgent = async (agent_id: string) => {
 export const getAllListings = async (params?: {
     type?: string;
     search?: string;
+    page?: number;
+    limit?: number;
 }) => {
-    const [data] = await api.get<{ data: AgentListing[] }>("/admin/listings", {
+    const [data] = await api.get<{ data: AgentListing[]; total: number; stats: any }>("/admin/listings", {
         params: {
             type: params?.type === "" ? undefined : params?.type,
-            search: params?.search
+            search: params?.search,
+            page: params?.page,
+            limit: params?.limit
         }
     });
-    return data as { data: AgentListing[] };
+    return data;
 };
 
 export const updateListingStatus = async (

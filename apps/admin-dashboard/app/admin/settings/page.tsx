@@ -50,10 +50,9 @@ const SettingsPage: React.FC = () => {
     const loadSettings = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/v1/settings/support`);
+            const [data, error] = await api.get<SupportSettings>(`/admin/settings/support`);
 
-            if (response.ok) {
-                const data = await response.json();
+            if (!error && data) {
                 const loadedSettings = {
                     email: data.email || "support@astrologyinbharat.com",
                     phone: data.phone || "+91 62394 08910",
@@ -61,6 +60,8 @@ const SettingsPage: React.FC = () => {
                 };
                 setSettings(loadedSettings);
                 setOriginalSettings(loadedSettings);
+            } else {
+                toast.error("Cloud synchronization failed");
             }
         } catch (error) {
             console.error("Failed to load settings:", error);
@@ -82,9 +83,9 @@ const SettingsPage: React.FC = () => {
 
         setSaving(true);
         try {
-            const response = await api.post("/admin/settings/support", settings);
+            const [_, error] = await api.post("/admin/settings/support", settings);
 
-            if (response.status === 200 || response.status === 201) {
+            if (!error) {
                 toast.success("Synchronized successfully");
                 setOriginalSettings(settings);
                 setIsEditing(false);
