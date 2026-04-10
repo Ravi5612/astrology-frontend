@@ -28,7 +28,7 @@ export default function ProductsPage() {
 
     // Search & Filter State
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeFilter, setActiveFilter] = useState<"all" | "agent" | "astrologer" | "merchant">("all");
+    const [activeFilter, setActiveFilter] = useState<"all" | "admin" | "astrologer" | "merchant">("all");
 
     // Form & Edit State
     const [formData, setFormData] = useState<Product>({
@@ -78,10 +78,12 @@ export default function ProductsPage() {
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
 
         let matchesFilter = true;
-        if (activeFilter === "agent") {
-            matchesFilter = !p.expert_id && !p.merchant_id;
+        if (activeFilter === "admin") {
+            // Admin products have no expert_id and no merchant_id
+            matchesFilter = !p.expert_id && !p.merchant_id && p.category !== "astrologer";
         } else if (activeFilter === "astrologer") {
-            matchesFilter = !!p.expert_id;
+            // Astrologer products have expert_id OR category "astrologer"
+            matchesFilter = !!p.expert_id || p.category === "astrologer";
         } else if (activeFilter === "merchant") {
             matchesFilter = !!p.merchant_id;
         }
@@ -243,10 +245,10 @@ export default function ProductsPage() {
                     All Products
                 </button>
                 <button
-                    onClick={() => setActiveFilter("agent")}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "agent" ? "bg-blue-100 text-blue-700 border-2 border-blue-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                    onClick={() => setActiveFilter("admin")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "admin" ? "bg-blue-100 text-blue-700 border-2 border-blue-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
                 >
-                    Agent Products
+                    Admin Products
                 </button>
                 <button
                     onClick={() => setActiveFilter("astrologer")}
