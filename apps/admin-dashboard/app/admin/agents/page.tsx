@@ -388,11 +388,11 @@ const EyeOff = ({ className }: { className?: string }) => (
 );
 
 // ── Listing Stats ─────────────────────────────────────────────
-const getListingStats = (data: AgentListing[]) => [
-    { title: "Total Listings", value: data.length, icon: BookOpen, iconColor: "text-blue-600", iconBgColor: "bg-blue-100" },
-    { title: "Experts", value: data.filter(l => l.listing_type === "expert").length, icon: Star, iconColor: "text-yellow-600", iconBgColor: "bg-yellow-100" },
-    { title: "Mandirs", value: data.filter(l => l.listing_type === "mandir").length, icon: Building2, iconColor: "text-orange-600", iconBgColor: "bg-orange-100" },
-    { title: "Puja Shops", value: data.filter(l => l.listing_type === "puja_shop").length, icon: ShoppingBag, iconColor: "text-purple-600", iconBgColor: "bg-purple-100" },
+const getListingStats = (totals: { experts: number, mandirs: number, puja_shops: number, total: number }) => [
+    { title: "Total Listings", value: totals.total, icon: BookOpen, iconColor: "text-blue-600", iconBgColor: "bg-blue-100" },
+    { title: "Experts", value: totals.experts, icon: Star, iconColor: "text-yellow-600", iconBgColor: "bg-yellow-100" },
+    { title: "Mandirs", value: totals.mandirs, icon: Building2, iconColor: "text-orange-600", iconBgColor: "bg-orange-100" },
+    { title: "Puja Shops", value: totals.puja_shops, icon: ShoppingBag, iconColor: "text-purple-600", iconBgColor: "bg-purple-100" },
 ];
 
 // ── Main Page ─────────────────────────────────────────────────
@@ -418,6 +418,7 @@ export default function AgentsPage() {
     const [typeFilter, setTypeFilter] = useState("");
     const [listSearch, setListSearch] = useState("");
     const [allListings, setAllListings] = useState<AgentListing[]>([]);
+    const [listingTotals, setListingTotals] = useState({ experts: 0, mandirs: 0, puja_shops: 0, total: 0 });
 
     // Commission Settings State
     const [settings, setSettings] = useState<Record<string, string>>({
@@ -468,11 +469,14 @@ export default function AgentsPage() {
     const fetchListings = useCallback(async () => {
         try {
             setListLoading(true);
-            const res = await getAllListings({
+            const res = (await getAllListings({
                 type: typeFilter,
                 search: listSearch
-            });
+            })) as any;
             setListings(res?.data || []);
+            if (res?.stats) {
+                setListingTotals(res.stats);
+            }
         } catch (error) {
             console.error("Failed to fetch listings", error);
         } finally {
@@ -488,7 +492,10 @@ export default function AgentsPage() {
 
     useEffect(() => {
         getAllListings({})
-            .then(r => setAllListings(r?.data || []))
+            .then((r: any) => {
+                setAllListings(r?.data || []);
+                if (r?.stats) setListingTotals(r.stats);
+            })
             .catch(() => { });
     }, []);
 
@@ -516,7 +523,7 @@ export default function AgentsPage() {
 
     const statsConfig = useMemo(() => getStatsConfig(stats), [stats]);
     const columns = useMemo(() => getColumns(), []);
-    const listingStats = useMemo(() => getListingStats(allListings), [allListings]);
+    const listingStats = useMemo(() => getListingStats(listingTotals), [listingTotals]);
 
     return (
         <>
