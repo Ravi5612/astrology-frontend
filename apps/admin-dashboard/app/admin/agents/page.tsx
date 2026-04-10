@@ -419,6 +419,8 @@ export default function AgentsPage() {
     const [listSearch, setListSearch] = useState("");
     const [allListings, setAllListings] = useState<AgentListing[]>([]);
     const [listingTotals, setListingTotals] = useState({ experts: 0, mandirs: 0, puja_shops: 0, total: 0 });
+    const [listPage, setListPage] = useState(1);
+    const [listTotal, setListTotal] = useState(0);
 
     // Commission Settings State
     const [settings, setSettings] = useState<Record<string, string>>({
@@ -471,9 +473,12 @@ export default function AgentsPage() {
             setListLoading(true);
             const res = (await getAllListings({
                 type: typeFilter,
-                search: listSearch
+                search: listSearch,
+                page: listPage,
+                limit: 10
             })) as any;
             setListings(res?.data || []);
+            setListTotal(res?.total || 0);
             if (res?.stats) {
                 setListingTotals(res.stats);
             }
@@ -482,7 +487,7 @@ export default function AgentsPage() {
         } finally {
             setListLoading(false);
         }
-    }, [typeFilter, listSearch]);
+    }, [typeFilter, listSearch, listPage]);
 
     useEffect(() => { fetchStats(); fetchSettings(); }, [fetchStats, fetchSettings]);
     useEffect(() => {
@@ -654,11 +659,14 @@ export default function AgentsPage() {
                     searchKeys={["listing_name", "agent_id"] as any}
                     title="Agent Listings"
                     statsCards={<StatsCards stats={listingStats} columns={4} />}
-                    onSearch={(q) => setListSearch(q)}
+                    onSearch={(q) => { setListSearch(q); setListPage(1); }}
                     isLoading={listLoading}
+                    manualPagination
+                    totalItems={listTotal}
+                    onPageChange={setListPage}
                     filterElement={
                         <select value={typeFilter}
-                            onChange={(e) => setTypeFilter(e.target.value)}
+                            onChange={(e) => { setTypeFilter(e.target.value); setListPage(1); }}
                             className="w-40 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 font-medium">
                             <option value="">All Types</option>
                             <option value="expert">Expert</option>
