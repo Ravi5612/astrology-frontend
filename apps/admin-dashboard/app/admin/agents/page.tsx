@@ -2,8 +2,9 @@
 import React, { useState, useMemo, lazy, Suspense, useEffect, useCallback } from "react";
 import {
     Plus, BookOpen, Star, ShoppingBag, Building2, X,
-    User, Phone, Mail, Handshake, MapPin, CreditCard, FileText, Upload, Camera
+    User, Phone, Mail, Handshake, MapPin, CreditCard, FileText, Upload, Camera, Settings, Save, Loader2
 } from "lucide-react";
+import { getCommissionSettings, updateCommissionSettings } from "@/src/services/admin.service";
 
 import { DataTable } from "@/app/components/admin/DataTable";
 import { StatsCards, Loading, Button } from "@repo/ui";
@@ -418,6 +419,15 @@ export default function AgentsPage() {
     const [listSearch, setListSearch] = useState("");
     const [allListings, setAllListings] = useState<AgentListing[]>([]);
 
+    // Commission Settings State
+    const [settings, setSettings] = useState<Record<string, string>>({
+        COMMISION_FROM_ASTROLOGER: "3",
+        COMMISION_FROM_CLIENT: "3",
+        COMMISION_FROM_PUJA_SHOP: "3"
+    });
+    const [isSavingSettings, setIsSavingSettings] = useState(false);
+    const [isFetchingSettings, setIsFetchingSettings] = useState(true);
+
     const fetchStats = useCallback(async () => {
         try {
             const res = await getAgentStats();
@@ -425,6 +435,15 @@ export default function AgentsPage() {
         } catch (error) {
             console.error("Failed to fetch agent stats", error);
         }
+    }, []);
+
+    const fetchSettings = useCallback(async () => {
+        setIsFetchingSettings(true);
+        const [data, error] = await getCommissionSettings();
+        if (!error && data) {
+            setSettings(data);
+        }
+        setIsFetchingSettings(false);
     }, []);
 
     const fetchAgents = useCallback(async () => {
@@ -461,7 +480,7 @@ export default function AgentsPage() {
         }
     }, [typeFilter, listSearch]);
 
-    useEffect(() => { fetchStats(); }, [fetchStats]);
+    useEffect(() => { fetchStats(); fetchSettings(); }, [fetchStats, fetchSettings]);
     useEffect(() => {
         const t = setTimeout(fetchAgents, 400);
         return () => clearTimeout(t);
@@ -481,7 +500,19 @@ export default function AgentsPage() {
     const handleRefresh = useCallback(() => {
         fetchStats();
         fetchAgents();
-    }, [fetchStats, fetchAgents]);
+        fetchSettings();
+    }, [fetchStats, fetchAgents, fetchSettings]);
+
+    const handleSaveSettings = async () => {
+        setIsSavingSettings(true);
+        const [_, error] = await updateCommissionSettings(settings);
+        if (error) {
+            toast.error("Failed to update commission settings");
+        } else {
+            toast.success("Commission settings updated successfully");
+        }
+        setIsSavingSettings(false);
+    };
 
     const statsConfig = useMemo(() => getStatsConfig(stats), [stats]);
     const columns = useMemo(() => getColumns(), []);
@@ -495,7 +526,7 @@ export default function AgentsPage() {
                     <button key={t} onClick={() => setTab(t)}
                         className={`px-5 py-2 rounded-lg text-sm font-bold capitalize transition-all ${tab === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                             }`}>
-                        {t === "agents" ? "👤 Agent Management" : "📋 Agent Listings"}
+                        {t === "agents" ? "👤 Agent and Commission" : "📋 Agent Listings"}
                     </button>
                 ))}
             </div>
@@ -538,6 +569,73 @@ export default function AgentsPage() {
                         </Suspense>
                     )}
                     <AddAgentModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSuccess={handleRefresh} />
+
+                    {/* Commission Configuration Section */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-12">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                                    <Settings size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">Commission Configuration</h3>
+                                    <p className="text-sm text-gray-500">Manage global agent commission percentages</p>
+                                </div>
+                            </div>
+                            <Button
+                                onClick={handleSaveSettings}
+                                disabled={isSavingSettings || isFetchingSettings}
+                                className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+                            >
+                                {isSavingSettings ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                                {isSavingSettings ? "Saving..." : "Save Changes"}
+                            </Button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">Commission from Astrologers (%)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={settings.COMMISION_FROM_ASTROLOGER}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, COMMISION_FROM_ASTROLOGER: e.target.value }))}
+                                        className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-bold text-gray-800"
+                                        placeholder="3"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">Commission from Clients (%)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={settings.COMMISION_FROM_CLIENT}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, COMMISION_FROM_CLIENT: e.target.value }))}
+                                        className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-bold text-gray-800"
+                                        placeholder="3"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">Commission from Puja Shop (%)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={settings.COMMISION_FROM_PUJA_SHOP}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, COMMISION_FROM_PUJA_SHOP: e.target.value }))}
+                                        className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-bold text-gray-800"
+                                        placeholder="3"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </>
             )}
 
