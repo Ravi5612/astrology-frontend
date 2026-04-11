@@ -7,7 +7,7 @@ import {
   TrendingUp, 
   Clock, 
   CheckCircle2, 
-  Search, 
+  Search,  
   Download,
   Calendar,
   AlertCircle,
