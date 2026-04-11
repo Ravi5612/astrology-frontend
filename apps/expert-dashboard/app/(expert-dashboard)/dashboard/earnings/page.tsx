@@ -1,4 +1,4 @@
-import EarningsPage from '@/components/earnings/Earnings'
+import EarningsPage from '@/components/Earnings/Earnings'
 import React from 'react'
 
 const page = () => {
