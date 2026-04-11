@@ -45,7 +45,7 @@ const securityHeaders = [
 
       // API & WebSocket connections
       // In development, also allow direct backend connections on localhost
-      `connect-src 'self' https://checkout.razorpay.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com${process.env.NODE_ENV !== "production" ? " http://localhost:6543 http://127.0.0.1:6543" : ""}`,
+      `connect-src 'self' https://checkout.razorpay.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com ${process.env.NEXT_PUBLIC_API_URL || ""} ${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/i, "").replace(/^http/, 'ws') || ""}${process.env.NODE_ENV !== "production" ? " http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543" : ""}`,
 
       // Frames: Razorpay checkout iframe and YouTube embeds
       "frame-src https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://www.youtube-nocookie.com",
