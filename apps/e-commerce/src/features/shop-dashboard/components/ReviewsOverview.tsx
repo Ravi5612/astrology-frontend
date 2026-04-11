@@ -10,6 +10,11 @@ export interface PerformanceData {
   ratingDistribution: { 1: number; 2: number; 3: number; 4: number; 5: number };
   weeklyTargetProgress?: number;
   currentTier?: string;
+  latestReview?: {
+    text: string;
+    rating: number;
+    userName: string;
+  };
 }
 
 interface ReviewsOverviewProps {
@@ -99,21 +104,30 @@ export const ReviewsOverview: React.FC<ReviewsOverviewProps> = ({ data, isLoadin
         </div>
       </div>
 
-      <div className="mt-10 pt-8 border-t border-gray-50">
-        <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50 flex gap-4 hover:bg-orange-50/30 transition-colors group cursor-pointer">
-          <div className="w-10 h-10 bg-[#fd6410]/10 rounded-full flex items-center justify-center text-[#fd6410] shrink-0 group-hover:bg-[#fd6410] group-hover:text-white transition-all">
-            <MessageSquare className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-gray-800 leading-relaxed italic">"Genuine product, very fast shipping. Highly recommended for spiritual seekers!"</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#fd6410]">Latest Review</span>
-              <div className="h-1 w-1 bg-gray-300 rounded-full" />
-              <span className="text-[10px] font-bold text-gray-400">Live</span>
+      {data?.latestReview ? (
+        <div className="mt-10 pt-8 border-t border-gray-50">
+          <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50 flex gap-4 hover:bg-orange-50/30 transition-colors group cursor-pointer">
+            <div className="w-10 h-10 bg-[#fd6410]/10 rounded-full flex items-center justify-center text-[#fd6410] shrink-0 group-hover:bg-[#fd6410] group-hover:text-white transition-all">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-gray-800 leading-relaxed italic">"{data.latestReview.text}"</p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#fd6410]">Review by {data.latestReview.userName}</span>
+                <div className="h-1 w-1 bg-gray-300 rounded-full" />
+                <span className="text-[10px] font-bold text-gray-400">Live</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-10 pt-8 border-t border-gray-50">
+          <div className="bg-orange-50/30 p-5 rounded-2xl border border-dashed border-orange-200 flex items-center justify-center gap-3">
+             <MessageSquare className="w-5 h-5 text-orange-200" />
+             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-300">No reviews yet for your shop</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

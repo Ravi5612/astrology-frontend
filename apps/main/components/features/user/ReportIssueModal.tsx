@@ -26,7 +26,7 @@ export default function ReportIssueModal({
     const [category, setCategory] = useState("");
     const [loading, setLoading] = useState(false);
     const [submittingWithChat, setSubmittingWithChat] = useState(false);
-    const { user: currentUser } = useAuthStore();
+    const { clientUser: currentUser } = useAuthStore();
 
     const orderCategories = [
         "Product Damaged/Defective",

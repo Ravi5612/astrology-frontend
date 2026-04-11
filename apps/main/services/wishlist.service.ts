@@ -37,5 +37,17 @@ export const WishlistService = {
 
     removePujaFromWishlist: async (pujaId: number): Promise<[any | null, ApiError | null]> => {
         return await api.delete(`/puja-like/remove/${pujaId}`);
+    },
+
+    getMerchantWishlist: async (): Promise<[any | null, ApiError | null]> => {
+        return await api.get("/merchant-like");
+    },
+
+    addMerchantToWishlist: async (merchantId: number): Promise<[any | null, ApiError | null]> => {
+        return await api.post("/merchant-like/add", { merchantId });
+    },
+
+    removeMerchantFromWishlist: async (merchantId: number): Promise<[any | null, ApiError | null]> => {
+        return await api.delete(`/merchant-like/remove/${merchantId}`);
     }
 };

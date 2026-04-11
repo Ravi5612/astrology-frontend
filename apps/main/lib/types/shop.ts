@@ -41,4 +41,9 @@ export interface Store {
     email: string;
     gallery: string[];
     features: string[];
+    operationalHours?: string;
+    trustScore?: string | number;
+    likesCount?: number;
+    productsCount?: number;
+    isLiked?: boolean;
 }

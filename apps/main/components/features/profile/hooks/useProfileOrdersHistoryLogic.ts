@@ -31,6 +31,10 @@ export const useProfileOrdersHistoryLogic = (
     const [allDisputes, setAllDisputes] = useState<any[]>([]);
     const [selectedDispute, setSelectedDispute] = useState<any>(null);
     const [showDisputeChat, setShowDisputeChat] = useState(false);
+    
+    // Review Modal
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedReviewTarget, setSelectedReviewTarget] = useState<{ merchantId: any, orderId: any } | null>(null);
 
     // Report Modal
     const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -146,6 +150,33 @@ export const useProfileOrdersHistoryLogic = (
         setExpandedSessions((prev) => ({ ...prev, [sessionId]: !prev[sessionId] }));
     };
 
+    const handleOpenReviewModal = (merchantId: any, orderId: any) => {
+        setSelectedReviewTarget({ merchantId, orderId });
+        setReviewModalOpen(true);
+    };
+
+    const handleReviewSubmit = async (data: { rating: number; review: string; name: string }) => {
+        if (!selectedReviewTarget) return;
+
+        console.log("Submitting review for target:", selectedReviewTarget, data);
+        
+        const [res, error] = await (await import("@/services/merchant.service")).merchantService.submitMerchantReview({
+            merchantId: selectedReviewTarget.merchantId,
+            orderId: selectedReviewTarget.orderId,
+            rating: data.rating,
+            comment: data.review
+        });
+        
+        if (error) {
+            toast.error((error as any).message || "Failed to submit review. Please try again.");
+            return;
+        }
+
+        toast.success("Thank you! Your review has been submitted successfully.");
+        setReviewModalOpen(false);
+        setSelectedReviewTarget(null);
+    };
+
     return {
         consultationHistory,
         loadingHistory,
@@ -176,5 +207,10 @@ export const useProfileOrdersHistoryLogic = (
         reportItemDetails,
         setReportItemDetails,
         loadOrdersAndDisputes,
+        reviewModalOpen,
+        setReviewModalOpen,
+        selectedReviewTarget,
+        handleOpenReviewModal,
+        handleReviewSubmit
     };
 };

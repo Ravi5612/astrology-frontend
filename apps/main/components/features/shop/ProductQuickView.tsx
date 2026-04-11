@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   X, 
   Star, 
@@ -29,6 +29,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "react-toastify";
+import { normalizeImagePath } from "@/utils/image-utils";
 
 interface ProductQuickViewProps {
     isOpen: boolean;
@@ -47,8 +48,21 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ isOpen, onClose, pr
     const { toggleLike } = useWishlist();
     const { addToCart, isAdding } = useCart();
 
+    // Real gallery images from backend with normalization
+    const galleryItems = useMemo(() => {
+        if (!product) return [];
+        
+        const rawItems = product.gallery && product.gallery.length > 0 
+            ? product.gallery 
+            : [product.image || product.imageUrl || (product as any).image_url || (product as any).productImage];
+            
+        return rawItems
+            .filter(Boolean)
+            .map(img => normalizeImagePath(img as string));
+    }, [product]);
+
     // 🔒 Robust Scroll Lock for all browsers
-    React.useEffect(() => {
+    useEffect(() => {
         if (isOpen) {
             const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
             document.body.style.overflow = 'hidden';
@@ -115,11 +129,6 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ isOpen, onClose, pr
     const price = Number(product.price) || 0;
     const originalPrice = Number(product.originalPrice || (product as any).original_price) || price;
     const discount = product.percentageOff || Math.round(((originalPrice - price) / originalPrice) * 100) || 0;
-
-    // Real gallery images from backend
-    const galleryItems = product.gallery && product.gallery.length > 0 
-        ? product.gallery 
-        : [product.image || product.imageUrl];
 
 
     return (
@@ -197,7 +206,10 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ isOpen, onClose, pr
                 </div>
 
                 {/* 📄 Right Column: Detailed Info */}
-                <div className="w-full md:w-1/2 p-6 md:p-10 lg:p-14 overflow-y-auto no-scrollbar custom-scrollbar bg-gradient-to-br from-white/40 to-transparent">
+                <div 
+                    className="w-full md:w-1/2 p-6 md:p-10 lg:p-14 overflow-y-auto no-scrollbar custom-scrollbar bg-gradient-to-br from-white/40 to-transparent"
+                    data-lenis-prevent
+                >
                     <div className="space-y-8">
                         {/* Title & Brand */}
                         <div className="space-y-2">

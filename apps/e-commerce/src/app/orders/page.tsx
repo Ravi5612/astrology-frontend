@@ -13,8 +13,11 @@ import {
   Calendar,
   Download,
   AlertCircle,
-  Loader2
+  Loader2,
+  ShieldCheck,
+  X
 } from "lucide-react";
+import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
 
@@ -31,6 +34,9 @@ interface Order {
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
   
   const queryClient = useQueryClient();
 
@@ -73,12 +79,53 @@ export default function OrdersPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
+      toast.success("Status updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to update status");
     }
   });
+
+  // OTP Verification Mutation
+  const verifyOtpMutation = useMutation({
+    mutationFn: async ({ id, otp }: { id: string, otp: string }) => {
+      const res = await fetch(`/api/v1/merchant/orders/${id}/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp }),
+        credentials: "include"
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Invalid OTP. Please try again.");
+      }
+    },
+    onSuccess: () => {
+      toast.success("Delivery verified and payment released!");
+      setOtpModalOpen(false);
+      setOtpValue("");
+      setVerifyingOrderId(null);
+      queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message);
+    }
+  });
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    if (newStatus === "delivered") {
+      setVerifyingOrderId(orderId);
+      setOtpModalOpen(true);
+    } else {
+      updateStatusMutation.mutate({ id: orderId, status: newStatus });
+    }
+  };
 
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pending": return "bg-amber-50 text-amber-700 border-amber-100";
+      case "paid":
+      case "packed":
       case "processing": return "bg-orange-50 text-orange-700 border-orange-100";
       case "shipped": return "bg-blue-50 text-blue-700 border-blue-100";
       case "delivered": return "bg-green-50 text-green-700 border-green-100";
@@ -90,6 +137,8 @@ export default function OrdersPage() {
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pending": return <Clock className="w-3.5 h-3.5" />;
+      case "paid":
+      case "packed":
       case "processing": return <Clock className="w-3.5 h-3.5" />;
       case "shipped": return <Truck className="w-3.5 h-3.5" />;
       case "delivered": return <CheckCircle2 className="w-3.5 h-3.5" />;
@@ -214,12 +263,18 @@ export default function OrdersPage() {
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-gray-400 font-medium">
-                  No orders found.
+                <td colSpan={6} className="py-32 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-4 opacity-40">
+                    <ShoppingBag className="w-16 h-16 text-gray-300" />
+                    <div className="space-y-1">
+                      <p className="text-xl font-bold text-gray-900">No Orders Yet</p>
+                      <p className="text-sm font-medium text-gray-500">When customers buy your products, they will appear here.</p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50/50 group transition-all duration-300">
+              <tr key={order.id} className="hover:bg-gray-50/80 group transition-all duration-300 hover:scale-[1.002] active:scale-[0.998] cursor-default">
                 <td className="pl-8 pr-4 py-6">
                   <span className="text-sm font-bold text-gray-900 tracking-tight uppercase">{order.orderNumber || order.id.substring(0, 8)}</span>
                 </td>
@@ -252,8 +307,8 @@ export default function OrdersPage() {
                     <select 
                        className="text-[10px] font-bold uppercase tracking-widest bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer"
                        value={order.status.toLowerCase()}
-                       onChange={(e) => updateStatusMutation.mutate({ id: order.id, status: e.target.value })}
-                       disabled={updateStatusMutation.isPending}
+                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                       disabled={updateStatusMutation.isPending || verifyOtpMutation.isPending}
                     >
                        <option value="pending">Pending</option>
                        <option value="processing">Processing</option>
@@ -284,6 +339,86 @@ export default function OrdersPage() {
             Open Guide
          </button>
       </div>
+
+      {/* OTP Verification Modal */}
+      {otpModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-6">
+          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => !verifyOtpMutation.isPending && setOtpModalOpen(false)}></div>
+          
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="absolute top-6 right-6">
+               <button 
+                onClick={() => setOtpModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                disabled={verifyOtpMutation.isPending}
+               >
+                 <X className="w-5 h-5 text-gray-400" />
+               </button>
+            </div>
+
+            <div className="p-8 sm:p-10">
+              <div className="w-16 h-16 bg-orange-100 rounded-3xl flex items-center justify-center mb-6 mx-auto">
+                 <ShieldCheck className="w-8 h-8 text-[#fd6410]" />
+              </div>
+
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-black text-gray-900 mb-2">Verify Delivery</h3>
+                <p className="text-gray-500 text-sm">Please enter the 6-digit OTP provided by the customer to complete the delivery.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="relative group">
+                  <input 
+                    type="text" 
+                    maxLength={6}
+                    placeholder="Enter 6-digit OTP"
+                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-center text-2xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-[#fd6410] transition-all"
+                    value={otpValue}
+                    onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
+                    disabled={verifyOtpMutation.isPending}
+                  />
+                  {!otpValue && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="text-gray-300 text-sm font-bold uppercase tracking-widest">000000</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <button 
+                    onClick={() => verifyingOrderId && verifyOtpMutation.mutate({ id: verifyingOrderId, otp: otpValue })}
+                    disabled={otpValue.length !== 6 || verifyOtpMutation.isPending}
+                    className="w-full py-4 bg-[#fd6410] text-white rounded-2xl font-bold shadow-lg shadow-orange-200 hover:bg-[#e85a0e] transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-3 active:scale-95"
+                  >
+                    {verifyOtpMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      <span>Verify & Complete</span>
+                    )}
+                  </button>
+                  <button 
+                    onClick={() => setOtpModalOpen(false)}
+                    className="w-full py-4 bg-white text-gray-400 font-bold rounded-2xl hover:text-gray-600 transition-colors"
+                    disabled={verifyOtpMutation.isPending}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-orange-50 p-4 text-center">
+              <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest flex items-center justify-center gap-2">
+                 <AlertCircle className="w-3 h-3" />
+                 Payment will be released after verification
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -11,6 +11,9 @@ export const normalizeImagePath = (value: string): string => {
     if (!value) return value;
 
     if (value.startsWith("/uploads/")) return value;
+    
+    // Support for Base64 data URLs
+    if (value.startsWith("data:")) return value;
 
     if (value.startsWith("http://") || value.startsWith("https://")) {
         try {
@@ -35,7 +38,7 @@ export const normalizeImagePath = (value: string): string => {
 export const getProductImageUrl = (product: any): string => {
     if (!product) return "/images/image-not-found.png";
 
-    const rawImage = product.imageUrl || product.image || product.secure_url || product.url || product.image_url || product.path;
+    const rawImage = product.productImage || product.imageUrl || product.image || product.secure_url || product.url || product.image_url || product.path;
 
     const normalizedValue = typeof rawImage === "string" ? rawImage : "";
 

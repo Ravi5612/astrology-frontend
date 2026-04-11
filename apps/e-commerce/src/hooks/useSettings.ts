@@ -44,3 +44,21 @@ export const useUpdateProfile = () => {
     }
   });
 };
+
+/**
+ * Hook to fetch merchant's products
+ */
+export const useMerchantProducts = () => {
+  return useQuery({
+    queryKey: ['merchant-products'],
+    queryFn: async () => {
+      const [data, error] = await settingsService.getProducts();
+      if (error) {
+        const message = (error as any).message || "Failed to fetch products";
+        throw new Error(message);
+      }
+      return data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
