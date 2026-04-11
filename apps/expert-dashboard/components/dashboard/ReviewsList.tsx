@@ -66,7 +66,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                 )}
             </div>
 
-            <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar-yellow">
+            <div className="overflow-y-auto pr-2 custom-scrollbar-yellow" style={{ maxHeight: '300px' }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {reviews.map((review) => (
                     <div key={review.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
