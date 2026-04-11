@@ -20,8 +20,8 @@ function parseJwt(token: string) {
     }
 }
 
-// 🚀 Standardized API URL (Sushant Sir's Standard)
-const API_BASE_URL = "http://localhost:6543/api/v1";
+// 🚀 Standardized API URL (Sushant Sir's Standard) - uses environment variable for production
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
 
 export async function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;

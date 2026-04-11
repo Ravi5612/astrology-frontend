@@ -90,7 +90,8 @@ const SignInForm: React.FC = () => {
       safeCallback,
       globalThis.window.location.origin,
     ).toString();
-    const googleLoginUrl = `http://localhost:6543/api/v1/auth/google/login?role=client&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
+    const googleLoginUrl = `${baseUrl.replace(/\/+$/, "")}/auth/google/login?role=client&redirect_uri=${encodeURIComponent(redirectUri)}`;
     globalThis.window.location.href = googleLoginUrl;
   };
 
