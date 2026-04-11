@@ -133,7 +133,7 @@ export default function VerifyEmail() {
             </div>
         )}
 
-        {status === "success" && status !== "loading" && countdown === 0 && (
+        {status === "success" && countdown === 0 && (
             <Link href="/dashboard" className="flex items-center justify-center gap-2 w-full bg-green-600 text-white rounded-xl py-4 font-black shadow-lg shadow-green-200 hover:bg-green-700 transition-all hover:scale-[1.02] active:scale-[0.98]">
                 <span>Go to Dashboard</span>
                 <ArrowRight className="w-5 h-5" />
