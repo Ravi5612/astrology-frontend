@@ -16,6 +16,7 @@ type MessageAreaProps = {
     expertData: any;
     typingStatus: { senderName: string; isTyping: boolean } | null;
     messagesEndRef: React.RefObject<HTMLDivElement | null>;
+    clientUser?: any;
 };
 
 export default function MessageArea({
@@ -25,7 +26,8 @@ export default function MessageArea({
     messages,
     expertData,
     typingStatus,
-    messagesEndRef
+    messagesEndRef,
+    clientUser
 }: MessageAreaProps) {
     const [mounted, setMounted] = React.useState(false);
 
@@ -49,14 +51,32 @@ export default function MessageArea({
                     return (
                         <div key={msg.id} className={`flex gap-3 md:gap-4 ${isUser ? "flex-row-reverse" : "flex-row"} items-start`}>
                             <div className="flex-shrink-0 mt-1">
-                                <div className={`w-8 h-8 rounded-full border-2 ${isUser ? 'border-[#fd6410]/30' : 'border-black/5'} overflow-hidden shadow-sm`}>
-                                    <Image
-                                        src={isUser ? "/placeholder-user.jpg" : expertData.image}
-                                        alt="Avatar"
-                                        width={32}
-                                        height={32}
-                                        className="object-cover"
-                                    />
+                                <div className={`w-8 h-8 rounded-full border-2 ${isUser ? 'border-[#fd6410]/30' : 'border-black/5'} overflow-hidden shadow-sm flex items-center justify-center bg-gray-100`}>
+                                    {isUser ? (
+                                        (clientUser?.avatar || clientUser?.profile_picture) ? (
+                                            <Image
+                                                src={clientUser.avatar || clientUser.profile_picture}
+                                                alt={clientUser.name || "User"}
+                                                width={32}
+                                                height={32}
+                                                className="object-cover w-full h-full"
+                                            />
+                                        ) : (
+                                            <div className="text-[10px] font-black text-[#fd6410]">
+                                                {clientUser?.name
+                                                    ? clientUser.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+                                                    : 'U'}
+                                            </div>
+                                        )
+                                    ) : (
+                                        <Image
+                                            src={expertData.image}
+                                            alt={expertData.name || "Expert"}
+                                            width={32}
+                                            height={32}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    )}
                                 </div>
                             </div>
                             <div className={`flex flex-col gap-1.5 max-w-[85%] md:max-w-[70%]`}>

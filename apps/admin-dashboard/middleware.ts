@@ -20,7 +20,7 @@ function parseJwt(token: string) {
     }
 }
 
-const API_BASE_URL = "http://localhost:6543/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
 
 export async function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;

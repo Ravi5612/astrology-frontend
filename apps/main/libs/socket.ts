@@ -12,7 +12,8 @@ const createDummySocket = () => ({
 
 const isBrowser = typeof window !== "undefined";
 
-const SOCKET_URL = isBrowser ? "http://localhost:6543" : "";
+const RAW_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543";
+const SOCKET_URL = isBrowser ? RAW_URL.replace(/\/api\/v1\/?$/i, "") : "";
 
 export const socket: Socket = isBrowser
     ? io(SOCKET_URL, {

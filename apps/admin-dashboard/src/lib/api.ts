@@ -9,7 +9,7 @@ export { ApiError };
  * - Credentials: included by default in safeFetch
  */
 export const api = createSafeFetchInstance({
-  baseUrl: "http://localhost:6543/api/v1",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
