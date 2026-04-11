@@ -9,11 +9,13 @@ import { toast } from 'react-toastify';
  * - Credentials: included by default in safeFetch
  */
 const getBaseUrl = () => {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  // 1. Server-side: MUST use absolute URL (otherwise fetch fails)
   if (typeof window === 'undefined') {
-    // Server-side requires absolute URLs
-    return 'http://localhost:6543/api/v1';
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:6543/api/v1';
   }
+  
+  // 2. Client-side: ALWAYS use relative path to utilize Next.js rewrites/proxy.
+  // This bypasses CSP blocks because the request is sent to the "same origin".
   return '/api/v1';
 };
 
