@@ -189,7 +189,7 @@ const SignInForm: React.FC = () => {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs font-bold text-gray-300 hover:text-orange transition-all"
+            className="text-xs font-bold text-orange hover:opacity-80 transition-all"
           >
             {t.signIn.forgotPassword}
           </Link>

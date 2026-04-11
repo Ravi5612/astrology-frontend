@@ -132,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     return `${legacyUploadsOrigin}/uploads/${value}`;
   };
 
-  const avatarSrc = normalizeImagePath(clientUser?.profile_picture);
+  const avatarSrc = normalizeImagePath(clientUser?.profile_picture || clientUser?.avatar);
 
   const unwrapResponse = (res: any) => res?.data ?? res;
   const normalizeNotification = (notif: any) => ({
@@ -267,7 +267,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     return "U";
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside or scrolling
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -289,10 +289,24 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
       }
     };
 
+    const handleScroll = () => {
+      // Close desktop dropdowns on main body scroll
+      if (showLanguageDropdown) setShowLanguageDropdown(false);
+      if (showProfileDropdown) setShowProfileDropdown(false);
+      if (showNotificationDropdown) setShowNotificationDropdown(false);
+    };
+
     if (showLanguageDropdown || showProfileDropdown || showNotificationDropdown || isMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
+      // Only attach scroll close behavior to desktop dropdowns
+      if (showLanguageDropdown || showProfileDropdown || showNotificationDropdown) {
+        window.addEventListener("scroll", handleScroll, { passive: true });
+      }
+      
+      return () => {
         document.removeEventListener("mousedown", handleClickOutside);
+        window.removeEventListener("scroll", handleScroll);
+      };
     }
   }, [showLanguageDropdown, showProfileDropdown, showNotificationDropdown, isMenuOpen]);
 
@@ -423,14 +437,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
                         {showNotificationDropdown && (
                           <div
-                            className="absolute bg-white shadow-lg rounded-2xl overflow-hidden"
-                            style={{
-                              top: "140%",
-                              right: "0",
-                              width: "380px",
-                              zIndex: 1001,
-                              border: "1px solid #eee"
-                            }}
+                            className="fixed top-[65px] left-[5vw] w-[90vw] sm:absolute sm:top-[140%] sm:left-auto sm:-right-4 md:right-0 sm:w-[320px] md:w-[380px] bg-white shadow-lg rounded-2xl overflow-hidden z-[1001] border border-[#eee]"
                           >
                             <div className="px-3 py-3 border-b bg-gray-50 flex justify-between items-center">
                               <p className="mb-0 font-bold text-gray-900 text-lg">{t.notifications}</p>
@@ -444,7 +451,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 </button>
                               )}
                             </div>
-                            <div className="overflow-auto" style={{ maxHeight: '400px' }}>
+                            <div data-lenis-prevent className="overflow-y-auto overscroll-contain" style={{ maxHeight: '400px' }}>
                               {notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
                                   <div className="w-16 h-16 bg-orange/5 rounded-full flex items-center justify-center mb-4 border border-orange/10 shadow-inner">
@@ -646,7 +653,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
       </header>
 
       <header
-        className="sticky top-0 z-50 bg-white border-b border-[#FF6B002e] shadow-[0_8px_11px_#0000000d]"
+        className="main-head sticky top-0 z-50 bg-white border-b border-[#FF6B002e] shadow-[0_8px_11px_#0000000d]"
         style={{ backdropFilter: 'saturate(160%) blur(8px)' }}
       >
         <div className="max-w-[1320px] mx-auto px-8 lg:px-16 py-3">

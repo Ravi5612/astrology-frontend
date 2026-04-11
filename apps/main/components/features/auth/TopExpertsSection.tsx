@@ -60,7 +60,7 @@ const TopExpertsSection: React.FC = () => {
                                         alt={expert.user?.name || "Expert"}
                                         height={80}
                                         width={80}
-                                        className="rounded-full object-cover border-2 border-orange/20 p-1 group-hover:scale-105 transition-transform duration-300"
+                                        className="w-20 h-20 rounded-full object-cover border-2 border-orange/20 p-1 group-hover:scale-105 transition-transform duration-300"
                                     />
                                     {expert.is_online && (
                                         <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm"></span>

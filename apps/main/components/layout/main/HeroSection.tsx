@@ -96,20 +96,19 @@ const HeroSection = () => {
               </div>
 
               {/* Right col — col-lg-5 */}
-              <div className="w-full lg:w-[42%] overflow-visible">
+              <div className="w-full lg:w-[42%] overflow-visible mt-6 lg:mt-0 mb-4 lg:mb-0">
                 {/* right-illus */}
-                <div className="relative h-[400px] overflow-visible">
+                <div className="relative h-[250px] md:h-[300px] lg:h-[400px] overflow-visible">
                   {/* Expert-img-h wrapper — positioned div for width/left, spin on the image */}
                   <div
-                    className="absolute"
-                    style={{ width: "90%", left: "10%", top: "-160px", bottom: 0, zIndex: 5 }}
+                    className="absolute w-[90%] left-[5%] lg:left-[10%] -top-[40px] lg:top-[-160px] bottom-0 z-[5]"
                   >
                     <Image
                       src="/images/Expert-h.png"
                       alt="Expert background"
                       fill
                       sizes="(max-width: 1024px) 100vw, 42vw"
-                      className="animate-[spin_30s_linear_infinite] object-contain scale-[1.0]"
+                      className="animate-[spin_30s_linear_infinite] object-contain scale-[0.85] lg:scale-100"
                       style={{ transformOrigin: "center center" }}
                     />
                   </div>
@@ -120,8 +119,7 @@ const HeroSection = () => {
                     fill
                     sizes="(max-width: 1024px) 100vw, 42vw"
                     priority
-                    className="object-contain scale-[1.4] origin-bottom translate-y-16 -translate-x-2 pointer-events-none"
-                    style={{ zIndex: 6 }}
+                    className="object-contain scale-110 lg:scale-[1.4] origin-bottom translate-y-6 -translate-x-4 lg:translate-y-16 lg:-translate-x-2 pointer-events-none z-[6]"
                   />
                 </div>
               </div>

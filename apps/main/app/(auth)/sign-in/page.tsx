@@ -6,6 +6,16 @@ export const metadata: Metadata = {
   description: "Sign in to your account and unlock personalized astrology insights.",
 };
 
-export default function SignInPage() {
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+export default async function SignInPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  
+  if (token) {
+    redirect("/profile");
+  }
+
   return <SignInPageClient />;
 }

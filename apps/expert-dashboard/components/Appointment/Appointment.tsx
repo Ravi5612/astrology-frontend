@@ -151,19 +151,27 @@ export default function AppointmentsPage() {
           isFree: !!(session.is_free ?? session.isFree),
           freeMinutes: session.free_minutes ?? session.freeMinutes ?? 0,
           durationMins: isPuja ? 0 : (() => {
-            let d = session.duration_mins ?? session.durationMins ?? session.duration ?? ((session.duration_seconds || 0) / 60);
-            if ((!d || isNaN(d)) && (currentStatus === 'completed' || currentStatus === 'expired')) {
-              const start = (session.activated_at || session.activatedAt || session.start_time) ? new Date(session.activated_at || session.activatedAt || session.start_time).getTime() : 0;
-              const end = (session.ended_at || session.endedAt || session.end_time) ? new Date(session.ended_at || session.endedAt || session.end_time).getTime() : 0;
-              if (start > 0 && end > 0) {
-                const diff = Math.ceil((end - start) / (1000 * 60));
-                return isNaN(diff) ? 0 : diff;
+            let parsedD = Number(session.duration_mins ?? session.durationMins ?? session.duration ?? ((session.duration_seconds || 0) / 60));
+            
+            // if duration is invalid or 0, fallback to timestamp difference
+            if (!parsedD || isNaN(parsedD) || parsedD === 0) {
+              if (currentStatus === 'completed' || currentStatus === 'expired') {
+                const sTemp = session.activated_at || session.activatedAt || session.start_time;
+                const eTemp = session.ended_at || session.endedAt || session.end_time;
+                const start = sTemp ? new Date(sTemp).getTime() : 0;
+                const end = eTemp ? new Date(eTemp).getTime() : 0;
+                
+                if (start > 0 && end > 0 && !isNaN(start) && !isNaN(end)) {
+                  const diff = Math.ceil((end - start) / (1000 * 60));
+                  return isNaN(diff) ? 0 : diff;
+                }
               }
+              return 0; // if timestamps also fail, strictly return 0 not NaN
             }
-            return isNaN(d) ? 0 : Math.ceil(d);
+            return Math.ceil(parsedD);
           })(),
           review: sessionReview ? {
-            rating: sessionReview.rating || 0,
+            rating: Number(sessionReview.rating) || 0,
             comment: sessionReview.comment || ""
           } : undefined,
           terminatedBy: session.terminated_by || session.terminatedBy,

@@ -132,8 +132,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 name: raw.user.name,
                 email: raw.user.email,
                 roles: raw.user.roles || [],
-                profile_picture: raw.profile_picture,
-                avatar: raw.profile_picture,
+                profile_picture: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
+                avatar: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
             };
         } else if (raw?.id) {
             user = {
@@ -141,8 +141,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 name: raw.full_name || raw.name || "User",
                 email: raw.email || "",
                 roles: raw.roles || [],
-                profile_picture: raw.profile_picture,
-                avatar: raw.profile_picture,
+                profile_picture: raw.profile_picture || raw.avatar,
+                avatar: raw.profile_picture || raw.avatar,
             };
         }
 

@@ -53,7 +53,14 @@ export default async function RootLayout({
       }) as any;
       
       if (!authError && res) {
-        user = res.user || (res.id ? res : null);
+        const raw = res?.data ?? res;
+        user = raw?.user || (raw?.id ? raw : null);
+        
+        if (user) {
+          // Unify the profile picture field so that Header has consistent data on SSR
+          user.profile_picture = user.profile_picture || user.avatar || raw?.profile_picture || raw?.avatar;
+          user.avatar = user.profile_picture;
+        }
       }
     } catch (err: any) {
       const errorMsg = err.message || String(err);
