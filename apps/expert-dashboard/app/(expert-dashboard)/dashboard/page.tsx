@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Users, CalendarCheck, Clock, Wallet, CheckCircle, XCircle } from "lucide-react";
+import { Users, CalendarCheck, Clock, Wallet, CheckCircle, XCircle, X } from "lucide-react";
 import { StatsCards } from "@repo/ui";
 import { RecentActivity } from "@/components/dashboard/ActivityFeed";
 import { UpcomingAppointments } from "@/components/dashboard/UserTable";
@@ -25,7 +25,21 @@ const Page = () => {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dismissedBanners, setDismissedBanners] = useState<string[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const saved = localStorage.getItem('dismissed-dashboard-banners');
+    if (saved) {
+      setDismissedBanners(JSON.parse(saved));
+    }
+  }, []);
+
+  const handleDismissBanner = (status: string) => {
+    const newDismissed = [...dismissedBanners, status.toLowerCase()];
+    setDismissedBanners(newDismissed);
+    localStorage.setItem('dismissed-dashboard-banners', JSON.stringify(newDismissed));
+  };
 
 
   useEffect(() => {
@@ -137,12 +151,18 @@ const Page = () => {
         // Backend logic: Status remains 'pending' but rejectionReason is filled when rejected
         const isRejected = kycStatus === 'rejected' || (kycStatus === 'pending' && !!reason);
 
-        if (!isRejected) return null;
+        if (!isRejected || dismissedBanners.includes(kycStatus)) return null;
 
         const displayReason = reason || "Please verify your documents and profile information and try again.";
 
         return (
-          <div className="bg-rose-50 border-2 border-rose-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left">
+          <div className="bg-rose-50 border-2 border-rose-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left relative group">
+            <button 
+              onClick={() => handleDismissBanner(kycStatus)}
+              className="absolute top-4 right-4 p-1 rounded-full hover:bg-rose-100 text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
+            >
+              <X size={20} />
+            </button>
             <div className="w-12 h-12 rounded-2xl bg-rose-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-500/20">
               <AlertTriangle className="w-6 h-6" />
             </div>
@@ -171,10 +191,16 @@ const Page = () => {
         const kycStatus = (user?.kycStatus || "").toLowerCase();
         const isApproved = kycStatus === 'active' || kycStatus === 'approved';
 
-        if (!isApproved) return null;
+        if (!isApproved || dismissedBanners.includes(kycStatus)) return null;
 
         return (
-          <div className="bg-emerald-50 border-2 border-emerald-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left">
+          <div className="bg-emerald-50 border-2 border-emerald-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left relative group">
+            <button 
+              onClick={() => handleDismissBanner(kycStatus)}
+              className="absolute top-4 right-4 p-1 rounded-full hover:bg-emerald-100 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all"
+            >
+              <X size={20} />
+            </button>
             <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20">
               <CheckCircle className="w-6 h-6" />
             </div>

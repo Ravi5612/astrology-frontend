@@ -130,16 +130,18 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     }));
 
     // Add KYC status notices on top of fetched notifications if applicable
-    if (showKycNotice) {
-      const status = (user?.kycStatus || "").toLowerCase();
-      if (status === 'rejected') {
+    const dismissedStatus = typeof window !== 'undefined' ? localStorage.getItem('dismissed-kyc-status') : null;
+    const currentStatus = (user?.kycStatus || "").toLowerCase();
+
+    if (showKycNotice && dismissedStatus !== currentStatus) {
+      if (currentStatus === 'rejected') {
         mapped.unshift({
           id: 'kyc-rejected',
           message: "❌ Profile Rejected: " + (user?.rejectionReason || "Check profile"),
           time: "Status",
           type: 'error'
         });
-      } else if (status === 'active' || status === 'approved') {
+      } else if (currentStatus === 'active' || currentStatus === 'approved') {
         mapped.unshift({
           id: 'kyc-active',
           message: "✅ Account Approved!",
@@ -164,6 +166,12 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       toast.error("Failed to clear notifications");
       return;
     }
+    
+    // Persist that we've cleared/dismissed the current status notice
+    if (user?.kycStatus) {
+      localStorage.setItem('dismissed-kyc-status', user.kycStatus.toLowerCase());
+    }
+
     setNotifications([]);
     setShowKycNotice(false);
     setIsNotificationOpen(false);

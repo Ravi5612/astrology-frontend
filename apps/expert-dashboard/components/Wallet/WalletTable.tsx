@@ -30,22 +30,22 @@ export default function WalletTable({ transactions }: WalletTableProps) {
 
     return (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+            <div className="p-6 border-b border-gray-50 flex items-center justify-between sticky top-0 bg-white z-20">
                 <div>
                     <h2 className="text-lg font-black text-gray-900">Transaction History</h2>
                     <p className="text-xs text-gray-400 font-medium">Detailed log of all credits and withdrawals</p>
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                    <thead>
-                        <tr className="bg-gray-50/50">
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Transaction Info</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto custom-scrollbar-yellow">
+                <table className="w-full text-left border-separate border-spacing-0">
+                    <thead className="sticky top-0 z-10 whitespace-nowrap">
+                        <tr className="bg-gray-50/90 backdrop-blur-sm">
+                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Transaction Info</th>
+                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Type</th>
+                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Amount</th>
+                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Status</th>
+                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Date</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -100,16 +100,7 @@ export default function WalletTable({ transactions }: WalletTableProps) {
                 )}
             </div>
 
-            <div className="p-4 bg-gray-50/50 border-t border-gray-50 text-center">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    fullWidth
-                    className="text-amber-600 font-black uppercase tracking-widest hover:bg-transparent"
-                >
-                    Load More Transactions
-                </Button>
-            </div>
+
         </div>
     );
 }

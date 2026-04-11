@@ -37,9 +37,9 @@ const NotificationPage = () => {
 
     return (
         <div className="min-h-screen bg-[#FFF9F4] pb-12 font-poppins">
-            <div className="container mx-auto px-4 py-8 max-w-2xl">
+            <div className="container mx-auto px-4 py-8 max-w-5xl">
                 <div className="bg-white border-0 shadow-premium rounded-[32px] overflow-hidden mb-6">
-                    <div className="px-8 py-7 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="px-8 py-7 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4 sticky top-0 z-10 shadow-sm">
                         <h5 className="text-xl font-bold text-gray-900 mb-0 flex items-center">
                             <span className="w-12 h-12 rounded-full bg-orange/10 text-orange flex items-center justify-center mr-4 flex-shrink-0 shadow-inner">
                                 <Bell className="w-6 h-6" />
@@ -57,7 +57,7 @@ const NotificationPage = () => {
                         )}
                     </div>
 
-                    <div className="p-8">
+                    <div className="px-8 py-4 max-h-[calc(100vh-280px)] overflow-y-auto custom-scrollbar-yellow">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-24">
                                 <div className="relative w-14 h-14 mb-6">

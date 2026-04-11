@@ -241,7 +241,7 @@ export default function ClientsPage() {
           <ClientHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
           {/* Clients List - New Card Design */}
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar-yellow pb-4">
             {sortedAndFilteredClients.length === 0 ? (
               <div className="text-center py-10 bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="mb-4">
