@@ -18,7 +18,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
       "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com",
-      `connect-src 'self' https://api.prokerala.com https://checkout.razorpay.com wss: ws:${process.env.NODE_ENV !== "production" ? " http://localhost:6543 http://127.0.0.1:6543" : ""}`,
+      `connect-src 'self' https://api.prokerala.com https://checkout.razorpay.com wss: ws: https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543`,
       "frame-src https://api.razorpay.com https://checkout.razorpay.com",
       "media-src 'self' blob:",
     ].join("; "),
@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:6543')
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:6543')
       .replace(/\/api\/v1\/?$/, '')
       .replace(/\/+$/, '');
 

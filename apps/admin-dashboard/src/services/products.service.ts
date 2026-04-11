@@ -7,6 +7,9 @@ export interface Product {
     originalPrice: number;
     imageUrl: string;
     isActive?: boolean;
+    expert_id?: number;
+    merchant_id?: number;
+    category?: string;
 }
 
 const fromApiProduct = (raw: any): Product => ({
@@ -18,6 +21,9 @@ const fromApiProduct = (raw: any): Product => ({
     originalPrice: Number(raw?.originalPrice ?? raw?.original_price ?? 0),
     imageUrl: raw?.imageUrl || raw?.image_url || raw?.image || "",
     isActive: raw?.isActive ?? raw?.is_active ?? true,
+    expert_id: raw?.expert_id ?? raw?.expertId,
+    merchant_id: raw?.merchant_id ?? raw?.merchantId,
+    category: raw?.category,
 });
 
 const toApiPayload = (product: Partial<Product>) => {

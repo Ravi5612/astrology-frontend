@@ -26,8 +26,9 @@ export default function ProductsPage() {
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    // Search State
+    // Search & Filter State
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilter, setActiveFilter] = useState<"all" | "admin" | "astrologer" | "merchant">("all");
 
     // Form & Edit State
     const [formData, setFormData] = useState<Product>({
@@ -73,9 +74,22 @@ export default function ProductsPage() {
     }, []);
 
     // Filtered Products
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        let matchesFilter = true;
+        if (activeFilter === "admin") {
+            // Admin products have no expert_id and no merchant_id
+            matchesFilter = !p.expert_id && !p.merchant_id && p.category !== "astrologer";
+        } else if (activeFilter === "astrologer") {
+            // Astrologer products have expert_id OR category "astrologer"
+            matchesFilter = !!p.expert_id || p.category === "astrologer";
+        } else if (activeFilter === "merchant") {
+            matchesFilter = !!p.merchant_id;
+        }
+
+        return matchesSearch && matchesFilter;
+    });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -131,7 +145,7 @@ export default function ProductsPage() {
             toast.error("Failed to delete product");
             return;
         }
-        
+
         toast.success("Product deleted successfully");
         fetchProducts();
     };
@@ -220,6 +234,34 @@ export default function ProductsPage() {
                         {showForm ? "Cancel" : "Add Product"}
                     </Button>
                 </div>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap gap-2 mb-6">
+                <button
+                    onClick={() => setActiveFilter("all")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "all" ? "bg-yellow-100 text-yellow-700 border-2 border-yellow-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    All Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("admin")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "admin" ? "bg-blue-100 text-blue-700 border-2 border-blue-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Admin Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("astrologer")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "astrologer" ? "bg-purple-100 text-purple-700 border-2 border-purple-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Astrologer Products
+                </button>
+                <button
+                    onClick={() => setActiveFilter("merchant")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === "merchant" ? "bg-green-100 text-green-700 border-2 border-green-400" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+                >
+                    Merchant Products
+                </button>
             </div>
 
             {showForm && (

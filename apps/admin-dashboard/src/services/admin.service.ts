@@ -172,3 +172,12 @@ export const deleteReviewResource = async (id: number): Promise<[any | null, any
 export const sendReviewResponse = async (id: number, message: string): Promise<[any | null, any | null]> => {
   return await api.post(`/admin/reviews/${id}/response`, { message });
 };
+
+// Commission Settings
+export const getCommissionSettings = async (): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/settings/commissions");
+};
+
+export const updateCommissionSettings = async (data: Record<string, string | number>): Promise<[any | null, any | null]> => {
+  return await api.post("/admin/settings/commissions", data);
+};

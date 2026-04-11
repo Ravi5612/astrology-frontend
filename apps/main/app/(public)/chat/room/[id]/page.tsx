@@ -357,6 +357,7 @@ function ChatRoomContent() {
                         expertData={expertData}
                         typingStatus={typingStatus}
                         messagesEndRef={messagesEndRef}
+                        clientUser={clientUser}
                     />
 
                     <ChatFooter

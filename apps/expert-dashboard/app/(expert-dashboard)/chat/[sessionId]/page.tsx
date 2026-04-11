@@ -389,17 +389,21 @@ function ExpertChatRoomContent() {
                                         user?.avatar ? (
                                             <img src={user.avatar} className="w-full h-full object-cover" />
                                         ) : (
-                                            user?.name?.charAt(0) || 'E'
+                                            user?.name
+                                                ? user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+                                                : 'E'
                                         )
                                     ) : (
                                         clientAvatar ? (
                                             <img
-                                                src={clientAvatar || "/images/dummy-expert.jpg"}
+                                                src={clientAvatar}
                                                 className="w-full h-full object-cover"
-                                                onError={(e) => { (e.target as HTMLImageElement).src = "/images/dummy-expert.jpg"; }}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = "/images/placeholder-user.jpg"; }}
                                             />
                                         ) : (
-                                            clientName.charAt(0)
+                                            clientName
+                                                ? clientName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+                                                : 'U'
                                         )
                                     )}
                                 </div>

@@ -80,13 +80,13 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
         const fetchCount = async () => {
             setFetchingCount(true);
             try {
-                const [count, error] = await getFilteredUsersCount(filters);
+                const [result, error] = await getFilteredUsersCount(filters);
                 if (error) {
                     console.error("Failed to fetch user count:", error);
                     setMatchedUsersCount(0);
                     return;
                 }
-                setMatchedUsersCount(count);
+                setMatchedUsersCount(typeof result === 'object' ? result.count : result);
             } catch (error) {
                 console.error("Failed to fetch user count:", error);
                 setMatchedUsersCount(0);

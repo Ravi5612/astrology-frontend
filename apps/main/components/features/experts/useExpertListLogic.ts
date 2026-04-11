@@ -10,7 +10,15 @@ import { ExpertProfile, ClientExpertProfile } from "@/lib/types";
 const getImageUrl = (path?: string) => {
   if (!path) return "/images/dummy-expert.jpg";
   if (path.startsWith("http") || path.startsWith("data:") || path.startsWith("/")) return path;
-  return `http://localhost:6543/uploads/${path}`;
+  
+  if (typeof window === 'undefined') {
+    // Server-side: MUST use absolute URL (otherwise fetch fails)
+    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:6543').replace(/\/api\/v1\/?$/i, "");
+    return `${baseUrl}/uploads/${path}`;
+  }
+  
+  // Client-side: ALWAYS use relative path to utilize Next.js rewrites/proxy.
+  return `/uploads/${path}`;
 };
 
 const mapExpert = (item: any): ClientExpertProfile => {

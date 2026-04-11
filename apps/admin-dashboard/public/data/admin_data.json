@@ -56,14 +56,9 @@
             "icon": "Package"
         },
         {
-            "label": "Agent Management",
+            "label": "Agent and Commission",
             "href": "/admin/agents",
             "icon": "Handshake"
-        },
-        {
-            "label": "Commissions",
-            "href": "/admin/commissions",
-            "icon": "BadgeIndianRupee"
         },
         {
             "label": "Mandir Approvals",
