@@ -18,7 +18,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
       "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com https://api.dicebear.com",
-      "connect-src 'self' http://localhost:6543 http://127.0.0.1:6543 https://api.prokerala.com https://checkout.razorpay.com wss: ws:",
+      "connect-src 'self' http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543 https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com https://api.prokerala.com https://checkout.razorpay.com wss: ws:",
       "frame-src https://api.razorpay.com https://checkout.razorpay.com",
       "media-src 'self' blob:",
     ].join("; "),
@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   async rewrites() {
-    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:6543').replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '');
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:6543').replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '');
 
     return [
       {

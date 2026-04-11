@@ -8,8 +8,17 @@ import { toast } from 'react-toastify';
  * - Headers: JSON by default
  * - Credentials: included by default in safeFetch
  */
+const getBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window === 'undefined') {
+    // Server-side requires absolute URLs
+    return 'http://localhost:6543/api/v1';
+  }
+  return '/api/v1';
+};
+
 export const api = createSafeFetchInstance({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || '/api/v1',
+  baseUrl: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
