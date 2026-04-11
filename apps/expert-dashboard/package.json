@@ -11,6 +11,8 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@repo/safe-fetch": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/lib": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-query-devtools": "^5.91.3",
