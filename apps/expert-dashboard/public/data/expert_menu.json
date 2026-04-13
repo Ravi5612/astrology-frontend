@@ -6,8 +6,8 @@
             "icon": "LayoutDashboard"
         },
         {
-            "label": "Appointment",
-            "href": "/dashboard/appointment",
+            "label": "Appointments",
+            "href": "/dashboard/appointments",
             "icon": "CalendarCheck"
         },
         {

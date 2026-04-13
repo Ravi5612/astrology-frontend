@@ -73,7 +73,7 @@ export const ChatNotificationListener: React.FC = () => {
                     <button
                         onClick={() => {
                             toast.dismiss();
-                            router.push(`/chat/${session.id}`);
+                            router.push(`/dashboard/chat/${session.id}`);
                         }}
                         className="mt-2 w-full bg-yellow-600 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition hover:bg-yellow-700 shadow-sm"
                     >
