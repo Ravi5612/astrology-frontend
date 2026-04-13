@@ -32,6 +32,8 @@ function ExpertChatRoomContent() {
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [pendingAttachment, setPendingAttachment] = useState<PendingAttachment | null>(null);
+    const [showSummary, setShowSummary] = useState(false);
+    const [summaryData, setSummaryData] = useState<any>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -115,14 +117,18 @@ function ExpertChatRoomContent() {
 
             if (data?.terminatedBy === 'admin') {
                 toast.error(`SESSION TERMINATED BY ADMIN: ${data.interventionMessage || 'Administrative action'}`);
-            } else {
-                toast.info("Session has ended. Redirecting...", { autoClose: 2000 });
             }
 
-            // ✅ Auto-close chat room and go back after 2 seconds
-            setTimeout(() => {
-                router.back();
-            }, 2000);
+            // Show summary popup instead of immediate redirect
+            if (data?.split) {
+                setSummaryData(data);
+                setShowSummary(true);
+            } else {
+                toast.info("Session has ended. Redirecting...", { autoClose: 2000 });
+                setTimeout(() => {
+                    router.back();
+                }, 2000);
+            }
         });
 
         return () => {
@@ -585,6 +591,58 @@ function ExpertChatRoomContent() {
                     </div>
                 </div>
             </div>
+
+            {/* Summary Modal */}
+            {showSummary && summaryData && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-[#fd6410] to-[#ff8c4a] p-8 text-center relative">
+                            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+                                <LucideIcons.CheckCircle2 className="w-10 h-10 text-white" />
+                            </div>
+                            <h3 className="text-2xl font-black text-white">Consultation Ended</h3>
+                            <p className="text-white/80 font-bold text-sm mt-1 uppercase tracking-widest">Earning Summary</p>
+                            
+                            <button 
+                                onClick={() => router.back()} 
+                                className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full text-white transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-8 space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Paid</p>
+                                    <p className="text-xl font-black text-gray-900">₹{summaryData.total_cost || summaryData.split.totalAmount}</p>
+                                </div>
+                                <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Platform Fee (20%)</p>
+                                    <p className="text-xl font-black text-[#fd6410]">₹{summaryData.split.platformFee}</p>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-green-50 rounded-3xl border border-green-100 text-center">
+                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">You Received</p>
+                                <p className="text-4xl font-black text-green-700">₹{summaryData.split.expertShare}</p>
+                                <p className="text-[10px] font-bold text-green-600/60 mt-2 italic">Credited to your wallet</p>
+                            </div>
+
+                            <button
+                                onClick={() => router.back()}
+                                className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-sm transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                Close & Back to Dashboard
+                                <LucideIcons.ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

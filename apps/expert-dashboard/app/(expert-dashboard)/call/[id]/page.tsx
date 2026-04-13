@@ -21,6 +21,8 @@ export default function ExpertCallRoom() {
     const [isMuted, setIsMuted] = useState(false);
     const [callDuration, setCallDuration] = useState(0);
     const [sessionData, setSessionData] = useState<any>(null);
+    const [showSummary, setShowSummary] = useState(false);
+    const [summaryData, setSummaryData] = useState<any>(null);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const deviceRef = useRef<any>(null);
@@ -102,7 +104,7 @@ export default function ExpertCallRoom() {
 
         acceptAndConnect();
 
-        callSocket.on('call_ended', () => handleCallEnded());
+        callSocket.on('call_ended', (data: any) => handleCallEnded(data));
 
         return () => {
             console.log('[ExpertCallRoom] 🧹 Cleanup running (sessionId:', sessionId, '). Setting cancelled=true.');
@@ -187,16 +189,22 @@ export default function ExpertCallRoom() {
         timerRef.current = setInterval(() => setCallDuration(d => d + 1), 1000);
     };
 
-    const handleCallEnded = () => {
-        console.log('[ExpertCallRoom] 📴 handleCallEnded called. Cleaning up device and redirecting...');
+    const handleCallEnded = (data?: any) => {
+        console.log('[ExpertCallRoom] 📴 handleCallEnded called. Cleaning up device...', data);
         setStatus('ended');
         if (timerRef.current) clearInterval(timerRef.current);
         if (deviceRef.current) {
             deviceRef.current.destroy();
             deviceRef.current = null;
         }
-        toast.info('Session ended');
-        setTimeout(() => router.push('/dashboard'), 3000);
+
+        if (data?.split) {
+            setSummaryData(data);
+            setShowSummary(true);
+        } else {
+            toast.info('Session ended');
+            setTimeout(() => router.push('/dashboard'), 3000);
+        }
     };
 
     const handleEndCall = () => {
@@ -293,6 +301,51 @@ export default function ExpertCallRoom() {
             </div>
 
             <div className="absolute bottom-6 text-[9px] text-white/15 font-black uppercase tracking-[0.5em]">🔒 Secure Encrypted Session</div>
+
+            {/* Summary Modal */}
+            {showSummary && summaryData && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-[#fd6410] to-[#ff8c4a] p-8 text-center relative">
+                            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+                                <LucideIcons.CheckCircle2 className="w-10 h-10 text-white" />
+                            </div>
+                            <h3 className="text-2xl font-black text-white">Call Ended</h3>
+                            <p className="text-white/80 font-bold text-sm mt-1 uppercase tracking-widest">Earning Summary</p>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-8 space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Cost</p>
+                                    <p className="text-xl font-black text-gray-900">₹{summaryData.split.totalAmount}</p>
+                                </div>
+                                <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Platform Fee (20%)</p>
+                                    <p className="text-xl font-black text-[#fd6410]">₹{summaryData.split.platformFee}</p>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-green-50 rounded-3xl border border-green-100 text-center">
+                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">You Received</p>
+                                <p className="text-4xl font-black text-green-700">₹{summaryData.split.expertShare}</p>
+                                <p className="text-[10px] font-bold text-green-600/60 mt-2 italic">Credited to your wallet</p>
+                            </div>
+
+                            <button
+                                onClick={() => router.push('/dashboard')}
+                                className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-sm transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                Back to Dashboard
+                                <LucideIcons.ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

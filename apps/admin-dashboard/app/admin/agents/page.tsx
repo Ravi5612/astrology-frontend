@@ -606,7 +606,7 @@ export default function AgentsPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Commission from Astrologers (%)</label>
+                                <label className="text-sm font-semibold text-gray-700">Agent Commission (for Expert) (%)</label>
                                 <div className="relative">
                                     <input
                                         type="number"
@@ -620,7 +620,7 @@ export default function AgentsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Commission from Clients (%)</label>
+                                <label className="text-sm font-semibold text-gray-700">Admin's Commission (Platform Fee) (%)</label>
                                 <div className="relative">
                                     <input
                                         type="number"
@@ -634,7 +634,7 @@ export default function AgentsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Commission from Puja Shop (%)</label>
+                                <label className="text-sm font-semibold text-gray-700">Agent Commission (for Puja Shop) (%)</label>
                                 <div className="relative">
                                     <input
                                         type="number"
