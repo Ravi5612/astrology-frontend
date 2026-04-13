@@ -52,12 +52,12 @@ export default function DashboardPage() {
   const stats = useMemo(
     () => [
       {
-        title: "Total Chat Sessions",
-        value: loading ? "..." : (dashboardData?.totalChatSessions?.toString() || "0"),
-        icon: Calendar,
-        iconColor: "text-purple-600",
-        iconBgColor: "bg-purple-100",
-        trend: { value: dashboardData?.trends?.new?.value || "+0%", isPositive: true, period: "last week" },
+        title: "Admin Earnings (Commission)",
+        value: loading ? "..." : `₹${dashboardData?.adminEarnings || "0"}`,
+        icon: Wallet,
+        iconColor: "text-indigo-600",
+        iconBgColor: "bg-indigo-100",
+        trend: { value: "+0%", isPositive: true, period: "today" },
       },
       {
         title: "Total Experts",
