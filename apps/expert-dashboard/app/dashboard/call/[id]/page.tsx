@@ -320,7 +320,7 @@ export default function ExpertCallRoom() {
                         <div className="p-8 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Cost</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Client Paid</p>
                                     <p className="text-xl font-black text-gray-900">₹{summaryData.split.totalAmount}</p>
                                 </div>
                                 <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
@@ -330,7 +330,7 @@ export default function ExpertCallRoom() {
                             </div>
 
                             <div className="p-6 bg-green-50 rounded-3xl border border-green-100 text-center">
-                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">You Received</p>
+                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">Total Earned</p>
                                 <p className="text-4xl font-black text-green-700">₹{summaryData.split.expertShare}</p>
                                 <p className="text-[10px] font-bold text-green-600/60 mt-2 italic">Credited to your wallet</p>
                             </div>

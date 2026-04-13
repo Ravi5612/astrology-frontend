@@ -96,7 +96,7 @@ function ExpertChatRoomContent() {
         });
 
         chatSocket.on('session_activated', (session: any) => {
-            console.log("[ExpertChatDebug] Session activated socket event:", session);
+            console.log("[ExpertChatDebug] ✅ Session activated socket event:", session);
             setSessionStatus('active');
 
             if (session.startedAt || session.started_at) setStartedAt(session.startedAt || session.started_at);
@@ -112,18 +112,31 @@ function ExpertChatRoomContent() {
         });
 
         chatSocket.on('session_ended', (data: any) => {
-            console.log("[ExpertChatDebug] Session ended event received!", data);
+            console.log("[ExpertChatDebug] 🛑 Session ended event received!", data);
             setSessionStatus('completed');
 
             if (data?.terminatedBy === 'admin') {
                 toast.error(`SESSION TERMINATED BY ADMIN: ${data.interventionMessage || 'Administrative action'}`);
             }
 
-            // Show summary popup instead of immediate redirect
-            if (data?.split) {
-                setSummaryData(data);
+            // Show summary popup - check data.split OR session.total_cost as fallback
+            if (data?.split || data?.total_cost !== undefined) {
+                console.log("[ExpertChatDebug] 📊 Opening summary modal with data:", data);
+                // Ensure split exists for the modal even if it's missing from event (use fallback calculation)
+                const finalData = { ...data };
+                if (!finalData.split && finalData.total_cost !== undefined) {
+                    const total = finalData.total_cost;
+                    const fee = (total * 0.2); // 20% fallback
+                    finalData.split = {
+                        totalAmount: total,
+                        platformFee: Number(fee.toFixed(2)),
+                        expertShare: Number((total - fee).toFixed(2))
+                    };
+                }
+                setSummaryData(finalData);
                 setShowSummary(true);
             } else {
+                console.warn("[ExpertChatDebug] ⚠️ No cost/split data in session_ended event", data);
                 toast.info("Session has ended. Redirecting...", { autoClose: 2000 });
                 setTimeout(() => {
                     router.back();
@@ -617,8 +630,8 @@ function ExpertChatRoomContent() {
                         <div className="p-8 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Paid</p>
-                                    <p className="text-xl font-black text-gray-900">₹{summaryData.total_cost || summaryData.split.totalAmount}</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Client Paid</p>
+                                    <p className="text-xl font-black text-gray-900">₹{summaryData.split.totalAmount}</p>
                                 </div>
                                 <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
                                     <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Platform Fee (20%)</p>
@@ -627,7 +640,7 @@ function ExpertChatRoomContent() {
                             </div>
 
                             <div className="p-6 bg-green-50 rounded-3xl border border-green-100 text-center">
-                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">You Received</p>
+                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">Total Earned</p>
                                 <p className="text-4xl font-black text-green-700">₹{summaryData.split.expertShare}</p>
                                 <p className="text-[10px] font-bold text-green-600/60 mt-2 italic">Credited to your wallet</p>
                             </div>

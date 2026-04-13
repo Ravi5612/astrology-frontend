@@ -89,12 +89,50 @@ export const ChatNotificationListener: React.FC = () => {
             );
         };
 
+        const handleSessionEnded = (data: any) => {
+            console.log("[ChatNotificationDebug] 🛑 Session ended RECEIVED:", data);
+            
+            // If already on the chat page, let the page handle the detailed modal
+            if (window.location.pathname.includes(`/dashboard/chat/${data.id || data.sessionId}`)) {
+                console.log("[ChatNotificationDebug] Expert is on chat page, skipping notification toast.");
+                return;
+            }
+
+            const total = data?.split?.totalAmount || data?.total_cost || 0;
+            const expertShare = data?.split?.expertShare || (total * 0.8);
+
+            toast.success(
+                (<div>
+                    <p className="font-bold flex items-center gap-2">
+                         Chat Consultation Ended
+                    </p>
+                    <div className="mt-2 p-2 bg-green-50 rounded-lg border border-green-100">
+                        <div className="flex justify-between text-[10px] font-bold text-green-700">
+                            <span>Client Paid:</span>
+                            <span>₹{total}</span>
+                        </div>
+                        <div className="flex justify-between text-xs font-black text-green-800 mt-1">
+                            <span>Your Earning:</span>
+                            <span>₹{expertShare}</span>
+                        </div>
+                    </div>
+                    <p className="text-[10px] text-gray-500 mt-2 italic">Credited to your wallet.</p>
+                </div>),
+                {
+                    position: "top-right",
+                    autoClose: 10000,
+                }
+            );
+        };
+
         chatSocket.on('connect', onConnect);
         chatSocket.on('new_chat_request', handleNewRequest);
+        chatSocket.on('session_ended', handleSessionEnded);
 
         return () => {
             console.log("[ChatNotificationDebug] Cleaning up listeners");
             chatSocket.off('new_chat_request', handleNewRequest);
+            chatSocket.off('session_ended', handleSessionEnded);
             chatSocket.off('connect', onConnect);
         };
     }, [isAuthenticated, user, router, registerExpert]);
