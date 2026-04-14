@@ -9,6 +9,7 @@ export const API_ROUTES = {
         PROFILE: '/agent/profile',
         LISTINGS: '/agent/listings',          // GET (all types) + POST (create mandir/puja_shop)
         REFERRED_USERS: '/agent/listings',    // GET – referred users + place listings
+        COMMISSIONS: '/agent/commissions',    // GET – individual commission transactions
         DASHBOARD_STATS: '/agent/dashboard/stats',
         REGISTER_USER: '/auth/agent/register', // POST — register expert/client
     },

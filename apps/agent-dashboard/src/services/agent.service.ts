@@ -87,8 +87,19 @@ export interface ReferredUsersParams {
     limit?: number;
 }
 
+export interface CommissionResponse {
+    data: any[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
 export const getReferredUsers = async (params?: ReferredUsersParams): Promise<[ReferredUsersResponse | null, ApiError | null]> => {
     return api.get<ReferredUsersResponse>(API_ROUTES.AGENTS.REFERRED_USERS, params as Record<string, any>);
+};
+
+export const getAgentCommissions = async (params?: { page?: number; limit?: number }): Promise<[CommissionResponse | null, ApiError | null]> => {
+    return api.get<CommissionResponse>(API_ROUTES.AGENTS.COMMISSIONS, params as Record<string, any>);
 };
 
 

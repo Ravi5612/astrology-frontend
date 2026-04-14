@@ -4,6 +4,7 @@ import { LucideIcon, ArrowUp, ArrowDown } from "lucide-react";
 export interface StatConfig {
     title: string;
     value: string | number;
+    tooltipValue?: string | number;
     icon: LucideIcon;
     iconColor: string;
     iconBgColor: string;
@@ -36,9 +37,9 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
 
                 return (
                     <div
-                        key={index}
+                        key={`${index}-${stat.tooltipValue}`}
                         className="group group/card bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm hover:shadow-2xl hover:border-[#FF6B00] hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden"
-                        title={`${stat.title}: ${stat.value}`}
+                        title={String(stat.tooltipValue || stat.value)}
                     >
                         {/* Hover Background */}
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-orange-100/30 to-transparent opacity-0 group-hover:opacity-100 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -53,6 +54,7 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
 
                                 <h3
                                     className={`text-xl sm:text-2xl lg:text-3xl font-bold ${stat.valueColor || "text-gray-900"} mb-1 break-all group-hover:scale-110 group-hover/card:scale-110 transition-transform origin-left`}
+                                    title={String(stat.tooltipValue || stat.value)}
                                 >
                                     {stat.value}
                                 </h3>

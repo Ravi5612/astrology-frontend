@@ -4,7 +4,7 @@ import { StatsCards, NotFound, Loading } from "@repo/ui";
 import type { StatConfig } from "@repo/ui";
 import { IndianRupee, CheckCircle, Clock, Filter, BadgeIndianRupee } from "lucide-react";
 
-import { getAgentDashboardStats, getReferredUsers } from "@/src/services/agent.service";
+import { getAgentDashboardStats, getAgentCommissions } from "@/src/services/agent.service";
 import type { ReferredUser } from "@/src/services/agent.service";
 
 interface CommissionRow {
@@ -54,25 +54,25 @@ export default function CommissionsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [[stats, statsError], [users, usersError]] = await Promise.all([
+                const [[stats, statsError], [commResponse, commError]] = await Promise.all([
                     getAgentDashboardStats(),
-                    getReferredUsers({ limit: 200 }),
+                    getAgentCommissions({ limit: 200 }),
                 ]);
 
                 if (statsError) console.error("Stats Error:", statsError);
-                if (usersError) console.error("Users Error:", usersError);
+                if (commError) console.error("Commissions Error:", commError);
 
                 setStatsData(stats);
 
-                // Map referred users to commission rows
-                const rows: CommissionRow[] = ((users as any)?.data || []).map((u: ReferredUser) => ({
-                    id: u.id,
-                    type: u.type || "client",
-                    listing: u.name || "Unknown",
-                    amount: u.commission || 0,
-                    commissionPercent: u.commissionPercent || 0,
-                    status: (u.commission && u.commission > 0) ? "paid" as const : "pending" as const,
-                    date: formatDate(u.createdAt),
+                // Map commission transactions to rows
+                const rows: CommissionRow[] = (commResponse?.data || []).map((c: any) => ({
+                    id: c.id,
+                    type: c.type || "commission",
+                    listing: c.listing || "Unknown",
+                    amount: c.amount || 0,
+                    commissionPercent: c.commissionPercent || 0,
+                    status: c.status || "paid",
+                    date: formatDate(c.date),
                 }));
 
                 setCommissions(rows);
