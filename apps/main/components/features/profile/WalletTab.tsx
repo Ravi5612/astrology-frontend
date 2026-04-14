@@ -390,15 +390,18 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             className="group hover:bg-gray-50/50 transition-colors"
                           >
                             <td className="px-8 py-6 text-sm font-bold text-gray-400">
-                              {tx.createdAt || tx.created_at
-                                ? new Date(
-                                    tx.createdAt || tx.created_at
-                                  ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                  })
-                                : "N/A"}
+                              {(() => {
+                                const dateVal = tx.createdAt || tx.created_at;
+                                if (!dateVal) return "N/A";
+                                const d = new Date(dateVal);
+                                return isNaN(d.getTime())
+                                  ? "N/A"
+                                  : d.toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    });
+                              })()}
                             </td>
                             <td className="px-8 py-6">
                               <p className="text-sm font-bold text-gray-800 m-0">

@@ -371,7 +371,7 @@ export default function MerchantProfilePage() {
               <div className={cn("transition-opacity duration-500", isGstExempt && "opacity-40 grayscale pointer-events-none")}>
                 <FileUploadCard 
                   label={isGstExempt ? "GST (Not Required)" : "GST Certificate"} 
-                  onFileChange={(e) => handleFileChange(e, 'gstCertificate')}
+                  onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'gstCertificate')}
                   preview={previews.gstCertificate}
                   onRemove={() => removeFile('gstCertificate')}
                   file={files.gstCertificate}
@@ -379,28 +379,28 @@ export default function MerchantProfilePage() {
               </div>
               <FileUploadCard
                 label="PAN (Front)"
-                onFileChange={(e: any) => handleFileChange(e, 'panFront')}
+                onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'panFront')}
                 preview={previews.panFront}
                 onRemove={() => removeFile('panFront')}
                 file={files.panFront}
               />
               <FileUploadCard 
                 label="PAN (Back)" 
-                onFileChange={(e: any) => handleFileChange(e, 'panBack')}
+                onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'panBack')}
                 preview={previews.panBack}
                 onRemove={() => removeFile('panBack')}
                 file={files.panBack}
               />
               <FileUploadCard 
                 label="Aadhar (Front)" 
-                onFileChange={(e: any) => handleFileChange(e, 'aadharFront')}
+                onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'aadharFront')}
                 preview={previews.aadharFront}
                 onRemove={() => removeFile('aadharFront')}
                 file={files.aadharFront}
               />
               <FileUploadCard 
                 label="Aadhar (Back)" 
-                onFileChange={(e: any) => handleFileChange(e, 'aadharBack')}
+                onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'aadharBack')}
                 preview={previews.aadharBack}
                 onRemove={() => removeFile('aadharBack')}
                 file={files.aadharBack}

@@ -10,6 +10,8 @@ import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 import { ZodiacSign, SIGNS, elementBySign } from "./useLuckyVibes";
 import { LuckyVibesFormProps } from "@/lib/types/calculator";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
   fullName,
@@ -22,6 +24,11 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
   setZodiac,
   handleCalculate,
 }) => {
+  const { lang } = useLanguageStore();
+  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const t = translationSet.calculators.luckyVibes;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="container px-6">
@@ -31,8 +38,8 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
           </div>
 
           <div className="text-center mb-10">
-            <h2 className="text-xl md:text-3xl font-black text-burgundy mb-2 tracking-tight">
-              Lucky Color <span className="text-primary">&</span> Lucky Number
+            <h2 className="text-xl md:text-3xl font-black text-burgundy mb-2 tracking-tight" style={fontStyle}>
+              {t.form.title}
             </h2>
             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-2"></div>
           </div>
@@ -41,23 +48,23 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
             <div className="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-[0_15px_40px_rgba(48,17,24,0.08)] border border-burgundy/5 relative overflow-hidden bg-white space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
-                    Full Name (Required)
+                  <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1" style={fontStyle}>
+                    {t.form.nameLabel}
                   </label>
                   <input
                     type="text"
                     required
                     style={{ borderRadius: "9999px" }}
                     className="w-full mt-2 bg-[#fdf2f2] border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
-                    placeholder="Type your full name..."
+                    placeholder={t.form.namePlaceholder}
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
-                    Date of Birth (Required)
+                  <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1" style={fontStyle}>
+                    {t.form.dobLabel}
                   </label>
                   <div className="relative mt-2">
                     <input
@@ -76,8 +83,8 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1">
-                  Zodiac Sign (Required)
+                <label className="text-sm font-bold text-burgundy/60 uppercase tracking-widest pl-1" style={fontStyle}>
+                  {t.form.zodiacLabel}
                 </label>
                 <select
                   value={zodiac}
@@ -86,14 +93,14 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
                   className="w-full mt-2 bg-white border-2 border-burgundy/5 px-5 py-3.5 text-burgundy font-black focus:border-primary outline-none transition-all shadow-sm text-sm"
                 >
                   {SIGNS.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
+                    <option key={s} value={s} style={fontStyle}>
+                      {t.dynamic.zodiac[s] || s}
                     </option>
                   ))}
                 </select>
 
-                <p className="m-0 mt-3 text-xs text-gray-400 italic">
-                  Element: <span className="font-black">{elementBySign(zodiac)}</span>
+                <p className="m-0 mt-3 text-xs text-gray-400 italic" style={fontStyle}>
+                  {t.form.elementLabel}: <span className="font-black">{t.dynamic.elements[elementBySign(zodiac)] || elementBySign(zodiac)}</span>
                 </p>
               </div>
 
@@ -103,9 +110,10 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
                   className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  style={fontStyle}
                 >
                   {loading ? <FaSpinner className="animate-spin" /> : <TbCrystalBall size={18} />}
-                  {loading ? "Generating..." : "Get Lucky Results"}
+                  {loading ? t.form.btnGenerating : t.form.btnCalculate}
                   <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

@@ -67,6 +67,7 @@ export default function ShopProfileSettings() {
   }, [products.length, isPaused]);
   
   // Local state for files to be uploaded
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
 

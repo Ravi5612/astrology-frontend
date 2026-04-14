@@ -20,6 +20,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 import "swiper/css";
 
@@ -28,6 +30,11 @@ interface StoreCardProps {
 }
 
 export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
+  const { lang } = useLanguageStore();
+  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const t = translationSet.storeSection.card;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   const [isOnline, setIsOnline] = useState(store.isOnline ?? false);
   const router = useRouter();
   const { isClientAuthenticated } = useAuthStore();
@@ -41,10 +48,10 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
     e.stopPropagation();
 
     if (!isClientAuthenticated) {
-      toast.error("Please login first to wishlist this shop", {
+      toast.error(t.toastWishlist, {
         onClick: () => router.push("/sign-in"),
         autoClose: 3000,
-        style: { cursor: 'pointer' }
+        style: { cursor: 'pointer', ...fontStyle }
       });
       return;
     }
@@ -158,7 +165,9 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         {/* Store Intro */}
         <div className="space-y-4">
            <div className="flex items-center justify-between">
-             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">About Store</span>
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none" style={fontStyle}>
+               {t.about}
+             </span>
              <div className="flex items-center gap-3">
                 {isOnline ? (
                   <div className="flex items-center gap-1 px-1.5 py-0.5 bg-green-500/10 rounded-full border border-green-500/20 animate-in fade-in zoom-in duration-500">
@@ -166,18 +175,18 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
                     </span>
-                    <span className="text-[7px] font-black text-green-500 uppercase tracking-tighter">Online</span>
+                    <span className="text-[7px] font-black text-green-500 uppercase tracking-tighter" style={fontStyle}>{t.online}</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gray-500/10 rounded-full border border-gray-500/20">
                     <span className="inline-flex rounded-full h-1.5 w-1.5 bg-gray-400"></span>
-                    <span className="text-[7px] font-black text-gray-400 uppercase tracking-tighter">Offline</span>
+                    <span className="text-[7px] font-black text-gray-400 uppercase tracking-tighter" style={fontStyle}>{t.offline}</span>
                   </div>
                 )}
                 {store.isTrusted && (
                   <div className="flex items-center text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span className="text-[9px] font-black ml-1 uppercase tracking-tighter">Verified</span>
+                    <span className="text-[9px] font-black ml-1 uppercase tracking-tighter" style={fontStyle}>{t.verified}</span>
                   </div>
                 )}
              </div>
@@ -197,7 +206,9 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         {/* Popular Products */}
         <div className="space-y-3">
            <div className="flex items-center justify-between">
-             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Popular Products</span>
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none" style={fontStyle}>
+               {t.popularProducts}
+             </span>
              <div className="w-3.5 h-3.5 bg-gray-100 rounded-sm flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-gray-300 rounded-full" />
              </div>
@@ -245,8 +256,11 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
 
         {/* Action Button */}
         <div className="mt-auto">
-          <div className="w-full py-3.5 bg-orange-600 text-white text-[10px] font-black rounded-2xl uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-orange-700 transition-all shadow-lg shadow-orange-900/10 active:scale-95 text-center">
-            Visit Full Store <ExternalLink className="w-3.5 h-3.5" />
+          <div 
+            className="w-full py-3.5 bg-orange-600 text-white text-[10px] font-black rounded-2xl uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-orange-700 transition-all shadow-lg shadow-orange-900/10 active:scale-95 text-center"
+            style={fontStyle}
+          >
+            {t.btnVisit} <ExternalLink className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>

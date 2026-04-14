@@ -28,7 +28,8 @@ export const pujaTranslations = {
             loading: "Invoking Divine Blessings",
             noPujas: "No Pujas Found",
             noPujasHint: "Try adjusting your filters or search terms.",
-            btnReset: "Reset All Filters"
+            btnReset: "Reset All Filters",
+            viewAll: "View All Sacred Rituals"
         },
         card: {
             online: "Online",
@@ -77,7 +78,8 @@ export const pujaTranslations = {
             loading: "दैवीय आशीर्वाद का आह्वान",
             noPujas: "कोई पूजा नहीं मिली",
             noPujasHint: "अपने फ़िल्टर या खोज शब्दों को समायोजित करने का प्रयास करें।",
-            btnReset: "सभी फ़िल्टर रीसेट करें"
+            btnReset: "सभी फ़िल्टर रीसेट करें",
+            viewAll: "सभी पवित्र अनुष्ठान देखें"
         },
         card: {
             online: "ऑनलाइन",
@@ -95,6 +97,24 @@ export const pujaTranslations = {
             description: "हमारे वैदिक पुजारी आपकी डिजिटल आध्यात्मिक यात्रा के लिए पवित्र स्थान तैयार कर रहे हैं। प्रामाणिक अनुष्ठान, लाइव स्ट्रीमिंग और व्यक्तिगत आशीर्वाद जल्द ही आ रहे हैं।",
             btnBack: "होम पर वापस जाएं",
             btnNotify: "मुझे सूचित करें"
+        }
+    },
+    pujaContent: {
+        en: {
+            "Griha Pravesh Puja": "Griha Pravesh Puja",
+            "Navagraha Shanti Puja": "Navagraha Shanti Puja",
+            "Vastu Shanti Puja": "Vastu Shanti Puja",
+            "Laxmi-Kuber Puja": "Laxmi-Kuber Puja",
+            "Ganesh Puja": "Ganesh Puja",
+            "Satyanarayan Puja": "Satyanarayan Puja",
+        },
+        hi: {
+            "Griha Pravesh Puja": "गृह प्रवेश पूजा",
+            "Navagraha Shanti Puja": "नवग्रह शांति पूजा",
+            "Vastu Shanti Puja": "वास्तु शांति पूजा",
+            "Laxmi-Kuber Puja": "लक्ष्मी-कुबेर पूजा",
+            "Ganesh Puja": "गणेश पूजा",
+            "Satyanarayan Puja": "सत्यनारायण पूजा",
         }
     }
 };

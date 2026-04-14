@@ -33,7 +33,7 @@ export const homeTranslations = {
             }
         },
         expertSection: {
-            title: "Find Your Expert",
+            title: "Our Experts",
             searchPlaceholder: "Search Expert by Name...",
             searchBtn: "Search",
             filterBtn: "Filter",
@@ -192,6 +192,8 @@ export const homeTranslations = {
             addToCart: "Add to Cart",
             buyNow: "Buy Now",
             off: "OFF",
+            toastWishlist: "Please login first to use wishlist",
+            toastBuyProducts: "Please login first to buy products"
         },
         cart: {
             checkoutSecurely: "Checkout Securely",
@@ -215,7 +217,170 @@ export const homeTranslations = {
             completeJourney: "Complete Your Journey",
             personalizedRecs: "Personalized Recommendations",
         },
-
+        storeSection: {
+            badge: "Verified Merchants",
+            title: "Our Trusted Shops",
+            subtitle: "Explore our network of premium spiritual stores, certified for quality and authenticity.",
+            searchPlaceholder: "Search shops or city...",
+            allCities: "All Cities",
+            noResults: "No Shops Found",
+            noResultsDesc: "Try searching for a different city or shop name.",
+            btnClear: "Clear All Filters",
+            btnDiscoverAll: "Discover All Stores",
+            card: {
+                about: "About Store",
+                online: "Online",
+                offline: "Offline",
+                verified: "Verified",
+                popularProducts: "Popular Products",
+                btnVisit: "Visit Full Store",
+                toastWishlist: "Please login first to wishlist this shop"
+            }
+        },
+        storeDetail: {
+            notFound: {
+                title: "Shop Not Found",
+                desc: "The store you are looking for might have been moved or doesn't exist.",
+                btnBack: "Back to Home"
+            },
+            profile: {
+                verifiedSeller: "Verified Seller",
+                online: "Online",
+                offline: "Offline",
+                marketplace: "Marketplace",
+                est: "Est.",
+                na: "N/A",
+                rating: "Rating",
+                products: "Products",
+                likes: "Likes"
+            },
+            trustInfo: {
+                scoreLabel: "Trust Store Score",
+                reliability: "Reliability",
+                hoursLabel: "Operational Hours",
+                addressLabel: "Store Address",
+                btnDirections: "Get Directions"
+            },
+            tabs: {
+                about: "About Shop",
+                products: "Product",
+                reviews: "Reviews",
+                gallery: "Gallery"
+            },
+            merchantDossier: {
+                title: "Merchant Dossier",
+                subtitle: "Verified Premium Partner Profile"
+            },
+            about: {
+                vision: "Founder's Vision & Heritage",
+                authenticityTitle: "Authenticity Guaranteed",
+                authenticityDesc: "We procure every spiritual artifact directly from traditional artisans and sacred sources in {city}, ensuring pure vibration.",
+                digitalAssistanceTitle: "Digital Assistance",
+                digitalAssistanceDesc: "Have questions? Write to us at {email} for detailed product guidance.",
+                specializations: "Prime Specializations"
+            },
+            emptyStates: {
+                noProducts: "No products available in this collection yet.",
+                noReviews: "No reviews yet for this merchant.",
+                noGallery: "No gallery images provided by merchant.",
+                verifiedJourney: "Verified Journey"
+            },
+            footer: {
+                btnExplore: "Explore More Stores"
+            }
+        },
+        calculators: {
+            luckyVibes: {
+                hero: {
+                    badge: "Lucky Vibes Generator",
+                    titleMain: "Lucky",
+                    titleAccent: "Color & Number",
+                    description: "Enter your name, date of birth, and zodiac sign to get your lucky number, colors, and lucky day."
+                },
+                form: {
+                    title: "Lucky Color & Lucky Number",
+                    nameLabel: "Full Name (Required)",
+                    namePlaceholder: "Type your full name...",
+                    dobLabel: "Date of Birth (Required)",
+                    zodiacLabel: "Zodiac Sign (Required)",
+                    elementLabel: "Element",
+                    btnCalculate: "Get Lucky Results",
+                    btnGenerating: "Generating..."
+                },
+                result: {
+                    badge: "Lucky Results",
+                    title: "Your Lucky Vibes",
+                    luckyNumber: "Lucky Number",
+                    luckyColor: "Lucky Color",
+                    secondaryColor: "Secondary",
+                    luckyDay: "Lucky Day",
+                    element: "Element",
+                    numerologyBase: "Numerology Base",
+                    dobNumber: "DOB Number",
+                    nameNumber: "Name Number",
+                    footerBadge: "Deterministic • Same Input = Same Lucky Result"
+                },
+                dynamic: {
+                    elements: {
+                        Fire: "Fire",
+                        Earth: "Earth",
+                        Air: "Air",
+                        Water: "Water"
+                    },
+                    zodiac: {
+                        Aries: "Aries",
+                        Taurus: "Taurus",
+                        Gemini: "Gemini",
+                        Cancer: "Cancer",
+                        Leo: "Leo",
+                        Virgo: "Virgo",
+                        Libra: "Libra",
+                        Scorpio: "Scorpio",
+                        Sagittarius: "Sagittarius",
+                        Capricorn: "Capricorn",
+                        Aquarius: "Aquarius",
+                        Pisces: "Pisces"
+                    },
+                    colors: {
+                        Red: "Red",
+                        Orange: "Orange",
+                        Gold: "Gold",
+                        Coral: "Coral",
+                        Amber: "Amber",
+                        Green: "Green",
+                        Olive: "Olive",
+                        Brown: "Brown",
+                        Beige: "Beige",
+                        "Forest Green": "Forest Green",
+                        "Sky Blue": "Sky Blue",
+                        White: "White",
+                        Silver: "Silver",
+                        Mint: "Mint",
+                        Lavender: "Lavender",
+                        Blue: "Blue",
+                        Teal: "Teal",
+                        "Sea Green": "Sea Green",
+                        Aqua: "Aqua",
+                        Indigo: "Indigo"
+                    },
+                    days: {
+                        Monday: "Monday",
+                        Tuesday: "Tuesday",
+                        Wednesday: "Wednesday",
+                        Thursday: "Thursday",
+                        Friday: "Friday",
+                        Saturday: "Saturday",
+                        Sunday: "Sunday"
+                    },
+                    messages: {
+                        Fire: "Your energy is bold and confident today. Use your lucky color to attract attention and positive action.",
+                        Earth: "Stability is your strength. Your lucky color supports calm decisions and steady progress.",
+                        Air: "Your mind is sharp and social. This lucky color boosts communication and clarity.",
+                        Water: "Your intuition is strong. This lucky color helps emotional balance and good vibes."
+                    }
+                }
+            }
+        }
     },
     hi: {
         hero: {
@@ -251,7 +416,7 @@ export const homeTranslations = {
             }
         },
         expertSection: {
-            title: "अपना ज्योतिषी खोजें",
+            title: "हमारे विशेषज्ञ",
             searchPlaceholder: "नाम से ज्योतिषी खोजें...",
             searchBtn: "खोजें",
             filterBtn: "फ़िल्टर",
@@ -410,6 +575,8 @@ export const homeTranslations = {
             addToCart: "कार्ट में जोड़ें",
             buyNow: "अभी खरीदें",
             off: "छूट",
+            toastWishlist: "विशलिस्ट का उपयोग करने के लिए कृपया पहले लॉगिन करें",
+            toastBuyProducts: "उत्पाद खरीदने के लिए कृपया पहले लॉगिन करें"
         },
         cart: {
             checkoutSecurely: "सुरक्षित चेकआउट",
@@ -433,6 +600,169 @@ export const homeTranslations = {
             completeJourney: "अपनी यात्रा पूरी करें",
             personalizedRecs: "व्यक्तिगत सिफारिशें",
         },
-
+        storeSection: {
+            badge: "सत्यापित व्यापारी",
+            title: "हमारे भरोसेमंद स्टोर",
+            subtitle: "गुणवत्ता और प्रामाणिकता के लिए प्रमाणित हमारे प्रीमियम आध्यात्मिक स्टोर के नेटवर्क का अन्वेषण करें।",
+            searchPlaceholder: "दुकान या शहर खोजें...",
+            allCities: "सभी शहर",
+            noResults: "कोई दुकान नहीं मिली",
+            noResultsDesc: "किसी अन्य शहर या दुकान के नाम से खोजने का प्रयास करें।",
+            btnClear: "सभी फ़िल्टर हटाएँ",
+            btnDiscoverAll: "सभी स्टोर देखें",
+            card: {
+                about: "स्टोर के बारे में",
+                online: "ऑनलाइन",
+                offline: "ऑफलाइन",
+                verified: "सत्यापित",
+                popularProducts: "लोकप्रिय उत्पाद",
+                btnVisit: "पूरा स्टोर देखें",
+                toastWishlist: "दुकान को विशलिस्ट करने के लिए कृपया पहले लॉगिन करें"
+            }
+        },
+        storeDetail: {
+            notFound: {
+                title: "स्टोर नहीं मिला",
+                desc: "जिस स्टोर को आप ढूंढ रहे हैं वह शायद हटा दिया गया है या मौजूद नहीं है।",
+                btnBack: "होम पर वापस जाएं"
+            },
+            profile: {
+                verifiedSeller: "सत्यापित विक्रेता",
+                online: "ऑनलाइन",
+                offline: "ऑफलाइन",
+                marketplace: "मार्केटप्लेस",
+                est: "स्थापना",
+                na: "उपलब्ध नहीं",
+                rating: "रेटिंग",
+                products: "उत्पाद",
+                likes: "पसंद"
+            },
+            trustInfo: {
+                scoreLabel: "ट्रस्ट स्टोर स्कोर",
+                reliability: "विश्वसनीयता",
+                hoursLabel: "परिचालन समय",
+                addressLabel: "स्टोर का पता",
+                btnDirections: "दिशा-निर्देश प्राप्त करें"
+            },
+            tabs: {
+                about: "स्टोर के बारे में",
+                products: "उत्पाद",
+                reviews: "समीक्षाएं",
+                gallery: "गैलरी"
+            },
+            merchantDossier: {
+                title: "मर्चेंट डोजियर",
+                subtitle: "सत्यापित प्रीमियम पार्टनर प्रोफाइल"
+            },
+            about: {
+                vision: "संस्थापक का दृष्टिकोण और विरासत",
+                authenticityTitle: "प्रामाणिकता की गारंटी",
+                authenticityDesc: "हम हर आध्यात्मिक वस्तु सीधे {city} के पारंपरिक कारीगरों और पवित्र स्रोतों से प्राप्त करते हैं, जिससे शुद्धता सुनिश्चित होती है।",
+                digitalAssistanceTitle: "डिजिटल सहायता",
+                digitalAssistanceDesc: "कोई सवाल है? विस्तृत उत्पाद मार्गदर्शन के लिए हमें {email} पर लिखें।",
+                specializations: "मुख्य विशेषज्ञता"
+            },
+            emptyStates: {
+                noProducts: "इस संग्रह में अभी तक कोई उत्पाद उपलब्ध नहीं है।",
+                noReviews: "इस व्यापारी के लिए अभी तक कोई समीक्षा नहीं है।",
+                noGallery: "व्यापारी द्वारा कोई गैलरी चित्र प्रदान नहीं किए गए हैं।",
+                verifiedJourney: "सत्यापित यात्रा"
+            },
+            footer: {
+                btnExplore: "और स्टोर देखें"
+            }
+        },
+        calculators: {
+            luckyVibes: {
+                hero: {
+                    badge: "लकी वाइब्स जेनरेटर",
+                    titleMain: "भाग्यशाली",
+                    titleAccent: "रंग और संख्या",
+                    description: "अपना भाग्यशाली नंबर, रंग और भाग्यशाली दिन प्राप्त करने के लिए अपना नाम, जन्म तिथि और राशि दर्ज करें।"
+                },
+                form: {
+                    title: "लकी कलर और लकी नंबर",
+                    nameLabel: "पूरा नाम (आवश्यक)",
+                    namePlaceholder: "अपना पूरा नाम लिखें...",
+                    dobLabel: "जन्म तिथि (आवश्यक)",
+                    zodiacLabel: "राशि (आवश्यक)",
+                    elementLabel: "तत्व",
+                    btnCalculate: "भाग्यशाली परिणाम प्राप्त करें",
+                    btnGenerating: "तैयार किया जा रहा है..."
+                },
+                result: {
+                    badge: "भाग्यशाली परिणाम",
+                    title: "आपकी लकी वाइब्स",
+                    luckyNumber: "लकी नंबर",
+                    luckyColor: "लकी कलर",
+                    secondaryColor: "सहायक",
+                    luckyDay: "लकी दिन",
+                    element: "तत्व",
+                    numerologyBase: "अंकशास्त्र आधार",
+                    dobNumber: "DOB नंबर",
+                    nameNumber: "नाम नंबर",
+                    footerBadge: "निश्चित • समान इनपुट = समान भाग्यशाली परिणाम"
+                },
+                dynamic: {
+                    elements: {
+                        Fire: "अग्नि",
+                        Earth: "पृथ्वी",
+                        Air: "वायु",
+                        Water: "जल"
+                    },
+                    zodiac: {
+                        Aries: "मेष",
+                        Taurus: "वृषभ",
+                        Gemini: "मिथुन",
+                        Cancer: "कर्क",
+                        Leo: "सिंह",
+                        Virgo: "कन्या",
+                        Libra: "तुला",
+                        Scorpio: "वृश्चिक",
+                        Sagittarius: "धनु",
+                        Capricorn: "मकर",
+                        Aquarius: "कुंभ",
+                        Pisces: "मीन"
+                    },
+                    colors: {
+                        Red: "लाल",
+                        Orange: "नारंगी",
+                        Gold: "सुनहरा",
+                        Coral: "मूंगा",
+                        Amber: "अंबर",
+                        Green: "हरा",
+                        Olive: "जैतूनी",
+                        Brown: "भूरा",
+                        Beige: "बेज",
+                        "Forest Green": "गहरा हरा",
+                        "Sky Blue": "आसमानी नीला",
+                        White: "सफेद",
+                        Silver: "चांदी",
+                        Mint: "पुदीना",
+                        Lavender: "लैवेंडर",
+                        Blue: "नीला",
+                        Teal: "चैती",
+                        "Sea Green": "समुद्री हरा",
+                        Aqua: "एक्वा",
+                        Indigo: "गहरा नीला"
+                    },
+                    days: {
+                        Monday: "सोमवार",
+                        Tuesday: "मंगलवार",
+                        Wednesday: "बुधवार",
+                        Thursday: "गुरुवार",
+                        Friday: "शुक्रवार",
+                        Saturday: "शनिवार",
+                        Sunday: "रविवार"
+                    },
+                    messages: {
+                        Fire: "आपकी ऊर्जा आज साहसी और आत्मविश्वासी है। ध्यान आकर्षित करने और सकारात्मक कार्रवाई के लिए अपने भाग्यशाली रंग का उपयोग करें।",
+                        Earth: "स्थिरता आपकी ताकत है। आपका भाग्यशाली रंग शांत निर्णयों और निरंतर प्रगति का समर्थन करता है।",
+                        Air: "आपका दिमाग तेज और सामाजिक है। यह लकी कलर संचार और स्पष्टता को बढ़ाता है।",
+                        Water: "आपकी अंतर्दृष्टि मजबूत है। यह लकी कलर भावनात्मक संतुलन और अच्छी वाइब्स में मदद करता है।"
+                    }
+                }
+            }
+        }
     }
 } as const;

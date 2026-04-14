@@ -19,6 +19,7 @@ const formatDate = (dateString: string, includeTime = false) => {
   if (!dateString) return "TBD";
   try {
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "TBD";
     const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: 'short',
@@ -31,7 +32,7 @@ const formatDate = (dateString: string, includeTime = false) => {
     }
     return date.toLocaleDateString("en-IN", options);
   } catch (e) {
-    return dateString;
+    return "TBD";
   }
 };
 

@@ -35,6 +35,7 @@ const ExpertList: React.FC<ExpertListProps> = ({
   const t =
     homeTranslations[lang as keyof typeof homeTranslations] ||
     homeTranslations.en;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [showFilterModal, setShowFilterModal] = React.useState(false);
   const [showSortModal, setShowSortModal] = React.useState(false);
@@ -79,8 +80,8 @@ const ExpertList: React.FC<ExpertListProps> = ({
     >
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
         <div className="relative mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {title || t.expertSection.title}
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={fontStyle}>
+            {title || (t as any).expertSection.title}
           </h2>
           <div className="w-48 h-1 bg-orange"></div>
         </div>
@@ -108,7 +109,10 @@ const ExpertList: React.FC<ExpertListProps> = ({
               applyFilters();
               setShowFilterModal(false);
             }}
-            resetFilters={resetFilters}
+            resetFilters={() => {
+              resetFilters();
+              setShowFilterModal(false);
+            }}
           />
         )}
 

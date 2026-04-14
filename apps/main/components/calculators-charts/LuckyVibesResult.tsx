@@ -9,8 +9,15 @@ import {
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus, GiSparkles } from "react-icons/gi";
 import { LuckyVibesResultProps } from "@/lib/types/calculator";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
+  const { lang } = useLanguageStore();
+  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const t = translationSet.calculators.luckyVibes;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="container px-6">
@@ -22,12 +29,14 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
 
             <div className="relative z-10">
               <div className="text-center mb-16">
-                <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
-                  Lucky Results
+                <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+                  {t.result.badge}
                 </span>
 
-                <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight">
-                  Your <span className="text-primary">Lucky</span> Vibes
+                <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
+                  {t.result.title.split(' ').map((word: string, i: number, arr: string[]) => (
+                    word === 'Lucky' || word === 'लकी' ? <span key={i} className="text-primary">{word} </span> : word + ' '
+                  ))}
                 </h2>
 
                 <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
@@ -43,8 +52,8 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
                       <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
                         {result.luckyNumber}
                       </span>
-                      <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block">
-                        Lucky Number
+                      <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
+                        {t.result.luckyNumber}
                       </span>
                     </div>
 
@@ -59,8 +68,8 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
                       <GiSparkles size={28} />
                     </div>
 
-                    <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
-                      "{result.message}"
+                    <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
+                      "{t.dynamic.messages[result.element as keyof typeof t.dynamic.messages] || result.message}"
                     </p>
                   </div>
                 </div>
@@ -75,15 +84,15 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
                       <FaPalette className="text-primary" size={20} />
                     </div>
                     <div>
-                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400">
-                        Lucky Color
+                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400" style={fontStyle}>
+                        {t.result.luckyColor}
                       </p>
-                      <p className="m-0 text-xl font-black text-burgundy">{result.luckyColor}</p>
+                      <p className="m-0 text-xl font-black text-burgundy" style={fontStyle}>{t.dynamic.colors[result.luckyColor as keyof typeof t.dynamic.colors] || result.luckyColor}</p>
                     </div>
                   </div>
 
-                  <p className="m-0 text-sm text-gray-500 italic">
-                    Secondary: <span className="font-black text-burgundy">{result.secondaryColor}</span>
+                  <p className="m-0 text-sm text-gray-500 italic" style={fontStyle}>
+                    {t.result.secondaryColor}: <span className="font-black text-burgundy">{t.dynamic.colors[result.secondaryColor as keyof typeof t.dynamic.colors] || result.secondaryColor}</span>
                   </p>
                 </div>
 
@@ -94,15 +103,15 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
                       <FaCalendarAlt className="text-primary" size={20} />
                     </div>
                     <div>
-                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400">
-                        Lucky Day
+                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400" style={fontStyle}>
+                        {t.result.luckyDay}
                       </p>
-                      <p className="m-0 text-xl font-black text-burgundy">{result.luckyDay}</p>
+                      <p className="m-0 text-xl font-black text-burgundy" style={fontStyle}>{t.dynamic.days[result.luckyDay as keyof typeof t.dynamic.days] || result.luckyDay}</p>
                     </div>
                   </div>
 
-                  <p className="m-0 text-sm text-gray-500 italic">
-                    Element: <span className="font-black text-burgundy">{result.element}</span>
+                  <p className="m-0 text-sm text-gray-500 italic" style={fontStyle}>
+                    {t.result.element}: <span className="font-black text-burgundy">{t.dynamic.elements[result.element] || result.element}</span>
                   </p>
                 </div>
 
@@ -113,19 +122,19 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
                       <TbCrystalBall className="text-primary" size={22} />
                     </div>
                     <div>
-                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400">
-                        Numerology Base
+                      <p className="m-0 text-xs font-black uppercase tracking-widest text-gray-400" style={fontStyle}>
+                        {t.result.numerologyBase}
                       </p>
-                      <p className="m-0 text-xl font-black text-burgundy">DOB + Name</p>
+                      <p className="m-0 text-xl font-black text-burgundy" style={fontStyle}>{lang === 'hi' ? 'DOB + नाम' : 'DOB + Name'}</p>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-4 py-2 rounded-full bg-white border border-orange-100 text-[10px] font-black uppercase tracking-widest text-burgundy">
-                      DOB Number: {result.dobNumber}
+                    <span className="px-4 py-2 rounded-full bg-white border border-orange-100 text-[10px] font-black uppercase tracking-widest text-burgundy" style={fontStyle}>
+                      {t.result.dobNumber}: {result.dobNumber}
                     </span>
-                    <span className="px-4 py-2 rounded-full bg-white border border-orange-100 text-[10px] font-black uppercase tracking-widest text-burgundy">
-                      Name Number: {result.nameNumber}
+                    <span className="px-4 py-2 rounded-full bg-white border border-orange-100 text-[10px] font-black uppercase tracking-widest text-burgundy" style={fontStyle}>
+                      {t.result.nameNumber}: {result.nameNumber}
                     </span>
                   </div>
                 </div>
@@ -134,8 +143,8 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
               {/* Footer badge */}
               <div className="mt-14 flex justify-center">
                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-orange-100">
-                  <span className="text-[10px] font-black uppercase tracking-[4px] text-primary">
-                    Deterministic • Same Input = Same Lucky Result
+                  <span className="text-[10px] font-black uppercase tracking-[4px] text-primary" style={fontStyle}>
+                    {t.result.footerBadge}
                   </span>
                 </div>
               </div>

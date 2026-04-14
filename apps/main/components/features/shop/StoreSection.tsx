@@ -8,6 +8,8 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { useAllMerchants } from "@/hooks/useAllMerchants";
 import { useMerchantCities } from "@/hooks/useMerchantCities";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -27,9 +29,14 @@ const StoreCardSkeleton = () => (
 );
 
 const StoreSection = () => {
+    const { lang } = useLanguageStore();
+    const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+    const t = translationSet.storeSection;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
     const [swiperInstance, setSwiperInstance] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCity, setSelectedCity] = useState("All Cities");
+    const [selectedCity, setSelectedCity] = useState(t.allCities);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     // Debounce search to avoid too many API calls
@@ -37,7 +44,14 @@ const StoreSection = () => {
 
     // Fetch cities from backend
     const { data: citiesData = [] } = useMerchantCities();
-    const cities = useMemo(() => ["All Cities", ...(Array.isArray(citiesData) ? citiesData : [])], [citiesData]);
+    const cities = useMemo(() => [t.allCities, ...(Array.isArray(citiesData) ? citiesData : [])], [citiesData, t.allCities]);
+
+    // Update selected city if language changes and it was 'All Cities'
+    React.useEffect(() => {
+        if (selectedCity === "All Cities" || selectedCity === "सभी शहर") {
+            setSelectedCity(t.allCities);
+        }
+    }, [lang, t.allCities]);
 
     // Fetch filtered merchants from backend
     const { 
@@ -46,7 +60,7 @@ const StoreSection = () => {
         isFetching: isStoresFetching 
     } = useAllMerchants({
         search: debouncedSearch,
-        city: selectedCity === "All Cities" ? undefined : selectedCity,
+        city: (selectedCity === t.allCities || selectedCity === "All Cities" || selectedCity === "सभी शहर") ? undefined : selectedCity,
         limit: 10
     });
 
@@ -71,18 +85,18 @@ const StoreSection = () => {
                     <div className="space-y-4">
                         <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 rounded-full border border-white/10 shadow-sm">
                             <Sparkles className="w-4 h-4 text-orange animate-pulse" />
-                            <span className="text-[11px] font-black text-orange-400 uppercase tracking-[0.2em] leading-none">Verified Merchants</span>
+                            <span className="text-[11px] font-black text-orange-400 uppercase tracking-[0.2em] leading-none" style={fontStyle}>{t.badge}</span>
                         </div>
 
                         <div>
-                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 uppercase tracking-tight">
-                                Our Trusted Shops
+                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 uppercase tracking-tight" style={fontStyle}>
+                                {t.title}
                             </h2>
                             <div className="w-48 h-1 bg-orange-600"></div>
                         </div>
 
-                        <p className="text-gray-400 font-bold text-sm italic max-w-2xl">
-                            Explore our network of premium spiritual stores, certified for quality and authenticity.
+                        <p className="text-gray-400 font-bold text-sm italic max-w-2xl" style={fontStyle}>
+                            {t.subtitle}
                         </p>
                     </div>
 
@@ -97,10 +111,11 @@ const StoreSection = () => {
                             )}
                             <input 
                                 type="text"
-                                placeholder="Search shops or city..."
+                                placeholder={t.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all text-sm placeholder:text-gray-500"
+                                style={fontStyle}
                             />
                         </div>
 
@@ -109,6 +124,7 @@ const StoreSection = () => {
                             <button 
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="w-full flex items-center justify-between px-4 py-3 bg-black/40 border border-white/10 rounded-2xl focus:ring-2 focus:ring-orange-500/20 outline-none text-sm font-bold text-gray-300 transition-all hover:border-white/20"
+                                style={fontStyle}
                             >
                                 <span className="truncate pr-2">{selectedCity}</span>
                                 <ChevronDown className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-orange-500' : ''}`} />
@@ -126,6 +142,7 @@ const StoreSection = () => {
                                                     setIsDropdownOpen(false);
                                                 }}
                                                 className={`w-full text-left px-4 py-2.5 text-sm hover:bg-orange-600 hover:text-white transition-colors ${selectedCity === city ? 'text-orange-500 bg-black/20 font-bold' : 'text-gray-400 font-medium'}`}
+                                                style={fontStyle}
                                             >
                                                 {city}
                                             </button>
@@ -173,13 +190,14 @@ const StoreSection = () => {
                     ) : (
                         <div className="text-center py-24 bg-black/20 rounded-[3rem] border border-white/5 shadow-2xl backdrop-blur-md">
                             <StoreIcon className="w-16 h-16 text-orange-500/30 mx-auto mb-6" />
-                            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">No Shops Found</h3>
-                            <p className="text-gray-500 font-medium">Try searching for a different city or shop name.</p>
+                            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight" style={fontStyle}>{t.noResults}</h3>
+                            <p className="text-gray-500 font-medium" style={fontStyle}>{t.noResultsDesc}</p>
                             <button 
-                                onClick={() => { setSearchQuery(""); setSelectedCity("All Cities"); }}
+                                onClick={() => { setSearchQuery(""); setSelectedCity(t.allCities); }}
                                 className="mt-8 text-orange-500 font-black uppercase text-[10px] tracking-widest hover:text-orange-400 transition-colors"
+                                style={fontStyle}
                             >
-                                Clear All Filters
+                                {t.btnClear}
                             </button>
                         </div>
                     )}
@@ -198,9 +216,12 @@ const StoreSection = () => {
                 </div>
 
                 <div className="mt-10 text-center">
-                    <button className="inline-flex items-center gap-4 px-12 py-5 bg-white border-2 border-slate-900 text-slate-900 rounded-[2rem] font-black text-[12px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl shadow-slate-100 hover:shadow-2xl">
+                    <button 
+                        className="inline-flex items-center gap-4 px-12 py-5 bg-white border-2 border-slate-900 text-slate-900 rounded-[2rem] font-black text-[12px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl shadow-slate-100 hover:shadow-2xl"
+                        style={fontStyle}
+                    >
                         <StoreIcon className="w-5 h-5" />
-                        <span>Discover All Stores</span>
+                        <span>{t.btnDiscoverAll}</span>
                     </button>
                 </div>
             </div>

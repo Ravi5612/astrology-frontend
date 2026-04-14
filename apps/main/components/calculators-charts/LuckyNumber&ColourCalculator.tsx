@@ -5,6 +5,8 @@ import CalculatorHero from "./common/hero";
 import LuckyVibesForm from "./LuckyVibesForm";
 import LuckyVibesResult from "./LuckyVibesResult";
 import { useLuckyVibes } from "./useLuckyVibes";
+import { useLanguageStore } from "@/store/languageStore";
+import { homeTranslations } from "@/lib/translations/home";
 
 const premiumCardStyles = `
   .glass-card {
@@ -38,6 +40,10 @@ const LuckyColorNumberCalculator: React.FC = () => {
     calculate,
   } = useLuckyVibes();
 
+  const { lang } = useLanguageStore();
+  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const t = translationSet.calculators.luckyVibes;
+
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
   const handleCalculate = async (e: React.FormEvent) => {
@@ -53,10 +59,10 @@ const LuckyColorNumberCalculator: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
       <CalculatorHero
-        badgeText="Lucky Vibes Generator"
-        titleMain="Lucky"
-        titleAccent="Color & Number"
-        paragraph="Enter your name, date of birth, and zodiac sign to get your lucky number, colors, and lucky day."
+        badgeText={t.hero.badge}
+        titleMain={t.hero.titleMain}
+        titleAccent={t.hero.titleAccent}
+        paragraph={t.hero.description}
       />
 
       <LuckyVibesForm

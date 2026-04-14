@@ -26,7 +26,7 @@ export const merchantService = {
      */
     getMerchantCities: async () => {
         const [data, error] = await api.get<any>('/merchants/cities');
-        console.error('!!! Main App Cities API Response:', data);
+        // console.log('Main App Cities API Response:', data);
         // Backend might return { cities: [] } or { data: [] }
         const cities = data?.data?.cities || data?.cities || data?.data || data;
         return [Array.isArray(cities) ? cities : [], error];
@@ -47,7 +47,7 @@ export const merchantService = {
      */
     getMerchantProducts: async (id: string | number, page = 1, limit = 20) => {
         const [data, error] = await api.get<any>(`/products?merchantId=${id}&page=${page}&limit=${limit}`);
-        console.error('!!! Raw Store products API Response:', data);
+        // console.log('Raw Store products API Response:', data);
         // Extract array from various possible keys
         const products = data?.data?.products || data?.products || data?.data || data;
         return [Array.isArray(products) ? products : [], error];
@@ -72,8 +72,6 @@ export const merchantService = {
             rating: Number(payload.rating),
             comment: payload.comment
         };
-        
-        console.log("!!! NETWORK REQUEST - Submitting review to /reviews:", body);
         
         const [data, error] = await api.post<any>('/reviews', body);
         return [data, error];
