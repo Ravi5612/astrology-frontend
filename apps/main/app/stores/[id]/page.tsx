@@ -22,6 +22,7 @@ import {
   ExternalLink,
   ChevronRight
 } from "lucide-react";
+import { merchantSocket } from "@/lib/socket";
 import { ProductCard } from "@/components/features/shop/ProductCard";
 import { Product } from "@/lib/types";
 import { Store } from "@/lib/types/shop";
@@ -53,10 +54,31 @@ const StoreDetailsPage = () => {
     const [activeTab, setActiveTab] = useState<'about' | 'collection' | 'reviews' | 'gallery'>('collection');
     const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [isOnline, setIsOnline] = useState(false);
 
     const { data: store, isLoading: isStoreLoading, error: storeError } = useMerchant(id);
     const { data: storeProducts = [], isLoading: isProductsLoading } = useMerchantProducts(id);
     const { data: storeReviews = [] } = useMerchantReviews(id);
+
+    // Initial status and socket listener
+    useEffect(() => {
+        if (store?.isOnline !== undefined) {
+            setIsOnline(store.isOnline);
+        }
+    }, [store?.isOnline]);
+
+    useEffect(() => {
+        const handleStatusChange = (data: { merchant_id: number; is_online: boolean }) => {
+            if (Number(data.merchant_id) === Number(id)) {
+                setIsOnline(data.is_online);
+            }
+        };
+
+        merchantSocket.on("merchant_status_changed", handleStatusChange);
+        return () => {
+            merchantSocket.off("merchant_status_changed", handleStatusChange);
+        };
+    }, [id]);
 
     if (isStoreLoading) return <StoreSkeleton />;
 
@@ -86,10 +108,28 @@ const StoreDetailsPage = () => {
                     <aside className="w-full lg:w-[360px] xl:w-[400px] shrink-0 sticky top-32">
                         <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[40px] overflow-hidden shadow-premium border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:border-orange/30 group">
                             <div className="relative pt-10 pb-4 flex flex-col items-center">
-                                {/* Top Badge */}
+                                {/* Top Badges */}
                                 <div className="absolute top-6 right-8 bg-orange/10 text-orange px-4 py-1.5 rounded-full flex items-center gap-2 border border-orange/20 shadow-sm">
                                     <Sparkles className="w-3.5 h-3.5 animate-pulse" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Verified Seller</span>
+                                </div>
+
+                                {/* Online/Offline Status (Top Left) */}
+                                <div className="absolute top-6 left-8">
+                                    {isOnline ? (
+                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 backdrop-blur-md rounded-full border border-green-500/20 animate-in fade-in slide-in-from-left-4 duration-500">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
+                                            </span>
+                                            <span className="text-[9px] font-black text-green-600 uppercase tracking-widest leading-none">Online</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-500/10 backdrop-blur-md rounded-full border border-slate-500/20">
+                                            <span className="inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Offline</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Shop Image Frame */}
@@ -105,9 +145,10 @@ const StoreDetailsPage = () => {
                                     </div>
                                 </div>
 
-                                {/* Shop Title */}
-                                <div className="mt-6 text-center px-8 space-y-2">
+                                {/* Shop Title & Status */}
+                                <div className="mt-6 text-center px-8 space-y-3">
                                     <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-tight">{shop.name}</h2>
+                                    
                                     <div className="flex items-center justify-center gap-1.5 text-orange font-black bg-orange/5 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest border border-orange/10 mx-auto w-fit">
                                         <MapPin className="w-3.5 h-3.5" />
                                         <span>{shop.city} Marketplace</span>
@@ -147,7 +188,7 @@ const StoreDetailsPage = () => {
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Trust Store Score</span>
-                                        <span className="text-sm font-black text-slate-800">{shop.trustScore || "99.8%"} Reliability</span>
+                                        <span className="text-sm font-black text-slate-800">{shop.trustScore ? `${shop.trustScore}%` : "99.8%"} Reliability</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 group/item">

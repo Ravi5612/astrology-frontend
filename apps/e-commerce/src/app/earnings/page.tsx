@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { 
   Wallet, 
   TrendingUp, 
@@ -17,6 +16,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
+import { 
+  useMerchantFinanceStats, 
+  useMerchantTransactions 
+} from "@/hooks/useFinance";
+import { WithdrawFundsModal } from "@/features/shop-dashboard/components/WithdrawFundsModal";
 
 interface Transaction {
   id: string;
@@ -31,32 +35,20 @@ export default function EarningsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
-  // Fetch Finance Stats
-  const { data: statsData, isLoading: statsLoading } = useQuery({
-    queryKey: ['merchant-finance-stats'],
-    queryFn: async () => {
-      const res = await fetch("/api/v1/merchant/finance/stats", { credentials: "include" });
-      if (!res.ok) return null;
-      return res.json();
-    }
-  });
+  // Fetch Finance Stats via Hook
+  const { data: statsData, isLoading: statsLoading } = useMerchantFinanceStats();
 
-  // Fetch Transactions List
-  const { data: txData, isLoading: txLoading } = useQuery({
-    queryKey: ['merchant-transactions', searchTerm, page, limit],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append("page", String(page));
-      params.append("limit", String(limit));
-      if (searchTerm) params.append("search", searchTerm);
-      const res = await fetch(`/api/v1/merchant/finance/transactions?${params.toString()}`, { credentials: "include" });
-      if (!res.ok) return null;
-      return res.json();
-    }
+  // Fetch Transactions List via Hook
+  const { data: txData, isLoading: txLoading } = useMerchantTransactions({
+    page,
+    limit,
+    search: searchTerm || undefined
   });
 
   const transactions: Transaction[] = txData?.transactions || [];
+  const availableBalance = statsData?.availableBalance || 0;
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -92,6 +84,12 @@ export default function EarningsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
+      <WithdrawFundsModal 
+        isOpen={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        availableBalance={availableBalance}
+      />
+
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -106,7 +104,10 @@ export default function EarningsPage() {
              <Download className="w-4 h-4" />
              <span>Statement</span>
           </button>
-          <button className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95">
+          <button 
+            onClick={() => setIsWithdrawModalOpen(true)}
+            className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
+          >
              <span>Withdraw Funds</span>
           </button>
         </div>
@@ -146,64 +147,66 @@ export default function EarningsPage() {
              </div>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden min-h-[300px]">
-             <table className="w-full text-left border-collapse">
-                <thead className="bg-gray-50/50 border-b border-gray-100 text-[10px] uppercase font-black text-gray-400 tracking-[0.2em]">
-                  <tr>
-                    <th className="pl-6 py-4">Transaction Details</th>
-                    <th className="px-4 py-4 text-center">Type</th>
-                    <th className="px-4 py-4 text-right">Amount</th>
-                    <th className="pr-6 py-4 text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {txLoading ? (
+          <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden min-h-[300px] flex flex-col">
+             <div className="flex-1 max-h-[600px] overflow-y-auto custom-scrollbar" data-lenis-prevent>
+               <table className="w-full text-left border-collapse">
+                  <thead className="bg-gray-50/50 border-b border-gray-100 text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] sticky top-0 z-10 backdrop-blur-md">
                     <tr>
-                      <td colSpan={4} className="py-20 text-center">
-                        <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mx-auto mb-2" />
-                        <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Fetching Ledger...</span>
-                      </td>
+                      <th className="pl-6 py-4 px-4 bg-gray-50/80">Transaction Details</th>
+                      <th className="px-4 py-4 text-center bg-gray-50/80">Type</th>
+                      <th className="px-4 py-4 text-right bg-gray-50/80">Amount</th>
+                      <th className="pr-6 py-4 text-right bg-gray-50/80">Status</th>
                     </tr>
-                  ) : transactions.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-20 text-center text-gray-400 italic text-sm">No transactions found.</td>
-                    </tr>
-                  ) : transactions.map((txn) => (
-                    <tr key={txn.id} className="hover:bg-gray-50/80 transition-all cursor-default group hover:scale-[1.002] active:scale-[0.998] duration-300">
-                      <td className="pl-6 py-5">
-                        <div className="flex flex-col">
-                           <span className="text-xs font-bold text-gray-900 group-hover:text-[#fd6410] transition-colors">{txn.id}</span>
-                           <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                              <Calendar className="w-2.5 h-2.5" /> {formatDate(txn.date)} • {formatTime(txn.date)}
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {txLoading ? (
+                      <tr>
+                        <td colSpan={4} className="py-20 text-center">
+                          <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mx-auto mb-2" />
+                          <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Fetching Ledger...</span>
+                        </td>
+                      </tr>
+                    ) : transactions.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-20 text-center text-gray-400 italic text-sm">No transactions found.</td>
+                      </tr>
+                    ) : transactions.map((txn) => (
+                      <tr key={txn.id} className="hover:bg-gray-50/80 transition-all cursor-default group hover:scale-[1.002] active:scale-[0.998] duration-300">
+                        <td className="pl-6 py-5">
+                          <div className="flex flex-col">
+                             <span className="text-xs font-bold text-gray-900 group-hover:text-[#fd6410] transition-colors">{txn.id}</span>
+                             <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                                <Calendar className="w-2.5 h-2.5" /> {formatDate(txn.date)} • {formatTime(txn.date)}
+                             </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-5 text-center">
+                           <span className={cn(
+                             "text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg",
+                             txn.type === "sale" ? "text-green-600 bg-green-50" : txn.type === "withdrawal" ? "text-blue-600 bg-blue-50" : "text-gray-600 bg-gray-50"
+                           )}>
+                              {txn.type}
                            </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-5 text-center">
-                         <span className={cn(
-                           "text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg",
-                           txn.type === "sale" ? "text-green-600 bg-green-50" : txn.type === "withdrawal" ? "text-blue-600 bg-blue-50" : "text-gray-600 bg-gray-50"
-                         )}>
-                            {txn.type}
-                         </span>
-                      </td>
-                      <td className={cn(
-                        "px-4 py-5 text-right font-black text-sm tracking-tight",
-                        txn.type === "sale" ? "text-green-600" : "text-gray-900"
-                      )}>
-                         {txn.type === "sale" ? "+" : "-"} {formatPrice(txn.amount)}
-                      </td>
-                      <td className="pr-6 py-5 text-right">
-                         <span className={cn(
-                           "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border",
-                           txn.status === "paid" || txn.status === "completed" ? "text-green-700 bg-green-50 border-green-100" : txn.status === "pending" ? "text-amber-700 bg-amber-50 border-amber-100" : "text-gray-700 bg-gray-50 border-gray-100"
-                         )}>
-                            {txn.status}
-                         </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-             </table>
+                        </td>
+                        <td className={cn(
+                          "px-4 py-5 text-right font-black text-sm tracking-tight",
+                          txn.type === "sale" ? "text-green-600" : "text-gray-900"
+                        )}>
+                           {txn.type === "sale" ? "+" : "-"} {formatPrice(txn.amount)}
+                        </td>
+                        <td className="pr-6 py-5 text-right">
+                           <span className={cn(
+                             "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border",
+                             txn.status === "paid" || txn.status === "completed" ? "text-green-700 bg-green-50 border-green-100" : txn.status === "pending" ? "text-amber-700 bg-amber-50 border-amber-100" : "text-gray-700 bg-gray-50 border-gray-100"
+                           )}>
+                              {txn.status}
+                           </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+               </table>
+             </div>
 
              {/* Pagination Controls */}
              {txData?.total > limit && (

@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import ToastProvider from "./ToastProvider";
 import FloatingChatButton from "../features/chat/FloatingChatButton";
+import { merchantSocket } from "@/lib/socket";
 
 export default function ClientLayout({
   children,
@@ -23,6 +24,8 @@ export default function ClientLayout({
 
   useEffect(() => {
     setMounted(true);
+    console.log("🌊 [Main App] ClientLayout mounted - WebSocket active:", merchantSocket.id || "Connecting...");
+    // alert("Main App Code Loaded!"); // Only for extreme debugging
   }, []);
 
   return (

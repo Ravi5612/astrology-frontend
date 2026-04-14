@@ -46,4 +46,5 @@ export interface Store {
     likesCount?: number;
     productsCount?: number;
     isLiked?: boolean;
+    isOnline?: boolean;
 }

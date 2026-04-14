@@ -15,12 +15,17 @@ import {
   ShoppingBag,
   ExternalLink,
   Eye,
-  Loader2
+  Loader2,
+  Clock,
+  Navigation
 } from "lucide-react";
 import { useMerchantProfile, useUpdateProfile, useMerchantProducts } from "@/hooks/useSettings";
+import { toast } from "react-toastify";
 
 export default function ShopProfileSettings() {
-  const { data: profile, isLoading: isProfileLoading } = useMerchantProfile();
+  const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
+  const profile = profileData?.profile;
+  const exists = profileData?.exists;
   const updateProfileMutation = useUpdateProfile();
   const { data: productsData, isLoading: isProductsLoading } = useMerchantProducts();
 
@@ -62,8 +67,8 @@ export default function ShopProfileSettings() {
   }, [products.length, isPaused]);
   
   // Local state for files to be uploaded
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [isDetecting, setIsDetecting] = useState(false);
 
   // Real-time Preview State
   const [formData, setFormData] = useState({
@@ -72,7 +77,12 @@ export default function ShopProfileSettings() {
     phone: "",
     address: "",
     city: "",
-    pincode: ""
+    pincode: "",
+    openTime: "",
+    closeTime: "",
+    latitude: "",
+    longitude: "",
+    trustScore: ""
   });
 
   // Sync profile data to form on load
@@ -84,7 +94,12 @@ export default function ShopProfileSettings() {
         phone: profile.phone || "",
         address: profile.address || "",
         city: profile.city || "",
-        pincode: profile.pincode || ""
+        pincode: profile.pincode || "",
+        openTime: profile.operationalHours?.split(" - ")[0] || "10:00 AM",
+        closeTime: profile.operationalHours?.split(" - ")[1] || "08:30 PM",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        trustScore: profile.trustScore || ""
       });
       if (profile.image) setShopImagePreview(profile.image);
       if (profile.video) setShopVideoPreview(profile.video);
@@ -94,6 +109,30 @@ export default function ShopProfileSettings() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setFormData((prev) => ({
+          ...prev,
+          latitude: latitude.toFixed(7),
+          longitude: longitude.toFixed(7),
+        }));
+        setIsDetecting(false);
+      },
+      (error) => {
+        setIsDetecting(false);
+      },
+      { timeout: 10000 }
+    );
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,6 +163,10 @@ export default function ShopProfileSettings() {
     data.append('address', formData.address);
     data.append('city', formData.city);
     data.append('pincode', formData.pincode);
+    data.append('operationalHours', `${formData.openTime} - ${formData.closeTime}`);
+    data.append('latitude', formData.latitude);
+    data.append('longitude', formData.longitude);
+    data.append('trustScore', formData.trustScore);
     
     if (selectedImage) data.append('image', selectedImage);
     if (selectedVideo) data.append('video', selectedVideo);
@@ -150,8 +193,14 @@ export default function ShopProfileSettings() {
             <ChevronRight className="w-3 h-3" />
             <span>Shop Profile</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Shop Profile Settings</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your shop's identity and location details for customers.</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            {exists ? 'Shop Profile Settings' : 'Complete Your Shop Profile'}
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {exists 
+              ? "Manage your shop's identity and location details for customers."
+              : "Set up your shop identity and location to start selling."}
+          </p>
         </div>
         <button 
           onClick={handleSave}
@@ -271,6 +320,60 @@ export default function ShopProfileSettings() {
                   />
                 </div>
               </div>
+
+              <div className="space-y-4 md:col-span-2 p-6 bg-orange-50/50 rounded-3xl border border-orange-100/50">
+                <div className="flex items-center gap-2 mb-2">
+                   <Clock className="w-4 h-4 text-[#fd6410]" />
+                   <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">Operational Schedule</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Opening Time</label>
+                    <div className="relative group">
+                      <input 
+                        name="openTime"
+                        placeholder="e.g. 10:00 AM"
+                        value={formData.openTime}
+                        onChange={handleInputChange}
+                        type="text" 
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Closing Time</label>
+                    <div className="relative group">
+                      <input 
+                        name="closeTime"
+                        placeholder="e.g. 08:30 PM"
+                        value={formData.closeTime}
+                        onChange={handleInputChange}
+                        type="text" 
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Trust Score (%)</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                     <ShieldCheck className="w-4 h-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                  </div>
+                  <input 
+                    name="trustScore"
+                    placeholder="e.g. 99.8"
+                    value={formData.trustScore}
+                    onChange={handleInputChange}
+                    type="text" 
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -313,6 +416,57 @@ export default function ShopProfileSettings() {
                   type="text" 
                   className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
                 />
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-black text-[#fd6410] uppercase tracking-widest pl-1 flex items-center">
+                    <Navigation className="w-3 h-3 mr-1" />
+                    GPS Coordinates
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
+                    disabled={isDetecting}
+                    className="flex items-center text-[10px] font-bold bg-[#fd6410]/10 text-[#fd6410] px-3 py-1.5 rounded-full hover:bg-[#fd6410]/20 transition-all border border-[#fd6410]/20 disabled:opacity-50"
+                  >
+                    {isDetecting ? (
+                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    ) : (
+                      <Navigation className="w-3 h-3 mr-1" />
+                    )}
+                    {isDetecting ? "Detecting..." : "Detect My Location"}
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Latitude</label>
+                    <input 
+                      name="latitude"
+                      placeholder="e.g. 28.6139"
+                      value={formData.latitude}
+                      onChange={handleInputChange}
+                      type="text" 
+                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Longitude</label>
+                    <input 
+                      name="longitude"
+                      placeholder="e.g. 77.2090"
+                      value={formData.longitude}
+                      onChange={handleInputChange}
+                      type="text" 
+                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                    />
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-400 italic pl-1">
+                  * Coordinates help customers find your shop on the map.
+                </p>
               </div>
             </div>
           </div>
@@ -361,9 +515,15 @@ export default function ShopProfileSettings() {
                 <div className="space-y-4">
                    <div className="flex items-center justify-between">
                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">About Store</span>
-                     <div className="flex items-center text-rose-500">
-                        <ShieldCheck className="w-4 h-4" />
-                        <span className="text-[9px] font-bold ml-1 uppercase">Trusted</span>
+                     <div className="flex flex-col items-end">
+                        <div className="flex items-center text-rose-500">
+                           <ShieldCheck className="w-4 h-4" />
+                           <span className="text-[9px] font-bold ml-1 uppercase">Trusted • {formData.trustScore || "99.8"}%</span>
+                        </div>
+                        <div className="flex items-center text-slate-400 mt-1">
+                           <Clock className="w-3 h-3" />
+                           <span className="text-[8px] font-bold ml-1 uppercase">{formData.openTime} - {formData.closeTime}</span>
+                        </div>
                      </div>
                    </div>
                    

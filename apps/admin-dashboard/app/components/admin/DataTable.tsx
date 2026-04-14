@@ -22,7 +22,8 @@ interface DataTableProps<T> {
   itemsPerPage?: number;
   onViewDetails?: (item: T) => void;
   renderCell?: (item: T, key: string) => React.ReactNode;
-  title?: string;
+  title?: React.ReactNode;
+  ariaTitle?: string;
   statsCards?: React.ReactNode;
   emptyMessage?: string;
   onSearch?: (value: string) => void;
@@ -117,7 +118,8 @@ export function DataTable<T extends { id: number | string }>({
   itemsPerPage = 10,
   onViewDetails,
   renderCell,
-  title = "Data Management",
+  title = "Management",
+  ariaTitle,
   statsCards,
   onSearch,
   isLoading = false,
@@ -250,7 +252,7 @@ export function DataTable<T extends { id: number | string }>({
                 placeholder="Search..."
                 className="w-full md:w-64"
                 size="md"
-                aria-label={`Search ${title.toLowerCase()}`}
+                aria-label={`Search ${ariaTitle || (typeof title === 'string' ? title.toLowerCase() : 'items')}`}
               />
             </div>
           </div>

@@ -9,7 +9,7 @@ interface User {
     email?: string;
     role?: string;
     roles?: string[];
-    kycStatus?: string;
+    status?: string;
     [key: string]: any;
 }
 
@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const normalizedData = {
                 ...userData,
                 id: userData.merchantId || userData.id,
-                kycStatus: userData.kycStatus || userData.status || 'pending',
+                status: userData.status || 'pending_verification',
                 name: userData.shopName || userData.name
             };
             set({ user: normalizedData });
@@ -75,7 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 const normalizedData = {
                     ...payload,
                     id: payload.merchantId || payload.id,
-                    kycStatus: payload.kycStatus || payload.status,
+                    status: payload.status,
                     name: payload.shopName || payload.name
                 };
                 set({ user: normalizedData, isAuthenticated: true, loading: false });

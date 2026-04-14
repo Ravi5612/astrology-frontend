@@ -13,7 +13,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import Link from "next/link";
 import { useMerchantProducts } from "@/hooks/useMerchantProducts";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
+import { merchantSocket } from "@/lib/socket";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -27,6 +28,7 @@ interface StoreCardProps {
 }
 
 export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
+  const [isOnline, setIsOnline] = useState(store.isOnline ?? false);
   const router = useRouter();
   const { isClientAuthenticated } = useAuthStore();
   const { isMerchantInWishlist } = useWishlistStore();
@@ -49,6 +51,26 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
 
     toggleLike({ id: Number(store.id), type: "merchant", isLiked });
   };
+
+  // ─── Real-time Online status via WebSockets ───
+  useEffect(() => {
+    console.log(`🏠 [Card ${store.id}] Initializing socket listener...`);
+
+    const handleStatusChange = (data: { merchant_id: number; is_online: boolean }) => {
+      console.log(`🏠 [Card ${store.id}] Socket event received:`, data);
+      if (Number(data.merchant_id) === Number(store.id)) {
+        console.log(`✅ [Card ${store.id}] Status MATCH: updating to ${data.is_online}`);
+        setIsOnline(data.is_online);
+      }
+    };
+
+    merchantSocket.on("merchant_status_changed", handleStatusChange);
+
+    return () => {
+      console.log(`🏠 [Card ${store.id}] Cleaning up socket listener`);
+      merchantSocket.off("merchant_status_changed", handleStatusChange);
+    };
+  }, [store.id]);
 
   // Fallback: Fetch products if popularProducts is missing or empty
 // ... (displayProducts logic kept same)
@@ -119,9 +141,12 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
             <span className="text-[9px] font-bold text-slate-400 leading-none">({store.reviewCount})</span>
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
-           <h2 className="text-white font-bold text-xl drop-shadow-md truncate">{store.name}</h2>
-           <div className="flex items-center text-orange-200 text-[10px] font-black uppercase tracking-widest mt-1">
+        {/* Shop Name & Location Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+           <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-white font-bold text-xl drop-shadow-md truncate">{store.name}</h2>
+           </div>
+           <div className="flex items-center text-orange-200 text-[10px] font-black uppercase tracking-widest leading-none">
               <MapPin className="w-3 h-3 mr-1 text-orange" />
               {store.city}
            </div>
@@ -134,12 +159,28 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
         <div className="space-y-4">
            <div className="flex items-center justify-between">
              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">About Store</span>
-             {store.isTrusted && (
-                <div className="flex items-center text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
-                   <ShieldCheck className="w-3.5 h-3.5" />
-                   <span className="text-[9px] font-black ml-1 uppercase tracking-tighter">Verified</span>
-                </div>
-             )}
+             <div className="flex items-center gap-3">
+                {isOnline ? (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-green-500/10 rounded-full border border-green-500/20 animate-in fade-in zoom-in duration-500">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                    </span>
+                    <span className="text-[7px] font-black text-green-500 uppercase tracking-tighter">Online</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gray-500/10 rounded-full border border-gray-500/20">
+                    <span className="inline-flex rounded-full h-1.5 w-1.5 bg-gray-400"></span>
+                    <span className="text-[7px] font-black text-gray-400 uppercase tracking-tighter">Offline</span>
+                  </div>
+                )}
+                {store.isTrusted && (
+                  <div className="flex items-center text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span className="text-[9px] font-black ml-1 uppercase tracking-tighter">Verified</span>
+                  </div>
+                )}
+             </div>
            </div>
            
            <div className="flex items-start space-x-3 text-sm text-gray-600">
