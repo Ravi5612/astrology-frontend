@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 import { Product } from "@/lib/types";
 
 async function getProducts(): Promise<Product[]> {
-  const [data, fetchError] = await api.get<any>(`/products`, { cache: "no-store" });
+  const [data, fetchError] = await api.get<any>(`/products?limit=100`, { cache: "no-store" });
   
   if (fetchError) {
     console.error("Failed to fetch products:", fetchError);
