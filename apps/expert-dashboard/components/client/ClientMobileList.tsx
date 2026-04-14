@@ -86,7 +86,7 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                     {/* Payment */}
                     <div className="flex justify-between items-center">
                         <div className="text-sm font-semibold text-yellow-700">
-                            Payment: ₹{client.payment.toLocaleString()}
+                            Earnings: ₹{client.payment.toLocaleString()}
                         </div>
                         <Button
                             onClick={() => onViewChat(client)}

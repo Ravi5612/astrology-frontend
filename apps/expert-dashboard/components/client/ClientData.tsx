@@ -117,6 +117,11 @@ export default function ClientsPage() {
             }
           }
 
+          // Calculate earnings (after platform fee)
+          const totalCost = session.total_cost || session.totalCost || session.amount || 0;
+          const expertShareFromMeta = session.metadata?.split?.expertShare || session.metadata?.expertShare;
+          const expertShare = expertShareFromMeta !== undefined ? expertShareFromMeta : (totalCost * 0.8);
+
           return {
             id: session.id, // using session ID as unique key
             name: session.user?.name || "Client",
@@ -133,13 +138,14 @@ export default function ClientsPage() {
             },
             rating: sessionReview?.rating || 0,
             review: sessionReview?.comment || "No review yet",
-            payment: session.total_cost || session.totalCost || session.amount || 0,
+            payment: Number(expertShare.toFixed(2)),
             rawSession: {
               ...session,
               durationMins: mins,
               durationSeconds: durationSecs,
               durationString: session.durationString || preciseDurationStr,
-              totalCost: session.total_cost || session.totalCost || session.amount || 0
+              totalCost: totalCost,
+              expertShare: expertShare
             }
           };
         });

@@ -53,7 +53,7 @@ export default function ClientTable({
                             onClick={() => requestSort("payment")}
                         >
                             <div className="flex items-center">
-                                Payment (₹)
+                                Earnings (₹)
                                 {getSortIcon("payment")}
                             </div>
                         </th>
