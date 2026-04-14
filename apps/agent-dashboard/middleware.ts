@@ -37,7 +37,11 @@ export async function middleware(request: NextRequest) {
             const exp = (payload?.exp ?? 0) * 1000;
 
             if (exp > Date.now()) {
-                // ✅ Token valid — allow through
+                // ✅ Check for agent role
+                if (payload?.role !== 'agent') {
+                    return NextResponse.redirect(new URL('/', request.url));
+                }
+                // ✅ Token valid and role correct — allow through
                 return NextResponse.next();
             }
             // Token expired — fall through to refresh
