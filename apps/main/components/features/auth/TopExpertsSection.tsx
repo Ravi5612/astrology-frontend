@@ -37,6 +37,34 @@ const TopExpertsSection: React.FC = () => {
         fetchTopExperts();
     }, []);
 
+    // Real-time status synchronization
+    useEffect(() => {
+        const { socket } = require("@/lib/socket");
+
+        const handleStatusSync = (data: any) => {
+            const userIdFromEvent = data.userId || data.id || data.expert_id;
+            const isAvailable = data.is_available ?? data.is_online;
+
+            setTopExperts(prev => prev.map(expert => {
+                // Check if the update matches this expert (either profile ID or user ID)
+                const isMatch = String(expert.id) === String(userIdFromEvent) || 
+                                (expert.user as any)?.id && String((expert.user as any).id) === String(userIdFromEvent);
+
+                if (isMatch) {
+                    console.log(`[Presence] TopExpertsSection: Expert ${expert.user?.name} is now ${isAvailable ? 'Online' : 'Offline'}`);
+                    return { ...expert, is_online: isAvailable };
+                }
+                return expert;
+            }));
+        };
+
+        socket.on("expert_status_changed", handleStatusSync);
+
+        return () => {
+            socket.off("expert_status_changed", handleStatusSync);
+        };
+    }, []);
+
     return (
         <div className="mt-8 hidden md:block">
             <h3 className="text-2xl font-black text-[#301118] mb-6 flex items-center gap-2">
