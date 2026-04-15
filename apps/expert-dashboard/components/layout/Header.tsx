@@ -27,6 +27,22 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     user,
   } = useHeaderState();
 
+  // Handle tab closure / page hide
+  React.useEffect(() => {
+    const handleUnload = () => {
+      const actualUserId = user?.userId || user?.id;
+      if (user && actualUserId && isOnline) {
+        const { socket } = require("@/lib/socket");
+        socket.emit("expert_offline", { userId: Number(actualUserId) });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [user, isOnline]);
+
   return (
     <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-40 shadow-sm">
       <div className="flex items-center justify-between gap-3">

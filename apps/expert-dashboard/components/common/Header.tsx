@@ -20,12 +20,36 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(false); // Toggle state
   const [loading, setLoading] = useState(false);
+  const [isSessionReady, setIsSessionReady] = useState(false); // New state to block socket emits until session logic finishes
 
   useEffect(() => {
-    if (user?.isAvailable !== undefined) {
-      setIsOnline(user.isAvailable);
+    if (user?.isAvailable !== undefined && !isSessionReady) {
+      const hasInitialized = sessionStorage.getItem("expert_session_initialized");
+
+      if (!hasInitialized) {
+        console.log("[Presence] 🆕 New Session detected. Forcing INITIAL Offline state...");
+        
+        // Even if DB says they are online, we want them offline for a fresh login.
+        // We set state to false immediately and also notify backend.
+        setIsOnline(false);
+        
+        if (user.isAvailable) {
+          api.patch('/expert/status', { is_available: false }).catch(err => {
+            console.error("Failed to force initial offline status:", err);
+          });
+          // We also emit offline just to be absolutely sure the Main App hears it
+          socket.emit("expert_offline", { userId: Number(user.userId || user.id) });
+        }
+        
+        sessionStorage.setItem("expert_session_initialized", "true");
+        setIsSessionReady(true);
+      } else {
+        console.log("[Presence] 🔄 Refresh detected. Syncing with DB state:", user.isAvailable);
+        setIsOnline(user.isAvailable);
+        setIsSessionReady(true);
+      }
     }
-  }, [user]);
+  }, [user, isSessionReady]);
 
   // WebSocket Listener for status sync (across sessions/devices) - RESTORED
   useEffect(() => {
@@ -83,29 +107,49 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
     // Register expert in tracking map for tab-close detection
     const registerExpertOnline = () => {
-      const actualUserId = user?.userId || user?.id; // userId is preferred as it maps to the User table ID
-      if (isAuthenticated && actualUserId) {
-        console.log(`[Socket] 🌐 Registering expert ${actualUserId} as online...`);
-        socket.emit("expert_online", { userId: actualUserId });
+      const actualUserId = user?.userId || user?.id;
+      // CRITICAL: Only emit online if session logic is READY and isOnline is TRUE
+      if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
+        if (socket.connected) {
+          console.log(`[Socket] 🌐 Registering expert ${actualUserId} as online...`);
+          socket.emit("expert_online", { userId: Number(actualUserId) });
+        } else {
+          socket.once("connect", () => {
+            if (isOnline) { // Re-check if still online when connected
+              socket.emit("expert_online", { userId: Number(actualUserId) });
+            }
+          });
+          socket.connect();
+        }
       }
     };
 
-    // Initial registration
-    registerExpertOnline();
-
-    // Re-register on socket reconnection
-    const handleReconnection = () => {
-      console.log("[Socket] 🔄 Socket reconnected, re-registering expert...");
+    if (isSessionReady) {
       registerExpertOnline();
+    }
+
+    const handleReconnection = () => {
+      if (isSessionReady) registerExpertOnline();
     };
     socket.on("connect", handleReconnection);
+
+    // Handle tab closure / page hide
+    const handleUnload = () => {
+      const actualUserId = user?.userId || user?.id;
+      if (isAuthenticated && actualUserId && isOnline) {
+        socket.emit("expert_offline", { userId: Number(actualUserId) });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
 
     return () => {
       socket.off("expert_status_changed", handleStatusSync);
       socket.off("kyc_status_updated", handleKycUpdate);
       socket.off("connect", handleReconnection);
+      window.removeEventListener("beforeunload", handleUnload);
     };
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, isOnline, isSessionReady]);
 
   // Track whether mouse is on icon or on popup
   const isHoveringIcon = useRef(false);
@@ -213,9 +257,9 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const actualUserId = user?.userId || user?.id;
     if (actualUserId) {
       if (newStatus) {
-        socket.emit("expert_online", { userId: actualUserId });
+        socket.emit("expert_online", { userId: Number(actualUserId) });
       } else {
-        socket.emit("expert_offline", { userId: actualUserId });
+        socket.emit("expert_offline", { userId: Number(actualUserId) });
       }
     }
 

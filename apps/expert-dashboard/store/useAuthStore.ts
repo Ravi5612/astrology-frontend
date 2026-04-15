@@ -64,6 +64,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     logout: async () => {
+        const user = get().user;
+        const actualUserId = user?.userId || user?.id;
+        
+        if (actualUserId) {
+            console.log(`[Presence] Reporting offline status before logout for user ${actualUserId}...`);
+            const { socket } = await import('@/lib/socket');
+            socket.emit("expert_offline", { userId: actualUserId });
+        }
+
         set({ user: null, isAuthenticated: false });
         await expertLogoutAction();
     },

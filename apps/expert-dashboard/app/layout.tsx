@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import "@/styles/index.css"
 import { AuthInitializer } from '@/components/layout/AuthInitializer'
+import { SocketConnectionManager } from '@/components/layout/SocketConnectionManager';
 import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ['latin'] })
@@ -63,6 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={inter.className} suppressHydrationWarning>
         <ReactQueryProvider>
           <AuthInitializer initialUser={initialUser}>
+            <SocketConnectionManager />
             {children}
             <ToastContainer position="top-right" />
           </AuthInitializer>

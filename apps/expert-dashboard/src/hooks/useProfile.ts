@@ -21,10 +21,11 @@ import { toast } from "react-toastify";
 /**
  * Transforms raw API or Auth user data into the standardized Profile interface.
  */
-const mapToProfile = (data: any, authUser: any): Profile => {
+const mapToProfile = (data: any, authUser: any): Profile & { exists: boolean } => {
     const firstAddress = data?.addresses?.[0] || authUser?.addresses?.[0];
     
     return {
+        exists: !!data,
         name: authUser?.name || data?.user?.name || "",
         email: authUser?.email || data?.user?.email || "",
         gender: data?.gender || authUser?.gender || Gender.OTHER,
@@ -219,7 +220,7 @@ export const useProfile = () => {
         profile: profileQuery.data,
         isLoading: profileQuery.isLoading,
         isFetching: profileQuery.isFetching,
-        hasProfile: !!profileQuery.data?.specialization,
+        hasProfile: !!profileQuery.data?.exists,
         todos: todosQuery.data || [],
         updateSection: updateMutation.mutateAsync,
         isSubmitting: updateMutation.isPending,

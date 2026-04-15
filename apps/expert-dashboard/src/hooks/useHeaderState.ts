@@ -13,16 +13,39 @@ export const useHeaderState = () => {
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showKycNotice, setShowKycNotice] = useState(true);
+  const [isSessionReady, setIsSessionReady] = useState(false); // New state to block socket emits until session logic finishes
 
   const isHoveringIcon = useRef(false);
   const isHoveringPopup = useRef(false);
 
-  // Sync online status with user data
+  // Sync online status with user data (Session-Aware)
   useEffect(() => {
-    if (user?.isAvailable !== undefined) {
-      setIsOnline(user.isAvailable);
+    if (user?.isAvailable !== undefined && !isSessionReady) {
+      const hasInitialized = sessionStorage.getItem("expert_session_initialized");
+
+      if (!hasInitialized) {
+        console.log("[Presence] 🆕 New Session detected in Hook. Forcing INITIAL Offline state...");
+        
+        // Force offline in state immediately
+        setIsOnline(false);
+        
+        if (user.isAvailable) {
+          api.patch('/expert/status', { is_available: false }).catch(err => {
+            console.error("Failed to force initial offline status:", err);
+          });
+          // Also emit offline immediately as a best-effort
+          socket.emit("expert_offline", { userId: Number(user.userId || user.id) });
+        }
+        
+        sessionStorage.setItem("expert_session_initialized", "true");
+        setIsSessionReady(true);
+      } else {
+        console.log("[Presence] 🔄 Refresh detected in Hook. Syncing with DB state:", user.isAvailable);
+        setIsOnline(user.isAvailable);
+        setIsSessionReady(true);
+      }
     }
-  }, [user]);
+  }, [user, isSessionReady]);
 
   // Load notifications
   const loadNotifications = useCallback(async () => {
@@ -103,14 +126,29 @@ export const useHeaderState = () => {
 
     // Presence registration
     const actualUserId = user?.userId || user?.id;
-    if (isAuthenticated && actualUserId) {
-      socket.emit("expert_online", { userId: actualUserId });
+    const registerExpertOnline = () => {
+      // CRITICAL: Only emit online if session logic is READY and isOnline state is TRUE
+      if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
+        if (socket.connected) {
+          console.log(`[Socket] 🌐 Registering expert ${actualUserId} as online...`);
+          socket.emit("expert_online", { userId: Number(actualUserId) });
+        } else {
+          socket.once("connect", () => {
+            if (isOnline) {
+              socket.emit("expert_online", { userId: Number(actualUserId) });
+            }
+          });
+          socket.connect();
+        }
+      }
+    };
+
+    if (isSessionReady) {
+      registerExpertOnline();
     }
 
     const handleReconnection = () => {
-      if (isAuthenticated && actualUserId) {
-        socket.emit("expert_online", { userId: actualUserId });
-      }
+      if (isSessionReady) registerExpertOnline();
     };
     socket.on("connect", handleReconnection);
 
