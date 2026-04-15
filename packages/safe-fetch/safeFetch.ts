@@ -54,6 +54,11 @@ export interface SafeFetchInstance {
     init?: SafeFetchInit,
   ) => Promise<Result<T>>;
   delete: <T>(url: string, init?: SafeFetchInit) => Promise<Result<T>>;
+  upload: <T>(
+    url: string,
+    body: FormData,
+    init?: SafeFetchInit,
+  ) => Promise<Result<T>>;
   /** Extend the instance with additional config (returns a new instance) */
   extend: (config: SafeFetchInstanceConfig) => SafeFetchInstance;
 }
@@ -209,6 +214,9 @@ export function createSafeFetchInstance(
 
   instance.delete = <T>(url: string, init?: SafeFetchInit) =>
     executeFetch<T>(url, { method: "DELETE", ...init }, config);
+
+  instance.upload = <T>(url: string, body: FormData, init?: SafeFetchInit) =>
+    executeFetch<T>(url, { ...withBody("POST", body), ...init }, config);
 
   /** Inherit config and override with new values — headers are merged, not replaced */
   instance.extend = (overrides: SafeFetchInstanceConfig) =>
