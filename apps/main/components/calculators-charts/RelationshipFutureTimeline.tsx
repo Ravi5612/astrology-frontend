@@ -139,7 +139,7 @@ const TimelineCard: React.FC<{
 
 const RelationshipFutureTimeline: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = relationshipFutureTranslations[lang as keyof typeof relationshipFutureTranslations] || relationshipFutureTranslations.en;
+  const t = relationshipFutureTranslations[lang as "en" | "hi"] || relationshipFutureTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [yourName, setYourName] = useState<string>("");

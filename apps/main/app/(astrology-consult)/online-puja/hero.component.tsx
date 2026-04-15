@@ -6,7 +6,7 @@ import { pujaTranslations } from "@/lib/translations/puja";
 
 const HeroSection = () => {
   const { lang } = useLanguageStore();
-  const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en).hero;
+  const t = (pujaTranslations[lang as "en" | "hi"] || pujaTranslations.en).hero;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   return (

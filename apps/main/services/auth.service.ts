@@ -4,6 +4,7 @@ import { ApiError } from "@repo/safe-fetch";
 
 export interface ClientUser {
     id: number;
+    uid?: string;
     name?: string;
     email?: string;
     role?: string;

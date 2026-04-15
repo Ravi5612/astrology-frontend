@@ -25,7 +25,7 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
   handleCalculate,
 }) => {
   const { lang } = useLanguageStore();
-  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const translationSet = (homeTranslations[lang as "en" | "hi"] || homeTranslations.en) as any;
   const t = translationSet.calculators.luckyVibes;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
@@ -108,9 +108,8 @@ const LuckyVibesForm: React.FC<LuckyVibesFormProps> = ({
                 <button
                   type="submit"
                   disabled={loading || !canCalculate}
-                  style={{ borderRadius: "9999px" }}
                   className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
-                  style={fontStyle}
+                  style={{ borderRadius: "9999px", ...fontStyle }}
                 >
                   {loading ? <FaSpinner className="animate-spin" /> : <TbCrystalBall size={18} />}
                   {loading ? t.form.btnGenerating : t.form.btnCalculate}

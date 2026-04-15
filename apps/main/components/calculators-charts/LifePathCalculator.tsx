@@ -58,7 +58,7 @@ const reduceLifePath = (n: number): LifePathNumber => {
 
 const NumerologyLifePathCalculator: React.FC = () => {
   const { lang } = useLanguageStore();
-  const t = lifePathTranslations[lang as keyof typeof lifePathTranslations] || lifePathTranslations.en;
+  const t = lifePathTranslations[lang as "en" | "hi"] || lifePathTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [dob, setDob] = useState<string>(""); // required

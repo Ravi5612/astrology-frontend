@@ -46,7 +46,7 @@ const hashSeed = (str: string): number => {
 
 const NakshatraFinder: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = nakshatraFinderTranslations[lang as keyof typeof nakshatraFinderTranslations] || nakshatraFinderTranslations.en;
+  const t = nakshatraFinderTranslations[lang as "en" | "hi"] || nakshatraFinderTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [dob, setDob] = useState<string>("");

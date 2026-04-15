@@ -59,7 +59,7 @@ const getBirthYearFromDob = (dob: string): number | null => {
 
 const MarriageAgeCalculator: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = marriageAgeTranslations[lang as keyof typeof marriageAgeTranslations] || marriageAgeTranslations.en;
+  const t = marriageAgeTranslations[lang as "en" | "hi"] || marriageAgeTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [name, setName] = useState<string>("");
