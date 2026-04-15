@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getExpertReviews, Review } from "@/libs/api-experts";
 import { Expert } from "@/lib/types";
 
-export const useExpertDetails = (expertId: string) => {
+export const useExpertDetails = (expertId: string, userId?: string) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -13,6 +13,7 @@ export const useExpertDetails = (expertId: string) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [totalReviews, setTotalReviews] = useState(0);
+  const [isAvailable, setIsAvailable] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,6 +34,30 @@ export const useExpertDetails = (expertId: string) => {
     }
   }, [activeTab, expertId]);
 
+  // Real-time status sync via Socket
+  useEffect(() => {
+    const { socket } = require("@/lib/socket");
+
+    const handleStatusSync = (data: any) => {
+      const expertIdFromEvent = data.expert_id || data.id || data.userId;
+      
+      // Check both IDs for a match (expert profile id and user id)
+      const isMatch = String(expertIdFromEvent) === String(expertId) || 
+                      (userId && String(expertIdFromEvent) === String(userId));
+
+      if (isMatch) {
+        console.log(`[Presence] Expert Detail Page: Expert ${expertId} status changed to ${data.is_available ? 'Online' : 'Offline'}`);
+        setIsAvailable(data.is_available);
+      }
+    };
+
+    socket.on("expert_status_changed", handleStatusSync);
+
+    return () => {
+      socket.off("expert_status_changed", handleStatusSync);
+    };
+  }, [expertId, userId]);
+
   const handleChatClick = () => {
     router.push(`/chat/prep/${expertId}`);
   };
@@ -43,7 +68,8 @@ export const useExpertDetails = (expertId: string) => {
     selectedImage, setSelectedImage,
     activeTab, setActiveTab,
     reviews, loadingReviews, totalReviews,
-    handleChatClick
+    handleChatClick,
+    isAvailable, setIsAvailable
   };
 };
 

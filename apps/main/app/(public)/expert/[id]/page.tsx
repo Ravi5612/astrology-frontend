@@ -55,6 +55,7 @@ export default async function Page({
     // Normalize expert
     const expert = {
       id: expertData.id,
+      userId: expertData.user_id || expertData.userId || expertData.user?.id,
       name: expertData.user?.name || expertData.name || "Expert",
       image: expertData.user?.avatar || expertData.avatar || expertData.image || "/images/dummy-expert.jpg",
       expertise: expertData.specialization || expertData.expertise || "",

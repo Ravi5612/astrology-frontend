@@ -29,7 +29,16 @@ export default function ExpertDetailsClient({
     loadingReviews,
     totalReviews,
     handleChatClick,
-  } = useExpertDetails(String(expert.id!));
+    isAvailable,
+    setIsAvailable,
+  } = useExpertDetails(String(expert.id!), String(expert.userId || ''));
+
+  // Initialize with the data from the server-side fetch
+  React.useEffect(() => {
+    if (expert.is_available !== undefined) {
+      setIsAvailable(expert.is_available);
+    }
+  }, [expert.is_available, setIsAvailable]);
 
   return (
     <>
@@ -37,12 +46,14 @@ export default function ExpertDetailsClient({
         <div className="flex flex-col lg:flex-row gap-8">
           <ExpertProfileCard
             expert={expert}
+            isAvailable={isAvailable}
             onChatClick={handleChatClick}
             onVideoClick={(url) => setSelectedVideo(url)}
           />
 
           <ExpertContentSection
             expert={expert}
+            isAvailable={isAvailable}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             reviews={reviews}

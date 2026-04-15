@@ -10,6 +10,7 @@ const Image = NextImage as any;
 
 interface ExpertContentSectionProps {
   expert: Expert;
+  isAvailable?: boolean;
   activeTab: 'about' | 'experience' | 'reviews' | 'gallery' | 'videos';
   setActiveTab: (tab: 'about' | 'experience' | 'reviews' | 'gallery' | 'videos') => void;
   reviews: Review[];
@@ -21,6 +22,7 @@ interface ExpertContentSectionProps {
 
 const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
   expert,
+  isAvailable = false,
   activeTab,
   setActiveTab,
   reviews,
@@ -43,9 +45,9 @@ const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
         <div className="flex items-center justify-between border-b border-orange/10 pb-4 mb-6">
           <h4 className="text-xl font-bold text-gray-900">Profile Details</h4>
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full animate-pulse ${expert.is_available ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-            <span className={`text-xs font-semibold uppercase tracking-wide ${expert.is_available ? 'text-green-600' : 'text-gray-500'}`}>
-              {expert.is_available ? 'Online' : 'Offline'}
+            <span className={`w-2 h-2 rounded-full animate-pulse ${isAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+            <span className={`text-xs font-semibold uppercase tracking-wide ${isAvailable ? 'text-green-600' : 'text-gray-500'}`}>
+              {isAvailable ? 'Online' : 'Offline'}
             </span>
           </div>
         </div>
@@ -126,7 +128,13 @@ const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
                         <div>
                           <h5 className="font-bold text-sm text-gray-900">{review.user.name}</h5>
                           <p className="text-[10px] text-gray-400 font-medium">
-                            {new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            {(() => {
+                              const dateStr = (review as any).createdAt || (review as any).created_at || (review as any).date;
+                              const date = new Date(dateStr);
+                              return isNaN(date.getTime()) 
+                                ? "Recently" 
+                                : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                            })()}
                           </p>
                         </div>
                       </div>
@@ -203,20 +211,24 @@ const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-3 mb-5">
-          <button className="flex-1 min-w-[140px] px-6 py-3 bg-orange text-white rounded-xl hover:bg-orange-hover transition-colors font-semibold text-sm shadow-orange/20 shadow-lg active:scale-95 flex items-center justify-center gap-2">
-            <i className="fa-regular fa-bell"></i>
-            Notify Me
-          </button>
-          <button className="flex-1 min-w-[140px] px-6 py-3 border border-orange text-orange rounded-xl hover:bg-orange/5 transition-colors font-semibold text-sm flex items-center justify-center gap-2 active:scale-95">
-            <i className="fa-regular fa-envelope"></i>
-            Message
-          </button>
-        </div>
-        <p className="text-[11px] text-orange flex items-center gap-2 py-2.5 px-4 bg-orange/5 rounded-xl border border-orange/20">
-          <i className="fa-solid fa-circle-info"></i>
-          Get an email alert instantly when the expert comes online.
-        </p>
+        {!isAvailable && (
+          <div className="flex flex-wrap gap-3 mb-5 animate-in fade-in duration-500">
+            <button className="flex-1 min-w-[140px] px-6 py-3 bg-orange text-white rounded-xl hover:bg-orange-hover transition-colors font-semibold text-sm shadow-orange/20 shadow-lg active:scale-95 flex items-center justify-center gap-2">
+              <i className="fa-regular fa-bell"></i>
+              Notify Me
+            </button>
+            <button className="flex-1 min-w-[140px] px-6 py-3 border border-orange text-orange rounded-xl hover:bg-orange/5 transition-colors font-semibold text-sm flex items-center justify-center gap-2 active:scale-95">
+              <i className="fa-regular fa-envelope"></i>
+              Message
+            </button>
+          </div>
+        )}
+        {!isAvailable && (
+          <p className="text-[11px] text-orange flex items-center gap-2 py-2.5 px-4 bg-orange/5 rounded-xl border border-orange/20 animate-in fade-in duration-500">
+            <i className="fa-solid fa-circle-info"></i>
+            Get an email alert instantly when the expert comes online.
+          </p>
+        )}
       </div>
     </div>
   );
