@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { CheckCircle, X } from "lucide-react";
-import NextImage from "next/image";
 
 interface VerificationPopupProps {
   isOpen: boolean;
@@ -25,31 +25,35 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
 }) => {
   const [isRendered, setIsRendered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // SSR guard — portals need document to be available
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       setIsRendered(true);
-      // Small delay to allow element to be mounted before triggering transition
       const timer = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
-      const timer = setTimeout(() => setIsRendered(false), 300); // Wait for transition out
+      const timer = setTimeout(() => setIsRendered(false), 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  if (!isRendered) return null;
+  if (!isRendered || !isMounted) return null;
 
-  return (
+  const modal = (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
+      style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
+      className={`transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
         onClick={onClose}
       />
 
@@ -74,7 +78,7 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
           <h3 className="text-2xl font-black text-gray-900 mb-2">
             {title}
           </h3>
-          
+
           <div className="text-gray-600 mb-6 leading-relaxed">
             {description || (
               <>
@@ -96,5 +100,7 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 };
 

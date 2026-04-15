@@ -74,7 +74,7 @@ const reduceNumber = (n: number): NameNumber => {
 
 const NameNumerologyCalculator: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = nameNumerologyTranslations[lang as keyof typeof nameNumerologyTranslations] || nameNumerologyTranslations.en;
+  const t = nameNumerologyTranslations[lang as "en" | "hi"] || nameNumerologyTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [fullName, setFullName] = useState<string>("");

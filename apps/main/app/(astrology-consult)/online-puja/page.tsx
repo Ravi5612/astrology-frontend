@@ -13,7 +13,7 @@ import { pujaTranslations } from "@/lib/translations/puja";
 
 const OnlinePujaPage = () => {
     const { lang } = useLanguageStore();
-    const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en);
+    const t = (pujaTranslations[lang as "en" | "hi"] || pujaTranslations.en);
     const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
     const [pujas, setPujas] = useState<ExpertPuja[]>([]);

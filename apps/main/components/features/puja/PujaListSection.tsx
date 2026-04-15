@@ -9,7 +9,7 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import { PujaCard } from "./PujaCard";
 import { useLanguageStore } from "@/store/languageStore";
-import { pujaTranslations } from "@/lib/translations/puja";
+import { pujaTranslations, pujaContent } from "@/lib/translations/puja";
 import { Swiper as SwiperComp, SwiperSlide as SwiperSlideComp } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -20,11 +20,8 @@ const SwiperSlide = SwiperSlideComp as any;
 
 const PujaListSection = () => {
     const { lang } = useLanguageStore();
-    const anyPujaTranslations = pujaTranslations as any;
-    const translationSet = anyPujaTranslations[lang] || anyPujaTranslations.en;
-    const t = translationSet;
-    const pujaContentMap = anyPujaTranslations.pujaContent;
-    const pujaContent = pujaContentMap[lang] || pujaContentMap.en;
+    const t = pujaTranslations[lang as "en" | "hi"] || pujaTranslations.en;
+    const content = (pujaContent[lang as "en" | "hi"] || pujaContent.en) || {};
     const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
     
     const [pujas, setPujas] = useState<ExpertPuja[]>([]);

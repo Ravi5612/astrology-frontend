@@ -88,7 +88,7 @@ const pickUniqueInitials = (seed: number): string[] => {
 
 const SoulmateInitialFinder: React.FC = () => {
   const { lang } = useLanguageStore();
-  const t = soulmateInitialsTranslations[lang as keyof typeof soulmateInitialsTranslations] || soulmateInitialsTranslations.en;
+  const t = soulmateInitialsTranslations[lang as "en" | "hi"] || soulmateInitialsTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [name, setName] = useState<string>("");

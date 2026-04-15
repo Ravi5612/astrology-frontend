@@ -91,7 +91,7 @@ const ProgressBar: React.FC<ProgressBarProps & { fontStyle?: any }> = ({ label, 
 
 const LoveCompatibilityCalcultor: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = loveCompatibilityTranslations[lang as keyof typeof loveCompatibilityTranslations] || loveCompatibilityTranslations.en;
+  const t = loveCompatibilityTranslations[lang as "en" | "hi"] || loveCompatibilityTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [maleName, setMaleName] = useState<string>("");

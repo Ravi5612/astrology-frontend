@@ -112,6 +112,7 @@ const SignUpForm: React.FC = () => {
     };
 
     return (
+        <>
         <div className="w-full max-w-[500px] mx-auto bg-white rounded-3xl shadow-[0_10px_50px_rgba(0,0,0,0.06)] border border-gray-100 p-6 md:p-10 mt-0 mb-16">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-gray-50">
                 <div>
@@ -273,12 +274,13 @@ const SignUpForm: React.FC = () => {
             </form>
 
             {/* Verification Popup */}
-            <VerificationPopup
-                isOpen={showVerification}
-                email={registeredEmail}
-                onClose={() => setShowVerification(false)}
-            />
         </div>
+        <VerificationPopup
+            isOpen={showVerification}
+            email={registeredEmail}
+            onClose={() => setShowVerification(false)}
+        />
+        </>
     );
 };
 

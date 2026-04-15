@@ -66,7 +66,7 @@ const getReasonByScore = (score: number, t: any) => {
 
 const LoyalPartnerCalculator: React.FC = () => {
   const { lang, toggleLang } = useLanguageStore();
-  const t = loyalPartnerTranslations[lang as keyof typeof loyalPartnerTranslations] || loyalPartnerTranslations.en;
+  const t = loyalPartnerTranslations[lang as "en" | "hi"] || loyalPartnerTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const [yourName, setYourName] = useState("");

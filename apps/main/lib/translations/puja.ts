@@ -98,23 +98,25 @@ export const pujaTranslations = {
             btnBack: "होम पर वापस जाएं",
             btnNotify: "मुझे सूचित करें"
         }
-    },
-    pujaContent: {
-        en: {
-            "Griha Pravesh Puja": "Griha Pravesh Puja",
-            "Navagraha Shanti Puja": "Navagraha Shanti Puja",
-            "Vastu Shanti Puja": "Vastu Shanti Puja",
-            "Laxmi-Kuber Puja": "Laxmi-Kuber Puja",
-            "Ganesh Puja": "Ganesh Puja",
-            "Satyanarayan Puja": "Satyanarayan Puja",
-        },
-        hi: {
-            "Griha Pravesh Puja": "गृह प्रवेश पूजा",
-            "Navagraha Shanti Puja": "नवग्रह शांति पूजा",
-            "Vastu Shanti Puja": "वास्तु शांति पूजा",
-            "Laxmi-Kuber Puja": "लक्ष्मी-कुबेर पूजा",
-            "Ganesh Puja": "गणेश पूजा",
-            "Satyanarayan Puja": "सत्यनारायण पूजा",
-        }
     }
 };
+
+export const pujaContent = {
+    en: {
+        "Griha Pravesh Puja": "Griha Pravesh Puja",
+        "Navagraha Shanti Puja": "Navagraha Shanti Puja",
+        "Vastu Shanti Puja": "Vastu Shanti Puja",
+        "Laxmi-Kuber Puja": "Laxmi-Kuber Puja",
+        "Ganesh Puja": "Ganesh Puja",
+        "Satyanarayan Puja": "Satyanarayan Puja",
+    },
+    hi: {
+        "Griha Pravesh Puja": "गृह प्रवेश पूजा",
+        "Navagraha Shanti Puja": "नवग्रह शांति पूजा",
+        "Vastu Shanti Puja": "वास्तु शांति पूजा",
+        "Laxmi-Kuber Puja": "लक्ष्मी-कुबेर पूजा",
+        "Ganesh Puja": "गणेश पूजा",
+        "Satyanarayan Puja": "सत्यनारायण पूजा",
+    }
+};
+

@@ -30,9 +30,11 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  const displayUid = clientUser?.uid || clientUser?.id;
+
   const handleCopy = () => {
-    if (clientUser?.uid) {
-      navigator.clipboard.writeText(clientUser.uid);
+    if (displayUid) {
+      navigator.clipboard.writeText(String(displayUid));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -125,9 +127,9 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
                   fontFamily: "monospace",
                 }}
               >
-                {clientUser?.uid || t.personalDetails.notAssigned}
+                {displayUid || t.personalDetails.notAssigned}
               </span>
-              {clientUser?.uid && (
+              {displayUid && (
                 <button
                   type="button"
                   title={

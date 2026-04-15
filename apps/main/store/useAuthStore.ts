@@ -129,6 +129,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (raw?.user?.id) {
             user = {
                 id: raw.user.id,
+                uid: raw.user.uid || raw.uid,
                 name: raw.user.name,
                 email: raw.user.email,
                 roles: raw.user.roles || [],
@@ -138,6 +139,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } else if (raw?.id) {
             user = {
                 id: raw.id,
+                uid: raw.uid,
                 name: raw.full_name || raw.name || "User",
                 email: raw.email || "",
                 roles: raw.roles || [],

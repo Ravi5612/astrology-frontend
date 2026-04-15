@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@repo/ui';
 import http from '@/lib/api';
 
@@ -15,6 +16,11 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Reset all state every time modal opens
     useEffect(() => {
@@ -26,7 +32,7 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         }
     }, [isOpen]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !isMounted) return null;
 
     const handleSendOtp = async () => {
         setLoading(true);
@@ -64,10 +70,10 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         setLoading(false);
     };
 
-    return (
-        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content border-0 shadow" style={{ borderRadius: '16px' }}>
+    const modalContent = (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', overflowX: 'hidden', overflowY: 'auto', outline: 0 }} tabIndex={-1}>
+            <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '400px', margin: '1.75rem auto', minHeight: 'calc(100% - 3.5rem)', display: 'flex', alignItems: 'center' }}>
+                <div className="modal-content border-0 shadow w-100" style={{ borderRadius: '16px' }}>
                     <div className="modal-header border-0 pb-0">
                         <h5 className="modal-title fw-bold">Verify Phone Number</h5>
                         <button type="button" className="btn-close" onClick={onClose}></button>
@@ -87,7 +93,7 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
                                 <Button
                                     loading={loading}
                                     onClick={handleSendOtp}
-                                    className="w-100 mb-2 py-2"
+                                    className="w-100 mb-2 py-2 shadow-sm"
                                     variant="primary"
                                 >
                                     Send Verification Code
@@ -135,6 +141,8 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
             </div>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 };
 
 export default PhoneVerifyModal;

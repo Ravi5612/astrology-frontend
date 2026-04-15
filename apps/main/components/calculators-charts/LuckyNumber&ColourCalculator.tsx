@@ -41,7 +41,7 @@ const LuckyColorNumberCalculator: React.FC = () => {
   } = useLuckyVibes();
 
   const { lang } = useLanguageStore();
-  const translationSet = (homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en) as any;
+  const translationSet = (homeTranslations[lang as "en" | "hi"] || homeTranslations.en) as any;
   const t = translationSet.calculators.luckyVibes;
 
   const resultsRef = useRef<HTMLDivElement | null>(null);

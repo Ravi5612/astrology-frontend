@@ -10,7 +10,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
-import { pujaTranslations } from "@/lib/translations/puja";
+import { pujaTranslations, pujaContent } from "@/lib/translations/puja";
 
 const LikeButton = ({ pujaId, initialLikes, t, fontStyle }: { pujaId: number; initialLikes: number; t: any; fontStyle: any }) => {
     const { isClientAuthenticated } = useAuthStore();
@@ -53,11 +53,9 @@ interface PujaCardProps {
 
 export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
     const { lang } = useLanguageStore();
-    const anyPujaTranslations = pujaTranslations as any;
-    const translationSet = anyPujaTranslations[lang] || anyPujaTranslations.en;
+    const translationSet = (pujaTranslations[lang as "en" | "hi"] || pujaTranslations.en) as any;
     const t = translationSet.card;
-    const pujaContentMap = anyPujaTranslations.pujaContent;
-    const content = (pujaContentMap[lang] || pujaContentMap.en) || {};
+    const content = (pujaContent[lang as "en" | "hi"] || pujaContent.en) || {};
     const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
     const localizedName = content[puja.name] || puja.name;
