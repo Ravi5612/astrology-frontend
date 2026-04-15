@@ -95,15 +95,18 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                         {t.date}
                       </span>
                       <span className="font-bold text-gray-900">
-                        {session.createdAt || session.created_at
-                          ? new Date(
-                              session.createdAt || session.created_at
-                            ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })
-                          : t.na}
+                        {(() => {
+                          const dateVal = session.createdAt || session.created_at;
+                          if (!dateVal) return t.na;
+                          const d = new Date(dateVal);
+                          return isNaN(d.getTime())
+                            ? t.na
+                            : d.toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              });
+                        })()}
                       </span>
                     </div>
                     <div>

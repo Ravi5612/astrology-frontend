@@ -309,6 +309,19 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
       };
     }
   }, [showLanguageDropdown, showProfileDropdown, showNotificationDropdown, isMenuOpen]);
+ 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isClient && isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      // If using Lenis or similar, you might need to add a class
+      document.body.classList.add('no-scroll');
+      return () => {
+        document.body.style.overflow = '';
+        document.body.classList.remove('no-scroll');
+      };
+    }
+  }, [isClient, isMenuOpen]);
 
   return (
     <>
@@ -688,12 +701,13 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                 </button>
 
                 {/* Nav links */}
-                <div
+                 <div
+                  data-lenis-prevent
                   className={`lg:flex lg:items-center lg:justify-center lg:flex-1 ${isMenuOpen
-                    ? 'block absolute left-0 right-0 bg-white w-full shadow-sm border-t z-[1000] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+                    ? 'block absolute left-0 right-0 bg-brown w-full shadow-2xl border-t border-white/10 z-[1000] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
                     : 'hidden'
                     }`}
-                  style={isMenuOpen ? { top: '100%', maxHeight: '80vh', overflowY: 'auto' } : {}}
+                  style={isMenuOpen ? { top: '100%', maxHeight: 'calc(100vh - 70px)', overflowY: 'auto', overscrollBehavior: 'contain' } : {}}
                 >
                   <ul
                     className={`flex items-center gap-2 xl:gap-8 translate-y-2 ${isMenuOpen
@@ -702,9 +716,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                       }`}
                   >
                     {/* Home */}
-                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
+                    <li className={isMenuOpen ? 'w-full border-b border-white/5' : ''}>
                       <Link
-                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
+                        className={`text-[15px] no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors ${isMenuOpen ? 'text-white/90' : 'text-[#1e0b0f]'}`}
                         href="/"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -713,9 +727,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </li>
 
                     {/* Daily Horoscope */}
-                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
+                    <li className={isMenuOpen ? 'w-full border-b border-white/5' : ''}>
                       <Link
-                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
+                        className={`text-[15px] no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors ${isMenuOpen ? 'text-white/90' : 'text-[#1e0b0f]'}`}
                         href={PATHS.HOROSCOPE}
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -724,17 +738,17 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </li>
 
                     {/* Astrology Consult dropdown */}
-                    <li className={`relative group ${isMenuOpen ? 'w-full border-b' : ''}`}>
+                    <li className={`relative group ${isMenuOpen ? 'w-full border-b border-white/5' : ''}`}>
                       {isMenuOpen ? (
                         /* Mobile accordion toggle */
                         <>
                           <button
-                            className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium w-full text-left bg-transparent border-0 flex justify-between items-center"
+                            className={`text-[15px] no-underline px-3 py-[10px] font-medium w-full text-left bg-transparent border-0 flex justify-between items-center ${isMenuOpen ? 'text-white/90' : 'text-[#1e0b0f]'}`}
                             onClick={() => setShowMobileSubMenu(!showMobileSubMenu)}
                           >
                             {t.navAstrologyConsult}
                             <i
-                              className={`fa-solid fa-chevron-${showMobileSubMenu ? 'up' : 'down'} text-gray-400`}
+                              className={`fa-solid fa-chevron-${showMobileSubMenu ? 'up' : 'down'} ${isMenuOpen ? 'text-white/40' : 'text-gray-400'}`}
                               style={{ fontSize: '12px' }}
                             />
                           </button>
@@ -757,15 +771,15 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 { label: t.dropBreakup, href: PATHS.BREAKUP_PATCHUP_CALCULATOR },
                                 { label: t.dropOnlinePuja, href: PATHS.ONLINE_PUJA },
                               ].map((item) => (
-                                <li key={item.href} className="py-1">
-                                  <Link
-                                    href={item.href}
-                                    className="no-underline text-gray-800 hover:text-orange-600"
-                                    style={{ fontSize: '14px' }}
-                                    onClick={() => { setIsMenuOpen(false); setShowMobileSubMenu(false); }}
-                                  >
-                                    {item.label}
-                                  </Link>
+                                  <li key={item.href} className="py-2.5 border-b border-white/5 last:border-0 ml-4">
+                                    <Link
+                                      href={item.href}
+                                      className="no-underline text-white/70 hover:text-orange transition-all"
+                                      style={{ fontSize: '14px' }}
+                                      onClick={() => { setIsMenuOpen(false); setShowMobileSubMenu(false); }}
+                                    >
+                                      {item.label}
+                                    </Link>
                                 </li>
                               ))}
                             </ul>
@@ -818,9 +832,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </li>
 
                     {/* Famous Places */}
-                    <li className={isMenuOpen ? 'w-full border-b' : ''}>
+                    <li className={isMenuOpen ? 'w-full border-b border-white/5' : ''}>
                       <Link
-                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
+                        className={`text-[15px] no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors ${isMenuOpen ? 'text-white/90' : 'text-[#1e0b0f]'}`}
                         href={PATHS.FAMOUS_PLACES}
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -831,7 +845,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     {/* Live Darshan */}
                     <li className={isMenuOpen ? 'w-full' : ''}>
                       <Link
-                        className="text-[15px] text-[#1e0b0f] no-underline px-3 py-[7px] font-medium block hover:text-orange-600 transition-colors"
+                        className={`text-[15px] no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors ${isMenuOpen ? 'text-white/90' : 'text-[#1e0b0f]'}`}
                         href={PATHS.LIVE_DARSHAN}
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -976,20 +990,23 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+              className="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center border-0 close-modal-btn"
               style={{
                 position: 'absolute',
-                top: '-15px',
-                right: '-15px',
+                top: '10px',
+                right: '10px',
                 width: '35px',
                 height: '35px',
                 zIndex: 10,
-                border: '1px solid #ddd',
-                backgroundColor: '#fff'
+                backgroundColor: '#f25e0a',
+                color: '#fff',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                borderRadius: '50%'
               }}
               onClick={() => setShowImageModal(false)}
             >
-              <i className="fa-solid fa-xmark text-dark fs-5"></i>
+              <i className="fa-solid fa-xmark fs-5"></i>
             </button>
 
             <div
@@ -1016,6 +1033,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             @keyframes zoomIn {
               from { opacity: 0; transform: scale(0.9); }
               to { opacity: 1; transform: scale(1); }
+            }
+            .close-modal-btn:hover {
+              transform: rotate(90deg) scale(1.1);
+              background-color: #301118 !important;
             }
           `}</style>
         </div>

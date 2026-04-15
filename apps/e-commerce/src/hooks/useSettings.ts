@@ -11,12 +11,18 @@ export const useMerchantProfile = () => {
     queryFn: async () => {
       const [data, error] = await settingsService.getProfile();
       if (error) {
-        const message = (error as any).message || "Failed to fetch profile";
+        const body = (error as any).body;
+        const message = body?.message 
+          ? (Array.isArray(body.message) ? body.message[0] : body.message)
+          : (error as any).message || "Failed to fetch profile";
         throw new Error(message);
       }
-      return data;
+      return {
+        profile: data?.data,
+        exists: data?.exists ?? false
+      };
     },
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 0, // Ensure real-time status updates are reflected
   });
 };
 
@@ -30,7 +36,10 @@ export const useUpdateProfile = () => {
     mutationFn: async (formData: FormData) => {
       const [data, error] = await settingsService.updateProfile(formData);
       if (error) {
-        const message = (error as any).message || "Failed to update profile";
+        const body = (error as any).body;
+        const message = body?.message 
+          ? (Array.isArray(body.message) ? body.message[0] : body.message)
+          : (error as any).message || "Failed to update profile";
         throw new Error(message);
       }
       return data;
@@ -38,6 +47,37 @@ export const useUpdateProfile = () => {
     onSuccess: () => {
       toast.success("Profile updated successfully!");
       queryClient.invalidateQueries({ queryKey: ['merchant-profile'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    }
+  });
+};
+
+/**
+ * Hook to toggle merchant online status
+ */
+export const useUpdateOnlineStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (isOnline: boolean) => {
+      console.log(`📤 Sending Online Toggle: ${isOnline}`);
+      const [data, error] = await settingsService.updateOnlineStatus(isOnline);
+      if (error) {
+        console.error("❌ Online Toggle API Error:", error);
+        const body = (error as any).body;
+        const message = body?.message 
+          ? (Array.isArray(body.message) ? body.message[0] : body.message)
+          : (error as any).message || "Failed to update online status";
+        throw new Error(message);
+      }
+      console.log("✅ Online Toggle API Success:", data);
+      return data;
+    },
+    onSuccess: (_, isOnline) => {
+      toast.success(`You are now ${isOnline ? 'Online' : 'Offline'}`);
+      queryClient.invalidateQueries({ queryKey: ["merchant-profile"] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -54,7 +94,10 @@ export const useMerchantProducts = () => {
     queryFn: async () => {
       const [data, error] = await settingsService.getProducts();
       if (error) {
-        const message = (error as any).message || "Failed to fetch products";
+        const body = (error as any).body;
+        const message = body?.message 
+          ? (Array.isArray(body.message) ? body.message[0] : body.message)
+          : (error as any).message || "Failed to fetch products";
         throw new Error(message);
       }
       return data;

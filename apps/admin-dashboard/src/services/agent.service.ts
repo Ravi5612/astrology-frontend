@@ -109,3 +109,33 @@ export const markCommissionPaid = async (id: number) => {
     const [data] = await api.patch<any>(`/admin/commissions/${id}/pay`);
     return data;
 };
+
+// ─── Self-Registered Merchants ────────────────────────────────────────────────
+export const getAdminMerchantProfiles = async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+}) => {
+    const [data] = await api.get<{ merchants: any[]; total: number }>("/admin/merchants", {
+        params: {
+            page: params?.page || 1,
+            limit: params?.limit || 10,
+            search: params?.search,
+            status: params?.status === "" ? undefined : params?.status
+        }
+    });
+    // Return unified structure
+    return {
+        data: (data as any)?.merchants || (data as any)?.data || [],
+        total: (data as any)?.total || 0
+    };
+};
+
+export const updateMerchantProfileStatus = async (
+    id: string | number,
+    status: string
+) => {
+    const [data] = await api.patch<any>(`/admin/merchants/${id}/status`, { status });
+    return data;
+};

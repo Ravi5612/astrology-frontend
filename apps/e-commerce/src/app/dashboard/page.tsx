@@ -9,6 +9,7 @@ import { ActivityFeed } from "@/features/shop-dashboard/components/ActivityFeed"
 import { RecentOrders } from "@/features/shop-dashboard/components/RecentOrders";
 import { ReviewsOverview } from "@/features/shop-dashboard/components/ReviewsOverview";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useMerchantProfile } from "@/hooks/useSettings";
 
 async function fetchStats() {
   const res = await fetch("/api/v1/merchant/stats", { credentials: "include" });
@@ -37,7 +38,10 @@ async function fetchPerformance() {
 export default function DashboardHome() {
   const [currentDate, setCurrentDate] = useState("");
   const { user } = useAuthStore();
-  const kycStatus = (user as any)?.kycStatus ?? "pending";
+  const { data: profileData } = useMerchantProfile();
+  
+  // Real-time status from API, falling back to static user object
+  const status = profileData?.profile?.status ?? (user as any)?.status ?? "pending_verification";
 
   useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString("en-US", {
@@ -105,7 +109,7 @@ export default function DashboardHome() {
 
       {/* KYC Status Banners */}
       <AnimatePresence>
-        {kycStatus === "pending" && (
+        {status === "pending_verification" && (
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-orange-50 border-2 border-orange-100 rounded-[2rem] p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-sm">
             <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-xl shadow-orange-500/20">
               <AlertTriangle className="w-7 h-7" />
@@ -125,7 +129,7 @@ export default function DashboardHome() {
             </button>
           </motion.div>
         )}
-        {kycStatus === "active" && (
+        {status === "active" && (
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-sm">
             <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-xl shadow-emerald-500/20">
               <CheckCircle className="w-7 h-7" />

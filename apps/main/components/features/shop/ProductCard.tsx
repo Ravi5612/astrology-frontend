@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
     e.stopPropagation();
 
     if (!isClientAuthenticated) {
-      toast.error("Please login first to use wishlist", {
+      toast.error(t.products.toastWishlist, {
         onClick: () => router.push("/sign-in"),
         autoClose: 3000,
         style: { cursor: 'pointer' }
@@ -66,7 +66,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
     e.stopPropagation();
 
     if (!isClientAuthenticated) {
-      toast.error("Please login first to buy products", {
+      toast.error(t.products.toastBuyProducts, {
         onClick: () => router.push("/sign-in"),
         autoClose: 3000,
         style: { cursor: 'pointer' }
@@ -85,9 +85,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
       {/* 🔥 Top Header: Offer Tag (Left) & Heart Icon (Right) */}
       {percentageOff > 0 && (
         <div className="absolute top-4 left-4 z-10 animate-in fade-in slide-in-from-left-4 duration-500">
-          <div className="bg-orange text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-orange/20 flex items-center gap-1.5 uppercase tracking-wider">
+          <div className="bg-orange text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-orange/20 flex items-center gap-1.5 uppercase tracking-wider" style={lang === 'hi' ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}>
             <i className="fa-solid fa-fire text-[10px]"></i>
-            {percentageOff}% Off
+            {lang === 'hi' ? `${percentageOff}% ${t.products.off}` : `${percentageOff}% ${t.products.off}`}
           </div>
         </div>
       )}
@@ -149,7 +149,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
             className={`flex-1 ${isCompact ? 'h-11 rounded-xl px-0.5' : 'h-14 rounded-2xl px-1'} border-2 border-gray-100 text-gray-500 font-bold text-[9px] uppercase tracking-wider hover:border-orange hover:text-orange hover:bg-orange/5 transition-all duration-300 flex items-center justify-center gap-1.5 group/btn shadow-sm hover:shadow-md`}
           >
             <i className={`${isCompact ? 'text-sm' : 'text-base'} fa-solid fa-cart-shopping translate-y-[-1px] group-hover/btn:scale-110 transition-transform`}></i>
-            <span className="leading-tight text-left">
+            <span className="leading-tight text-left" style={lang === 'hi' ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}>
               {t.products.addToCart.split(' ').map((word: string, i: number, arr: string[]) => (
                 <React.Fragment key={i}>
                   {word}{i === (arr.length === 3 ? 1 : 0) ? <br /> : ' '}
@@ -174,7 +174,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
             ) : (
               <>
                 <i className={`${isCompact ? 'text-base' : 'text-lg'} fa-solid fa-bolt translate-y-[-1px]`}></i>
-                <span className="leading-tight text-left">
+                <span className="leading-tight text-left" style={lang === 'hi' ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}>
                   {t.products.buyNow.split(' ').map((word: string, i: number, arr: string[]) => (
                     <React.Fragment key={i}>
                       {word}{i === 0 ? <br /> : ' '}

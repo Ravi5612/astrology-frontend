@@ -8,10 +8,18 @@ import { SearchInput, Avatar, NotificationBell } from "@repo/ui";
 import Link from "next/link";
 import { ToastContainer } from "react-toastify";
 
+import { useMerchantProfile, useUpdateOnlineStatus } from "@/hooks/useSettings";
+
 export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isOnline, setIsOnline] = useState(true);
+    
+    // Fetch real profile data
+    const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
+    const updateOnlineStatus = useUpdateOnlineStatus();
+    
+    const isOnline = profileData?.profile?.isOnline ?? false;
+    
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     
@@ -73,10 +81,11 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
                                     {isOnline ? "Online" : "Offline"}
                                 </span>
                                 <button
-                                    onClick={() => setIsOnline(!isOnline)}
+                                    onClick={() => updateOnlineStatus.mutate(!isOnline)}
+                                    disabled={updateOnlineStatus.isPending || isProfileLoading}
                                     className={`relative inline-flex items-center h-6 rounded-full w-11 transition-all duration-300 ${
                                         isOnline ? "bg-green-500" : "bg-red-500"
-                                    }`}
+                                    } ${(updateOnlineStatus.isPending || isProfileLoading) ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
                                     <span className={`inline-block w-4 h-4 transform transition-transform duration-300 bg-white rounded-full shadow-md ${isOnline ? "translate-x-6" : "translate-x-1"}`} />
                                 </button>
@@ -110,7 +119,11 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
                             </div>
 
                             <Link href="/settings" className="shrink-0">
-                                <Avatar src="/images/web-logo.png" alt="Merchant Profile" className="border-2 border-[#fd6410] shadow-md hover:scale-105 transition-transform duration-200 w-10 h-10" />
+                                <Avatar 
+                                    src={profileData?.profile?.image || "/images/web-logo.png"} 
+                                    alt="Merchant Profile" 
+                                    className="border-2 border-[#fd6410] shadow-md hover:scale-105 transition-transform duration-200 w-10 h-10 object-cover" 
+                                />
                             </Link>
                         </div>
                     </div>

@@ -53,8 +53,15 @@ interface PujaCardProps {
 
 export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
     const { lang } = useLanguageStore();
-    const t = (pujaTranslations[lang as keyof typeof pujaTranslations] || pujaTranslations.en).card;
+    const anyPujaTranslations = pujaTranslations as any;
+    const translationSet = anyPujaTranslations[lang] || anyPujaTranslations.en;
+    const t = translationSet.card;
+    const pujaContentMap = anyPujaTranslations.pujaContent;
+    const content = (pujaContentMap[lang] || pujaContentMap.en) || {};
     const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+
+    const localizedName = content[puja.name] || puja.name;
+    const localizedDescription = content[puja.name + "_desc"] || puja.description || t.descriptionFallback;
 
     const getMinCost = (puja: ExpertPuja) => {
         const costs = [
@@ -75,7 +82,7 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
                  {puja.puja_image_url ? (
                     <Image 
                         src={puja.puja_image_url} 
-                        alt={puja.name} 
+                        alt={localizedName} 
                         fill 
                         className="object-cover transition-transform group-hover:scale-105 duration-700"
                     />
@@ -102,8 +109,8 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
             <div className="p-4 sm:p-5 flex flex-col grow">
                 {/* Header: Name + Like */}
                 <div className="flex justify-between items-start gap-2 mb-2">
-                    <h3 className="text-lg font-black text-gray-900 group-hover:text-orange-600 transition-colors leading-tight">
-                        {puja.name}
+                    <h3 className="text-lg font-black text-gray-900 group-hover:text-orange-600 transition-colors leading-tight" style={fontStyle}>
+                        {localizedName}
                     </h3>
                     <div className="pt-0.5">
                         <LikeButton pujaId={puja.id} initialLikes={puja.total_likes || 0} t={t} fontStyle={fontStyle} />
@@ -135,7 +142,7 @@ export const PujaCard: React.FC<PujaCardProps> = ({ puja }) => {
 
                 {/* Description */}
                 <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed h-[40px] mb-4" style={fontStyle}>
-                    {puja.description || t.descriptionFallback}
+                    {localizedDescription}
                 </p>
 
                 {/* Footer: Price + Action */}

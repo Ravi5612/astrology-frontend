@@ -38,8 +38,13 @@
   margin: 4px 0;
 }
 
+.custom-scrollbar-yellow::-webkit-scrollbar-thumb {
+  background: #fd6410;
+  border-radius: 10px !important;
+}
+
 .custom-scrollbar-yellow {
   scrollbar-width: thin !important;
-  scrollbar-color: #2d1111 rgba(162, 161, 159, 0.062);
+  scrollbar-color: #fd6410 rgba(74, 44, 0, 0.2);
   border-radius: 10px !important;
 }

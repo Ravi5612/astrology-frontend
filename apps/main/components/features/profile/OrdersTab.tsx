@@ -131,15 +131,18 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                         {t.date}
                       </span>
                       <span className="font-bold text-gray-900" style={fontStyle}>
-                        {order.date || order.createdAt || order.created_at
-                          ? new Date(
-                              order.createdAt || order.created_at
-                            ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })
-                          : t.na}
+                        {(() => {
+                          const dateVal = order.date || order.createdAt || order.created_at;
+                          if (!dateVal) return t.na;
+                          const d = new Date(dateVal);
+                          return isNaN(d.getTime())
+                            ? t.na
+                            : d.toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              });
+                        })()}
                       </span>
                     </div>
                     <div>

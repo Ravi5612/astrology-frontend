@@ -48,7 +48,7 @@ export default async function RootLayout({
           initialUser = {
             ...payload,
             id: payload.merchantId || payload.id,
-            kycStatus: payload.kycStatus || payload.status,
+            status: payload.status,
             name: payload.shopName || payload.name
           };
         }

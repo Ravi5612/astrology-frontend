@@ -57,7 +57,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2 sticky top-0 bg-white z-10 pb-2 border-b border-gray-50 -mt-2 pt-2">
                 <h4 className="font-semibold text-gray-900">Recent Reviews</h4>
                 {total > 0 && (
                     <span className="text-xs text-gray-400 font-medium">
@@ -66,7 +66,8 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="overflow-y-auto pr-2 custom-scrollbar-yellow" style={{ maxHeight: '300px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {reviews.map((review) => (
                     <div key={review.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
                         <div className="flex justify-between items-start mb-2">
@@ -107,6 +108,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                         </p>
                     </div>
                 ))}
+            </div>
             </div>
 
             {hasMore && (

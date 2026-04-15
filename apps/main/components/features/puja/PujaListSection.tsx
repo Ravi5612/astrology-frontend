@@ -9,6 +9,7 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import { PujaCard } from "./PujaCard";
 import { useLanguageStore } from "@/store/languageStore";
+import { pujaTranslations } from "@/lib/translations/puja";
 import { Swiper as SwiperComp, SwiperSlide as SwiperSlideComp } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -19,10 +20,17 @@ const SwiperSlide = SwiperSlideComp as any;
 
 const PujaListSection = () => {
     const { lang } = useLanguageStore();
+    const anyPujaTranslations = pujaTranslations as any;
+    const translationSet = anyPujaTranslations[lang] || anyPujaTranslations.en;
+    const t = translationSet;
+    const pujaContentMap = anyPujaTranslations.pujaContent;
+    const pujaContent = pujaContentMap[lang] || pujaContentMap.en;
+    const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+    
     const [pujas, setPujas] = useState<ExpertPuja[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedPujaName, setSelectedPujaName] = useState("All Pujas");
+    const [selectedPujaName, setSelectedPujaName] = useState(t.filters.allPujas);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +50,11 @@ const PujaListSection = () => {
         fetchPujasItems();
     }, []);
 
+    // Reset selectedPujaName when language changes to ensure it shows "All Pujas" in correct language
+    useEffect(() => {
+        setSelectedPujaName(t.filters.allPujas);
+    }, [lang, t.filters.allPujas]);
+
     // Close dropdown on click outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -53,13 +66,13 @@ const PujaListSection = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const uniquePujaNames = ["All Pujas", ...Array.from(new Set(pujas.map(p => p.name)))];
+    const uniquePujaNames = [t.filters.allPujas, ...Array.from(new Set(pujas.map(p => p.name)))];
 
     const filteredPujas = pujas.filter(puja => {
         const matchesSearch = puja.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                              (puja.expert?.user?.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
                              (puja.districts?.some(d => d.toLowerCase().includes(searchQuery.toLowerCase())));
-        const matchesDropdown = selectedPujaName === "All Pujas" || puja.name === selectedPujaName;
+        const matchesDropdown = selectedPujaName === t.filters.allPujas || puja.name === selectedPujaName;
         return matchesSearch && matchesDropdown;
     });
 
@@ -78,8 +91,8 @@ const PujaListSection = () => {
             <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
                 <div className="relative mb-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 z-20">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                            Book Sacred Pujas
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={fontStyle}>
+                            {t.page.title} <span className="text-orange-600">{t.page.titleHighlight}</span>
                         </h2>
                         <div className="w-48 h-1 bg-orange-600"></div>
                     </div>
@@ -91,10 +104,11 @@ const PujaListSection = () => {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500/50" />
                             <input 
                                 type="text"
-                                placeholder="Search puja or pandit..."
+                                placeholder={t.filters.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all text-sm placeholder:text-gray-500"
+                                style={fontStyle}
                             />
                         </div>
 
@@ -103,8 +117,9 @@ const PujaListSection = () => {
                             <button 
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 border border-white/10 rounded-xl focus:ring-2 focus:ring-orange-500/20 outline-none text-sm font-bold text-gray-300 transition-all"
+                                style={fontStyle}
                             >
-                                <span className="truncate pr-2">{selectedPujaName}</span>
+                                <span className="truncate pr-2">{selectedPujaName === t.filters.allPujas ? t.filters.allPujas : (pujaContent[selectedPujaName] || selectedPujaName)}</span>
                                 <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180 text-orange-500' : ''}`} />
                             </button>
                             
@@ -118,8 +133,9 @@ const PujaListSection = () => {
                                                 setIsDropdownOpen(false);
                                             }}
                                             className={`w-full text-left px-4 py-2.5 text-sm hover:bg-orange-600 hover:text-white transition-colors ${selectedPujaName === name ? 'text-orange-500 bg-black/20 font-bold' : 'text-gray-400 font-medium'}`}
+                                            style={fontStyle}
                                         >
-                                            {name}
+                                            {name === t.filters.allPujas ? t.filters.allPujas : (pujaContent[name] || name)}
                                         </button>
                                     ))}
                                 </div>
@@ -131,12 +147,12 @@ const PujaListSection = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-4">
                         <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-                        <p className="text-orange-200/40 font-bold animate-pulse uppercase tracking-[0.2em] text-xs">Loading Pujas</p>
+                        <p className="text-orange-200/40 font-bold animate-pulse uppercase tracking-[0.2em] text-xs" style={fontStyle}>{t.page.loading}</p>
                     </div>
                 ) : filteredPujas.length === 0 ? (
                     <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5 shadow-2xl">
-                        <h2 className="text-xl font-bold text-white mb-2">No Pujas Found</h2>
-                        <p className="text-gray-500">Try adjusting your filters or search terms.</p>
+                        <h2 className="text-xl font-bold text-white mb-2" style={fontStyle}>{t.page.noPujas}</h2>
+                        <p className="text-gray-500" style={fontStyle}>{t.page.noPujasHint}</p>
                     </div>
                 ) : (
                     <div className="relative puja-swiper-wrapper mt-4 md:px-12 mb-8 z-10">
@@ -178,9 +194,10 @@ const PujaListSection = () => {
                         <Link
                             href="/online-puja"
                             className="no-underline bg-orange-600 hover:bg-orange-700 text-white px-8 py-3.5 rounded-full font-bold shadow-lg transition-all mx-auto flex items-center justify-center gap-2 w-fit active:scale-95 shadow-orange-900/40 hover:translate-y-[-2px]"
+                            style={fontStyle}
                         >
                             <i className="fa-solid fa-om text-lg"></i>
-                            View All Sacred Rituals
+                            {t.page.viewAll}
                         </Link>
                     </div>
                 )}

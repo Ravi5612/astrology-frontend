@@ -59,6 +59,26 @@ export interface AgentListing {
     deity?: string;          // mandir
     specialization?: string; // expert
     items?: string;          // puja_shop
+    
+    // Merchant Verification Fields
+    isVerified?: boolean;
+    gstin?: string;
+    pan?: string;
+    isGstExempt?: boolean;
+    bankName?: string;
+    accountHolder?: string;
+    accountNumber?: string;
+    ifsc?: string;
+    gstCertificate?: string;
+    panFront?: string;
+    panBack?: string;
+    aadharFront?: string;
+    aadharBack?: string;
+    fullDetails?: {
+        pan?: string;
+        accountNumber?: string;
+    };
+    
     created_at: string;
 }
 

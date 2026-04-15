@@ -9,8 +9,8 @@ export const settingsService = {
    */
   getProfile: async () => {
     const [data, error] = await api.get<any>('/merchant/profile');
-    // The backend returns { success: true, data: { ... } }
-    return [data?.data || data, error];
+    // The backend now returns { success: true, exists: boolean, data: { ... } }
+    return [data, error];
   },
 
   /**
@@ -21,6 +21,14 @@ export const settingsService = {
     // We use .patch (as per our backend plan) and pass FormData directly
     // safe-fetch will handle the multipart headers automatically if it's FormData
     const [data, error] = await api.patch<any>('/merchant/profile', formData);
+    return [data?.data || data, error];
+  },
+
+  /**
+   * Specifically toggle the online status via JSON
+   */
+  updateOnlineStatus: async (isOnline: boolean) => {
+    const [data, error] = await api.patch<any>('/merchant/profile', { isOnline });
     return [data?.data || data, error];
   },
 
