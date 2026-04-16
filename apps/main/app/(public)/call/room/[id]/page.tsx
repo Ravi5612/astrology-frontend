@@ -41,87 +41,92 @@ export default function CallRoomPage() {
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-6">
         {callType === "video" ? (
-          <div className="w-full relative h-[65vh] max-h-[600px]">
-            {/* LARGE WINDOW CONTAINER */}
+          <div className="w-full relative h-[65vh] max-h-[600px] bg-neutral-900 rounded-3xl overflow-hidden">
+            {/* The actual video tracks MUST stay in the same DOM elements to avoid detachment */}
+            
+            {/* Remote Video Container */}
             <div 
-              className="w-full h-full bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative"
+              ref={remoteVideoRef as any}
               onClick={() => isSwapped && setIsSwapped(false)}
+              className={`transition-all duration-500 bg-neutral-800 ${
+                isSwapped 
+                  ? "absolute bottom-4 right-4 w-32 h-40 rounded-2xl border-2 border-white/20 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                  : "w-full h-full z-10"
+              }`}
             >
-              {/* Remote Video (Default Main) */}
-              <div 
-                ref={remoteVideoRef as any} 
-                className={`${isSwapped ? "hidden" : "w-full h-full"} transition-all duration-500`} 
-              />
-              
-              {/* Local Video (Only shows here if swapped or ringing) */}
-              <div 
-                ref={localVideoRef as any} 
-                className={`${(status === "connected" && !isSwapped) ? "hidden" : "w-full h-full"} transition-all duration-500`} 
-              />
-
-              {status === "ringing" && (
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 gap-4">
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center animate-bounce shadow-2xl shadow-primary/50">
-                    <Video className="w-10 h-10 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-black text-white drop-shadow-lg">Waiting for expert...</h3>
-                    <p className="text-white/70 font-bold mt-1">Please wait for the expert to pick the call</p>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/20">
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                    <span className="text-[10px] uppercase tracking-widest font-black">Connecting Securely</span>
-                  </div>
+              {/* Expert Name Tag (Only when main) */}
+              {!isSwapped && status === "connected" && (
+                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                  <span className="text-white text-xs font-bold">{sessionData?.expert?.user?.name || "Expert"}</span>
                 </div>
               )}
-
-              {status === "connecting" && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60">
-                  <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                  <p className="text-white font-bold uppercase tracking-widest text-sm">Initializing Secure Stream...</p>
-                </div>
-              )}
-
-              {status === "connected" && (
-                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-30">
-                  <span className="text-white text-xs font-bold">
-                    {isSwapped ? "You" : (sessionData?.expert?.user?.name || "Expert")}
+              {/* Client Name Tag (Only when PIP) */}
+              {isSwapped && (
+                <div className="absolute bottom-1 left-0 right-0 text-center bg-black/40 z-50">
+                  <span className="text-white/80 text-[7px] font-black uppercase tracking-tighter">
+                    {sessionData?.expert?.user?.name || "Expert"}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* SMALL WINDOW (PIP) CONTAINER */}
-            {status === "connected" && (
-              <div 
-                onClick={() => setIsSwapped(!isSwapped)}
-                className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-40 cursor-pointer active:scale-95 transition-all hover:border-primary/50"
-              >
-                {/* Remote Video in PIP */}
-                <div 
-                  ref={isSwapped ? (remoteVideoRef as any) : null} 
-                  className={`${isSwapped ? "w-full h-full" : "hidden"}`} 
-                />
-                
-                {/* Local Video in PIP */}
-                <div 
-                  ref={!isSwapped ? (localVideoRef as any) : null} 
-                  className={`${!isSwapped ? "w-full h-full" : "hidden"}`} 
-                />
-
-                {((!isSwapped && isCameraOff)) && (
-                  <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                    <User className="w-8 h-8 text-neutral-400" />
-                  </div>
-                )}
-                
-                <div className="absolute bottom-1 left-0 right-0 text-center bg-black/20">
-                  <span className="text-white/80 text-[7px] font-black uppercase tracking-tighter">
-                    {isSwapped ? (sessionData?.expert?.user?.name || "Expert") : "You"}
-                  </span>
+            {/* Local Video Container */}
+            <div 
+              ref={localVideoRef as any}
+              onClick={() => !isSwapped && status === "connected" && setIsSwapped(true)}
+              className={`transition-all duration-500 bg-neutral-700 ${
+                !isSwapped 
+                  ? (status === "connected" 
+                      ? "absolute bottom-4 right-4 w-32 h-40 rounded-2xl border-2 border-white/20 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                      : "w-full h-full z-10")
+                  : "w-full h-full z-10"
+              }`}
+            >
+              {isCameraOff && (
+                <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center z-[45]">
+                  <User className="w-12 h-12 text-neutral-400" />
                 </div>
+              )}
+
+              {/* Status overlays for main view */}
+              {(!isSwapped && status !== "connected") && (
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 gap-4 z-50">
+                  {status === "ringing" && (
+                    <>
+                      <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center animate-bounce shadow-2xl shadow-primary/50">
+                        <Video className="w-10 h-10 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black text-white drop-shadow-lg">Waiting for expert...</h3>
+                        <p className="text-white/70 font-bold mt-1">Please wait for the expert to pick the call</p>
+                      </div>
+                      <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/20">
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        <span className="text-[10px] uppercase tracking-widest font-black">Connecting Securely</span>
+                      </div>
+                    </>
+                  )}
+                  {status === "connecting" && (
+                    <>
+                      <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                      <p className="text-white font-bold uppercase tracking-widest text-sm">Initializing Secure Stream...</p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Tags */}
+              <div className="absolute bottom-1 left-0 right-0 text-center bg-black/40 z-50">
+                <span className="text-white/80 text-[7px] font-black uppercase tracking-tighter">
+                  {!isSwapped ? (status === "connected" ? "You" : "") : "You"}
+                </span>
               </div>
-            )}
+              {isSwapped && (
+                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                  <span className="text-white text-xs font-bold">You</span>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-8">

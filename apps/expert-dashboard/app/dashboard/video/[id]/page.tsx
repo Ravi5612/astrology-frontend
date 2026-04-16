@@ -254,26 +254,53 @@ export default function ExpertVideoCallPage() {
             </div>
 
             {/* Video Area */}
-            <div className="flex-1 relative bg-neutral-950">
-                {/* LARGE WINDOW CONTAINER */}
+            <div className="flex-1 relative bg-neutral-950 overflow-hidden">
+                {/* Remote Video Container (User) */}
                 <div 
-                    className="absolute inset-0 flex items-center justify-center bg-neutral-900 cursor-default"
+                    ref={remoteVideoRef as any}
                     onClick={() => isSwapped && setIsSwapped(false)}
+                    className={`transition-all duration-500 bg-neutral-900 ${
+                        isSwapped 
+                            ? "absolute bottom-6 right-6 w-36 h-48 rounded-2xl border-2 border-white/10 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                            : "absolute inset-0 z-10"
+                    }`}
                 >
-                    {/* Remote Video (User) - Main by default */}
-                    <div
-                        ref={remoteVideoRef as any}
-                        className={`${isSwapped ? "hidden" : "w-full h-full"}`}
-                    />
-                    
-                    {/* Local Video (Expert) - Main if swapped */}
-                    <div
-                        ref={localVideoRef as any}
-                        className={`${isSwapped ? "w-full h-full" : "hidden"}`}
-                    />
+                    {/* User Name Tag */}
+                    <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                        <span className="text-white text-xs font-bold">
+                            {!isSwapped ? (sessionData?.user?.name || 'Client') : (sessionData?.user?.name || 'Client')}
+                        </span>
+                    </div>
 
+                    {/* Waiting status */}
+                    {status === 'connected' && !hasRemoteTrack && !isSwapped && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-45">
+                            <p className="text-white/40 font-bold text-sm uppercase tracking-widest animate-pulse">
+                                Waiting for client...
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Local Video Container (Expert) */}
+                <div 
+                    ref={localVideoRef as any}
+                    onClick={() => !isSwapped && status === 'connected' && setIsSwapped(true)}
+                    className={`transition-all duration-500 bg-neutral-800 ${
+                        !isSwapped 
+                            ? "absolute bottom-6 right-6 w-36 h-48 rounded-2xl border-2 border-white/10 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                            : "absolute inset-0 z-10"
+                    }`}
+                >
+                    {isCameraOff && (
+                        <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center z-[45]">
+                            <User className="w-12 h-12 text-neutral-500" />
+                        </div>
+                    )}
+
+                    {/* Accepting/Connecting status */}
                     {status !== 'connected' && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-[48]">
                             <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-pulse">
                                 <User className="w-10 h-10 text-white/30" />
                             </div>
@@ -282,54 +309,19 @@ export default function ExpertVideoCallPage() {
                             </p>
                         </div>
                     )}
-                    {status === 'connected' && !hasRemoteTrack && !isSwapped && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-[5]">
-                            <p className="text-white/40 font-bold text-sm uppercase tracking-widest animate-pulse">
-                                Waiting for client...
-                            </p>
-                        </div>
-                    )}
-                    
-                    {/* Tag */}
-                    {status === 'connected' && (
-                        <div className="absolute bottom-6 left-6 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full z-10 border border-white/10">
-                            <span className="text-sm font-bold">
-                                {isSwapped ? "You (Expert)" : (sessionData?.user?.name || 'Client')}
-                            </span>
-                        </div>
-                    )}
+
+                    {/* You Tag */}
+                    <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                        <span className="text-white text-xs font-bold">You (Expert)</span>
+                    </div>
                 </div>
 
-                {/* SMALL WINDOW (PIP) CONTAINER */}
-                {status === 'connected' && (
-                    <div 
-                        onClick={() => setIsSwapped(!isSwapped)}
-                        className="absolute bottom-6 right-6 w-36 h-48 bg-neutral-800 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl z-20 cursor-pointer active:scale-95 transition-all hover:border-primary/50"
-                    >
-                        {/* Remote Video (User) in PIP if swapped */}
-                        <div
-                            ref={isSwapped ? (remoteVideoRef as any) : null}
-                            className={`${isSwapped ? "w-full h-full" : "hidden"}`}
-                        />
-                        
-                        {/* Local Video (Expert) in PIP by default */}
-                        <div
-                            ref={!isSwapped ? (localVideoRef as any) : null}
-                            className={`${!isSwapped ? "w-full h-full" : "hidden"}`}
-                        />
-
-                        {(!isSwapped && isCameraOff) && (
-                            <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                                <User className="w-10 h-10 text-neutral-500" />
-                            </div>
-                        )}
-                        <div className="absolute bottom-1 left-0 right-0 text-center bg-black/30 backdrop-blur-[2px]">
-                            <span className="text-white/60 text-[8px] font-black uppercase tracking-widest">
-                                {isSwapped ? (sessionData?.user?.name || 'Client') : "You"}
-                            </span>
-                        </div>
-                    </div>
-                )}
+                {/* Bottom Center Tag for PIP mode branding/info */}
+                <div className="absolute bottom-1 left-0 right-0 text-center bg-black/20 z-50">
+                    <span className="text-white/30 text-[7px] font-black uppercase tracking-[0.3em]">
+                        🔒 Secure Encrypted
+                    </span>
+                </div>
             </div>
 
             {/* Controls */}
