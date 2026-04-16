@@ -200,9 +200,31 @@ export const useCallLogic = () => {
     room.on("participantConnected", (p) => {
       p.on("trackSubscribed", attachRemoteTrack);
     });
-    room.on("participantDisconnected", handleCallEnded);
-    room.on("disconnected", handleCallEnded);
+    room.on("participantDisconnected", (p) => {
+      console.log("Participant disconnected:", p.identity);
+      handleCallEnded();
+    });
+    room.on("reconnecting", (error) => {
+      if (error.code === 53001) {
+        toast.warning("Network issue detected. Reconnecting...");
+      }
+    });
+    room.on("disconnected", (room, error) => {
+      if (error) {
+        toast.error("Call disconnected due to network issues.");
+      }
+      handleCallEnded();
+    });
   };
+
+  useEffect(() => {
+    if (status === "connected" && sessionData?.max_duration_seconds) {
+      if (callDuration >= sessionData.max_duration_seconds) {
+        toast.error("Low balance. Consultation ended.");
+        handleEndCall();
+      }
+    }
+  }, [callDuration, sessionData, status]);
 
   const startTimer = () => {
     if (timerRef.current) return;

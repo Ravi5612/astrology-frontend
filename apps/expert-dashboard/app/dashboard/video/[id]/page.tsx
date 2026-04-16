@@ -147,13 +147,22 @@ export default function ExpertVideoCallPage() {
         room.participants.forEach(attachRemoteParticipant);
         room.on('participantConnected', attachRemoteParticipant);
 
+        room.on('reconnecting', (error) => {
+            if (error.code === 53001) {
+                toast.warning("Network issue detected. Reconnecting...");
+            }
+        });
+
         room.on('participantDisconnected', (participant: any) => {
             console.log('[ExpertVideo] 👤 Participant disconnected:', participant.identity);
             handleCallEnded();
         });
 
         room.on('disconnected', (room: any, error: any) => {
-            if (error) console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
+            if (error) {
+                console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
+                toast.error("Call disconnected due to network issues.");
+            }
             localTracksRef.current.forEach((t: any) => t.stop?.());
             handleCallEnded();
         });
@@ -178,6 +187,15 @@ export default function ExpertVideoCallPage() {
             container.appendChild(el);
         }
     }, [status]);
+
+    useEffect(() => {
+        if (status === 'connected' && sessionData?.max_duration_seconds) {
+            if (callDuration >= sessionData.max_duration_seconds) {
+                toast.error("User's balance exhausted. Ending call.");
+                handleEndCall();
+            }
+        }
+    }, [callDuration, sessionData, status]);
 
     const startTimer = () => {
         if (timerRef.current) return;
