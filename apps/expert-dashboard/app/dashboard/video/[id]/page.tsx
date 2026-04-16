@@ -23,6 +23,7 @@ export default function ExpertVideoCallPage() {
     const [sessionData, setSessionData] = useState<any>(null);
     const [showSummary, setShowSummary] = useState(false);
     const [summaryData, setSummaryData] = useState<any>(null);
+    const [hasRemoteTrack, setHasRemoteTrack] = useState(false);
 
     const roomRef = useRef<any>(null);       // Twilio Video Room
     const timerRef = useRef<NodeJS.Timeout | null>(null);

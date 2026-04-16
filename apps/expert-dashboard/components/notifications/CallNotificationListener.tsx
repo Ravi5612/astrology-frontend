@@ -13,7 +13,8 @@ export const CallNotificationListener: React.FC = () => {
 
     const registerExpert = useCallback(() => {
         if (!user) return;
-        const expertId = user.profileId || user.id;
+        const expertId = Number(user.profileId || user.id);
+        if (!expertId) return;
         console.log("[CallSocket] Registering expert with ID:", expertId);
         callSocket.emit('register_expert', { expertId }, (res: any) => {
             console.log("[CallSocket] Registration response:", res);
@@ -97,10 +98,18 @@ export const CallNotificationListener: React.FC = () => {
             audio.play().catch(() => console.log("Audio play blocked by browser"));
         };
 
+        const handleAutoDismiss = (data: any) => {
+            const sid = data.session?.id || data.sessionId || data.id;
+            console.log("[CallSocket] 🔔 Auto-dismissing notification for session:", sid);
+            toast.dismiss();
+        };
+
         callSocket.on('connect', onConnect);
         callSocket.on('reconnect', onReconnect);
         callSocket.on('connect_error', onConnectError);
         callSocket.on('new_call_request', handleNewCall);
+        callSocket.on('call_accepted', handleAutoDismiss);
+        callSocket.on('call_ended', handleAutoDismiss);
 
         return () => {
             console.log("[CallSocket] 🧹 Cleaning up listeners...");
@@ -108,8 +117,10 @@ export const CallNotificationListener: React.FC = () => {
             callSocket.off('reconnect', onReconnect);
             callSocket.off('connect_error', onConnectError);
             callSocket.off('new_call_request', handleNewCall);
+            callSocket.off('call_accepted', handleAutoDismiss);
+            callSocket.off('call_ended', handleAutoDismiss);
         };
-    }, [isAuthenticated, user, router, registerExpert]);
+    }, [isAuthenticated, !!user, router, registerExpert]);
 
     return null;
 };
