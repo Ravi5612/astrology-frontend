@@ -21,7 +21,7 @@ export default function ClientHeader({
             <div className="relative w-full sm:w-64">
                 <input
                     type="text"
-                    placeholder="Search clients..."
+                    placeholder="Search Session ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-shadow"

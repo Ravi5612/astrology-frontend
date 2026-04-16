@@ -190,10 +190,12 @@ export default function ClientsPage() {
 
     // Filtering logic
     if (searchTerm) {
+      const cleanTerm = searchTerm.toLowerCase().replace(/^#/, "");
       sortableItems = sortableItems.filter(
         (client) =>
-          client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          client.email.toLowerCase().includes(searchTerm.toLowerCase())
+          client.name.toLowerCase().includes(cleanTerm) ||
+          client.email.toLowerCase().includes(cleanTerm) ||
+          client.id.toString().includes(cleanTerm)
       );
     }
 
