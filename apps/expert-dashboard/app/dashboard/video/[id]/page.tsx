@@ -145,13 +145,22 @@ export default function ExpertVideoCallPage() {
         room.participants.forEach(attachRemoteParticipant);
         room.on('participantConnected', attachRemoteParticipant);
 
+        room.on('reconnecting', (error) => {
+            if (error.code === 53001) {
+                toast.warning("Network issue detected. Reconnecting...");
+            }
+        });
+
         room.on('participantDisconnected', (participant: any) => {
 
             handleCallEnded();
         });
 
         room.on('disconnected', (room: any, error: any) => {
-            if (error) console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
+            if (error) {
+                console.error('[ExpertVideo] 📴 Room disconnected with error:', error);
+                toast.error("Call disconnected due to network issues.");
+            }
             localTracksRef.current.forEach((t: any) => t.stop?.());
             handleCallEnded();
         });
@@ -159,7 +168,7 @@ export default function ExpertVideoCallPage() {
 
     // Re-attach local video on status change or re-mount
     useEffect(() => {
-        const localVideoTrack = localTracksRef.current.find(t => t.kind === 'video');
+        const localVideoTrack = localTracksRef.current?.find(t => t.kind === 'video');
         if (localVideoTrack && localVideoRef.current) {
 
             const el = localVideoTrack.attach();
@@ -167,10 +176,24 @@ export default function ExpertVideoCallPage() {
             el.style.height = '100%';
             el.style.objectFit = 'cover';
             el.style.transform = 'scaleX(-1)';
-            localVideoRef.current.innerHTML = '';
-            localVideoRef.current.appendChild(el);
+            
+            // Safe cleanup of inner container only
+            const container = localVideoRef.current;
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(el);
         }
     }, [status]);
+
+    useEffect(() => {
+        if (status === 'connected' && sessionData?.max_duration_seconds) {
+            if (callDuration >= sessionData.max_duration_seconds) {
+                toast.error("User's balance exhausted. Ending call.");
+                handleEndCall();
+            }
+        }
+    }, [callDuration, sessionData, status]);
 
     const startTimer = () => {
         if (timerRef.current) return;
@@ -193,12 +216,12 @@ export default function ExpertVideoCallPage() {
     };
 
     const handleEndCall = async () => {
-        const [_, error] = await api.post(`/call/end`, { sessionId: parseInt(sessionId) });
+        const [data, error] = await api.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
         if (error) {
             console.error('[ExpertVideo] Failed to end call on backend', error);
         }
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
-        handleCallEnded();
+        handleCallEnded(data);
     };
 
     const toggleMute = () => {
@@ -223,6 +246,8 @@ export default function ExpertVideoCallPage() {
         return `${m}:${sec}`;
     };
 
+    const [isSwapped, setIsSwapped] = useState(false);
+
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col overflow-hidden">
             {/* Header */}
@@ -232,15 +257,6 @@ export default function ExpertVideoCallPage() {
                     <h1 className="text-lg font-black">{sessionData?.user?.name || 'Client'}</h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    {status === 'connected' && (
-                        <>
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-                                <Clock className="w-3 h-3 text-primary" />
-                                <span className="text-sm font-black text-primary">{formatDuration(callDuration)}</span>
-                            </div>
-                        </>
-                    )}
                     {(status === 'accepting' || status === 'connecting') && (
                         <span className="text-xs font-bold text-white/40 uppercase tracking-widest animate-pulse">
                             {status === 'accepting' ? 'Accepting...' : 'Connecting...'}
@@ -249,16 +265,71 @@ export default function ExpertVideoCallPage() {
                 </div>
             </div>
 
+            {/* Timer Overlay (Centered Above Video) */}
+            {status === 'connected' && (
+                <div className="flex justify-center -mb-4 mt-4 z-20">
+                    <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-lg font-black text-primary tracking-tight font-mono">
+                                {formatDuration(callDuration)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Video Area */}
-            <div className="flex-1 relative bg-neutral-950">
-                {/* Remote video (large — user's camera) */}
-                <div className="absolute inset-0 flex items-center justify-center bg-neutral-900">
-                    <div
-                        ref={remoteVideoRef as any}
-                        className="w-full h-full"
-                    />
+            <div className="flex-1 relative bg-neutral-950 overflow-hidden">
+                {/* Remote Video Container (User) */}
+                <div 
+                    onClick={() => isSwapped && setIsSwapped(false)}
+                    className={`transition-all duration-500 bg-neutral-900 ${
+                        isSwapped 
+                            ? "absolute bottom-6 right-6 w-36 h-48 rounded-2xl border-2 border-white/10 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                            : "absolute inset-0 z-10"
+                    }`}
+                >
+                    <div ref={remoteVideoRef as any} className="w-full h-full" />
+
+                    {/* User Name Tag */}
+                    <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                        <span className="text-white text-xs font-bold">
+                            {!isSwapped ? (sessionData?.user?.name || 'Client') : (sessionData?.user?.name || 'Client')}
+                        </span>
+                    </div>
+
+                    {/* Waiting status */}
+                    {status === 'connected' && !hasRemoteTrack && !isSwapped && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-45">
+                            <p className="text-white/40 font-bold text-sm uppercase tracking-widest animate-pulse">
+                                Waiting for client...
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Local Video Container (Expert) */}
+                <div 
+                    onClick={() => !isSwapped && status === 'connected' && setIsSwapped(true)}
+                    className={`transition-all duration-500 bg-neutral-800 ${
+                        !isSwapped 
+                            ? "absolute bottom-6 right-6 w-36 h-48 rounded-2xl border-2 border-white/10 shadow-2xl z-40 cursor-pointer overflow-hidden hover:border-primary/50" 
+                            : "absolute inset-0 z-10"
+                    }`}
+                >
+                    <div ref={localVideoRef as any} className="w-full h-full" />
+
+                    {isCameraOff && (
+                        <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center z-[45]">
+                            <User className="w-12 h-12 text-neutral-500" />
+                        </div>
+                    )}
+
+                    {/* Accepting/Connecting status */}
                     {status !== 'connected' && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-[48]">
                             <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-pulse">
                                 <User className="w-10 h-10 text-white/30" />
                             </div>
@@ -267,35 +338,18 @@ export default function ExpertVideoCallPage() {
                             </p>
                         </div>
                     )}
-                    {status === 'connected' && !hasRemoteTrack && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-neutral-900 z-[5]">
-                            <p className="text-white/40 font-bold text-sm uppercase tracking-widest animate-pulse">
-                                Waiting for client...
-                            </p>
-                        </div>
-                    )}
-                    {/* Client name tag */}
-                    {status === 'connected' && hasRemoteTrack && (
-                        <div className="absolute bottom-6 left-6 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
-                            <span className="text-sm font-bold">{sessionData?.user?.name || 'Client'}</span>
-                        </div>
-                    )}
+
+                    {/* You Tag */}
+                    <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
+                        <span className="text-white text-xs font-bold">You (Expert)</span>
+                    </div>
                 </div>
 
-                {/* Local video (PIP — expert's camera, bottom right) */}
-                <div className="absolute bottom-6 right-6 w-36 h-48 bg-neutral-800 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl z-10">
-                    <div
-                        ref={localVideoRef as any}
-                        className="w-full h-full"
-                    />
-                    {isCameraOff && (
-                        <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                            <User className="w-10 h-10 text-neutral-500" />
-                        </div>
-                    )}
-                    <div className="absolute bottom-1 left-0 right-0 text-center">
-                        <span className="text-white/50 text-[9px] font-bold">You (Expert)</span>
-                    </div>
+                {/* Bottom Center Tag for PIP mode branding/info */}
+                <div className="absolute bottom-1 left-0 right-0 text-center bg-black/20 z-50">
+                    <span className="text-white/30 text-[7px] font-black uppercase tracking-[0.3em]">
+                        🔒 Secure Encrypted
+                    </span>
                 </div>
             </div>
 

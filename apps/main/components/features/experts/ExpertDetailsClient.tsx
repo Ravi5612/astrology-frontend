@@ -29,6 +29,8 @@ export default function ExpertDetailsClient({
     loadingReviews,
     totalReviews,
     handleChatClick,
+    handleCallClick,
+    handleVideoCallClick,
     isAvailable,
     setIsAvailable,
   } = useExpertDetails(String(expert.id!), String(expert.userId || ''));
@@ -48,6 +50,8 @@ export default function ExpertDetailsClient({
             expert={expert}
             isAvailable={isAvailable}
             onChatClick={handleChatClick}
+            onCallClick={handleCallClick}
+            onVideoCallClick={handleVideoCallClick}
             onVideoClick={(url) => setSelectedVideo(url)}
           />
 

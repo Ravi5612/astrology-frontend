@@ -178,8 +178,17 @@ function ExpertChatRoomContent() {
                 setTimeLeft((prev) => (prev <= 0 ? 0 : prev - 1));
             }
         }, 1000);
+
         return () => clearInterval(timer);
     }, [sessionStatus, startedAt, expiresAt]);
+
+    // Auto-end if time runs out
+    useEffect(() => {
+        if (sessionStatus === 'active' && timeLeft === 0 && expiresAt) {
+            console.log("[ExpertChat] 💸 Time expired, auto-ending session.");
+            handleEndChat();
+        }
+    }, [timeLeft, sessionStatus, expiresAt]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

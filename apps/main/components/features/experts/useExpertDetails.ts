@@ -62,13 +62,21 @@ export const useExpertDetails = (expertId: string, userId?: string) => {
     router.push(`/chat/prep/${expertId}`);
   };
 
+  const handleCallClick = () => {
+    router.push(`/call/prep/${expertId}?type=audio`);
+  };
+
+  const handleVideoCallClick = () => {
+    router.push(`/call/prep/${expertId}?type=video`);
+  };
+
   return {
     isReviewModalOpen, setIsReviewModalOpen,
     selectedVideo, setSelectedVideo,
     selectedImage, setSelectedImage,
     activeTab, setActiveTab,
     reviews, loadingReviews, totalReviews,
-    handleChatClick,
+    handleChatClick, handleCallClick, handleVideoCallClick,
     isAvailable, setIsAvailable
   };
 };

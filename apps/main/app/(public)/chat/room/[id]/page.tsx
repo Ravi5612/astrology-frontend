@@ -197,8 +197,15 @@ function ChatRoomContent() {
             }
         }, 1000);
 
-        return () => clearInterval(timer);
-    }, [sessionStatus, startedAt, expiresAt]);
+    useEffect(() => {
+        if (sessionStatus === 'active' && timeLeft === 0 && expiresAt && !isFree) {
+            console.log("[ChatRoom] 💸 Balance exhausted, auto-terminating chat.");
+            handleEndChat();
+        }
+    }, [timeLeft, sessionStatus, expiresAt, isFree]);
+
+    return () => clearInterval(timer);
+}, [sessionStatus, startedAt, expiresAt]);
 
     useEffect(() => {
         if (showFreeEndPrompt && continuationTimer > 0) {
