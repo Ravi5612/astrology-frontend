@@ -12,7 +12,7 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 
   // Disable browser features we don't use
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Permissions-Policy", value: "geolocation=()" },
 
   // HSTS — force HTTPS for 1 year (production only)
   ...(process.env.NODE_ENV === "production"
