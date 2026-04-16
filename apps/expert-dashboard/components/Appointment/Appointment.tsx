@@ -12,17 +12,14 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { chatSocket, callSocket } from "@/lib/socket";
 import { getReviews } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
+import { TableSkeleton, StatsSkeleton } from "../dashboard/DashboardSkeletons";
 
 export default function AppointmentsPage() {
   const { user: expertUser, isAuthenticated: isExpertAuthenticated } = useAuthStore();
 
-  console.log("[AppointmentDebug] AppointmentsPage Rendered");
 
-  useEffect(() => {
-    if (expertUser) {
-      console.log("[AppointmentDebug] Full expertUser structure:", JSON.stringify(expertUser, null, 2));
-    }
-  }, [expertUser]);
+
+
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -36,13 +33,11 @@ export default function AppointmentsPage() {
 
   const fetchAllSessions = async () => {
     if (!isExpertAuthenticated || !expertUser) {
-      console.log("[AppointmentDebug] Not authenticated or no expert user. Authentication status:", isExpertAuthenticated);
       setLoading(false);
       return;
     }
 
     try {
-      console.log("[AppointmentDebug] Fetching all sessions (chat + call) for expert user ID:", expertUser.id);
 
       // Fetch Chat & Call sessions (pending + completed), reviews and stats
       const [
@@ -191,7 +186,7 @@ export default function AppointmentsPage() {
         setStats(statsData);
       }
 
-      console.log("[AppointmentDebug] Mapped appointments:", mappedAppointments);
+
       setAppointments(mappedAppointments);
     } catch (error) {
       console.error("[AppointmentDebug] Failed to fetch sessions:", error);
@@ -203,7 +198,6 @@ export default function AppointmentsPage() {
 
   // Initial Fetch & Socket Listeners
   useEffect(() => {
-    console.log("[AppointmentDebug] useEffect triggered. Auth:", isExpertAuthenticated, "ExpertUser:", expertUser?.id);
     setLoading(true);
     fetchAllSessions();
 
@@ -212,27 +206,17 @@ export default function AppointmentsPage() {
       const registrationId = expertUser.profileId || expertUser.id;
 
       const connectSocket = () => {
-        console.log("[AppointmentDebug] ChatSocket status:", chatSocket.connected ? "Connected" : "Disconnected", "ID:", chatSocket.id);
-
         if (!chatSocket.connected) {
-          console.log("[AppointmentDebug] Attempting to connect ChatSocket...");
           chatSocket.connect();
         }
 
         const rid = expertUser.profileId || expertUser.id;
-        console.log(`[AppointmentDebug] Emitting 'register_expert' for ID: ${rid} (Room: expert_${rid})`);
-        chatSocket.emit('register_expert', { expertId: rid }, (response: any) => {
-          console.log("[AppointmentDebug] 'register_expert' (Chat) success:", response);
-        });
+        chatSocket.emit('register_expert', { expertId: rid });
 
         if (!callSocket.connected) {
-          console.log("[AppointmentDebug] Attempting to connect CallSocket...");
           callSocket.connect();
         }
-        console.log(`[AppointmentDebug] Emitting 'register_expert' (Call) for ID: ${rid}`);
-        callSocket.emit('register_expert', { expertId: rid }, (response: any) => {
-          console.log("[AppointmentDebug] 'register_expert' (Call) success:", response);
-        });
+        callSocket.emit('register_expert', { expertId: rid });
       };
 
       // Connect if not connected
@@ -240,21 +224,18 @@ export default function AppointmentsPage() {
 
       // Handle reconnection
       chatSocket.on('connect', () => {
-        console.log("[AppointmentDebug] ChatSocket connected! Registering again...");
         connectSocket();
       });
 
       // 2. Real-time update when NEW request arrives
       const handleNewRequest = (session: any) => {
-        console.log("[AppointmentDebug] 🚨 New Real-time Chat Request RECEIVED via Socket:", JSON.stringify(session, null, 2));
 
         // Safety check for session data
         if (!session || !session.id) {
-          console.error("[AppointmentDebug] Received invalid session object:", session);
           return;
         }
 
-        console.log(`[AppointmentDebug] Socket data contains expiresAt: ${session.expiresAt || 'MISSING'}`);
+
 
         const newAppt: Appointment = {
           id: session.id,
@@ -278,17 +259,15 @@ export default function AppointmentsPage() {
 
         setAppointments(prev => {
           if (prev.some(a => a.id === newAppt.id)) {
-            console.log("[AppointmentDebug] Duplicate request ignored. Session ID:", newAppt.id);
             return prev;
           }
-          console.log("[AppointmentDebug] ✅ Adding NEW appointment to UI list:", newAppt);
+
           return [newAppt, ...prev];
         });
       };
 
       const handleNewCallRequest = (data: any) => {
         const { session } = data;
-        console.log("[AppointmentDebug] 🚨 New Real-time CALL Request RECEIVED via Socket:", session.id);
 
         const newAppt: Appointment = {
           id: session.id,
@@ -317,21 +296,17 @@ export default function AppointmentsPage() {
       };
 
       const handleSessionEnded = (data: any) => {
-        console.log("[AppointmentDebug] 🏁 Session Ended Event received:", data);
         const targetId = data.id || data.sessionId;
         if (!targetId) {
-          console.error("[AppointmentDebug] End event missing ID:", data);
           return;
         }
 
         setAppointments(prev => {
           const index = prev.findIndex(a => a.id === targetId);
           if (index === -1) {
-            console.log("[AppointmentDebug] Session not found in current list, potentially re-fetching or already removed.");
-            // fetchChatSessions(); // Optional: Re-fetch if you want to be sure
             return prev;
           }
-          console.log(`[AppointmentDebug] Updating session ${targetId} to status: ${data.status || 'completed'}`);
+
           return prev.map(a =>
             a.id === targetId ? {
               ...a,
@@ -343,13 +318,11 @@ export default function AppointmentsPage() {
       };
 
       const handleCallEnded = (data: any) => {
-        console.log("[AppointmentDebug] 🏁 Call Ended Event received:", data);
         const targetId = data.id || data.sessionId;
         setAppointments(prev => prev.map(a => a.id === targetId ? { ...a, status: 'completed' as any } : a));
       };
 
       const handleCallAccepted = (data: any) => {
-        console.log("[AppointmentDebug] ✅ Call Accepted Event received (Remote):", data);
         const targetId = (data.session?.id || data.id);
         if (!targetId) return;
 
@@ -363,7 +336,6 @@ export default function AppointmentsPage() {
 
       // 3. Real-time update when session is ACTIVATED
       chatSocket.on('session_activated', (session: any) => {
-        console.log("[AppointmentDebug] Session Activated:", session.id);
         setAppointments(prev => prev.map(a =>
           a.id === session.id ? { ...a, status: 'active' as const } : a
         ));
@@ -375,7 +347,6 @@ export default function AppointmentsPage() {
       callSocket.on('call_accepted', handleCallAccepted);
 
       return () => {
-        console.log("[AppointmentDebug] Cleaning up socket listeners...");
         chatSocket.off('new_chat_request', handleNewRequest);
         chatSocket.off('session_activated');
         chatSocket.off('session_ended', handleSessionEnded);
@@ -393,7 +364,6 @@ export default function AppointmentsPage() {
     const hasActiveSession = appointments.some(a => a.status === 'active');
 
     if (hasActiveSession) {
-      console.log("[AppointmentDebug] Active session detected, starting polling fallback...");
       const interval = setInterval(() => {
         fetchAllSessions();
       }, 15000); // Poll every 15s
@@ -411,7 +381,6 @@ export default function AppointmentsPage() {
     date: Date | null,
     time: string
   ) => {
-    console.log("Rescheduling appointment:", appointment, date, time);
     setIsModalOpen(false);
   };
 
@@ -434,18 +403,14 @@ export default function AppointmentsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6 bg-gray-50 min-h-screen">
       {/* Stats Section */}
-      <AppointmentStats stats={stats} />
+      {loading ? (
+        <StatsSkeleton />
+      ) : (
+        <AppointmentStats stats={stats} />
+      )}
 
       {/* Filters & View Toggles */}
       <AppointmentFilters
@@ -458,7 +423,9 @@ export default function AppointmentsPage() {
       />
 
       {/* Appointment List or Calendar */}
-      {view === "list" ? (
+      {loading ? (
+        <TableSkeleton />
+      ) : view === "list" ? (
         <AppointmentList
           appointments={filteredAppointments}
           onReschedule={openRescheduleModal}

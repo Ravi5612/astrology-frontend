@@ -8,6 +8,7 @@ import { PujaModal } from "@/components/shared/PujaModal";
 import { toast } from "react-toastify";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
 import { ChevronDown } from "lucide-react";
+import { PricingSkeleton } from "@/components/dashboard/DashboardSkeletons";
 
 // ---- Static suggested pujas ----
 const SUGGESTED_PUJAS = [
@@ -64,8 +65,8 @@ const buildServices = (profile: Profile | null) => [
     description: s.description || "Custom service provided by expert.",
     offer: "",
     icon: Sparkles,
-    iconBg: "bg-yellow-50",
-    iconColor: "text-yellow-500",
+    iconBg: "bg-orange-50",
+    iconColor: "text-orange-500",
     isCustom: true,
     id: s.id,
   }))
@@ -73,10 +74,10 @@ const buildServices = (profile: Profile | null) => [
 
 const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: any) => void, onDelete: (id: string) => void }) => (
   <div
-    className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-yellow-200' : 'border-gray-200'} group flex flex-col`}
+    className={`relative bg-white p-6 sm:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all border ${service.isCustom ? 'border-orange-200' : 'border-gray-200'} group flex flex-col`}
   >
     {/* Icon Badge */}
-    <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform bg-linear-to-tr from-yellow-500 to-yellow-600`}>
+    <div className={`absolute -top-4 -right-4 p-2.5 rounded-full shadow-lg group-hover:scale-110 transition-transform bg-linear-to-tr from-orange-500 to-orange-600`}>
       <service.icon className="w-4 h-4 text-white" />
     </div>
 
@@ -91,7 +92,7 @@ const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: 
     {/* Price */}
     <div className="mb-4">
       <div className="flex items-baseline gap-1">
-        <span className="text-2xl font-black text-yellow-700">
+        <span className="text-2xl font-black text-orange-700">
           ₹{service.price}
         </span>
         <span className="text-gray-500 text-sm font-medium">{service.unit}</span>
@@ -109,7 +110,7 @@ const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: 
     <div className="flex gap-2 mt-auto">
       <button
         onClick={() => onEdit(service)}
-        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
+        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
       >
         <Edit3 className="w-4 h-4" />
         Edit Pricing
@@ -229,11 +230,7 @@ const ServicePricingPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-yellow-600" />
-      </div>
-    );
+    return <PricingSkeleton />;
   }
 
   const services = buildServices(profile);
@@ -242,7 +239,7 @@ const ServicePricingPage = () => {
     <div className="p-4 sm:p-8 min-h-screen">
       {/* Header */}
       <div className="max-w-3xl mx-auto text-center mb-12 flex flex-col items-center">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-yellow-700 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-700 tracking-tight">
           Services &amp; Pricing
         </h1>
         <p className="text-gray-600 mt-3 text-sm sm:text-lg">
@@ -250,7 +247,7 @@ const ServicePricingPage = () => {
         </p>
         <button
           onClick={openAdd}
-          className="mt-6 flex items-center gap-2 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-full shadow-lg transition-all active:scale-95"
+          className="mt-6 flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg transition-all active:scale-95"
         >
           <Plus className="w-4 h-4" />
           Add Custom Service
@@ -260,7 +257,7 @@ const ServicePricingPage = () => {
       {/* Consultation Services Section */}
       <div className="max-w-6xl mx-auto mb-10">
         <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-          <MessageSquare className="w-5 h-5 text-yellow-600" />
+          <MessageSquare className="w-5 h-5 text-orange-600" />
           Consultation Services
         </h2>
         <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -411,7 +408,7 @@ const ServicePricingPage = () => {
       {services.some(s => s.isCustom) && (
         <div className="max-w-6xl mx-auto mb-10">
           <h2 className="text-xl font-black text-gray-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-            <Plus className="w-5 h-5 text-yellow-600" />
+            <Plus className="w-5 h-5 text-orange-600" />
             Custom Services
           </h2>
           <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">

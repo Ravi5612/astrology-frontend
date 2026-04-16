@@ -17,12 +17,13 @@ import { expertResetPasswordAction } from "@/src/actions/auth";
 
 const BrandingSection = () => (
   <div className="relative hidden lg:block h-full min-h-[500px]">
-    <div className="absolute inset-0 bg-yellow-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
+    <div className="absolute inset-0 bg-orange-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
       <div className="relative w-48 h-48 mb-8 drop-shadow-2xl">
         <Image
           src="/images/Expert.png"
           alt="Expert Community"
           fill
+          sizes="192px"
           className="object-contain"
           priority
         />
@@ -120,19 +121,19 @@ const ResetPasswordContent: React.FC = () => {
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                     </div>
                     <input
                       {...register("password")}
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                      className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                       placeholder="Min. 6 chars (A-Z, 0-9)"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-600 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -147,19 +148,19 @@ const ResetPasswordContent: React.FC = () => {
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className={`h-5 w-5 transition-colors ${errors.confirmPassword ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                      <Lock className={`h-5 w-5 transition-colors ${errors.confirmPassword ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                     </div>
                     <input
                       {...register("confirmPassword")}
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
-                      className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                      className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                       placeholder="Confirm your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-600 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
                     >
                       {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -171,8 +172,8 @@ const ResetPasswordContent: React.FC = () => {
                   type="submit"
                   loading={loading}
                   fullWidth
-                  variant="warning"
-                  className="bg-yellow-600 hover:bg-yellow-700 py-4 rounded-2xl shadow-lg shadow-yellow-600/20 font-black text-sm uppercase tracking-widest"
+                  variant="primary"
+                  className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 font-black text-sm uppercase tracking-widest"
                 >
                   Reset My Password
                 </Button>
@@ -209,7 +210,7 @@ const ResetPasswordPage: React.FC = () => {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#FFF9F4]">
-        <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-600 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-orange-100 border-t-orange-600 rounded-full animate-spin"></div>
       </div>
     }>
       <ResetPasswordContent />

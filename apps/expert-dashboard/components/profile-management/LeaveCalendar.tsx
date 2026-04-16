@@ -29,7 +29,7 @@ export default function LeaveCalendar({
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="flex items-center text-base sm:text-lg font-semibold">
-                    <CalendarIcon className="w-5 h-5 mr-2 text-yellow-600" /> Leave
+                    <CalendarIcon className="w-5 h-5 mr-2 text-orange-600" /> Leave
                     Calendar
                 </h2>
                 <span className="text-xs sm:text-sm text-gray-500">
@@ -44,7 +44,7 @@ export default function LeaveCalendar({
                     value={newLeaveDate}
                     onChange={(e) => setNewLeaveDate(e.target.value)}
                     min={new Date().toISOString().split("T")[0]}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
                 <div className="flex space-x-2">
                     <input
@@ -53,7 +53,7 @@ export default function LeaveCalendar({
                         onChange={(e) => setNewLeaveReason(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && handleAdd()}
                         placeholder="Reason for leave..."
-                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                     <Button
                         onClick={handleAdd}

@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { format } from "date-fns";
+import { TableSkeleton } from "./DashboardSkeletons";
 
 interface RecentAppointment {
   id: number | string;
@@ -149,10 +150,7 @@ export const UpcomingAppointments: React.FC = () => {
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
-          <div className="flex items-center justify-center py-10 text-gray-400 gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span className="text-sm">Loading appointments…</span>
-          </div>
+          <TableSkeleton />
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-200 bg-gray-50">

@@ -19,7 +19,7 @@ const statusStyles = {
   upcoming: {
     icon: <Clock className="w-6 h-6 text-yellow-500" />,
     bg: "bg-yellow-50",
-    text: "text-yellow-600",
+    text: "text-orange-600",
     label: "Upcoming",
   },
   completed: {

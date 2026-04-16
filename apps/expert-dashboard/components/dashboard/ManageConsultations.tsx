@@ -128,7 +128,7 @@ export const ManageConsultations: React.FC = () => {
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all active:scale-95"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all active:scale-95"
         >
           <Plus className="w-4 h-4" />
           Add Service
@@ -203,7 +203,7 @@ export const ManageConsultations: React.FC = () => {
                       id: (svc as any).id,
                     })
                   }
-                  className="ml-auto flex items-center gap-1 text-xs font-semibold text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 px-2.5 py-1 rounded-lg transition-colors"
+                  className="ml-auto flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-800 hover:bg-orange-50 px-2.5 py-1 rounded-lg transition-colors"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   Edit

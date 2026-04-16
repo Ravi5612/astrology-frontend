@@ -22,7 +22,7 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
                                 {client.avatar ? (
                                     <img
                                         src={client.avatar || "/images/dummy-expert.jpg"}
@@ -45,7 +45,7 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                                     size={16}
                                     className={
                                         i < client.rating
-                                            ? "text-yellow-400 fill-current"
+                                            ? "text-orange-400 fill-current"
                                             : "text-gray-300"
                                     }
                                 />
@@ -85,14 +85,14 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
 
                     {/* Payment */}
                     <div className="flex justify-between items-center">
-                        <div className="text-sm font-semibold text-yellow-700">
+                        <div className="text-sm font-semibold text-orange-700">
                             Earnings: ₹{client.payment.toLocaleString()}
                         </div>
                         <Button
                             onClick={() => onViewChat(client)}
                             variant="secondary"
                             size="sm"
-                            className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 font-bold"
+                            className="bg-orange-100 text-orange-800 hover:bg-orange-200 font-bold"
                         >
                             <MessageSquare size={12} className="mr-1.5" />
                             Chat History
@@ -105,7 +105,7 @@ export default function ClientMobileList({ clients, onViewChat }: ClientMobileLi
                             Expert Notes:
                         </label>
                         <textarea
-                            className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                            className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500"
                             rows={3}
                             placeholder="Add private notes about this client..."
                         />

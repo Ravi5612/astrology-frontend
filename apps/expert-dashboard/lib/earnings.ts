@@ -1,7 +1,15 @@
 import { api, ApiError } from "./api";
 
-export const getEarningsStats = async (period: string = 'monthly'): Promise<[any | null, ApiError | null]> => {
-    const [res, error] = await api.get(`/expert/earnings/stats?period=${period}`);
+export const getEarningsStats = async (
+    period: string = 'last_6_months',
+    startDate?: string,
+    endDate?: string
+): Promise<[any | null, ApiError | null]> => {
+    let url = `/expert/earnings/stats?period=${period}`;
+    if (startDate) url += `&startDate=${startDate}`;
+    if (endDate) url += `&endDate=${endDate}`;
+
+    const [res, error] = await api.get(url);
     if (error) return [null, error];
     const data = (res as any)?.data ?? res;
     return [data, null];

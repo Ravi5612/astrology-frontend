@@ -17,6 +17,7 @@ import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 import { AlertTriangle, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { StatsSkeleton, ActivitySkeleton, TableSkeleton } from "@/components/dashboard/DashboardSkeletons";
 const Page = () => {
   const { user } = useAuthStore();
   const [ratingStats, setRatingStats] = useState<ReviewStats | null>(null);
@@ -42,14 +43,7 @@ const Page = () => {
   };
 
 
-  useEffect(() => {
-    console.log("[DashboardDebug] Current User Status Info:", {
-      status: user?.status,
-      kycStatus: user?.kycStatus,
-      kycDetailsStatus: user?.kyc_details?.status,
-      rejectionReason: user?.rejectionReason
-    });
-  }, [user]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,7 +102,7 @@ const Page = () => {
       trend: { value: "Quality", isPositive: true, period: "total" },
       icon: XCircle,
       iconBgColor: "bg-yellow-100",
-      iconColor: "text-yellow-600",
+      iconColor: "text-orange-600",
     },
     {
       title: "Total Earnings",
@@ -225,15 +219,30 @@ const Page = () => {
       })()}
 
       <section>
-        <StatsCards stats={statsData} columns={4} />
+        {loading ? (
+          <StatsSkeleton />
+        ) : (
+          <StatsCards stats={statsData} columns={4} />
+        )}
       </section>
 
       <section>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <RecentActivity />
-          <div className="lg:col-span-2">
-            <UpcomingAppointments />
-          </div>
+          {loading ? (
+            <>
+              <ActivitySkeleton />
+              <div className="lg:col-span-2">
+                <TableSkeleton />
+              </div>
+            </>
+          ) : (
+            <>
+              <RecentActivity />
+              <div className="lg:col-span-2">
+                <UpcomingAppointments />
+              </div>
+            </>
+          )}
         </div>
       </section>
 

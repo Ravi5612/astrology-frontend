@@ -68,7 +68,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const actualUserId = user?.userId || user?.id;
         
         if (actualUserId) {
-            console.log(`[Presence] Reporting offline status before logout for user ${actualUserId}...`);
             const { socket } = await import('@/lib/socket');
             socket.emit("expert_offline", { userId: actualUserId });
         }
@@ -78,7 +77,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     refreshAuth: async () => {
-        console.log("[AuthStore] Refreshing auth...");
         set({ loading: true });
         
         const [res, error] = await api.get<any>('/expert');
@@ -94,7 +92,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         const payload = res?.data ?? res;
         if (payload && (payload.id || payload.user)) {
-            console.log("[AuthStore] Auth refresh success, expert found");
             const fullUserData = {
                 ...payload.user,
                 ...payload,

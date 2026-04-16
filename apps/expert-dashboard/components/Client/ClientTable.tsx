@@ -73,7 +73,7 @@ export default function ClientTable({
                         >
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-sm overflow-hidden shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
                                         {client.avatar ? (
                                             <img
                                                 src={client.avatar || "/images/dummy-expert.jpg"}
@@ -114,7 +114,7 @@ export default function ClientTable({
                                 </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-semibold text-yellow-700">
+                                <div className="text-sm font-semibold text-orange-700">
                                     ₹{client.payment.toLocaleString()}
                                 </div>
                             </td>

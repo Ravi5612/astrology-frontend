@@ -389,7 +389,7 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
                 <button
                   type="button"
                   onClick={addSamagri}
-                  className="p-2 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700"
+                  className="p-2 bg-orange-600 text-white rounded-xl hover:bg-orange-700"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -441,7 +441,7 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 px-6 bg-yellow-600 text-white font-bold rounded-2xl hover:bg-yellow-700 transition-all shadow-lg flex items-center justify-center gap-2 hover:translate-y-[-2px] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0"
+              className="flex-1 py-3 px-6 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-all shadow-lg flex items-center justify-center gap-2 hover:translate-y-[-2px] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (mode === 'add' ? 'Save Service' : 'Update Service')}
             </button>

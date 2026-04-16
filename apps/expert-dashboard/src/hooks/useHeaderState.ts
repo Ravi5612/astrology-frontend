@@ -24,7 +24,6 @@ export const useHeaderState = () => {
       const hasInitialized = sessionStorage.getItem("expert_session_initialized");
 
       if (!hasInitialized) {
-        console.log("[Presence] 🆕 New Session detected in Hook. Forcing INITIAL Offline state...");
         
         // Force offline in state immediately
         setIsOnline(false);
@@ -40,7 +39,6 @@ export const useHeaderState = () => {
         sessionStorage.setItem("expert_session_initialized", "true");
         setIsSessionReady(true);
       } else {
-        console.log("[Presence] 🔄 Refresh detected in Hook. Syncing with DB state:", user.isAvailable);
         setIsOnline(user.isAvailable);
         setIsSessionReady(true);
       }
@@ -130,7 +128,6 @@ export const useHeaderState = () => {
       // CRITICAL: Only emit online if session logic is READY and isOnline state is TRUE
       if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
         if (socket.connected) {
-          console.log(`[Socket] 🌐 Registering expert ${actualUserId} as online...`);
           socket.emit("expert_online", { userId: Number(actualUserId) });
         } else {
           socket.once("connect", () => {

@@ -13,12 +13,13 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 const BrandingSection = () => (
   <div className="relative hidden lg:block h-full min-h-[500px]">
-    <div className="absolute inset-0 bg-yellow-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
+    <div className="absolute inset-0 bg-orange-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
       <div className="relative w-48 h-48 mb-8 drop-shadow-2xl">
         <Image
           src="/images/Expert.png"
           alt="Expert Community"
           fill
+          sizes="192px"
           className="object-contain"
           priority
         />
@@ -109,7 +110,7 @@ const VerifyEmailContent = () => {
         <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center bg-white text-center sm:text-left">
           {status === "verifying" && (
             <div className="flex flex-col items-center sm:items-start animate-pulse">
-              <Loader2 className="w-14 h-14 text-yellow-500 animate-spin mb-8" />
+              <Loader2 className="w-14 h-14 text-orange-500 animate-spin mb-8" />
               <h2 className="text-3xl font-black text-gray-900 tracking-tight">Authenticating</h2>
               <p className="mt-4 text-gray-500 font-medium italic">{message}</p>
             </div>
@@ -168,7 +169,7 @@ export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#FFF9F4]">
-        <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-600 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-orange-100 border-t-orange-600 rounded-full animate-spin"></div>
       </div>
     }>
       <VerifyEmailContent />

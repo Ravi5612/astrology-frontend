@@ -4,6 +4,7 @@ const User = UserIcon as any;
 const Clock = ClockIcon as any;
 import { getRecentAppointments as getRecentSessions } from '@/lib/dashboard';
 import { format, formatDistanceToNow } from 'date-fns';
+import { ActivitySkeleton } from './DashboardSkeletons';
 
 interface Activity {
   name: string;
@@ -50,17 +51,7 @@ export const RecentActivity: React.FC = () => {
       </h3>
       <div className="space-y-2">
         {loading ? (
-          <div className="flex flex-col space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="animate-pulse flex items-center space-x-4 p-3">
-                <div className="rounded-full bg-gray-200 h-10 w-10"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ActivitySkeleton />
         ) : activities.length > 0 ? (
           activities.map((activity, index) => (
             <div

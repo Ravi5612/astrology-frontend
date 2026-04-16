@@ -21,7 +21,7 @@ const API_URL = CLIENT_API_URL;
 
 const BrandingSection = () => (
   <div className="relative hidden lg:block h-full min-h-[600px]">
-    <div className="absolute inset-0 bg-yellow-600/90 flex flex-col items-center justify-center text-white p-12 text-center">
+    <div className="absolute inset-0 bg-orange-600/90 flex flex-col items-center justify-center text-white p-12 text-center">
       <motion.div 
         animate={{ y: [-10, 10, -10] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -31,6 +31,7 @@ const BrandingSection = () => (
           src="/images/Expert.png"
           alt="Expert Community"
           fill
+          sizes="256px"
           className="object-contain -scale-x-100"
           priority
         />
@@ -131,14 +132,14 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className={`h-5 w-5 transition-colors ${errors.name ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                  <User className={`h-5 w-5 transition-colors ${errors.name ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                 </div>
                 <input
                   {...register("name")}
                   id="name"
                   type="text"
                   autoComplete="name"
-                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.name ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.name ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                   placeholder="Enter your name"
                 />
               </div>
@@ -152,14 +153,14 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                  <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                 </div>
                 <input
                   {...register("email")}
                   id="email"
                   type="email"
                   autoComplete="email"
-                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.email ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.email ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                   placeholder="expert@example.com"
                 />
               </div>
@@ -173,20 +174,20 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                  <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                 </div>
                 <input
                   {...register("password")}
                   id="password"
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                   placeholder="Min. 6 chars (A-Z, 0-9)"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -201,20 +202,20 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 transition-colors ${errors.confirmPassword ? 'text-red-400' : 'text-gray-400 group-focus-within:text-yellow-600'}`} />
+                  <Lock className={`h-5 w-5 transition-colors ${errors.confirmPassword ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
                 </div>
                 <input
                   {...register("confirmPassword")}
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-red-300' : 'border-gray-200 group-focus-within:border-yellow-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all font-medium`}
+                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
                   placeholder="Confirm your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
                 >
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -227,8 +228,8 @@ const RegisterPage: React.FC = () => {
                 type="submit"
                 loading={loading}
                 fullWidth
-                variant="warning"
-                className="bg-yellow-600 hover:bg-yellow-700 py-4 rounded-2xl shadow-lg shadow-yellow-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest"
+                variant="primary"
+                className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest"
               >
                 Create Account
               </Button>
@@ -257,7 +258,7 @@ const RegisterPage: React.FC = () => {
             <div className="text-center mt-8">
               <p className="text-sm text-gray-500 font-medium">
                 Already have an account?{" "}
-                <Link href="/" className="text-yellow-600 hover:text-yellow-700 font-black border-b-2 border-yellow-600/20 hover:border-yellow-600 transition-all ml-1">
+                <Link href="/" className="text-orange-600 hover:text-orange-700 font-black border-b-2 border-orange-600/20 hover:border-orange-600 transition-all ml-1">
                   Sign In
                 </Link>
               </p>

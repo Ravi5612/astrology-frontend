@@ -36,11 +36,6 @@
             "icon": "Bell"
         },
         {
-            "label": "Product",
-            "href": "/dashboard/product",
-            "icon": "ShoppingBag"
-        },
-        {
             "label": "Account",
             "href": "#",
             "icon": "Settings",

@@ -87,7 +87,7 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
     };
 
     if (appt.status === 'accepted') return <span className="text-emerald-600 font-bold px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Check className="w-4 h-4"/> It is accepted</span>;
-    if (appt.status === 'confirmed') return <span className="text-yellow-600 font-bold px-4 py-2 bg-yellow-50 rounded-xl border border-yellow-100 flex items-center gap-2 shadow-sm"><Star className="w-4 h-4 fill-yellow-600"/> Confirmed & Paid</span>;
+    if (appt.status === 'confirmed') return <span className="text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-xl border border-orange-100 flex items-center gap-2 shadow-sm"><Star className="w-4 h-4 fill-orange-600"/> Confirmed & Paid</span>;
     if (appt.status === 'rejected') return <span className="text-red-400 font-bold px-4 py-2 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2 shadow-sm animate-in fade-in transition-all"><Ban className="w-4 h-4"/> You rejected this</span>;
     if (appt.status === 'on_hold') return (
         <div className="flex flex-col items-center gap-2 bg-orange-50/50 p-3 rounded-2xl border border-orange-100 group shadow-sm transition-all hover:shadow-md animate-in fade-in transition-all">
@@ -252,7 +252,7 @@ function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, 
             {appt.status === 'active' && (
                 <a
                     href={appt.meetingLink}
-                    className="px-5 py-3 text-sm bg-yellow-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-yellow-700 shadow-sm transition-all w-full"
+                    className="px-5 py-3 text-sm bg-orange-600 text-white rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-orange-700 shadow-sm transition-all w-full"
                 >
                     {appt.service.includes("Chat") ? (
                         <>
@@ -290,7 +290,7 @@ export default function AppointmentList({
 
     const statusColors: Record<Appointment["status"], string> = {
         confirmed: "bg-green-100 text-green-600",
-        pending: "bg-yellow-100 text-yellow-600 border-yellow-200",
+        pending: "bg-orange-100 text-orange-600 border-orange-200",
         active: "bg-blue-100 text-blue-600 border-blue-200",
         completed: "bg-gray-100 text-gray-600 border-gray-200",
         cancelled: "bg-red-100 text-red-600 border-red-200",
@@ -316,7 +316,7 @@ export default function AppointmentList({
                         {/* Left Section: Client Info & Details */}
                         <div className="flex items-start lg:items-center gap-5 flex-1 min-w-0">
                             {/* Avatar */}
-                            <div className="shrink-0 w-12 h-12 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-2xl ring-2 ring-yellow-500 overflow-hidden shadow-sm">
+                            <div className="shrink-0 w-12 h-12 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold text-2xl ring-2 ring-orange-500 overflow-hidden shadow-sm">
                                 {appt.avatar ? (
                                     <img
                                         src={appt.avatar || "/images/dummy-expert.jpg"}
@@ -374,7 +374,7 @@ export default function AppointmentList({
                                 </div>
                                 {appt.pujaId && (
                                     <div className="mt-3 flex flex-wrap gap-2">
-                                        <span className="bg-yellow-50 text-yellow-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-yellow-200 flex items-center gap-1.5 shadow-sm transition-all hover:shadow-md">
+                                        <span className="bg-orange-50 text-orange-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-orange-200 flex items-center gap-1.5 shadow-sm transition-all hover:shadow-md">
                                             <LucideVideo className="w-3.5 h-3.5" />
                                             {appt.pujaMode === 'online' ? 'Online Ritual' : (appt.pujaMode === 'home_visit_with' ? 'Home Visit (With Samagri)' : 'Home Visit (Basic)')}
                                         </span>
@@ -398,11 +398,11 @@ export default function AppointmentList({
                                     </div>
                                 )}
                                 {appt.askExpertForDate && appt.status === 'pending' && (
-                                    <div className="mt-3 p-3 bg-yellow-50 rounded-xl border border-dashed border-yellow-300 flex items-center gap-3">
-                                        <div className="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center animate-bounce">
-                                            <LucideClock className="w-4 h-4 text-yellow-600" />
+                                    <div className="mt-3 p-3 bg-orange-50 rounded-xl border border-dashed border-orange-300 flex items-center gap-3">
+                                        <div className="shrink-0 w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center animate-bounce">
+                                            <LucideClock className="w-4 h-4 text-orange-600" />
                                         </div>
-                                        <p className="text-[11px] font-black text-yellow-800 uppercase tracking-wider leading-tight">
+                                        <p className="text-[11px] font-black text-orange-800 uppercase tracking-wider leading-tight">
                                             User is requesting you to <br/> propose a date & time
                                         </p>
                                     </div>

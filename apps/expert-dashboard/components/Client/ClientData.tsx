@@ -11,6 +11,7 @@ import * as LucideIcons from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getReviews } from "@/lib/reviews";
 import Button from "../ui/Button";
+import { HistorySkeleton } from "../dashboard/DashboardSkeletons";
 
 const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin } = LucideIcons as any;
 
@@ -244,12 +245,9 @@ export default function ClientsPage() {
           <ClientHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
           {/* Clients List area */}
-          <div className={`space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar-yellow pb-4 transition-opacity duration-300 ${loading && clients.length > 0 ? "opacity-60" : "opacity-100"}`}>
+          <div className={`space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar-orange pb-4 transition-opacity duration-300 ${loading && clients.length > 0 ? "opacity-60" : "opacity-100"}`}>
             {!mounted ? null : loading && clients.length === 0 ? (
-               <div className="flex flex-col items-center justify-center py-24">
-                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-100 border-t-[#fd6410]"></div>
-                 <p className="mt-4 text-gray-500 font-medium animate-pulse">Loading sessions...</p>
-               </div>
+               <HistorySkeleton />
             ) : sortedAndFilteredClients.length === 0 ? (
               <div className="text-center py-20 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
                 <div className="mb-4">
@@ -344,8 +342,8 @@ export default function ClientsPage() {
                                   <Clock size={14} className="text-gray-400" />
                                   {client.lastConsultation.duration}
                                 </span>
-                                <span className="flex items-center gap-1.5 bg-yellow-50 px-2.5 py-1 rounded-md text-yellow-700 pb-1">
-                                  <Star size={14} className="fill-yellow-500 text-yellow-500" />
+                                <span className="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-md text-orange-700 pb-1">
+                                  <Star size={14} className="fill-orange-500 text-orange-500" />
                                   <span className="mt-0.5">{client.rating > 0 ? client.rating : 'N/A'} Rating</span>
                                 </span>
                               </div>
@@ -484,7 +482,7 @@ export default function ClientsPage() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-[#fffbf9] space-y-6 custom-scrollbar-yellow">
+            <div className="flex-1 overflow-y-auto p-6 bg-[#fffbf9] space-y-6 custom-scrollbar-orange">
               {loadingChat ? (
                 <div className="flex flex-col justify-center items-center h-64 gap-4">
                   <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#fd6410] border-t-transparent"></div>

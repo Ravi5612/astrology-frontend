@@ -5,6 +5,7 @@ import WalletStats from "./WalletStats";
 import WithdrawMoney from "./WithdrawMoney";
 import WalletTable from "./WalletTable";
 import { useWallet } from "@/src/hooks/useWallet";
+import { WalletSkeleton } from "../dashboard/DashboardSkeletons";
 
 export default function Wallet() {
     const { 
@@ -17,11 +18,7 @@ export default function Wallet() {
     } = useWallet();
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
-            </div>
-        );
+        return <WalletSkeleton />;
     }
 
     // Default stats if fetch failed or loading

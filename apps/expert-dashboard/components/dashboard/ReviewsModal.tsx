@@ -63,7 +63,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {loading && page === 1 ? (
                         <div className="flex flex-col items-center justify-center py-20">
-                            <Loader2 className="w-10 h-10 text-yellow-600 animate-spin mb-2" />
+                            <Loader2 className="w-10 h-10 text-orange-600 animate-spin mb-2" />
                             <p className="text-gray-500">Loading all reviews...</p>
                         </div>
                     ) : reviews.length > 0 ? (
@@ -83,7 +83,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                                                     }}
                                                 />
                                             ) : (
-                                                <User className="w-5 h-5 text-yellow-600" />
+                                                <User className="w-5 h-5 text-orange-600" />
                                             )}
                                         </div>
                                         <div>
@@ -92,7 +92,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                                                 {[1, 2, 3, 4, 5].map((s) => (
                                                     <Star
                                                         key={s}
-                                                        className={`w-4 h-4 ${s <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-200'}`}
+                                                        className={`w-4 h-4 ${s <= review.rating ? 'fill-orange-500 text-orange-500' : 'text-gray-200'}`}
                                                     />
                                                 ))}
                                             </div>
@@ -124,7 +124,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                             onClick={() => setPage(p => p - 1)}
                             variant="ghost"
                             size="sm"
-                            className="text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
+                            className="text-gray-700 disabled:opacity-50 hover:text-orange-600 transition-colors"
                         >
                             Previous
                         </Button>
@@ -136,7 +136,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                             onClick={() => setPage(p => p + 1)}
                             variant="ghost"
                             size="sm"
-                            className="text-gray-700 disabled:opacity-50 hover:text-yellow-600 transition-colors"
+                            className="text-gray-700 disabled:opacity-50 hover:text-orange-600 transition-colors"
                         >
                             Next
                         </Button>

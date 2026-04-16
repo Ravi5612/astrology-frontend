@@ -12,7 +12,7 @@ export default function AppointmentCalendar({
     return (
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100">
             <Calendar
-                onClickDay={(value) => console.log("Clicked date:", value)}
+                onClickDay={(value) => {}}
                 className="w-full"
                 tileContent={({ date }) => {
                     const dayAppointments = appointments.filter(

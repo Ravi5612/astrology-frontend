@@ -180,7 +180,7 @@ export function ServiceModal({
               <input
                 type="text"
                 placeholder="e.g. Vastu Consultation"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all font-medium text-sm"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-sm"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isStandard}
@@ -214,7 +214,7 @@ export function ServiceModal({
                   type="number"
                   min={0}
                   placeholder="0"
-                  className="w-full pl-7 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all font-bold text-sm"
+                  className="w-full pl-7 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold text-sm"
                   value={price || ""}
                   onChange={(e) => setPrice(Number(e.target.value))}
                 />
@@ -225,7 +225,7 @@ export function ServiceModal({
                 Unit
               </label>
               <select
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all font-medium text-sm"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-sm"
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
                 disabled={isStandard}
@@ -248,7 +248,7 @@ export function ServiceModal({
               <textarea
                 rows={3}
                 placeholder="Describe your service…"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all text-sm resize-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm resize-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -259,7 +259,7 @@ export function ServiceModal({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full mt-2 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base shadow-xl active:scale-95 transition-all disabled:opacity-60"
+            className="w-full mt-2 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black text-base shadow-xl active:scale-95 transition-all disabled:opacity-60"
           >
             {saving ? (
               <Loader2 className="w-5 h-5 animate-spin" />

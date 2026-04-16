@@ -37,8 +37,8 @@ export default function WalletStats({ stats }: WalletStatsProps) {
             title: "Processing",
             value: `₹${(stats?.pendingWithdrawals ?? 0).toLocaleString('en-IN')}`,
             icon: Clock,
-            iconBgColor: "bg-amber-100",
-            iconColor: "text-amber-600",
+            iconBgColor: "bg-orange-100",
+            iconColor: "text-orange-600",
             trend: {
                 value: "In Progress",
                 isPositive: false,

@@ -25,7 +25,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/a
 
 export async function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
-    console.log("[MiddlewareLog] Pathname:", pathname);
 
     // 0. Define Protected Routes
     const isDashboardRoute = pathname.startsWith('/dashboard');
@@ -73,7 +72,6 @@ export async function middleware(request: NextRequest) {
             const fiveMinutesInMs = 5 * 60 * 1000;
 
             if (expiryTime - currentTime < fiveMinutesInMs) {
-                console.log("🕒 Expert token expiring soon, triggering refresh...");
                 shouldRefresh = true;
             }
         }

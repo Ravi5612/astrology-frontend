@@ -27,7 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       const hasInitialized = sessionStorage.getItem("expert_session_initialized");
 
       if (!hasInitialized) {
-        console.log("[Presence] 🆕 New Session detected. Forcing INITIAL Offline state...");
         
         // Even if DB says they are online, we want them offline for a fresh login.
         // We set state to false immediately and also notify backend.
@@ -44,7 +43,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         sessionStorage.setItem("expert_session_initialized", "true");
         setIsSessionReady(true);
       } else {
-        console.log("[Presence] 🔄 Refresh detected. Syncing with DB state:", user.isAvailable);
         setIsOnline(user.isAvailable);
         setIsSessionReady(true);
       }
@@ -53,10 +51,8 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
   // WebSocket Listener for status sync (across sessions/devices) - RESTORED
   useEffect(() => {
-    console.log("[Socket] Dashboard Header initialized. Socket status:", socket.connected ? "Connected" : "Disconnected");
 
     const handleStatusSync = (data: any) => {
-      console.log("[Socket] 🔔 Dashboard received event:", data);
 
       const expertId = data.expert_id || data.userId || data.id;
       const isAvailable = data.is_available !== undefined
@@ -67,14 +63,12 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       const altId = user?.userId;
 
       if (String(currentExpertId) === String(expertId) || String(altId) === String(expertId)) {
-        console.log(`[Socket] 🔄 Dashboard Syncing Status for ID ${expertId} to ${isAvailable}`);
         setIsOnline(isAvailable);
       }
     };
 
     // Global KYC Status Update Listener
     const handleKycUpdate = (data: any) => {
-      console.log("[Socket] 🛡️ KYC Status Update RECEIVED:", data);
 
       const expertId = data.expert_id || data.id || data.userId;
       const currentExpertId = user?.id || user?.profileId;
@@ -111,7 +105,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       // CRITICAL: Only emit online if session logic is READY and isOnline is TRUE
       if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
         if (socket.connected) {
-          console.log(`[Socket] 🌐 Registering expert ${actualUserId} as online...`);
           socket.emit("expert_online", { userId: Number(actualUserId) });
         } else {
           socket.once("connect", () => {
@@ -232,8 +225,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const handleToggle = async () => {
     setLoading(true);
     const newStatus = !isOnline;
-
-    console.log("[Presence] Updating expert availability to:", newStatus);
     const [res, error] = await api.patch<{ is_available: boolean }>('/expert/status', { is_available: newStatus });
 
     if (error) {

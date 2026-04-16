@@ -52,10 +52,9 @@ export default function ExpertCallRoom() {
         let cancelled = false;
 
         const acceptAndConnect = async () => {
-            console.log('[ExpertCallRoom] 🚀 Starting acceptAndConnect for sessionId:', sessionId);
             
             // Pre-check hardware
-            console.log('[ExpertCallRoom] 🎤 Checking hardware & network...');
+            // Pre-check hardware
             try {
                 await checkHardwareAndNetwork();
             } catch (hwErr: any) {
@@ -66,11 +65,11 @@ export default function ExpertCallRoom() {
                 return;
             }
             
-            if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after hardware check (StrictMode cleanup).'); return; }
-            console.log('[ExpertCallRoom] ✅ Hardware check passed.');
+            if (cancelled) { return; }
+
 
             // Step 1: Accept call via REST API → get Twilio token for expert
-            console.log('[ExpertCallRoom] 📡 Calling /call/accept API...');
+            // Step 1: Accept call via REST API → get Twilio token for expert
             const [data, error] = await api.post<any>('/call/accept', {
                 sessionId: parseInt(sessionId),
             });
@@ -83,8 +82,8 @@ export default function ExpertCallRoom() {
                 return;
             }
 
-            if (cancelled) { console.log('[ExpertCallRoom] ⚠️ Cancelled after API call (StrictMode cleanup).'); return; }
-            console.log('[ExpertCallRoom] 📡 /call/accept response:', { hasToken: !!data?.token, session: data?.session });
+            if (cancelled) { return; }
+
 
             if (!data?.token) {
                 toast.error('No token received from accept endpoint');
@@ -94,11 +93,11 @@ export default function ExpertCallRoom() {
             setSessionData(data.session);
 
             // Step 2: Join socket room so user gets notified
-            console.log('[ExpertCallRoom] 🔌 Emitting join_call_room for sessionId:', sessionId);
+            // Step 2: Join socket room so user gets notified
             callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
 
             // Step 3: Init Twilio Device
-            console.log('[ExpertCallRoom] 📞 Initializing Twilio Device...');
+            // Step 3: Init Twilio Device
             await initTwilioDevice(data.token);
         };
 
@@ -107,11 +106,9 @@ export default function ExpertCallRoom() {
         callSocket.on('call_ended', (data: any) => handleCallEnded(data));
 
         return () => {
-            console.log('[ExpertCallRoom] 🧹 Cleanup running (sessionId:', sessionId, '). Setting cancelled=true.');
             cancelled = true;
             if (timerRef.current) clearInterval(timerRef.current);
             if (deviceRef.current) {
-                console.log('[ExpertCallRoom] 🗑️ Destroying Twilio Device on cleanup.');
                 deviceRef.current.destroy();
                 deviceRef.current = null;
             }
@@ -137,21 +134,16 @@ export default function ExpertCallRoom() {
         deviceRef.current = device;
 
         device.on('ready', () => {
-            console.log('[ExpertTwilio] ✅ Device ready. Connecting to TwiML conference...');
         });
 
         // Listen for when a call we made is connected (conference joined)
         device.on('connect', (call: any) => {
-            console.log('[ExpertTwilio] � device:connect — expert joined conference room.', {
-                callSid: call?.parameters?.CallSid,
-            });
             toast.success('Connected! Call is live.');
             setStatus('connected');
             startTimer();
         });
 
         device.on('disconnect', (call: any) => {
-            console.log('[ExpertTwilio] 📴 device:disconnect fired.', { callSid: call?.parameters?.CallSid });
             handleCallEnded();
         });
 
@@ -161,9 +153,8 @@ export default function ExpertCallRoom() {
             handleCallEnded();
         });
 
-        console.log('[ExpertTwilio] 📡 Registering device with Twilio...');
+
         await device.register();
-        console.log('[ExpertTwilio] ✅ Device registered. Connecting to conference room:', `call_room_${sessionId}`);
 
         // Both user & expert call the TwiML App with sessionId.
         // TwiML App uses <Dial><Conference>call_room_{sessionId}</Conference></Dial>
@@ -174,13 +165,12 @@ export default function ExpertCallRoom() {
         // Per-call event handlers (Twilio SDK v2.x — use call events, not device events)
         call.on('accept', (call: any) => {
             // 'accept' fires when media is connected — this is when call is truly live
-            console.log('[ExpertTwilio] ✅ call:accept — media connected! Starting timer.');
             toast.success('Connected! Call is live.');
             setStatus('connected');
             startTimer();
         });
-        call.on('disconnect', () => { console.log('[ExpertTwilio] 📴 call:disconnect fired.'); handleCallEnded(); });
-        call.on('cancel', () => { console.log('[ExpertTwilio] ❌ call:cancel — call cancelled.'); handleCallEnded(); });
+        call.on('disconnect', () => { handleCallEnded(); });
+        call.on('cancel', () => { handleCallEnded(); });
         call.on('error', (err: any) => { console.error('[ExpertTwilio] ❌ call:error', err); toast.error(`Call error: ${err.message}`); handleCallEnded(); });
     };
 
@@ -190,7 +180,6 @@ export default function ExpertCallRoom() {
     };
 
     const handleCallEnded = (data?: any) => {
-        console.log('[ExpertCallRoom] 📴 handleCallEnded called. Cleaning up device...', data);
         setStatus('ended');
         if (timerRef.current) clearInterval(timerRef.current);
         if (deviceRef.current) {
@@ -216,7 +205,6 @@ export default function ExpertCallRoom() {
     const toggleMute = () => {
         if (callRef.current) {
             callRef.current.mute(!isMuted);
-            console.log('[ExpertCallRoom] 🎤 Mute toggled:', !isMuted ? 'MUTED' : 'UNMUTED');
         } else {
             console.warn('[ExpertCallRoom] ⚠️ No active call to mute.');
         }

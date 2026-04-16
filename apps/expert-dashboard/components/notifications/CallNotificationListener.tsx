@@ -15,30 +15,23 @@ export const CallNotificationListener: React.FC = () => {
         if (!user) return;
         const expertId = Number(user.profileId || user.id);
         if (!expertId) return;
-        console.log("[CallSocket] Registering expert with ID:", expertId);
-        callSocket.emit('register_expert', { expertId }, (res: any) => {
-            console.log("[CallSocket] Registration response:", res);
-        });
+        callSocket.emit('register_expert', { expertId });
     }, [user]);
 
     useEffect(() => {
         if (!isAuthenticated || !user) return;
 
         if (!callSocket.connected) {
-            console.log("[CallSocket] 🔌 Socket not connected, connecting to /call namespace...");
             callSocket.connect();
         } else {
-            console.log("[CallSocket] ✅ Socket already connected, registering expert...");
             registerExpert();
         }
 
         const onConnect = () => {
-            console.log("[CallSocket] ✅ CONNECTED to /call namespace. ID:", callSocket.id);
             registerExpert();
         };
 
         const onReconnect = (attempt: number) => {
-            console.log("[CallSocket] 🔄 RECONNECTED to /call namespace after", attempt, "attempts. Re-registering...");
             registerExpert();
         };
 
@@ -47,7 +40,6 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         const handleNewCall = (data: any) => {
-            console.log("[CallSocket] 🚨 New CALL request received:", data);
             const { session } = data;
             const callerName = session.user?.name || "A Client";
             const callType = session.type || 'audio';
@@ -95,12 +87,10 @@ export const CallNotificationListener: React.FC = () => {
             );
 
             const audio = new Audio('/sounds/ringtone.mp3');
-            audio.play().catch(() => console.log("Audio play blocked by browser"));
+            audio.play().catch(() => {});
         };
 
         const handleAutoDismiss = (data: any) => {
-            const sid = data.session?.id || data.sessionId || data.id;
-            console.log("[CallSocket] 🔔 Auto-dismissing notification for session:", sid);
             toast.dismiss();
         };
 
@@ -112,7 +102,6 @@ export const CallNotificationListener: React.FC = () => {
         callSocket.on('call_ended', handleAutoDismiss);
 
         return () => {
-            console.log("[CallSocket] 🧹 Cleaning up listeners...");
             callSocket.off('connect', onConnect);
             callSocket.off('reconnect', onReconnect);
             callSocket.off('connect_error', onConnectError);

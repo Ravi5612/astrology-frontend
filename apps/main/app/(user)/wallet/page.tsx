@@ -6,13 +6,20 @@ import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
 import * as LucideIcons from "lucide-react";
 import { PATHS } from "@repo/routes";
+import { loadRazorpay } from "@/libs/razorpay";
 
 const {
     Wallet, Plus, History, CreditCard, ChevronRight, AlertCircle, TrendingUp, CheckCircle2
 } = LucideIcons as any;
 
 export default function UserWalletPage() {
-    const { clientBalance, refreshBalance, isClientAuthenticated, clientLoading } = useAuthStore(); // Changed usage
+    const { 
+        clientBalance, 
+        refreshBalance, 
+        isClientAuthenticated, 
+        clientLoading,
+        clientUser // Added for Razorpay prefill
+    } = useAuthStore();
     const [rechargeAmount, setRechargeAmount] = useState<number>(500);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -25,21 +32,83 @@ export default function UserWalletPage() {
     }, [isClientAuthenticated, refreshBalance]);
 
     const handleRecharge = async () => {
-        if (rechargeAmount < 10) {
-            toast.error("Minimum recharge amount is ₹10");
+        if (rechargeAmount < 100) {
+            toast.error("Minimum recharge amount is ₹100");
             return;
         }
 
         setIsProcessing(true);
-        const [res, error] = await http.post("/wallet/topup", { amount: rechargeAmount });
-
-        if (error) {
-            toast.error(error.message || "Recharge failed. Please try again.");
-        } else {
-            toast.success(`Successfully recharged ₹${rechargeAmount}!`);
-            refreshBalance();
+        
+        // 1. Load Razorpay SDK
+        const isSDKLoaded = await loadRazorpay();
+        if (!isSDKLoaded) {
+            toast.error("Payment system failed to load. Please check your connection.");
+            setIsProcessing(false);
+            return;
         }
-        setIsProcessing(false);
+
+        // 2. Create Order on Backend
+        const [orderRes, orderError] = await http.post<any>("/payment/orders/create", {
+            amount: rechargeAmount,
+            type: "wallet_recharge",
+        });
+
+        if (orderError) {
+            toast.error(orderError.message || "Failed to initiate payment. Please try again.");
+            setIsProcessing(false);
+            return;
+        }
+
+        const orderPayload = (orderRes as any)?.data ?? orderRes;
+        const { id: order_id, amount, currency, key_id } = orderPayload || {};
+
+        if (!order_id) {
+            toast.error("Invalid response from payment server.");
+            setIsProcessing(false);
+            return;
+        }
+
+        // 3. Initialize Razorpay Checkout
+        const options = {
+            key: key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: amount,
+            currency: currency,
+            name: "Astrology in Bharat",
+            description: `Wallet Recharge: ₹${rechargeAmount}`,
+            order_id: order_id,
+            handler: async (response: any) => {
+                // 4. Verify Payment on Backend
+                const [verifyRes, verifyError] = await http.post<any>("/payment/orders/verify", {
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                });
+
+                if (verifyError) {
+                    toast.error(verifyError.message || "Payment verification failed. Please contact support.");
+                } else {
+                    const verifyPayload = (verifyRes as any)?.data ?? verifyRes;
+                    if (verifyPayload?.success) {
+                        toast.success(`Wallet successfully recharged with ₹${rechargeAmount}!`);
+                        refreshBalance();
+                    } else {
+                        toast.error("Payment could not be verified.");
+                    }
+                }
+                setIsProcessing(false);
+            },
+            prefill: {
+                name: clientUser?.name || "",
+                email: clientUser?.email || "",
+            },
+            theme: { color: "#FF6B00" },
+            modal: {
+                ondismiss: () => setIsProcessing(false),
+            },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
     };
 
     if (clientLoading) {

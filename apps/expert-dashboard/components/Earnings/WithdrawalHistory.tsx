@@ -42,7 +42,7 @@ export default function WithdrawalHistory({
                                             row.status === "Processed"
                                                 ? "bg-green-50 text-green-700 ring-green-600"
                                                 : row.status === "Pending"
-                                                    ? "bg-yellow-50 text-yellow-700 ring-yellow-600"
+                                                    ? "bg-orange-50 text-orange-700 ring-orange-600"
                                                     : "bg-red-50 text-red-700 ring-red-600"
                                         )}
                                     >

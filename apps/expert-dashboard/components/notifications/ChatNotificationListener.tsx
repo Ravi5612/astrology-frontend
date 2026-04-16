@@ -14,20 +14,15 @@ export const ChatNotificationListener: React.FC = () => {
     const registerExpert = useCallback(() => {
         if (!user) return;
         const registrationId = user.profileId || user.id;
-        console.log("[ChatNotificationDebug] Registering expert PROFILE ID:", registrationId);
-        chatSocket.emit('register_expert', { expertId: registrationId }, (res: any) => {
-            console.log("[ChatNotificationDebug] Registration acknowledgment:", res);
-        });
+        chatSocket.emit('register_expert', { expertId: registrationId });
     }, [user]);
 
     useEffect(() => {
         if (!isAuthenticated || !user) {
-            console.log("[ChatNotificationDebug] Not authenticated, skipping socket setup");
             return;
         }
 
         const setupSocket = () => {
-            console.log("[ChatNotificationDebug] Setting up socket... Status:", chatSocket.connected ? "Connected" : "Disconnected");
 
             if (!chatSocket.connected) {
                 chatSocket.connect();
@@ -39,12 +34,10 @@ export const ChatNotificationListener: React.FC = () => {
         setupSocket();
 
         const onConnect = () => {
-            console.log("[ChatNotificationDebug] Socket reconnected automatically. Re-registering expert...");
             registerExpert();
         };
 
         const handleNewRequest = (session: any) => {
-            console.log("[ChatNotificationDebug] 🚨 New chat request RECEIVED:", session);
 
             const isFree = !!session.isFree;
 
@@ -75,7 +68,7 @@ export const ChatNotificationListener: React.FC = () => {
                             toast.dismiss();
                             router.push(`/dashboard/chat/${session.id}`);
                         }}
-                        className="mt-2 w-full bg-yellow-600 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition hover:bg-yellow-700 shadow-sm"
+                        className="mt-2 w-full bg-orange-600 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition hover:bg-orange-700 shadow-sm"
                     >
                         Accept & Start Chat
                     </button>
@@ -90,11 +83,9 @@ export const ChatNotificationListener: React.FC = () => {
         };
 
         const handleSessionEnded = (data: any) => {
-            console.log("[ChatNotificationDebug] 🛑 Session ended RECEIVED:", data);
             
             // If already on the chat page, let the page handle the detailed modal
             if (window.location.pathname.includes(`/dashboard/chat/${data.id || data.sessionId}`)) {
-                console.log("[ChatNotificationDebug] Expert is on chat page, skipping notification toast.");
                 return;
             }
 
@@ -130,7 +121,6 @@ export const ChatNotificationListener: React.FC = () => {
         chatSocket.on('session_ended', handleSessionEnded);
 
         return () => {
-            console.log("[ChatNotificationDebug] Cleaning up listeners");
             chatSocket.off('new_chat_request', handleNewRequest);
             chatSocket.off('session_ended', handleSessionEnded);
             chatSocket.off('connect', onConnect);

@@ -11,7 +11,7 @@ export default function WalletTable({ transactions }: WalletTableProps) {
     const getStatusStyles = (status: string) => {
         switch (status) {
             case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-            case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
+            case 'pending': return 'bg-orange-50 text-orange-600 border-orange-100';
             case 'processing': return 'bg-blue-50 text-blue-600 border-blue-100';
             case 'failed': return 'bg-red-50 text-red-600 border-red-100';
             default: return 'bg-gray-50 text-gray-600 border-gray-100';
@@ -37,7 +37,7 @@ export default function WalletTable({ transactions }: WalletTableProps) {
                 </div>
             </div>
 
-            <div className="overflow-x-auto max-h-[500px] overflow-y-auto custom-scrollbar-yellow">
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto custom-scrollbar-orange">
                 <table className="w-full text-left border-separate border-spacing-0">
                     <thead className="sticky top-0 z-10 whitespace-nowrap">
                         <tr className="bg-gray-50/90 backdrop-blur-sm">
@@ -53,7 +53,7 @@ export default function WalletTable({ transactions }: WalletTableProps) {
                             <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-xl ${tx.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                                        <div className={`p-2 rounded-xl ${tx.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
                                             {tx.type === 'credit' ? <ArrowDownLeft className="w-4 h-4" /> : <Landmark className="w-4 h-4" />}
                                         </div>
                                         <div>
@@ -65,7 +65,7 @@ export default function WalletTable({ transactions }: WalletTableProps) {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${tx.type === 'credit' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}>
+                                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${tx.type === 'credit' ? 'text-emerald-600 bg-emerald-50' : 'text-orange-600 bg-orange-50'}`}>
                                         {tx.type}
                                     </span>
                                 </td>

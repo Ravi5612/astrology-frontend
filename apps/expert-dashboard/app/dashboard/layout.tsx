@@ -12,21 +12,26 @@ import { LayoutProps } from "@/types/expert";
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { isAuthenticated, loading } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && !loading && !isAuthenticated) {
       router.push("/");
     }
-  }, [loading, isAuthenticated, router]);
+  }, [isMounted, loading, isAuthenticated, router]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  if (loading) {
+  if (!isMounted || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50" suppressHydrationWarning>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600" suppressHydrationWarning></div>
       </div>
     );
   }
@@ -39,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <ChatNotificationListener />
       <CallNotificationListener />
-      <div className="min-h-screen flex bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat bg-fixed relative">
+      <div className="min-h-screen flex bg-[#FFF9F4] relative" suppressHydrationWarning>
         {/* Sidebar */}
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 

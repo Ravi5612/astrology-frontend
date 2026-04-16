@@ -5,6 +5,7 @@ import { Bell, BellOff, Trash2 } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { useNotifications } from "@/src/hooks/useNotifications";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
+import { NotificationSkeleton } from "@/components/dashboard/DashboardSkeletons";
 
 const NotificationPage = () => {
     const { 
@@ -57,16 +58,9 @@ const NotificationPage = () => {
                         )}
                     </div>
 
-                    <div className="px-8 py-4 max-h-[calc(100vh-280px)] overflow-y-auto custom-scrollbar-yellow">
+                    <div className="px-8 py-4 max-h-[calc(100vh-280px)] overflow-y-auto custom-scrollbar-orange">
                         {isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-24">
-                                <div className="relative w-14 h-14 mb-6">
-                                    <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
-                                </div>
-                                <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
-                                    Fetching Updates
-                                </p>
-                            </div>
+                            <NotificationSkeleton />
                         ) : notifications.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-24 text-center">
                                 <div className="w-24 h-24 bg-gray-50 rounded-[32px] flex items-center justify-center mb-8 border border-gray-100 shadow-inner rotate-12">

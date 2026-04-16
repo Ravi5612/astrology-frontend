@@ -45,7 +45,7 @@ function ExpertChatRoomContent() {
 
         // 0. Fetch Session Status and Client Info
         const fetchSessionInfo = async () => {
-            console.log("[ExpertChatDebug] Fetching status for session:", sessionId);
+
 
             // Fetch basic session info
             const [sessionRes, sessionErr] = await api.get<any>(`/chat/session/${sessionId}?_t=${Date.now()}`);
@@ -91,12 +91,12 @@ function ExpertChatRoomContent() {
         chatSocket.emit('register_expert', { expertId: registrationId });
 
         chatSocket.on('new_message', (msg: ChatMessage) => {
-            console.log("[ExpertChatDebug] New message received:", msg);
+
             setMessages((prev) => [...prev, msg]);
         });
 
         chatSocket.on('session_activated', (session: any) => {
-            console.log("[ExpertChatDebug] ✅ Session activated socket event:", session);
+
             setSessionStatus('active');
 
             if (session.startedAt || session.started_at) setStartedAt(session.startedAt || session.started_at);
@@ -112,7 +112,7 @@ function ExpertChatRoomContent() {
         });
 
         chatSocket.on('session_ended', (data: any) => {
-            console.log("[ExpertChatDebug] 🛑 Session ended event received!", data);
+
             setSessionStatus('completed');
 
             if (data?.terminatedBy === 'admin') {
@@ -121,7 +121,7 @@ function ExpertChatRoomContent() {
 
             // Show summary popup - check data.split OR session.total_cost as fallback
             if (data?.split || data?.total_cost !== undefined) {
-                console.log("[ExpertChatDebug] 📊 Opening summary modal with data:", data);
+
                 // Ensure split exists for the modal even if it's missing from event (use fallback calculation)
                 const finalData = { ...data };
                 if (!finalData.split && finalData.total_cost !== undefined) {
@@ -187,7 +187,7 @@ function ExpertChatRoomContent() {
 
     const handleActivate = async () => {
         setIsActivating(true);
-        console.log("[ExpertChatDebug] Activating session...", sessionId);
+
 
         // 1. API call (Data Persistence) - This now triggers the single automated card and socket broadcast
         const [_, error] = await api.post(`/chat/activate/${sessionId}`);
@@ -219,7 +219,7 @@ function ExpertChatRoomContent() {
             payload.attachmentType = pendingAttachment.type;
         }
 
-        console.log("[ExpertChatDebug] Sending message:", payload);
+
         chatSocket.emit('send_message', payload);
         setInputValue("");
         setPendingAttachment(null);
@@ -280,7 +280,7 @@ function ExpertChatRoomContent() {
         }
 
         // Use socket emit to align with User side logic ("New Backend Logic")
-        console.log("[ExpertChatDebug] Emitting end_chat socket event:", sessionId);
+
         chatSocket.emit('end_chat', { sessionId: parseInt(sessionId) });
     };
 
@@ -436,7 +436,7 @@ function ExpertChatRoomContent() {
                                     </span>
                                 )}
                                 <div className={`px-4 py-3 rounded-2xl shadow-sm ${isExpert
-                                    ? "bg-yellow-600 text-white rounded-tr-none"
+                                    ? "bg-orange-600 text-white rounded-tr-none"
                                     : isAdmin
                                         ? "bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-center w-full shadow-red-100"
                                         : "bg-white text-gray-900 border border-gray-100 rounded-tl-none"

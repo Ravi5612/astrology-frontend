@@ -8,7 +8,7 @@
   --color-orange: #FF6B00;
   --color-secondary: #301118;
   --color-secondary-dark: #1A0E05;
-  --color-yellow-600: #d97706;
+  --color-yellow-600: #FF6B00; /* Standardized to Brand Orange */
   --color-yellow-700: #b45309;
   --color-yellow-800: #92400e;
 }

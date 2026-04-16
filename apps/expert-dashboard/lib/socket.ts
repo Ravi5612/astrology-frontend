@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { BACKEND_URL } from "./config";
 const SOCKET_URL = BACKEND_URL;
 
-console.log("[Socket] Dashboard connecting to:", SOCKET_URL);
+
 
 export const socket: Socket = io(SOCKET_URL, {
     transports: ["websocket"],
@@ -23,7 +23,6 @@ export const callSocket: Socket = io(`${SOCKET_URL}/call`, {
 });
 
 socket.on("connect", () => {
-    console.log("[Socket] ✅ Dashboard Connected! ID:", socket.id);
 });
 
 socket.on("connect_error", (err) => {
@@ -31,7 +30,6 @@ socket.on("connect_error", (err) => {
 });
 
 chatSocket.on("connect", () => {
-    console.log("[ChatSocket] ✅ Connected! ID:", chatSocket.id);
 });
 
 chatSocket.on("connect_error", (err) => {
@@ -39,7 +37,6 @@ chatSocket.on("connect_error", (err) => {
 });
 
 callSocket.on("connect", () => {
-    console.log("[CallSocket] ✅ Connected! ID:", callSocket.id);
 });
 
 callSocket.on("connect_error", (err) => {

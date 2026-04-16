@@ -37,9 +37,7 @@ export default function ExpertVideoCallPage() {
         hasConnectedRef.current = true;
 
         const acceptAndConnect = async () => {
-            console.log('[ExpertVideo] 🚀 Starting video call for sessionId:', sessionId);
 
-            console.log('[ExpertVideo] 📡 Calling /call/accept...');
             const [data, error] = await api.post<any>('/call/accept', { sessionId: parseInt(sessionId) });
             
             if (error) {
@@ -49,7 +47,7 @@ export default function ExpertVideoCallPage() {
                 return;
             }
 
-            console.log('[ExpertVideo] ✅ /call/accept response:', { hasToken: !!data?.token, roomName: data?.roomName });
+
 
             setSessionData(data?.session);
             callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
@@ -62,7 +60,7 @@ export default function ExpertVideoCallPage() {
 
         // Listen for call_ended from the other side (user ending the call)
         const onCallEnded = (data: any) => {
-            console.log('[ExpertVideo] 📴 call_ended received from socket', data);
+
             handleCallEnded(data);
         };
         callSocket.on('call_ended', onCallEnded);
@@ -77,7 +75,7 @@ export default function ExpertVideoCallPage() {
     const localTracksRef = useRef<any[]>([]);
 
     const initVideoRoom = async (token: string, roomName: string) => {
-        console.log('[ExpertVideo] 🎥 Connecting to Twilio Video room:', roomName);
+
         const TwilioVideo = await import('twilio-video');
 
         // Create local audio + video tracks
@@ -104,27 +102,27 @@ export default function ExpertVideoCallPage() {
             tracks: localTracks,
         });
         roomRef.current = room;
-        console.log('[ExpertVideo] ✅ Connected to room:', room.name);
+
 
         setStatus('connected');
         startTimer();
 
         // Attach remote participant (user)
         const attachRemoteParticipant = (participant: any) => {
-            console.log('[ExpertVideo] 👤 Remote participant joined:', participant.identity);
+
 
             participant.tracks.forEach((pub: any) => {
                 if (pub.isSubscribed && pub.track) attachRemoteTrack(pub.track);
             });
 
             participant.on('trackSubscribed', (track: any) => {
-                console.log('[ExpertVideo] 📡 Track subscribed:', track.kind);
+
                 attachRemoteTrack(track);
             });
         };
 
         const attachRemoteTrack = (track: any) => {
-            console.log('[ExpertVideo] 📡 Attaching remote track:', track.kind, '| SID:', track.sid);
+
             if (track.kind === 'video' && remoteVideoRef.current) {
                 const el = track.attach();
                 el.style.width = '100%';
@@ -134,13 +132,13 @@ export default function ExpertVideoCallPage() {
                 if (remoteVideoRef.current) {
                     remoteVideoRef.current.innerHTML = ''; // Clear existing content
                     remoteVideoRef.current.appendChild(el); // Append the new video element
-                    console.log('[ExpertVideo] ✅ Remote video element ATTACHED.');
+
                     setHasRemoteTrack(true);
                 }
             } else if (track.kind === 'audio') {
                 const el = track.attach();
                 document.body.appendChild(el);
-                console.log('[ExpertVideo] ✅ Remote audio element ATTACHED.');
+
             }
         };
 
@@ -148,7 +146,7 @@ export default function ExpertVideoCallPage() {
         room.on('participantConnected', attachRemoteParticipant);
 
         room.on('participantDisconnected', (participant: any) => {
-            console.log('[ExpertVideo] 👤 Participant disconnected:', participant.identity);
+
             handleCallEnded();
         });
 
@@ -163,7 +161,7 @@ export default function ExpertVideoCallPage() {
     useEffect(() => {
         const localVideoTrack = localTracksRef.current.find(t => t.kind === 'video');
         if (localVideoTrack && localVideoRef.current) {
-            console.log('[ExpertVideo] 🔄 Re-attaching local preview to container (Status:', status, ')');
+
             const el = localVideoTrack.attach();
             el.style.width = '100%';
             el.style.height = '100%';
@@ -180,7 +178,7 @@ export default function ExpertVideoCallPage() {
     };
 
     const handleCallEnded = (data?: any) => {
-        console.log('[ExpertVideo] 📴 Call ended.', data);
+
         setStatus('ended');
         if (timerRef.current) clearInterval(timerRef.current);
         roomRef.current?.disconnect?.();
@@ -208,7 +206,7 @@ export default function ExpertVideoCallPage() {
             isMuted ? pub.track.enable() : pub.track.disable();
         });
         setIsMuted(!isMuted);
-        console.log('[ExpertVideo] 🎤 Mute:', !isMuted);
+
     };
 
     const toggleCamera = () => {
@@ -216,7 +214,7 @@ export default function ExpertVideoCallPage() {
             isCameraOff ? pub.track.enable() : pub.track.disable();
         });
         setIsCameraOff(!isCameraOff);
-        console.log('[ExpertVideo] 📹 Camera:', isCameraOff ? 'ON' : 'OFF');
+
     };
 
     const formatDuration = (s: number) => {

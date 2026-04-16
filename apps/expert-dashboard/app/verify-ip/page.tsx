@@ -57,7 +57,7 @@ const VerifyIpContent = () => {
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
                 {status === "loading" && (
                     <div className="flex flex-col items-center">
-                        <Loader2Icon className="h-12 w-12 text-yellow-500 animate-spin mb-4" />
+                        <Loader2Icon className="h-12 w-12 text-orange-500 animate-spin mb-4" />
                         <h1 className="text-2xl font-bold text-gray-800">Verifying IP</h1>
                         <p className="text-gray-600 mt-2">{message}</p>
                     </div>
@@ -78,7 +78,7 @@ const VerifyIpContent = () => {
                         <p className="text-gray-600 mt-2">{message}</p>
                         <button
                             onClick={() => router.push("/")}
-                            className="mt-6 px-6 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700 transition-colors"
+                            className="mt-6 px-6 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors"
                         >
                             Go to Login
                         </button>
