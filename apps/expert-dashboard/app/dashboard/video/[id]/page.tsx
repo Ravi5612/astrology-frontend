@@ -195,12 +195,12 @@ export default function ExpertVideoCallPage() {
     };
 
     const handleEndCall = async () => {
-        const [_, error] = await api.post(`/call/end`, { sessionId: parseInt(sessionId) });
+        const [data, error] = await api.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
         if (error) {
             console.error('[ExpertVideo] Failed to end call on backend', error);
         }
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
-        handleCallEnded();
+        handleCallEnded(data);
     };
 
     const toggleMute = () => {

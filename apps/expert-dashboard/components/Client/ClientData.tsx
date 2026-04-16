@@ -110,8 +110,10 @@ export default function ClientsPage() {
           return dateB - dateA;
         });
 
-        // Set total records as sum (approximate since we merged two paginated results)
-        setTotalRecords((chatData as any)?.meta?.totalCount || chatSessions.length + (callData as any)?.meta?.totalCount || callSessions.length);
+        // Calculate totals correctly
+        const totalChat = (chatData as any)?.meta?.totalCount || chatSessions.length;
+        const totalCall = (callData as any)?.meta?.totalCount || callSessions.length;
+        setTotalRecords(totalChat + totalCall);
 
         const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
 

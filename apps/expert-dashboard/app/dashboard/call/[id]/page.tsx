@@ -207,10 +207,14 @@ export default function ExpertCallRoom() {
         }
     };
 
-    const handleEndCall = () => {
+    const handleEndCall = async () => {
+        const [data, error] = await api.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
+        if (error) {
+            console.error('[ExpertCallRoom] Failed to end call on backend', error);
+        }
         deviceRef.current?.disconnectAll?.();
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
-        handleCallEnded();
+        handleCallEnded(data);
     };
 
     const toggleMute = () => {
