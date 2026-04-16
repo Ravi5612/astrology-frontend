@@ -40,6 +40,19 @@ export default function CallRoomPage() {
       </div>
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-6">
+        {/* Call Timer / Status (Centered Above) */}
+        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md shadow-xl animate-in fade-in slide-in-from-top-4 duration-500">
+          {status === "connected" && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />}
+          <span className={`text-xs font-black uppercase tracking-[0.2em] ${status === 'connected' ? 'text-primary' : 'text-white/60'}`}>
+            {status === "connected" ? (
+              <span className="flex items-center gap-2">
+                <Clock className="w-3 h-3" />
+                {statusLabel[status]}
+              </span>
+            ) : statusLabel[status]}
+          </span>
+        </div>
+
         {callType === "video" ? (
           <div className="w-full relative h-[65vh] max-h-[600px] bg-neutral-900 rounded-3xl overflow-hidden">
             {/* The actual video tracks MUST stay in the same DOM elements to avoid detachment */}
@@ -161,10 +174,6 @@ export default function CallRoomPage() {
           </div>
         )}
 
-        <div className="flex items-center gap-2">
-          {status === "connected" && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />}
-          <span className="text-white/60 font-bold text-sm uppercase tracking-widest">{statusLabel[status]}</span>
-        </div>
 
         {status !== "ended" && (
           <div className="flex items-center gap-6 mt-2">

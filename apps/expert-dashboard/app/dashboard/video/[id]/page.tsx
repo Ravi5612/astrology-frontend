@@ -241,15 +241,6 @@ export default function ExpertVideoCallPage() {
                     <h1 className="text-lg font-black">{sessionData?.user?.name || 'Client'}</h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    {status === 'connected' && (
-                        <>
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-                                <Clock className="w-3 h-3 text-primary" />
-                                <span className="text-sm font-black text-primary">{formatDuration(callDuration)}</span>
-                            </div>
-                        </>
-                    )}
                     {(status === 'accepting' || status === 'connecting') && (
                         <span className="text-xs font-bold text-white/40 uppercase tracking-widest animate-pulse">
                             {status === 'accepting' ? 'Accepting...' : 'Connecting...'}
@@ -257,6 +248,21 @@ export default function ExpertVideoCallPage() {
                     )}
                 </div>
             </div>
+
+            {/* Timer Overlay (Centered Above Video) */}
+            {status === 'connected' && (
+                <div className="flex justify-center -mb-4 mt-4 z-20">
+                    <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-lg font-black text-primary tracking-tight font-mono">
+                                {formatDuration(callDuration)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Video Area */}
             <div className="flex-1 relative bg-neutral-950 overflow-hidden">
