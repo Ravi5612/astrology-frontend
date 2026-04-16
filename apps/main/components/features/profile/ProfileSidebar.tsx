@@ -108,8 +108,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                     className="w-full bg-brown text-white p-4 rounded-2xl flex items-center justify-between shadow-premium border-0"
                 >
                     <div className="flex items-center gap-3">
-                        <i className={`${activeMenuItem.icon} text-xl text-orange`}></i>
-                        <span className="font-bold text-base" style={fontStyle}>{activeMenuItem.label}</span>
+                        <i className={`${activeMenuItem?.icon || ''} text-xl text-orange`}></i>
+                        <span className="font-bold text-base" style={fontStyle}>{activeMenuItem?.label || ''}</span>
                     </div>
                     <i className={`fa-solid fa-chevron-down transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}></i>
                 </button>
