@@ -31,6 +31,8 @@ export default function CallRoomPage() {
     ended: "Call ended",
   };
 
+  const [isSwapped, setIsSwapped] = React.useState(false);
+
   return (
     <div className="min-h-screen bg-neutral-900 text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 opacity-20 pointer-events-none">
@@ -39,13 +41,23 @@ export default function CallRoomPage() {
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-6">
         {callType === "video" ? (
-          <div className="w-full relative">
-            <div className="w-full h-[65vh] max-h-[600px] bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative">
-              {status === "connected" ? (
-                <div ref={remoteVideoRef as any} className="w-full h-full" />
-              ) : (
-                <div ref={localVideoRef as any} className="w-full h-full" />
-              )}
+          <div className="w-full relative h-[65vh] max-h-[600px]">
+            {/* LARGE WINDOW CONTAINER */}
+            <div 
+              className="w-full h-full bg-neutral-800 rounded-3xl overflow-hidden flex items-center justify-center relative"
+              onClick={() => isSwapped && setIsSwapped(false)}
+            >
+              {/* Remote Video (Default Main) */}
+              <div 
+                ref={remoteVideoRef as any} 
+                className={`${isSwapped ? "hidden" : "w-full h-full"} transition-all duration-500`} 
+              />
+              
+              {/* Local Video (Only shows here if swapped or ringing) */}
+              <div 
+                ref={localVideoRef as any} 
+                className={`${(status === "connected" && !isSwapped) ? "hidden" : "w-full h-full"} transition-all duration-500`} 
+              />
 
               {status === "ringing" && (
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 gap-4">
@@ -71,22 +83,42 @@ export default function CallRoomPage() {
               )}
 
               {status === "connected" && (
-                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
-                  <span className="text-white text-xs font-bold">{sessionData?.expert?.user?.name || "Expert"}</span>
+                <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-30">
+                  <span className="text-white text-xs font-bold">
+                    {isSwapped ? "You" : (sessionData?.expert?.user?.name || "Expert")}
+                  </span>
                 </div>
               )}
             </div>
 
+            {/* SMALL WINDOW (PIP) CONTAINER */}
             {status === "connected" && (
-              <div className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-20">
-                <div ref={localVideoRef as any} className="w-full h-full" />
-                {isCameraOff && (
+              <div 
+                onClick={() => setIsSwapped(!isSwapped)}
+                className="absolute bottom-4 right-4 w-32 h-40 bg-neutral-700 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-40 cursor-pointer active:scale-95 transition-all hover:border-primary/50"
+              >
+                {/* Remote Video in PIP */}
+                <div 
+                  ref={isSwapped ? (remoteVideoRef as any) : null} 
+                  className={`${isSwapped ? "w-full h-full" : "hidden"}`} 
+                />
+                
+                {/* Local Video in PIP */}
+                <div 
+                  ref={!isSwapped ? (localVideoRef as any) : null} 
+                  className={`${!isSwapped ? "w-full h-full" : "hidden"}`} 
+                />
+
+                {((!isSwapped && isCameraOff)) && (
                   <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
                     <User className="w-8 h-8 text-neutral-400" />
                   </div>
                 )}
-                <div className="absolute bottom-1 left-0 right-0 text-center">
-                  <span className="text-white/60 text-[9px] font-bold">You</span>
+                
+                <div className="absolute bottom-1 left-0 right-0 text-center bg-black/20">
+                  <span className="text-white/80 text-[7px] font-black uppercase tracking-tighter">
+                    {isSwapped ? (sessionData?.expert?.user?.name || "Expert") : "You"}
+                  </span>
                 </div>
               </div>
             )}
