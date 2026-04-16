@@ -12,7 +12,8 @@ import {
     updateTodo, 
     deleteTodoApi,
     createProfile,
-    updateProfile 
+    updateProfile,
+    updateExpertStatus
 } from "@/lib/profile";
 import { Profile, Gender, Todo, DocumentItem } from "@/types/profile";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -74,6 +75,41 @@ const mapToProfile = (data: any, authUser: any): Profile & { exists: boolean } =
 };
 
 /**
+ * Whitelisted fields for each segmented API endpoint to prevent 400 Bad Request.
+ */
+const SECTION_WHITELISTS: Record<string, string[]> = {
+    personal: ['name', 'gender', 'bio', 'specialization', 'experience_in_years', 'languages', 'date_of_birth', 'phone_number', 'addresses', 'avatar'],
+    pricing: ['price', 'chat_price', 'call_price', 'video_call_price', 'report_price', 'horoscope_price'],
+    status: ['is_available'],
+    portfolio: ['gallery', 'videos', 'video'],
+    experience: ['detailed_experience'],
+    documents: ['documents'],
+    certificates: ['certificates']
+};
+
+const getSegmentedData = (data: any, section: string) => {
+    const whitelist = SECTION_WHITELISTS[section];
+    if (!whitelist) return data;
+    
+    const filtered: any = {};
+    whitelist.forEach(key => {
+        if (data[key] !== undefined) {
+            filtered[key] = data[key];
+        }
+    });
+
+    // Special cases: backend might expect slightly different names than Profile interface
+    if (section === 'personal' && data.profilePic !== undefined) {
+        filtered.avatar = data.profilePic;
+    }
+    if (section === 'personal' && data.phoneNumber !== undefined) {
+        filtered.phone_number = data.phoneNumber;
+    }
+
+    return filtered;
+};
+
+/**
  * Constructs the payload for the API based on the Profile interface.
  */
 export const constructProfilePayload = (profile: Profile) => {
@@ -110,10 +146,11 @@ export const constructProfilePayload = (profile: Profile) => {
         gallery: profile.gallery,
         videos: profile.videos,
         video: profile.video,
-        detailed_experience: profile.detailed_experience.map((exp: any) => ({
-            id: exp.id || 0,
+        detailed_experience: (profile.detailed_experience || []).map((exp: any) => ({
+            title: exp.role || exp.title || "Expert",
             role: exp.role || exp.title || "Expert",
             company: exp.company || exp.organization || "Freelance",
+            organization: exp.company || exp.organization || "Freelance",
             description: exp.description || "",
             startDate: exp.startDate,
             endDate: exp.endDate,
@@ -165,14 +202,18 @@ export const useProfile = () => {
             if (isNew) {
                 result = await createProfile(data);
             } else {
+                // Filter payload to only include whitelisted fields for this section
+                const filteredData = getSegmentedData(data, section);
+                
                 switch (section) {
-                    case 'personal': result = await updatePersonalInfo(data); break;
-                    case 'pricing': result = await updatePricing(data); break;
-                    case 'portfolio': result = await updatePortfolio(data); break;
-                    case 'certificates': result = await updateCertificates(data.certificates); break;
-                    case 'documents': result = await updateDocuments(data.documents); break;
-                    case 'experience': result = await updateExperience(data.detailed_experience); break;
-                    default: result = await updateProfile(data);
+                    case 'personal': result = await updatePersonalInfo(filteredData); break;
+                    case 'pricing': result = await updatePricing(filteredData); break;
+                    case 'status': result = await updateExpertStatus(data.is_available); break;
+                    case 'portfolio': result = await updatePortfolio(filteredData); break;
+                    case 'certificates': result = await updateCertificates(filteredData.certificates); break;
+                    case 'documents': result = await updateDocuments(filteredData.documents); break;
+                    case 'experience': result = await updateExperience(filteredData.detailed_experience); break;
+                    default: result = await updateProfile(filteredData);
                 }
             }
             const [res, error] = result;

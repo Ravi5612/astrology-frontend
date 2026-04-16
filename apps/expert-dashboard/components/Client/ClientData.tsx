@@ -21,6 +21,9 @@ export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const limit = 20;
 
   useEffect(() => {
     setMounted(true);
@@ -53,8 +56,11 @@ export default function ClientsPage() {
     const fetchClients = async () => {
       try {
         setLoading(true);
+        // Clean searchTerm for ID search if it has hash
+        const cleanSearch = searchTerm.replace(/^#/, "");
+        
         const [sessionsResult, reviewsResult] = await Promise.all([
-          api.get<any>('/chat/sessions/all'),
+          api.get<any>(`/chat/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
           expertUser?.profileId ? getReviews(expertUser.profileId, 1, 50) : Promise.resolve([null, null] as [any, any])
         ]);
 
@@ -62,26 +68,30 @@ export default function ClientsPage() {
         const [reviewsData, reviewsError] = reviewsResult;
 
         if (sessionsError) {
-            console.error("Failed to fetch sessions:", sessionsError);
+          console.error("Failed to fetch sessions:", sessionsError);
         }
         
-        const sessions = (sessionsData as any)?.data || sessionsData || [];
+        // Handle New Response Format: { success, data, meta }
+        let sessions = [];
+        if (sessionsData && typeof sessionsData === 'object' && 'data' in sessionsData) {
+           sessions = (sessionsData as any).data || [];
+           if ((sessionsData as any).meta) {
+              setTotalRecords((sessionsData as any).meta.totalCount || 0);
+           }
+        } else {
+           sessions = sessionsData || [];
+        }
+
         const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
 
         // Map API response to Client interface
-        const mappedClients: Client[] = sessions.map((session: any) => {
-          // Precise duration calculation
+        const mappedClients: Client[] = (Array.isArray(sessions) ? sessions : []).map((session: any) => {
+          // ... (existing mapping logic preserved)
           let durationSecs = session.duration_seconds || session.durationSeconds || 0;
-
-          // If we only have mins, convert to secs for base calculation
           if (durationSecs === 0) {
             const dMins = session.duration_mins || session.durationMins || session.duration || 0;
-            if (dMins > 0) {
-              // If dMins is suspiciously large, it might already be seconds
-              durationSecs = dMins > 500 ? dMins : dMins * 60;
-            }
+            if (dMins > 0) durationSecs = dMins > 500 ? dMins : dMins * 60;
           }
-
           if (durationSecs === 0 && (session.status === 'completed' || session.status === 'expired')) {
             const start = (session.activated_at || session.activatedAt) ? new Date(session.activated_at || session.activatedAt).getTime() :
               (session.start_time || session.startTime ? new Date(session.start_time || session.startTime).getTime() :
@@ -95,38 +105,29 @@ export default function ClientsPage() {
               durationSecs = Math.floor(diffMs / 1000);
             }
           }
-
-          // Ensure at least some duration for completed sessions
-          if (durationSecs === 0 && session.status === 'completed') durationSecs = 300; // 5 min default
+          if (durationSecs === 0 && session.status === 'completed') durationSecs = 300; 
 
           const mins = Math.floor(durationSecs / 60);
           const secs = durationSecs % 60;
-          const preciseDurationStr = mins > 0
-            ? (secs > 0 ? `${mins}m ${secs}s` : `${mins} min`)
-            : `${secs}s`;
+          const preciseDurationStr = mins > 0 ? (secs > 0 ? `${mins}m ${secs}s` : `${mins} min`) : `${secs}s`;
 
-          // Try to find review from separate reviews API if not in session
           let sessionReview = session.review;
           if (!sessionReview || !sessionReview.comment) {
             const matchingReview = reviews.find((r: any) => (r.session_id || r.sessionId) === session.id);
             if (matchingReview) {
-              sessionReview = {
-                rating: matchingReview.rating,
-                comment: matchingReview.comment
-              };
+              sessionReview = { rating: matchingReview.rating, comment: matchingReview.comment };
             }
           }
 
-          // Calculate earnings (after platform fee)
           const totalCost = session.total_cost || session.totalCost || session.amount || 0;
           const expertShareFromMeta = session.metadata?.split?.expertShare || session.metadata?.expertShare;
           const expertShare = expertShareFromMeta !== undefined ? expertShareFromMeta : (totalCost * 0.8);
 
           return {
-            id: session.id, // using session ID as unique key
+            id: session.id,
             name: session.user?.name || "Client",
-            avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
-            phone: session.user?.phone || session.user?.phone_number || "Hidden",
+            avatar: session.user?.profile_picture || session.user?.avatar,
+            phone: session.user?.phone || "Hidden",
             email: session.user?.email || "Hidden",
             lastConsultation: {
               date: (() => {
@@ -139,14 +140,7 @@ export default function ClientsPage() {
             rating: sessionReview?.rating || 0,
             review: sessionReview?.comment || "No review yet",
             payment: Number(expertShare.toFixed(2)),
-            rawSession: {
-              ...session,
-              durationMins: mins,
-              durationSeconds: durationSecs,
-              durationString: session.durationString || preciseDurationStr,
-              totalCost: totalCost,
-              expertShare: expertShare
-            }
+            rawSession: { ...session, durationString: preciseDurationStr, totalCost, expertShare }
           };
         });
 
@@ -160,7 +154,7 @@ export default function ClientsPage() {
     };
 
     fetchClients();
-  }, [expertUser?.profileId]);
+  }, [expertUser?.profileId, searchTerm, offset]);
 
   // Fetch Chat History
   const handleViewChat = async (client: Client) => {
@@ -188,16 +182,8 @@ export default function ClientsPage() {
   const sortedAndFilteredClients = useMemo(() => {
     let sortableItems = [...clients];
 
-    // Filtering logic
-    if (searchTerm) {
-      const cleanTerm = searchTerm.toLowerCase().replace(/^#/, "");
-      sortableItems = sortableItems.filter(
-        (client) =>
-          client.name.toLowerCase().includes(cleanTerm) ||
-          client.email.toLowerCase().includes(cleanTerm) ||
-          client.id.toString().includes(cleanTerm)
-      );
-    }
+    // NOTE: Filtering is now handled on the server side via query params.
+    // Client-side filtering is only a fallback for rapid state changes.
 
     // Sorting logic
     if (sortConfig.key !== null) {
@@ -391,6 +377,35 @@ export default function ClientsPage() {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalRecords > limit && (
+            <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-6">
+              <p className="text-sm text-gray-500">
+                Showing <span className="font-bold text-gray-900">{offset + 1}</span> to{" "}
+                <span className="font-bold text-gray-900">{Math.min(offset + limit, totalRecords)}</span> of{" "}
+                <span className="font-bold text-gray-900">{totalRecords}</span> sessions
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={offset === 0}
+                  onClick={() => setOffset(Math.max(0, offset - limit))}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={offset + limit >= totalRecords}
+                  onClick={() => setOffset(offset + limit)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

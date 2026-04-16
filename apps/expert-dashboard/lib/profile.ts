@@ -35,6 +35,10 @@ export const updatePricing = async (data: any): Promise<[any | null, ApiError | 
     return api.patch<any>('/expert/pricing', data);
 };
 
+export const updateExpertStatus = async (isAvailable: boolean): Promise<[any | null, ApiError | null]> => {
+    return api.patch<any>('/expert/status', { is_available: isAvailable });
+};
+
 export const updateBankDetails = async (bankDetails: string): Promise<[any | null, ApiError | null]> => {
     return api.patch<any>('/expert/bank-details', { bank_details: bankDetails });
 };
