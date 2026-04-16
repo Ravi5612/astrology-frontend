@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useLanguageStore } from '@/store/languageStore';
 import { profileTranslations } from '@/lib/translations/profile';
@@ -28,6 +28,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     const { lang } = useLanguageStore();
     const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
     const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
+    
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const menuItems = [
         { icon: "fa-regular fa-user", label: t.sidebar.tabs.profile, id: "profile" },
@@ -43,9 +45,12 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
         { icon: "fa-solid fa-headset", label: t.sidebar.tabs.support, id: "support" },
     ];
 
+    const activeMenuItem = menuItems.find(item => item.id === activeTab) || menuItems[0];
+
     return (
-        <div className="flex flex-col gap-0 sticky top-[140px] z-30 self-start">
-            <div className="bg-white rounded-t-2xl p-4 shadow-premium border-b border-gray-100">
+        <div className="flex flex-col gap-0 lg:sticky lg:top-[140px] z-30 self-start w-full">
+            {/* Desktop Header - Hidden on Mobile */}
+            <div className="hidden lg:block bg-white rounded-t-2xl p-4 shadow-premium border-b border-gray-100">
                 <div className="flex items-center gap-4">
                     <div className="relative flex-shrink-0">
                         <div className="w-[64px] h-[64px] rounded-full overflow-hidden border-2 border-white shadow-md">
@@ -95,15 +100,34 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                 </div>
             </div>
 
-            {/* Navigation Menu - Scrollable */}
+            {/* Mobile Dropdown Trigger */}
+            <div className="lg:hidden w-full">
+                <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full bg-brown text-white p-4 rounded-2xl flex items-center justify-between shadow-premium border-0"
+                >
+                    <div className="flex items-center gap-3">
+                        <i className={`${activeMenuItem?.icon || ''} text-xl text-orange`}></i>
+                        <span className="font-bold text-base" style={fontStyle}>{activeMenuItem?.label || ''}</span>
+                    </div>
+                    <i className={`fa-solid fa-chevron-down transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+            </div>
+
+            {/* Navigation Menu - Responsive visibility */}
             <div
-                className="bg-brown rounded-b-2xl shadow-premium overflow-y-auto custom-scrollbar"
+                className={`bg-brown lg:rounded-b-2xl shadow-premium overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out ${
+                    isDropdownOpen 
+                    ? 'max-h-[500px] opacity-100 visible mt-2 rounded-2xl py-2' 
+                    : 'max-h-0 lg:max-h-none opacity-0 lg:opacity-100 invisible lg:visible mt-0 lg:mt-0 lg:rounded-b-2xl'
+                }`}
                 style={{
-                    maxHeight: "calc(100vh - 200px)",
+                    maxHeight: isDropdownOpen ? "500px" : undefined
                 }}
                 data-lenis-prevent
             >
-                <div className="pt-4 px-4 pb-2">
+                <div className="pt-4 px-4 pb-2 hidden lg:block">
                     <small
                         className="text-[10px] uppercase font-bold tracking-wider text-white/50"
                         style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
@@ -123,7 +147,10 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                                         ? 'bg-orange text-white shadow-gold font-bold'
                                         : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white'
                                 }`}
-                                onClick={() => setActiveTab(item.id)}
+                                onClick={() => {
+                                    setActiveTab(item.id);
+                                    setIsDropdownOpen(false); // Close dropdown on mobile selection
+                                }}
                             >
                                 <i className={`${item.icon} w-5 mr-3 text-lg transition-transform group-hover:scale-110`}></i>
                                 <span className="text-sm">{item.label}</span>
