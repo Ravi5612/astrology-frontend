@@ -128,21 +128,34 @@ export const useCallLogic = () => {
   }, [sessionId, SOCKET_URL]);
 
   const startLocalVideoPreview = async () => {
+    if (localTracksRef.current.length > 0) return;
     try {
       const TwilioVideo = await import("twilio-video");
       const tracks = await TwilioVideo.createLocalTracks({ audio: true, video: { width: 640 } });
       localTracksRef.current = tracks;
-      const videoTrack = tracks.find((t) => t.kind === "video");
-      if (videoTrack && localVideoRef.current) {
-        const el = videoTrack.attach();
-        el.style.cssText = "width:100%; height:100%; object-fit:cover; transform:scaleX(-1);";
-        localVideoRef.current.innerHTML = "";
-        localVideoRef.current.appendChild(el);
-      }
+      attachLocalVideo();
     } catch (err) {
       console.error("Failed to start local preview", err);
     }
   };
+
+  const attachLocalVideo = () => {
+    const videoTrack = localTracksRef.current.find((t) => t.kind === "video");
+    if (videoTrack && localVideoRef.current) {
+      const el = videoTrack.attach();
+      el.style.cssText = "width:100%; height:100%; object-fit:cover; transform:scaleX(-1);";
+      localVideoRef.current.innerHTML = "";
+      localVideoRef.current.appendChild(el);
+    }
+  };
+
+  useEffect(() => {
+    if (status === "connected" || status === "ringing") {
+      // Small delay to ensure DOM is ready after status change
+      const timer = setTimeout(attachLocalVideo, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
 
   const initAudioCall = async (token: string) => {
     const { Device } = await import("@twilio/voice-sdk");
