@@ -10,6 +10,7 @@ export interface CallSession {
     token?: string;
     roomName?: string;
     expert?: ExpertProfile; // Changed to ExpertProfile to support nested user object
+    max_duration_seconds?: number;
 }
 
 export interface CallReview {

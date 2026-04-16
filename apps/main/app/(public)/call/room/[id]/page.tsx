@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import * as LucideIcons from "lucide-react";
 import { useCallLogic } from "./useCallLogic";
 
-const { PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, User, Loader2, Star, X } = LucideIcons as any;
+const { PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, User, Loader2, Star, X, Clock } = LucideIcons as any;
 
 export default function CallRoomPage() {
   const router = useRouter();
