@@ -59,33 +59,54 @@ export default function ClientsPage() {
         // Clean searchTerm for ID search if it has hash
         const cleanSearch = searchTerm.replace(/^#/, "");
         
-        const [sessionsResult, reviewsResult] = await Promise.all([
+        const [chatResult, callResult, reviewsResult] = await Promise.all([
           api.get<any>(`/chat/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
+          api.get<any>(`/call/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
           expertUser?.profileId ? getReviews(expertUser.profileId, 1, 50) : Promise.resolve([null, null] as [any, any])
         ]);
 
-        const [sessionsData, sessionsError] = sessionsResult;
+        const [chatData, chatError] = chatResult;
+        const [callData, callError] = callResult;
         const [reviewsData, reviewsError] = reviewsResult;
 
-        if (sessionsError) {
-          console.error("Failed to fetch sessions:", sessionsError);
-        }
+        if (chatError) console.error("Failed to fetch chat sessions:", chatError);
+        if (callError) console.error("Failed to fetch call sessions:", callError);
         
-        // Handle New Response Format: { success, data, meta }
-        let sessions = [];
-        if (sessionsData && typeof sessionsData === 'object' && 'data' in sessionsData) {
-           sessions = (sessionsData as any).data || [];
-           if ((sessionsData as any).meta) {
-              setTotalRecords((sessionsData as any).meta.totalCount || 0);
-           }
+        // Extract sessions from both responses
+        let chatSessions = [];
+        if (chatData && typeof chatData === 'object' && 'data' in chatData) {
+           chatSessions = (chatData as any).data || [];
         } else {
-           sessions = sessionsData || [];
+           chatSessions = chatData || [];
         }
+
+        let callSessions = [];
+        if (callData && typeof callData === 'object' && 'data' in callData) {
+           callSessions = (callData as any).data || [];
+        } else {
+           callSessions = callData || [];
+        }
+
+        // Combine and mark types
+        const combinedSessions = [
+          ...chatSessions.map((s: any) => ({ ...s, consultType: 'chat' })),
+          ...callSessions.map((s: any) => ({ ...s, consultType: s.type || 'call' }))
+        ];
+
+        // Sort combined sessions by date (newest first)
+        combinedSessions.sort((a, b) => {
+          const dateA = new Date(a.created_at || a.createdAt).getTime();
+          const dateB = new Date(b.created_at || b.createdAt).getTime();
+          return dateB - dateA;
+        });
+
+        // Set total records as sum (approximate since we merged two paginated results)
+        setTotalRecords((chatData as any)?.meta?.totalCount || chatSessions.length + (callData as any)?.meta?.totalCount || callSessions.length);
 
         const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
 
         // Map API response to Client interface
-        const mappedClients: Client[] = (Array.isArray(sessions) ? sessions : []).map((session: any) => {
+        const mappedClients: Client[] = (Array.isArray(combinedSessions) ? combinedSessions : []).map((session: any) => {
           // ... (existing mapping logic preserved)
           let durationSecs = session.duration_seconds || session.durationSeconds || 0;
           if (durationSecs === 0) {
@@ -119,8 +140,8 @@ export default function ClientsPage() {
             }
           }
 
-          const totalCost = session.total_cost || session.totalCost || session.amount || 0;
-          const expertShareFromMeta = session.metadata?.split?.expertShare || session.metadata?.expertShare;
+          const totalCost = session.total_cost || session.totalCost || session.amount || session.final_price || session.finalPrice || 0;
+          const expertShareFromMeta = session.metadata?.split?.expertShare || session.metadata?.expertShare || session.metadata?.split?.expert_share;
           const expertShare = expertShareFromMeta !== undefined ? expertShareFromMeta : (totalCost * 0.8);
 
           return {
@@ -135,7 +156,7 @@ export default function ClientsPage() {
                 return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
               })(),
               duration: preciseDurationStr,
-              type: "chat"
+              type: session.consultType || "interaction"
             },
             rating: sessionReview?.rating || 0,
             review: sessionReview?.comment || "No review yet",

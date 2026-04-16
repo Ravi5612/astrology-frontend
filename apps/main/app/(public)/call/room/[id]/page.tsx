@@ -168,8 +168,8 @@ export default function CallRoomPage() {
       </div>
 
       {showRatingModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-md bg-neutral-900 border border-white/10 rounded-t-3xl p-8 flex flex-col gap-6 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+          <div className="w-full max-w-md bg-neutral-900 border border-white/10 rounded-3xl p-8 flex flex-col gap-6 animate-in zoom-in-95 duration-300">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">Call Ended</p>

@@ -10,6 +10,8 @@ interface ExpertProfileCardProps {
   expert: Expert;
   isAvailable?: boolean;
   onChatClick: () => void;
+  onCallClick: () => void;
+  onVideoCallClick: () => void;
   onVideoClick: (url: string) => void;
 }
 
@@ -17,6 +19,8 @@ const ExpertProfileCard: React.FC<ExpertProfileCardProps> = ({
   expert,
   isAvailable = false,
   onChatClick,
+  onCallClick,
+  onVideoCallClick,
   onVideoClick,
 }) => {
   return (
@@ -114,14 +118,14 @@ const ExpertProfileCard: React.FC<ExpertProfileCardProps> = ({
         <div className="px-6 pb-6 pt-2">
           <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={onChatClick}
+              onClick={onCallClick}
               className="flex items-center justify-center gap-1.5 bg-green-50 text-green-700 border border-green-200 py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-green-100 shadow-sm text-xs"
             >
               <i className="fa-solid fa-phone text-[12px]"></i>
               Call
             </button>
             <button
-              onClick={onChatClick}
+              onClick={onVideoCallClick}
               className="flex items-center justify-center gap-1.5 bg-orange/10 text-orange border border-orange/20 py-2 rounded-lg font-semibold active:scale-95 transition-all hover:bg-orange/20 shadow-sm text-xs"
             >
               <i className="fa-solid fa-video text-[12px]"></i>
