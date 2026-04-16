@@ -23,17 +23,27 @@ export default function ClientsPage() {
   const [mounted, setMounted] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const limit = 20;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: null,
     direction: "ascending",
   });
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setOffset(0); // Reset to first page on new search
+    }, 800); // Increased to 800ms for smoother typing experience
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Chat Modal State
   const [showChatModal, setShowChatModal] = useState(false);
@@ -56,8 +66,8 @@ export default function ClientsPage() {
     const fetchClients = async () => {
       try {
         setLoading(true);
-        // Clean searchTerm for ID search if it has hash
-        const cleanSearch = searchTerm.replace(/^#/, "");
+        // Clean debouncedSearchTerm for ID search if it has hash
+        const cleanSearch = debouncedSearchTerm.replace(/^#/, "");
         
         const [chatResult, callResult, reviewsResult] = await Promise.all([
           api.get<any>(`/chat/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
@@ -175,7 +185,7 @@ export default function ClientsPage() {
     };
 
     fetchClients();
-  }, [expertUser?.profileId, searchTerm, offset]);
+  }, [expertUser?.profileId, debouncedSearchTerm, offset]);
 
   // Fetch Chat History
   const handleViewChat = async (client: Client) => {
@@ -241,29 +251,40 @@ export default function ClientsPage() {
     setSortConfig({ key, direction });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen relative">
       <div className="max-w-5xl mx-auto">
-        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8">
+        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-hidden">
+          {/* Subtle Progress Bar for background loading */}
+          {loading && clients.length > 0 && (
+            <div className="absolute top-0 left-0 right-0 h-1 z-10 overflow-hidden bg-orange-50">
+              <div className="h-full bg-[#f25e0a] animate-pulse w-full"></div>
+            </div>
+          )}
+
           <ClientHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-          {/* Clients List - New Card Design */}
-          <div className="space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar-yellow pb-4">
-            {sortedAndFilteredClients.length === 0 ? (
-              <div className="text-center py-10 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          {/* Clients List area */}
+          <div className={`space-y-4 max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar-yellow pb-4 transition-opacity duration-300 ${loading && clients.length > 0 ? "opacity-60" : "opacity-100"}`}>
+            {!mounted ? null : loading && clients.length === 0 ? (
+               <div className="flex flex-col items-center justify-center py-24">
+                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-100 border-t-[#fd6410]"></div>
+                 <p className="mt-4 text-gray-500 font-medium animate-pulse">Loading sessions...</p>
+               </div>
+            ) : sortedAndFilteredClients.length === 0 ? (
+              <div className="text-center py-20 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
                 <div className="mb-4">
-                  <Calendar className="w-12 h-12 text-gray-300 mx-auto" strokeWidth={1.5} />
+                  <LucideIcons.SearchX className="w-12 h-12 text-gray-300 mx-auto" strokeWidth={1.5} />
                 </div>
-                <h6 className="font-bold text-gray-700">No Consultation History</h6>
-                <p className="text-gray-500 text-sm mt-1">You have no past consultations matching your search.</p>
+                <h6 className="font-bold text-gray-700">No sessions found</h6>
+                <p className="text-gray-500 text-sm mt-1">
+                  {debouncedSearchTerm ? `No results for "${debouncedSearchTerm}"` : "You haven't had any consultations yet."}
+                </p>
+                {debouncedSearchTerm && (
+                  <Button variant="secondary" size="sm" className="mt-4" onClick={() => setSearchTerm("")}>
+                    Clear Search
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
