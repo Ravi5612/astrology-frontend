@@ -46,7 +46,6 @@ export default function CallRoomPage() {
             
             {/* Remote Video Container */}
             <div 
-              ref={remoteVideoRef as any}
               onClick={() => isSwapped && setIsSwapped(false)}
               className={`transition-all duration-500 bg-neutral-800 ${
                 isSwapped 
@@ -54,6 +53,8 @@ export default function CallRoomPage() {
                   : "w-full h-full z-10"
               }`}
             >
+              <div ref={remoteVideoRef as any} className="w-full h-full" />
+              
               {/* Expert Name Tag (Only when main) */}
               {!isSwapped && status === "connected" && (
                 <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
@@ -72,7 +73,6 @@ export default function CallRoomPage() {
 
             {/* Local Video Container */}
             <div 
-              ref={localVideoRef as any}
               onClick={() => !isSwapped && status === "connected" && setIsSwapped(true)}
               className={`transition-all duration-500 bg-neutral-700 ${
                 !isSwapped 
@@ -82,6 +82,8 @@ export default function CallRoomPage() {
                   : "w-full h-full z-10"
               }`}
             >
+              <div ref={localVideoRef as any} className="w-full h-full" />
+              
               {isCameraOff && (
                 <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center z-[45]">
                   <User className="w-12 h-12 text-neutral-400" />

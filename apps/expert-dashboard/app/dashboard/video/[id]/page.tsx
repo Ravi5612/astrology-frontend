@@ -161,7 +161,7 @@ export default function ExpertVideoCallPage() {
 
     // Re-attach local video on status change or re-mount
     useEffect(() => {
-        const localVideoTrack = localTracksRef.current.find(t => t.kind === 'video');
+        const localVideoTrack = localTracksRef.current?.find(t => t.kind === 'video');
         if (localVideoTrack && localVideoRef.current) {
             console.log('[ExpertVideo] 🔄 Re-attaching local preview to container (Status:', status, ')');
             const el = localVideoTrack.attach();
@@ -169,8 +169,13 @@ export default function ExpertVideoCallPage() {
             el.style.height = '100%';
             el.style.objectFit = 'cover';
             el.style.transform = 'scaleX(-1)';
-            localVideoRef.current.innerHTML = '';
-            localVideoRef.current.appendChild(el);
+            
+            // Safe cleanup of inner container only
+            const container = localVideoRef.current;
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(el);
         }
     }, [status]);
 
@@ -257,7 +262,6 @@ export default function ExpertVideoCallPage() {
             <div className="flex-1 relative bg-neutral-950 overflow-hidden">
                 {/* Remote Video Container (User) */}
                 <div 
-                    ref={remoteVideoRef as any}
                     onClick={() => isSwapped && setIsSwapped(false)}
                     className={`transition-all duration-500 bg-neutral-900 ${
                         isSwapped 
@@ -265,6 +269,8 @@ export default function ExpertVideoCallPage() {
                             : "absolute inset-0 z-10"
                     }`}
                 >
+                    <div ref={remoteVideoRef as any} className="w-full h-full" />
+
                     {/* User Name Tag */}
                     <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 z-50">
                         <span className="text-white text-xs font-bold">
@@ -284,7 +290,6 @@ export default function ExpertVideoCallPage() {
 
                 {/* Local Video Container (Expert) */}
                 <div 
-                    ref={localVideoRef as any}
                     onClick={() => !isSwapped && status === 'connected' && setIsSwapped(true)}
                     className={`transition-all duration-500 bg-neutral-800 ${
                         !isSwapped 
@@ -292,6 +297,8 @@ export default function ExpertVideoCallPage() {
                             : "absolute inset-0 z-10"
                     }`}
                 >
+                    <div ref={localVideoRef as any} className="w-full h-full" />
+
                     {isCameraOff && (
                         <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center z-[45]">
                             <User className="w-12 h-12 text-neutral-500" />
