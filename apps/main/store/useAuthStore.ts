@@ -42,11 +42,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     clientLogout: async () => {
-        // Guard to prevent multiple simultaneous logout calls or redundant loops
-        if (!get().isClientAuthenticated && !get().clientUser) {
-            return;
-        }
-
         // Reset Zustand state IMMEDIATELY — prevents interceptors from triggering logout again
         set({
             clientUser: null,

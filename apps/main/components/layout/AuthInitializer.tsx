@@ -36,7 +36,9 @@ export const AuthInitializer = ({
                     // Only redirect if user was trying to access a protected page
                     const protectedPrefixes = ['/profile', '/wallet', '/settings', '/session-history', '/cart', '/checkout'];
                     if (protectedPrefixes.some(p => currentPath.startsWith(p))) {
-                        window.location.href = '/sign-in';
+                        // BREAK THE LOOP: Clear stale/expired cookies before redirecting
+                        // clientLogout() will clear state, call /api/auth/logout, and redirect to /?_logout=1
+                        useAuthStore.getState().clientLogout();
                     }
                     // Public pages (/, /sign-in, /register, etc.) — do NOT redirect
                 }
