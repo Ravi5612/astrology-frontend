@@ -7,11 +7,8 @@ export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> 
     return api.get(API_ROUTES.AGENTS.PROFILE);
 };
 
-export const updateAgentProfile = async (formData: FormData): Promise<[any | null, ApiError | null]> => {
-    return api<any>(API_ROUTES.AGENTS.PROFILE, {
-        method: 'PATCH',
-        body: formData,
-    });
+export const updateAgentProfile = async (payload: any): Promise<[any | null, ApiError | null]> => {
+    return api.patch(API_ROUTES.AGENTS.PROFILE, payload);
 };
 
 // ── Listings ─────────────────────────────────────────────────────────────────
