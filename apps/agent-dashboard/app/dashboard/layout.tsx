@@ -249,9 +249,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
+    const { setAgent } = useAgentAuthStore();
+
     useEffect(() => {
         setMounted(true);
-    }, []);
+        // Sync agent profile on layout mount to ensure store has UID/agent_id
+        const syncProfile = async () => {
+             const { getAgentProfile } = await import("@/src/services/agent.service");
+             const [data, error] = await getAgentProfile();
+             if (!error && data) {
+                 setAgent(data);
+             }
+        };
+        syncProfile();
+    }, [setAgent]);
 
     const pathname = usePathname();
     const toggleSidebar = useCallback(() => setSidebarOpen((p) => !p), []);
@@ -286,7 +297,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <p className="text-sm font-bold text-gray-800">{mounted ? (agent?.name ?? "Agent") : "Agent"}</p>
                                 <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest flex items-center gap-1 justify-end">
                                     <Handshake className="w-3 h-3 text-primary-hover" />
-                                    {mounted ? (agent?.agent_id ?? "Field Agent") : "Field Agent"}
+                                    {mounted ? (agent?.agent_id || "Field Agent") : "Field Agent"}
                                 </p>
                             </div>
                             {/* @repo/ui Avatar component */}
