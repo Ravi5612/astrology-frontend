@@ -13,8 +13,10 @@ export default function ProfilePage() {
     const { agent, setAgent } = useAgentAuthStore() as any;
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const fetchProfile = async () => {
             try {
                 const data = await getAgentProfile();
@@ -57,8 +59,8 @@ export default function ProfilePage() {
                         {/* @repo/ui Avatar */}
                         <div className="ring-4 ring-white rounded-full shadow-xl">
                             <Avatar
-                                src={agent?.avatar ?? null}
-                                alt={agent?.name ?? "Agent"}
+                                src={mounted ? (agent?.avatar ?? null) : null}
+                                alt={mounted ? (agent?.name ?? "Agent") : "Agent"}
                                 size="xl"
                                 className="!w-20 !h-20"
                             />
@@ -71,7 +73,7 @@ export default function ProfilePage() {
                             Edit Profile
                         </Button>
                     </div>
-                    <h2 className="text-2xl font-black text-gray-900">{agent?.name ?? "Agent"}</h2>
+                    <h2 className="text-2xl font-black text-gray-900">{mounted ? (agent?.name ?? "Agent") : "Agent"}</h2>
                     <p className="text-sm text-primary-hover font-bold mt-0.5">Field Agent — AstrologyInBharat</p>
 
                     <div className="mt-6 grid sm:grid-cols-2 gap-4">

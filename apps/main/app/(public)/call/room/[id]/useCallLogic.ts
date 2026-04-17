@@ -39,9 +39,14 @@ export const useCallLogic = () => {
 
   useEffect(() => {
     cancelledRef.current = false;
+    
+    const finalSocketUrl = typeof window !== "undefined" 
+      ? (window.location.origin.includes("localhost") ? "http://localhost:6543" : window.location.origin)
+      : SOCKET_URL;
+
     if (!hasSetupRef.current) {
       hasSetupRef.current = true;
-      socketRef.current = io(`${SOCKET_URL}/call`, {
+      socketRef.current = io(`${finalSocketUrl}/call`, {
         withCredentials: true,
         transports: ["websocket"],
       });
@@ -49,41 +54,53 @@ export const useCallLogic = () => {
 
     const socket = socketRef.current!;
     const onConnect = () => {
+      console.log("🟢 [Socket] Connected to call room", sessionId);
       socket.emit("join_call_room", { sessionId: parseInt(sessionId) });
-      checkAndStartLocalVideo();
     };
 
     if (socket.connected) onConnect();
     else socket.on("connect", onConnect);
 
     let pollTimer: NodeJS.Timeout | null = null;
-    const checkAndStartLocalVideo = async () => {
-      if (hasAcceptedRef.current) return;
+    const checkSessionStatus = async () => {
       const [res, err] = await http.get<any>(`/call/session/${sessionId}`);
       if (err) {
-        console.error("Failed to pre-fetch session", err);
+        console.error("Failed to fetch session", err);
         return;
       }
 
       const session = res?.data || res;
-      if (session) {
-        setCallType(session.type);
-        setSessionData(session);
-        if (session.type === "video") startLocalVideoPreview();
-        if (session.status === "active" || session.status === "ongoing") {
-          if (pollTimer) clearInterval(pollTimer);
-          handleCallAccepted(session);
+      if (!session) return;
+
+      setSessionData(session);
+      setCallType(session.type);
+
+      // 1. Transition to accepted/active
+      if (!hasAcceptedRef.current && (session.status === "active" || session.status === "ongoing")) {
+        console.log("🔄 [Poll] Session active, connecting...");
+        handleCallAccepted(session);
+      } 
+      // 2. Transition to ended
+      else if (session.status === "completed" || session.status === "cancelled" || session.status === "rejected") {
+        console.log("🔄 [Poll] Session ended on server, cleaning up...");
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
         }
+        handleCallEnded();
+      }
+      // 3. Local preview for video
+      else if (!hasAcceptedRef.current && session.type === "video") {
+        startLocalVideoPreview();
       }
     };
 
-    checkAndStartLocalVideo();
-    pollTimer = setInterval(checkAndStartLocalVideo, 3000);
+    checkSessionStatus();
+    pollTimer = setInterval(checkSessionStatus, 3000);
 
     const handleCallAccepted = async (data?: any) => {
       if (cancelledRef.current || hasAcceptedRef.current) return;
       hasAcceptedRef.current = true;
-      if (pollTimer) clearInterval(pollTimer);
       setStatus("connecting");
 
       const [tokenResponse, tokenError] = await http.get<any>(`/call/token/${sessionId}`);
@@ -115,7 +132,10 @@ export const useCallLogic = () => {
     };
 
     socket.on("call_accepted", handleCallAccepted);
-    socket.on("call_ended", () => !cancelledRef.current && handleCallEnded());
+    socket.on("call_ended", () => {
+      console.log("📡 [Socket] call_ended received");
+      if (!cancelledRef.current) handleCallEnded();
+    });
 
     return () => {
       cancelledRef.current = true;
@@ -125,7 +145,7 @@ export const useCallLogic = () => {
       if (timerRef.current) clearInterval(timerRef.current);
       deviceRef.current?.destroy?.();
     };
-  }, [sessionId, SOCKET_URL]);
+  }, [sessionId]);
 
   const startLocalVideoPreview = async () => {
     if (localTracksRef.current.length > 0) return;

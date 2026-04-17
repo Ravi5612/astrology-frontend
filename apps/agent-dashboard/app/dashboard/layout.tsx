@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useCallback, useState, Fragment } from "react";
+import React, { memo, useCallback, useState, Fragment, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAgentAuthStore } from "@/src/store/useAgentAuthStore";
@@ -247,6 +247,12 @@ Sidebar.displayName = "Sidebar";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { agent } = useAgentAuthStore();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const pathname = usePathname();
     const toggleSidebar = useCallback(() => setSidebarOpen((p) => !p), []);
     const currentPage = MENU_ITEMS.find((m) => m.href === pathname)?.label ?? "Dashboard";
@@ -277,16 +283,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         {/* Agent info — right side (using @repo/ui Avatar) */}
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-bold text-gray-800">{agent?.name ?? "Agent"}</p>
+                                <p className="text-sm font-bold text-gray-800">{mounted ? (agent?.name ?? "Agent") : "Agent"}</p>
                                 <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest flex items-center gap-1 justify-end">
                                     <Handshake className="w-3 h-3 text-primary-hover" />
-                                    {agent?.agent_id ?? "Field Agent"}
+                                    {mounted ? (agent?.agent_id ?? "Field Agent") : "Field Agent"}
                                 </p>
                             </div>
                             {/* @repo/ui Avatar component */}
                             <Avatar
-                                src={agent?.avatar ?? null}
-                                alt={agent?.name ?? "Agent"}
+                                src={mounted ? (agent?.avatar ?? null) : null}
+                                alt={mounted ? (agent?.name ?? "Agent") : "Agent"}
                                 size="md"
                                 className="cursor-pointer hover:ring-2 hover:ring-primary-hover transition-all border-2 border-primary/10"
                             />

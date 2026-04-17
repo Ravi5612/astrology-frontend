@@ -34,8 +34,10 @@ export default function AgentDashboardHome() {
     const { agent } = useAgentAuthStore();
     const [statsData, setStatsData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const fetchDashboardData = async () => {
             const [data, error] = await getAgentDashboardStats();
             
@@ -92,8 +94,8 @@ export default function AgentDashboardHome() {
                 <div className="absolute -right-4 top-12 w-32 h-32 bg-white/10 rounded-full pointer-events-none" />
                 <div className="relative z-10">
                     <p className="text-orange-200 text-sm font-bold uppercase tracking-widest mb-1">Welcome back 🙏</p>
-                    <h2 className="text-3xl font-black text-white mb-1">{agent?.name ?? "Agent"}</h2>
-                    <p className="text-orange-100 text-sm font-medium font-mono">ID: {agent?.agent_id}</p>
+                    <h2 className="text-3xl font-black text-white mb-1">{mounted ? (agent?.name ?? "Agent") : "Agent"}</h2>
+                    <p className="text-orange-100 text-sm font-medium font-mono">ID: {mounted ? agent?.agent_id : "..."}</p>
                     <div className="mt-6 flex flex-wrap items-center gap-6">
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Total Earned</p>
