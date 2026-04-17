@@ -33,17 +33,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-yellow-700",
         activeText: "text-white",
         borderColor: "border-yellow-700",
-        infoText: "The expert will receive their login credentials and a verification link via email.",
-    },
-    {
-        id: "client",
-        label: "Client",
-        emoji: "👤",
-        icon: Users,
-        activeBg: "bg-primary",
-        activeText: "text-white",
-        borderColor: "border-primary",
-        infoText: "The client will receive their login credentials and a verification link via email.",
+        infoText: "Register an expert and earn 3% commission on their total platform earnings.",
     },
     {
         id: "mandir",
@@ -53,7 +43,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-orange-700",
         activeText: "text-white",
         borderColor: "border-orange-700",
-        infoText: "Register a new mandir listing. It will be submitted for review before going live.",
+        infoText: "Add a mandir listing and earn 3% commission on every puja service booked there.",
     },
     {
         id: "puja_shop",
@@ -63,7 +53,7 @@ const TABS: TabConfig[] = [
         activeBg: "bg-purple-800",
         activeText: "text-white",
         borderColor: "border-purple-800",
-        infoText: "The merchant will receive their login credentials and a verification link via email.",
+        infoText: "Register a puja shop merchant and earn 3% commission on their total product sales.",
     },
 ];
 
@@ -241,11 +231,11 @@ function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) 
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ The login credentials and a verification link will be automatically sent to the {userType === 'expert' ? 'expert' : userType === 'merchant' ? 'merchant' : 'client'}&apos;s email address after registration.
+                    ℹ️ You will earn a <strong>3% Recurring Commission</strong> from this {userType === 'expert' ? 'Expert\'s' : 'Merchant\'s'} platform activity. Login credentials will be sent to their email.
                 </div>
 
                 <Button variant="primary" type="submit" icon={userType === 'merchant' ? ShoppingBag : UserPlus} disabled={submitting} fullWidth>
-                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : userType === "merchant" ? "Puja Shop" : "Client"}`}
+                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : "Puja Shop Merchant"}`}
                 </Button>
             </form>
 
@@ -393,7 +383,7 @@ function PlaceForm({ type }: { type: "mandir" | "puja_shop" }) {
 
                 {/* Info box */}
                 <div className={`bg-${accentColor}-50 border border-${accentColor}-100 rounded-xl p-4 text-xs font-medium text-${accentColor}-700`}>
-                    🙏 This {entityLabel} listing will be reviewed by admin before it goes live on the platform.
+                    🙏 This {entityLabel} listing will be reviewed by admin. You will earn <strong>3% commission</strong> on transactions related to this listing.
                 </div>
 
                 <Button
@@ -434,8 +424,8 @@ export default function RegisterUserPage() {
                 </p>
             </div>
 
-            {/* 4 Tab Buttons */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {/* 3 Tab Buttons */}
+            <div className="grid grid-cols-3 gap-2">
                 {TABS.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -469,7 +459,6 @@ export default function RegisterUserPage() {
                     <span className="text-lg">{currentTab.emoji}</span>
                     <p className={`text-sm font-black ${currentTab.activeText}`}>
                         {activeTab === "expert" && "Register New Expert"}
-                        {activeTab === "client" && "Register New Client"}
                         {activeTab === "mandir" && "Add New Mandir Listing"}
                         {activeTab === "puja_shop" && "Add New Puja Shop Listing"}
                     </p>

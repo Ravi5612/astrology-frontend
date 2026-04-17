@@ -7,11 +7,8 @@ export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> 
     return api.get(API_ROUTES.AGENTS.PROFILE);
 };
 
-export const updateAgentProfile = async (formData: FormData): Promise<[any | null, ApiError | null]> => {
-    return api<any>(API_ROUTES.AGENTS.PROFILE, {
-        method: 'PATCH',
-        body: formData,
-    });
+export const updateAgentProfile = async (payload: any): Promise<[any | null, ApiError | null]> => {
+    return api.patch(API_ROUTES.AGENTS.PROFILE, payload);
 };
 
 // ── Listings ─────────────────────────────────────────────────────────────────
@@ -148,4 +145,21 @@ export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | 
         return [null, error];
     }
     return [data, null];
+};
+
+// ── Wallet ───────────────────────────────────────────────────────────────────
+export const getAgentWalletBalance = async (): Promise<[any | null, ApiError | null]> => {
+    return api.get(API_ROUTES.AGENTS.WALLET.BALANCE);
+};
+
+export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | null]> => {
+    return api.get(API_ROUTES.AGENTS.WALLET.WITHDRAWALS);
+};
+
+export const requestAgentWithdrawal = async (amount: number): Promise<[any | null, ApiError | null]> => {
+    return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount });
+};
+
+export const settleAgentCommissions = async (): Promise<[any | null, ApiError | null]> => {
+    return api.post(API_ROUTES.AGENTS.WALLET.SETTLE, {});
 };

@@ -41,27 +41,41 @@ export const getDashboardStats = async (type: string = 'monthly'): Promise<[Dash
 };
 
 export const getRecentAppointments = async (): Promise<[any[] | null, ApiError | null]> => {
-    const [pendingRes, completedRes] = await Promise.all([
+    const [pendingChatRes, completedChatRes, pendingCallRes, completedCallRes] = await Promise.all([
         api.get<any>("/chat/sessions/appointments/pending"),
-        api.get<any>("/chat/sessions/appointments/completed")
+        api.get<any>("/chat/sessions/appointments/completed"),
+        api.get<any>("/call/sessions/appointments/pending"),
+        api.get<any>("/call/sessions/appointments/completed")
     ]);
 
     const extractData = (result: [any | null, ApiError | null]) => {
         const [res, error] = result;
         if (error || !res) return [];
+        // Handle both possible response structures ({data: [...]} or [...])
         const data = res?.data?.data || res?.data || res;
         return Array.isArray(data) ? data : [];
     };
 
-    const allSessions = [...extractData(pendingRes), ...extractData(completedRes)];
+    const allSessions = [
+        ...extractData(pendingChatRes), 
+        ...extractData(completedChatRes),
+        ...extractData(pendingCallRes),
+        ...extractData(completedCallRes)
+    ];
 
-    // Deduplicate sessions by ID
-    const uniqueSessions = Array.from(new Map(allSessions.map(item => [item.id, item])).values());
+    // Deduplicate sessions by ID (Note: IDs might collide if chat and call use different sequences, 
+    // but usually they are unique across the system or we should prefix them)
+    // To be safe, we can use a composite key or just rely on the fact that they are likely different.
+    // If they are from different tables, IDs might collide. Let's use a unique identifier.
+    const uniqueSessions = Array.from(new Map(allSessions.map(item => {
+        const typePrefix = (item as any).type ? 'call' : 'chat'; // Call sessions have a type (AUDIO/VIDEO)
+        return [`${typePrefix}_${item.id}`, item];
+    })).values());
 
     // Sort by date (newest first)
     const sortedSessions = uniqueSessions.sort((a: any, b: any) => {
-        const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
-        const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
+        const dateA = new Date(a.created_at || a.createdAt || a.start_time || 0).getTime();
+        const dateB = new Date(b.created_at || b.createdAt || b.start_time || 0).getTime();
         return dateB - dateA;
     });
 

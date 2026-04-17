@@ -19,15 +19,21 @@ interface CommissionRow {
 
 const TYPE_BADGE: Record<string, string> = {
     expert: "bg-yellow-100 text-yellow-700",
-    client: "bg-blue-100 text-blue-700",
     mandir: "bg-orange-100 text-orange-700",
     puja_shop: "bg-purple-100 text-purple-700",
+    video_call: "bg-pink-100 text-pink-700",
+    audio_call: "bg-cyan-100 text-cyan-700",
+    chat: "bg-green-100 text-green-700",
+    puja_service: "bg-orange-100 text-orange-700",
 };
 const TYPE_LABEL: Record<string, string> = {
     expert: "Expert",
-    client: "Client",
     mandir: "Mandir",
     puja_shop: "Puja Shop",
+    video_call: "Video Call",
+    audio_call: "Audio Call",
+    chat: "Chat",
+    puja_service: "Puja Service",
 };
 
 type FilterType = "all" | "paid" | "pending";

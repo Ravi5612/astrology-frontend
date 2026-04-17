@@ -81,7 +81,7 @@ const Page = () => {
 
   const statsData = [
     {
-      title: "Total Chat Sessions",
+      title: "Total Sessions",
       value: (dashboardStats?.totalChatSessions || 0).toString(),
       trend: { value: dashboardStats?.trends?.sessions || "All Time", isPositive: true, period: "total" },
       icon: CalendarCheck,

@@ -42,15 +42,6 @@ const TABS: Tab[] = [
         badgeBg: "bg-yellow-100 text-yellow-700",
     },
     {
-        id: "client",
-        label: "Clients",
-        icon: Users,
-        color: "text-blue-600",
-        activeBg: "bg-blue-700",
-        activeText: "text-white",
-        badgeBg: "bg-blue-100 text-blue-700",
-    },
-    {
         id: "mandir",
         label: "Mandirs",
         icon: Building2,
@@ -311,7 +302,6 @@ export default function ListingsPage() {
 
     // Per-tab counts from live data (when tab = all)
     const expertCount = useMemo(() => data.filter((u) => u.type === "expert").length, [data]);
-    const clientCount = useMemo(() => data.filter((u) => u.type === "client").length, [data]);
     const mandirCount = useMemo(() => data.filter((u) => u.type === "mandir").length, [data]);
     const pujaShopCount = useMemo(() => data.filter((u) => u.type === "puja_shop").length, [data]);
 
@@ -320,7 +310,6 @@ export default function ListingsPage() {
         if (tab.id === "all") return total;
         if (activeTab === "all") {
             if (tab.id === "expert") return expertCount;
-            if (tab.id === "client") return clientCount;
             if (tab.id === "mandir") return mandirCount;
             if (tab.id === "puja_shop") return pujaShopCount;
         }
@@ -428,14 +417,6 @@ export default function ListingsPage() {
                                     <Star className="w-4 h-4 text-yellow-600" />
                                     <span className="text-xs font-bold text-yellow-700">
                                         {expertCount} experts
-                                    </span>
-                                </div>
-                            )}
-                            {clientCount > 0 && (
-                                <div className="flex items-center gap-2 bg-blue-50 rounded-xl border border-blue-200 px-4 py-2 shadow-sm">
-                                    <Users className="w-4 h-4 text-blue-600" />
-                                    <span className="text-xs font-bold text-blue-700">
-                                        {clientCount} clients
                                     </span>
                                 </div>
                             )}
