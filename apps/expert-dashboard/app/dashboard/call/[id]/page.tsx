@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
+import { SummaryModal } from "@/components/common/SummaryModal";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, User, Clock, Volume2 } = LucideIcons as any;
 
@@ -54,7 +55,6 @@ export default function ExpertCallRoom() {
         const acceptAndConnect = async () => {
             
             // Pre-check hardware
-            // Pre-check hardware
             try {
                 await checkHardwareAndNetwork();
             } catch (hwErr: any) {
@@ -67,8 +67,6 @@ export default function ExpertCallRoom() {
             
             if (cancelled) { return; }
 
-
-            // Step 1: Accept call via REST API → get Twilio token for expert
             // Step 1: Accept call via REST API → get Twilio token for expert
             const [data, error] = await api.post<any>('/call/accept', {
                 sessionId: parseInt(sessionId),
@@ -84,7 +82,6 @@ export default function ExpertCallRoom() {
 
             if (cancelled) { return; }
 
-
             if (!data?.token) {
                 toast.error('No token received from accept endpoint');
                 return;
@@ -93,10 +90,8 @@ export default function ExpertCallRoom() {
             setSessionData(data.session);
 
             // Step 2: Join socket room so user gets notified
-            // Step 2: Join socket room so user gets notified
             callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
 
-            // Step 3: Init Twilio Device
             // Step 3: Init Twilio Device
             await initTwilioDevice(data.token);
         };
@@ -133,9 +128,6 @@ export default function ExpertCallRoom() {
 
         deviceRef.current = device;
 
-        device.on('ready', () => {
-        });
-
         // Listen for when a call we made is connected (conference joined)
         device.on('connect', (call: any) => {
             toast.success('Connected! Call is live.');
@@ -153,18 +145,13 @@ export default function ExpertCallRoom() {
             handleCallEnded();
         });
 
-
         await device.register();
 
         // Both user & expert call the TwiML App with sessionId.
-        // TwiML App uses <Dial><Conference>call_room_{sessionId}</Conference></Dial>
-        // to put both into the same conference room.
         const call = await device.connect({ params: { sessionId } });
-        callRef.current = call; // Store for mute/unmute
+        callRef.current = call;
 
-        // Per-call event handlers (Twilio SDK v2.x — use call events, not device events)
         call.on('accept', (call: any) => {
-            // 'accept' fires when media is connected — this is when call is truly live
             toast.success('Connected! Call is live.');
             setStatus('connected');
             startTimer();
@@ -187,7 +174,10 @@ export default function ExpertCallRoom() {
             deviceRef.current = null;
         }
 
-        if (data?.split) {
+        if (data?.summary) {
+            setSummaryData(data.summary);
+            setShowSummary(true);
+        } else if (typeof data === 'string' && data.split(':').length >= 3) {
             setSummaryData(data);
             setShowSummary(true);
         } else {
@@ -294,50 +284,14 @@ export default function ExpertCallRoom() {
 
             <div className="absolute bottom-6 text-[9px] text-white/15 font-black uppercase tracking-[0.5em]">🔒 Secure Encrypted Session</div>
 
-            {/* Summary Modal */}
-            {showSummary && summaryData && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-                        {/* Header */}
-                        <div className="bg-gradient-to-r from-[#fd6410] to-[#ff8c4a] p-8 text-center relative">
-                            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
-                                <LucideIcons.CheckCircle2 className="w-10 h-10 text-white" />
-                            </div>
-                            <h3 className="text-2xl font-black text-white">Call Ended</h3>
-                            <p className="text-white/80 font-bold text-sm mt-1 uppercase tracking-widest">Earning Summary</p>
-                        </div>
-
-                        {/* Content */}
-                        <div className="p-8 space-y-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Client Paid</p>
-                                    <p className="text-xl font-black text-gray-900">₹{summaryData.split.totalAmount}</p>
-                                </div>
-                                <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
-                                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Platform Fee (20%)</p>
-                                    <p className="text-xl font-black text-[#fd6410]">₹{summaryData.split.platformFee}</p>
-                                </div>
-                            </div>
-
-                            <div className="p-6 bg-green-50 rounded-3xl border border-green-100 text-center">
-                                <p className="text-xs font-black text-green-600 uppercase tracking-[0.2em] mb-2">Total Earned</p>
-                                <p className="text-4xl font-black text-green-700">₹{summaryData.split.expertShare}</p>
-                                <p className="text-[10px] font-bold text-green-600/60 mt-2 italic">Credited to your wallet</p>
-                            </div>
-
-                            <button
-                                onClick={() => router.push('/dashboard')}
-                                className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-sm transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2"
-                            >
-                                Back to Dashboard
-                                <LucideIcons.ArrowRight className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <SummaryModal 
+                isOpen={showSummary && !!summaryData} 
+                data={(() => {
+                    const [totalAmount, platformFee, expertShare, terminatedBy] = (summaryData || "").split(':');
+                    return { totalAmount, platformFee, expertShare, terminatedBy };
+                })()} 
+                title="Call Session Ended"
+            />
         </div>
     );
 }

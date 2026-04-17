@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import {
     getAllChatSessions,
+    getConsultationHistory,
     getChatHistory,
     getMyOrders,
     getMyDisputes,
@@ -46,7 +47,21 @@ export const useProfileOrdersHistoryLogic = (
         if (activeTab === "history" && isClientAuthenticated) {
             setLoadingHistory(true);
             try {
-                const [sessions, error] = await getAllChatSessions() as any;
+                const [result, error] = await getConsultationHistory({ limit: 50 }) as any;
+                let sessions = Array.isArray(result) ? result : (result?.items || result?.data || []);
+                
+                // Map backend fields to frontend expected ones for a logic-less UI
+                sessions = sessions.map((s: any) => ({
+                    ...s,
+                    expert_name: s.expert_name ?? s.expert?.user?.name ?? "Astro Expert",
+                    expert_image: s.expert_image ?? s.expert?.user?.avatar ?? s.expert?.user?.profile_picture ?? "/images/dummy-expert.jpg",
+                    expert_category: s.expert_category ?? s.expert?.category ?? s.expert?.specialization ?? "Expert Expert",
+                    rating: s.rating ?? s.metadata?.rating ?? 0,
+                    total_cost: s.amount ?? s.total_cost,
+                    createdAt: s.startTime ?? s.createdAt ?? s.created_at,
+                    durationString: s.durationString ?? (s.duration ? `${Math.floor(s.duration / 60)}m ${s.duration % 60}s` : "0s")
+                }));
+
                 setConsultationHistory(!error ? sessions : []);
             } catch (error) {
                 console.error("Failed to load consultation history:", error);
@@ -132,13 +147,22 @@ export const useProfileOrdersHistoryLogic = (
         try {
             setSelectedSession(session);
             setShowChatModal(true);
-            const [messages, error] = await getChatHistory(session.id) as any;
-            if (!error && messages) {
-                setChatMessages(messages);
+            
+            // Only fetch chat history if it's a CHAT session
+            if (session.type === 'CHAT' || session.session_type === 'chat' || !session.type) {
+                const [messages, error] = await getChatHistory(session.id) as any;
+                if (error) {
+                    console.error("Error fetching chat history:", error);
+                    setChatMessages([]);
+                } else {
+                    setChatMessages(messages || []);
+                }
+            } else {
+                // For calls, clear messages as there are none
+                setChatMessages([]);
             }
-        } catch (error) {
-            console.error("Failed to load chat messages:", error);
-            toast.error("Failed to load chat messages");
+        } catch (err) {
+            console.error("Error in handleViewChat:", err);
         }
     };
 

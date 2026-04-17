@@ -122,14 +122,24 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 ml-auto">
+                  <div className="flex items-center gap-6 ml-auto">
+                    {/* Consultation Type Badge */}
+                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gray-100/80 border border-gray-200">
+                      <i className={`fa-solid ${(session.type === "VIDEO_CALL" || session.session_type === "video") ? "fa-video text-purple-600" : (session.type === "AUDIO_CALL" || session.session_type === "audio") ? "fa-phone text-blue-600" : "fa-message text-blue-500"} text-[10px]`}></i>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-gray-700" style={fontStyle}>
+                        {(session.type === "VIDEO_CALL" || session.session_type === "video") ? t.viewVideo : (session.type === "AUDIO_CALL" || session.session_type === "audio") ? t.viewCall : t.viewChat.replace(" History", "").replace(" इतिहास देखें", "")}
+                      </span>
+                    </div>
+
                     <span
                       className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
-                        session.terminatedBy === "admin"
-                          ? "bg-red-50 text-red-600 border-red-100"
-                          : session.status === "completed"
-                            ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                            : "bg-amber-50 text-amber-600 border-amber-100"
+                        session.status?.toLowerCase() === "completed"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : (session.status?.toLowerCase() === "missed" || session.status?.toLowerCase() === "rejected" || session.status?.toLowerCase() === "failed")
+                            ? "bg-rose-50 text-rose-600 border-rose-100"
+                            : (session.status?.toLowerCase() === "active" || session.status?.toLowerCase() === "pending")
+                              ? "bg-sky-50 text-sky-600 border-sky-100"
+                              : "bg-gray-50 text-gray-600 border-gray-100"
                       }`}
                       style={fontStyle}
                     >
@@ -154,17 +164,13 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                       <div className="relative group">
                         <div className="w-24 h-24 rounded-full border-4 border-gray-50 overflow-hidden bg-gray-50 shadow-inner group-hover:scale-105 transition-transform duration-500">
                           <Image
-                            src={
-                              session.expert?.user?.avatar ||
-                              "https://randomuser.me/api/portraits/men/32.jpg"
-                            }
+                            src={session.expert_image}
                             width={96}
                             height={96}
                             className="w-full h-full object-cover"
-                            alt={session.expert?.user?.name || "Expert"}
+                            alt={session.expert_name}
                             onError={(e) => {
-                              (e.target as any).src =
-                                "https://randomuser.me/api/portraits/men/32.jpg";
+                              (e.target as any).src = "/images/dummy-expert.jpg";
                             }}
                           />
                         </div>
@@ -177,18 +183,22 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-4 mb-6">
                           <div>
                             <h5 className="font-bold text-gray-900 text-2xl mb-1">
-                              {session.expert?.user?.name || "Astro Expert"}
+                              {session.expert_name}
                             </h5>
                             <p className="text-gray-500 font-medium text-sm">
-                              {session.expert?.category ||
-                                session.expert?.specialization ||
-                                "Expert Expert"}
+                              {session.expert_category}
                             </p>
                           </div>
                           <div className="md:text-right">
-                            <span className="block text-2xl font-black text-gray-900">
-                              ₹{session.total_cost || 0}
-                            </span>
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t.amountPaid}</span>
+                              <div className="flex items-baseline gap-2 justify-end">
+                                <span className="text-xl font-black text-blue-600">₹{session.total_cost || 0}</span>
+                                {session.rate && (
+                                  <span className="text-[11px] font-bold text-gray-400">(@ ₹{session.rate}/min)</span>
+                                )}
+                              </div>
+                            </div>
                             <span
                               className="text-[10px] font-bold uppercase tracking-widest text-gray-400"
                               style={fontStyle}
@@ -203,9 +213,9 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                             <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center text-blue-600">
                               <i
                                 className={`fa-solid ${
-                                  session.session_type === "video"
+                                  (session.type === "VIDEO_CALL" || session.session_type === "video")
                                     ? "fa-video"
-                                    : session.session_type === "audio"
+                                    : (session.type === "AUDIO_CALL" || session.session_type === "audio")
                                       ? "fa-phone"
                                       : "fa-message"
                                 }`}
@@ -215,7 +225,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                               className="text-sm font-bold text-gray-700"
                               style={fontStyle}
                             >
-                              {session.durationString || "0s"}
+                              {(session.type === "VIDEO_CALL" || session.session_type === "video") ? "Video Call" : (session.type === "AUDIO_CALL" || session.session_type === "audio") ? "Audio Call" : "Chat"} • {session.durationString || "0s"}
                             </span>
                           </div>
                           <div className="w-px h-8 bg-gray-200"></div>
@@ -227,7 +237,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                               className="text-sm font-bold text-gray-700"
                               style={fontStyle}
                             >
-                              {session.expert?.rating || "N/A"} {t.rating}
+                              {session.rating > 0 ? `${session.rating} ${t.rating}` : `N/A ${t.rating}`}
                             </span>
                           </div>
                         </div>
@@ -239,9 +249,20 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                         onClick={() => onViewDetails(session)}
                         className="w-full sm:w-auto px-8 py-3 bg-blue-50 text-blue-600 font-bold rounded-2xl hover:bg-blue-100 transition-all flex items-center justify-center gap-3"
                         style={fontStyle}
+                        disabled={session.type !== "CHAT" && session.session_type !== "chat" && session.session_type !== undefined}
                       >
-                        <i className="fa-solid fa-comments text-lg"></i>
-                        {t.viewChat}
+                        <i className={`fa-solid ${
+                          (session.type === "VIDEO_CALL" || session.session_type === "video")
+                            ? "fa-video"
+                            : (session.type === "AUDIO_CALL" || session.session_type === "audio")
+                              ? "fa-phone"
+                              : "fa-comments"
+                        } text-lg`}></i>
+                        {(session.type === "VIDEO_CALL" || session.session_type === "video")
+                          ? t.viewVideo
+                          : (session.type === "AUDIO_CALL" || session.session_type === "audio")
+                            ? t.viewCall
+                            : t.viewChat}
                       </button>
 
                       {consultationDisputes[session.id] ? (

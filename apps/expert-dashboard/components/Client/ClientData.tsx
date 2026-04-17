@@ -13,7 +13,7 @@ import { getReviews } from "@/lib/reviews";
 import Button from "../ui/Button";
 import { HistorySkeleton } from "../dashboard/DashboardSkeletons";
 
-const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin } = LucideIcons as any;
+const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin, Phone, Video } = LucideIcons as any;
 
 import { createPortal } from "react-dom";
 
@@ -70,113 +70,47 @@ export default function ClientsPage() {
         // Clean debouncedSearchTerm for ID search if it has hash
         const cleanSearch = debouncedSearchTerm.replace(/^#/, "");
         
-        const [chatResult, callResult, reviewsResult] = await Promise.all([
-          api.get<any>(`/chat/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
-          api.get<any>(`/call/sessions/all?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`),
-          expertUser?.profileId ? getReviews(expertUser.profileId, 1, 50) : Promise.resolve([null, null] as [any, any])
-        ]);
+        // Unified API Call for all consultation types
+        const [historyResult, historyError] = await api.get<any>(`/consultations/history?limit=${limit}&offset=${offset}&search=${encodeURIComponent(cleanSearch)}`);
 
-        const [chatData, chatError] = chatResult;
-        const [callData, callError] = callResult;
-        const [reviewsData, reviewsError] = reviewsResult;
-
-        if (chatError) console.error("Failed to fetch chat sessions:", chatError);
-        if (callError) console.error("Failed to fetch call sessions:", callError);
+        if (historyError) {
+          console.error("Failed to fetch consultation history:", historyError);
+          throw historyError;
+        }
         
-        // Extract sessions from both responses
-        let chatSessions = [];
-        if (chatData && typeof chatData === 'object' && 'data' in chatData) {
-           chatSessions = (chatData as any).data || [];
-        } else {
-           chatSessions = chatData || [];
-        }
-
-        let callSessions = [];
-        if (callData && typeof callData === 'object' && 'data' in callData) {
-           callSessions = (callData as any).data || [];
-        } else {
-           callSessions = callData || [];
-        }
-
-        // Combine and mark types
-        const combinedSessions = [
-          ...chatSessions.map((s: any) => ({ ...s, consultType: 'chat' })),
-          ...callSessions.map((s: any) => ({ ...s, consultType: s.type || 'call' }))
-        ];
-
-        // Sort combined sessions by date (newest first)
-        combinedSessions.sort((a, b) => {
-          const dateA = new Date(a.created_at || a.createdAt).getTime();
-          const dateB = new Date(b.created_at || b.createdAt).getTime();
-          return dateB - dateA;
-        });
-
-        // Calculate totals correctly
-        const totalChat = (chatData as any)?.meta?.totalCount || chatSessions.length;
-        const totalCall = (callData as any)?.meta?.totalCount || callSessions.length;
-        setTotalRecords(totalChat + totalCall);
-
-        const reviews = (reviewsData as any)?.reviews || (reviewsData as any)?.data || reviewsData || [];
-
-        // Map API response to Client interface
-        const mappedClients: Client[] = (Array.isArray(combinedSessions) ? combinedSessions : []).map((session: any) => {
-          // ... (existing mapping logic preserved)
-          let durationSecs = session.duration_seconds || session.durationSeconds || 0;
-          if (durationSecs === 0) {
-            const dMins = session.duration_mins || session.durationMins || session.duration || 0;
-            if (dMins > 0) durationSecs = dMins > 500 ? dMins : dMins * 60;
-          }
-          if (durationSecs === 0 && (session.status === 'completed' || session.status === 'expired')) {
-            const start = (session.activated_at || session.activatedAt) ? new Date(session.activated_at || session.activatedAt).getTime() :
-              (session.start_time || session.startTime ? new Date(session.start_time || session.startTime).getTime() :
-                (session.created_at || session.createdAt ? new Date(session.created_at || session.createdAt).getTime() : 0));
-            const end = (session.ended_at || session.endedAt) ? new Date(session.ended_at || session.endedAt).getTime() :
-              (session.end_time || session.endTime ? new Date(session.end_time || session.endTime).getTime() :
-                (session.updated_at || session.updatedAt ? new Date(session.updated_at || session.updatedAt).getTime() : 0));
-
-            if (start > 0 && end > 0) {
-              const diffMs = end - start;
-              durationSecs = Math.floor(diffMs / 1000);
-            }
-          }
-          if (durationSecs === 0 && session.status === 'completed') durationSecs = 300; 
-
-          const mins = Math.floor(durationSecs / 60);
-          const secs = durationSecs % 60;
-          const preciseDurationStr = mins > 0 ? (secs > 0 ? `${mins}m ${secs}s` : `${mins} min`) : `${secs}s`;
-
-          let sessionReview = session.review;
-          if (!sessionReview || !sessionReview.comment) {
-            const matchingReview = reviews.find((r: any) => (r.session_id || r.sessionId) === session.id);
-            if (matchingReview) {
-              sessionReview = { rating: matchingReview.rating, comment: matchingReview.comment };
-            }
-          }
-
-          const totalCost = session.total_cost || session.totalCost || session.amount || session.final_price || session.finalPrice || 0;
-          const expertShareFromMeta = session.metadata?.split?.expertShare || session.metadata?.expertShare || session.metadata?.split?.expert_share;
-          const expertShare = expertShareFromMeta !== undefined ? expertShareFromMeta : (totalCost * 0.8);
+        const sessions = Array.isArray(historyResult) ? historyResult : (historyResult?.items || historyResult?.data || []);
+        
+        // Map API response to Client interface using top-level standardized fields
+        const mappedClients: Client[] = sessions.map((session: any) => {
+          const totalCost = Number(session.total_cost || session.amount || 0);
+          const expertShare = Number(session.expert_earning || session.expert_share || session.payment || (totalCost * 0.8));
+          const platformFee = Number(session.platform_fee || (totalCost - expertShare) || 0);
 
           return {
             id: session.id,
-            name: session.user?.name || "Client",
-            avatar: session.user?.profile_picture || session.user?.avatar,
-            phone: session.user?.phone || "Hidden",
-            email: session.user?.email || "Hidden",
+            name: session.user_name || "Client",
+            avatar: session.user_image || null,
+            phone: session.user_phone || "Hidden",
+            email: session.user_email || "Hidden",
             lastConsultation: {
-              date: (() => {
-                const d = new Date(session.created_at || session.createdAt);
-                return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
-              })(),
-              duration: preciseDurationStr,
-              type: session.consultType || "interaction"
+              date: session.startTime || session.createdAt || new Date().toISOString(),
+              duration: session.durationString || "0s",
+              type: (session.type || "interaction").toLowerCase()
             },
-            rating: sessionReview?.rating || 0,
-            review: sessionReview?.comment || "No review yet",
+            rating: session.rating || 0,
+            review: session.comment || "No review yet",
             payment: Number(expertShare.toFixed(2)),
-            rawSession: { ...session, durationString: preciseDurationStr, totalCost, expertShare }
+            terminatedBy: session.terminatedBy,
+            rawSession: { ...session, totalCost, expertShare, platformFee }
           };
         });
+
+        // Update total records metadata if available
+        if (historyResult?.meta?.totalCount) {
+          setTotalRecords(historyResult.meta.totalCount);
+        } else {
+          setTotalRecords(mappedClients.length);
+        }
 
         setClients(mappedClients);
       } catch (error) {
@@ -198,17 +132,25 @@ export default function ClientsPage() {
 
     setSelectedSession(session);
     setShowChatModal(true);
-    setLoadingChat(true);
 
-    try {
-      const [res, error] = await api.get<any>(`/chat/history/${session.id}`);
-      if (error) throw error;
-      const messages = (res as any)?.data || res || [];
-      setChatMessages(messages);
-    } catch (error) {
-      console.error("Failed to load chat history:", error);
-      toast.error("Failed to load chat history");
-    } finally {
+    const isChat = (session.type || session.session_type || "").toLowerCase().includes("chat");
+    
+    if (isChat) {
+      setLoadingChat(true);
+      try {
+        const [res, error] = await api.get<any>(`/chat/history/${session.id}`);
+        if (error) throw error;
+        const messages = (res as any)?.data || res || [];
+        setChatMessages(messages);
+      } catch (error) {
+        console.error("Failed to load chat history:", error);
+        toast.error("Failed to load chat history");
+      } finally {
+        setLoadingChat(false);
+      }
+    } else {
+      // For calls, no chat history is needed
+      setChatMessages([]);
       setLoadingChat(false);
     }
   };
@@ -300,10 +242,10 @@ export default function ClientsPage() {
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Session ID</span>
                           <span className="font-extrabold text-gray-800">#{session?.id || client.id}</span>
                         </div>
-                        <div className="flex flex-col min-w-[120px]">
+                        <div className="flex flex-col min-w-[100px]">
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Date</span>
                           <span className="font-bold text-gray-800">
-                            {new Date(session?.created_at || session?.createdAt || Date.now()).toLocaleDateString('en-IN', {
+                            {new Date(session?.startTime || session?.created_at || session?.createdAt || Date.now()).toLocaleDateString('en-IN', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric'
@@ -314,16 +256,29 @@ export default function ClientsPage() {
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Earnings</span>
                           <span className="font-extrabold text-[#fd6410]">₹{client.payment}</span>
                         </div>
+                        <div className="flex flex-col min-w-[100px]">
+                          <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Type</span>
+                          <span className="font-bold text-gray-800 flex items-center gap-2">
+                             {(session?.type === 'AUDIO_CALL' || session?.session_type === 'audio') ? (
+                               <><LucideIcons.Phone size={14} className="text-blue-500" /> Audio</>
+                             ) : (session?.type === 'VIDEO_CALL' || session?.session_type === 'video') ? (
+                               <><LucideIcons.Video size={14} className="text-purple-500" /> Video</>
+                             ) : (
+                               <><LucideIcons.MessageSquare size={14} className="text-[#fd6410]" /> Chat</>
+                             )}
+                          </span>
+                        </div>
                         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 ml-auto">
-                          <span className={`px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-wide ${session?.terminated_by === 'admin' || session?.terminatedBy === 'admin'
-                            ? 'bg-red-100 text-red-700'
-                            : session?.status === 'completed'
-                              ? 'bg-green-100 text-green-700'
-                              : session?.status === 'active'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-gray-100 text-gray-600'
-                            }`}>
-                            {(session?.terminated_by === 'admin' || session?.terminatedBy === 'admin') ? 'Terminated by Admin' : (session?.status || 'Completed')}
+                          <span className={`px-4 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-sm border ${
+                            (session?.status?.toLowerCase() === 'completed')
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                              : (session?.status?.toLowerCase() === 'missed' || session?.status?.toLowerCase() === 'rejected' || session?.status?.toLowerCase() === 'failed')
+                                ? 'bg-rose-50 text-rose-700 border-rose-100'
+                                : (session?.status?.toLowerCase() === 'active' || session?.status?.toLowerCase() === 'pending')
+                                  ? 'bg-sky-50 text-sky-700 border-sky-100'
+                                  : 'bg-slate-50 text-slate-600 border-slate-100'
+                          }`}>
+                            {session?.status || 'COMPLETED'}
                           </span>
                           <button
                             onClick={(e) => {
@@ -337,74 +292,135 @@ export default function ClientsPage() {
                         </div>
                       </div>
 
-                      {/* Expanded Details */}
+                      {/* Expanded Details - Premium Professional View */}
                       {isExpanded && (
-                        <div className="p-5 bg-white">
-                          <div className="flex items-center gap-5 mb-5">
-                            <div className="w-20 h-20 rounded-full border-2 border-orange-100 overflow-hidden shadow-sm flex-shrink-0">
-                              <img
-                                src={session?.user?.profile_picture || session?.user?.avatar || "/images/dummy-expert.jpg"}
-                                alt={client.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => { (e.target as HTMLImageElement).src = "/images/dummy-expert.jpg"; }}
-                              />
+                        <div className="p-6 bg-white border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                          {/* Row 1: Profile & Earnings Summary */}
+                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+                            <div className="flex items-center gap-5">
+                              <div className="relative group">
+                                <div className="w-20 h-20 rounded-full border-4 border-orange-50 overflow-hidden shadow-md transition-transform group-hover:scale-105 duration-300 bg-white flex items-center justify-center">
+                                  {(session?.user_image || session?.user?.profile_picture || session?.user?.avatar || client.avatar) ? (
+                                    <img
+                                      src={session?.user_image || session?.user?.profile_picture || session?.user?.avatar || client.avatar}
+                                      alt={client.name}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => { 
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        target.parentElement!.classList.add('bg-orange-100');
+                                        target.parentElement!.innerHTML = `<span class="text-2xl font-black text-[#fd6410]">${client.name.charAt(0)}</span>`;
+                                      }}
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full bg-orange-100 flex items-center justify-center">
+                                      <span className="text-2xl font-black text-[#fd6410]">{client.name.charAt(0).toUpperCase()}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+                                  <LucideIcons.Check size={10} className="font-black" />
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <h5 className="text-xl font-black text-gray-900 leading-none mb-1.5">{client.name}</h5>
+                                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Verified Client</p>
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex justify-between items-start mb-2">
-                                <div>
-                                  <h5 className="text-lg font-bold text-gray-900 m-0 leading-tight">{client.name}</h5>
-                                  <p className="text-sm text-gray-500 m-0 mt-1">Client</p>
-                                </div>
-                                <div className="text-right">
-                                  <span className="font-bold text-gray-900 block">₹{client.payment}</span>
-                                  <span className="text-xs text-gray-500">Earnings</span>
-                                </div>
+
+                            <div className="flex flex-col sm:items-end w-full sm:w-auto">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Your Net Earning</span>
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-3xl font-black text-[#fd6410]">₹{client.payment}</span>
+                                {session?.rate && (
+                                  <span className="text-xs font-bold text-gray-400">(@ ₹{session.rate}/min)</span>
+                                )}
                               </div>
-                              <div className="flex gap-4 text-sm text-gray-500 mt-2">
-                                <span className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-md">
-                                  <Clock size={14} className="text-gray-400" />
-                                  {client.lastConsultation.duration}
-                                </span>
-                                <span className="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-md text-orange-700 pb-1">
-                                  <Star size={14} className="fill-orange-500 text-orange-500" />
-                                  <span className="mt-0.5">{client.rating > 0 ? client.rating : 'N/A'} Rating</span>
-                                </span>
-                              </div>
+                              {client.terminatedBy && (
+                                <div className="mt-2 flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-full border border-gray-100">
+                                  <LucideIcons.Power size={10} className="text-gray-400" />
+                                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-tight">
+                                    Cut by: {client.terminatedBy === 'EXPERT' ? 'You' : 'Client'}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
 
-                          {/* Client Feedback Box */}
-                          <div className={`mt-2 mb-5 p-4 rounded-xl border flex gap-3 items-start transition-all ${client.review && client.review !== "No review yet"
-                            ? "bg-orange-50/50 border-orange-100"
-                            : "bg-gray-50/80 border-gray-100"
+                          {/* Row 2: Stats Summary Bar - Styled like Main App */}
+                          <div className="bg-[#fcfcfc] rounded-[2rem] p-2 border border-gray-100 flex flex-wrap items-center gap-4 mb-8">
+                             <div className="flex-1 min-w-[150px] bg-white rounded-[1.8rem] py-4 px-6 shadow-sm border border-gray-50 flex items-center justify-center gap-4">
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
+                                  (session?.type || session?.session_type || "").toLowerCase().includes('chat') ? 'bg-orange-50 text-[#fd6410]' : 'bg-blue-50 text-blue-600'
+                                }`}>
+                                  {(session?.type || session?.session_type || "").toLowerCase().includes('chat') ? <MessageSquare size={20} /> : <Phone size={20} />}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Consultation</span>
+                                  <span className="text-sm font-black text-gray-700 capitalize">
+                                    {(session?.type || session?.session_type || "Session")} • {session.durationString || "0s"}
+                                  </span>
+                                </div>
+                             </div>
+
+                             <div className="flex-1 min-w-[150px] bg-white rounded-[1.8rem] py-4 px-6 shadow-sm border border-gray-50 flex items-center justify-center gap-4">
+                                <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                                  <Star size={20} className="fill-current" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Client Rating</span>
+                                  <span className="text-sm font-black text-gray-700">
+                                    {client.rating > 0 ? `${client.rating} Stars` : 'N/A Rating'}
+                                  </span>
+                                </div>
+                             </div>
+                          </div>
+
+                          {/* Client Feedback Tray */}
+                          <div className={`p-5 rounded-3xl border flex gap-4 items-start transition-all ${
+                            client.review && client.review !== "No review yet"
+                              ? "bg-orange-50/30 border-orange-100"
+                              : "bg-gray-50/50 border-gray-100 border-dashed"
                             }`}>
-                            <div className={`mt-0.5 p-1.5 rounded-full ${client.review && client.review !== "No review yet" ? "bg-orange-100 text-[#fd6410]" : "bg-gray-200 text-gray-400"}`}>
-                              <MessageSquare size={14} />
+                            <div className={`p-2 rounded-2xl ${
+                              client.review && client.review !== "No review yet" ? "bg-[#fd6410] text-white" : "bg-gray-200 text-gray-400"
+                            }`}>
+                              <MessageSquare size={16} />
                             </div>
                             <div className="flex-1">
-                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Client Feedback</p>
-                              <p className="text-sm text-gray-700 italic leading-relaxed m-0">
+                              <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Detailed Feedback</p>
+                              <p className="text-sm text-gray-700 leading-relaxed m-0 font-medium">
                                 {client.review && client.review !== "No review yet"
                                   ? `"${client.review}"`
-                                  : "The client hasn't left a review yet. Feedback helps build trust!"}
+                                  : "The client hasn't provided a written review for this session."}
                               </p>
                             </div>
                           </div>
 
-                          <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                          <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-6">
                             <div className="flex gap-3">
                               <button
                                 onClick={() => handleViewChat(client)}
-                                className="rounded-full px-6 py-2 text-sm font-bold border-2 border-[#007bff] text-[#007bff] bg-white hover:bg-[#007bff0a] flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-                                disabled={session?.status !== 'completed'}
+                                className="rounded-full px-6 py-2 text-sm font-bold border-2 border-[#fd6410] text-[#fd6410] bg-white hover:bg-[#fd6410]/5 flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                                disabled={session?.status?.trim()?.toLowerCase() !== 'completed' && session?.status?.trim()?.toLowerCase() !== 'active'}
                               >
-                                <MessageSquare size={16} />
-                                {session?.status === 'completed' ? 'View Chat History' : 'No Chat Details'}
+                                {((session?.type || session?.session_type || "").toLowerCase().includes("chat")) ? (
+                                  <>
+                                    <MessageSquare size={16} />
+                                    {(session?.status?.trim()?.toLowerCase() === 'completed' || session?.status?.trim()?.toLowerCase() === 'active') ? 'View Chat History' : 'No Chat Details'}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Phone size={16} />
+                                    {(session?.status?.trim()?.toLowerCase() === 'completed' || session?.status?.trim()?.toLowerCase() === 'active') ? 'View Call Details' : 'No Call Details'}
+                                  </>
+                                )}
                               </button>
                             </div>
 
-                            {/* Placeholder for report issue if needed for Expert */}
-                            {(session?.status === 'issue_reported' || session?.status === 'dispute_raised') && (
+                            {/* Status Indicators */}
+                            {(session?.status?.trim()?.toLowerCase() === 'issue_reported' || session?.status?.trim()?.toLowerCase() === 'dispute_raised') && (
                               <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-bold border border-red-100">
                                 <LucideIcons.AlertTriangle size={16} />
                                 Issue Reported
@@ -475,17 +491,17 @@ export default function ClientsPage() {
               <div className="flex items-center gap-4 relative z-10">
                 <div className="w-14 h-14 rounded-full border-4 border-white/20 overflow-hidden bg-white shadow-lg">
                   <img
-                    src={selectedSession.user?.profile_picture || selectedSession.user?.avatar || "/images/dummy-expert.jpg"}
+                    src={selectedSession.user_image || "/images/dummy-expert.jpg"}
                     alt="User"
                     className="w-full h-full object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).src = "/images/dummy-expert.jpg"; }}
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tight">{selectedSession.user?.name || "Client Consultation"}</h3>
+                  <h3 className="text-xl font-black tracking-tight">{selectedSession.user_name || "Client Consultation"}</h3>
                   <div className="flex items-center gap-2 text-white/90 mt-1 font-bold text-sm">
-                    <Calendar size={14} className="opacity-70" />
-                    {new Date(selectedSession.created_at || selectedSession.createdAt).toLocaleDateString('en-IN', {
+                    <LucideIcons.Calendar size={14} className="opacity-70" />
+                    {new Date(selectedSession.startTime || selectedSession.createdAt || selectedSession.created_at).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
@@ -500,155 +516,152 @@ export default function ClientsPage() {
                 className="bg-white/10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 relative z-10"
                 aria-label="Close modal"
               >
-                <X size={24} />
+                <LucideIcons.X size={24} />
               </button>
             </div>
 
-            {/* Messages Area */}
+            {/* Messages Area / Call Summary Area */}
             <div className="flex-1 overflow-y-auto p-6 bg-[#fffbf9] space-y-6 custom-scrollbar-orange">
               {loadingChat ? (
                 <div className="flex flex-col justify-center items-center h-64 gap-4">
                   <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#fd6410] border-t-transparent"></div>
-                  <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Loading Conversation...</p>
+                  <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Loading Details...</p>
                 </div>
-              ) : (chatMessages?.length || 0) === 0 ? (
-                <div className="text-center py-20">
-                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 shadow-inner">
-                    <MessageSquare size={40} className="text-gray-200" />
+              ) : (selectedSession.type || selectedSession.session_type || "").toLowerCase().includes("chat") ? (
+                /* Chat Messages View (Preserved but styled) */
+                (chatMessages?.length || 0) === 0 ? (
+                  <div className="text-center py-20">
+                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 shadow-inner">
+                      <LucideIcons.MessageSquare size={40} className="text-gray-200" />
+                    </div>
+                    <p className="font-bold text-gray-400">No messages found in this session</p>
                   </div>
-                  <p className="font-bold text-gray-400">No messages found in this session</p>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {chatMessages.map((msg: any, idx: number) => {
-                    const content = msg.content || "";
-                    const sType = (msg.senderType || msg.sender_type || "").toLowerCase();
-                    const isExpert = sType === 'expert';
-                    const isStatusMsg = content.includes("Expert has ended") || content.includes("Consultation started") || sType === 'system';
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {chatMessages.map((msg: any, idx: number) => {
+                      const content = msg.content || "";
+                      const sType = (msg.senderType || msg.sender_type || "").toLowerCase();
+                      const isExpert = sType === 'expert' || sType === 'agent';
+                      const isUserSide = !isExpert;
 
-                    // 1. Status Messages (Centered Badges)
-                    if (isStatusMsg) {
-                      const isEnded = content.toLowerCase().includes('end') || content.toLowerCase().includes('finish');
                       return (
-                        <div key={idx} className="flex justify-center my-4 w-full text-center px-4">
-                          <div className={`px-4 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.1em] border shadow-sm inline-block ${isEnded ? 'bg-red-50 text-red-600 border-red-100' : 'bg-gray-100/80 text-gray-500 border-gray-200'
-                            }`}>
-                            {content}
+                        <div key={idx} className={`flex w-full mb-2 ${isUserSide ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`flex gap-3 max-w-[85%] ${isUserSide ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-8 h-8 rounded-full border overflow-hidden shadow-sm flex-shrink-0 bg-white ${isExpert ? 'border-gray-200' : 'border-[#fd6410]/20'}`}>
+                              <img
+                                src={isUserSide ? (selectedSession.user_image || "https://astrologerinbharat.com/images/dummy-expert.jpg") : (selectedSession.expert_image || "https://astrologerinbharat.com/images/dummy-expert.jpg")}
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className={`flex flex-col ${isUserSide ? 'items-end' : 'items-start'}`}>
+                              <div className={`p-4 shadow-sm relative ${isUserSide
+                                ? 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none'
+                                : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none'
+                                }`}>
+                                <p className="text-[14px] leading-relaxed whitespace-pre-wrap m-0 font-medium">{content}</p>
+                              </div>
+                              <span className="text-[8px] mt-1.5 px-1 text-gray-400 font-black uppercase tracking-widest">
+                                {new Date(msg.created_at || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       );
-                    }
+                    })}
+                  </div>
+                )
+              ) : (
+                /* Call Summary View - PREMIUM OVERHAUL */
+                <div className="flex flex-col items-center justify-center px-2 py-4 animate-in fade-in zoom-in-95 duration-500">
+                  <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-orange-100/50 border-4 border-white">
+                    <LucideIcons.CheckCircle2 className="w-10 h-10 text-[#fd6410]" />
+                  </div>
+                  
+                  <h4 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tight">
+                    Session Summary
+                  </h4>
+                  <p className="text-gray-500 mb-8 max-w-xs mx-auto text-xs font-bold uppercase tracking-widest opacity-60">
+                    Record ID: #{selectedSession.id}
+                  </p>
 
-                    // 2. Intro Card (Birth Details Shared)
-                    if (content.startsWith("[INTRO_CARD]")) {
-                      try {
-                        const details = JSON.parse(content.replace("[INTRO_CARD]", ""));
-                        return (
-                          <div key={idx} className="my-4 w-full px-2">
-                            <div className="relative overflow-hidden rounded-[1.5rem] p-5 shadow-md border-0"
-                              style={{ background: "linear-gradient(135deg, #fff9c4 0%, #fff176 100%)", border: "1px solid #fdd835" }}>
-                              <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                                <Sun size={80} />
-                              </div>
-                              <h6 className="font-black mb-4 text-orange-900 flex items-center gap-2 border-b border-orange-900/10 pb-3 text-sm uppercase tracking-wider">
-                                <ClipboardList size={20} className="text-orange-600" />
-                                Birth Details Shared
-                              </h6>
-                              <div className="grid grid-cols-2 gap-y-4 gap-x-6">
-                                <div>
-                                  <label className="text-[9px] uppercase font-black text-orange-800/50 tracking-widest block mb-0.5">Name</label>
-                                  <p className="text-sm font-bold text-gray-900 m-0">{details.name}</p>
-                                </div>
-                                <div>
-                                  <label className="text-[9px] uppercase font-black text-orange-800/50 tracking-widest block mb-0.5">Gender</label>
-                                  <p className="text-sm font-bold text-gray-900 m-0 capitalize">{details.gender || 'N/A'}</p>
-                                </div>
-                                <div>
-                                  <label className="text-[9px] uppercase font-black text-orange-800/50 tracking-widest block mb-0.5">Date of Birth</label>
-                                  <p className="text-sm font-bold text-gray-900 m-0">{details.dob}</p>
-                                </div>
-                                <div>
-                                  <label className="text-[9px] uppercase font-black text-orange-800/50 tracking-widest block mb-0.5">Time</label>
-                                  <p className="text-sm font-bold text-gray-900 m-0">{details.tob || 'N/A'}</p>
-                                </div>
-                                <div className="col-span-2 mt-1 border-t border-orange-900/10 pt-3">
-                                  <label className="text-[9px] uppercase font-black text-orange-800/50 tracking-widest block mb-0.5">Place of Birth</label>
-                                  <p className="text-sm font-bold text-gray-900 m-0 flex items-center gap-1.5 font-medium">
-                                    <MapPin size={14} className="text-red-500 opacity-60" />
-                                    {details.pob || 'N/A'}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      } catch (e) { return <div key={idx} className="text-center italic text-gray-400 py-2">Invalid data card</div>; }
-                    }
+                  {/* Premium Earning Grid */}
+                  <div className="w-full grid grid-cols-2 gap-4 mb-6">
+                    <div className="p-5 bg-white rounded-[2rem] border border-gray-100 shadow-sm transition-all hover:border-orange-100 group">
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Client Paid</p>
+                      <p className="text-xl font-black text-gray-900 tracking-tight">₹{Number(selectedSession.totalCost || 0).toFixed(2)}</p>
+                    </div>
+                    <div className="p-5 bg-orange-50/50 rounded-[2rem] border border-orange-100/30 shadow-sm">
+                      <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-2">Platform Fee</p>
+                      <p className="text-xl font-black text-[#fd6410] tracking-tight">₹{Number(selectedSession.platformFee || 0).toFixed(2)}</p>
+                    </div>
+                  </div>
 
-                    // 3. Chat Bubbles (MATCH MAIN APP: Expert=Left, User=Right)
-                    const isUserSide = !isExpert; // User always on Right to match Main App
-
-                    return (
-                      <div key={idx} className={`flex w-full mb-2 ${isUserSide ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`flex gap-3 max-w-[85%] ${isUserSide ? 'flex-row-reverse' : 'flex-row'}`}>
-                          {/* Avatar in Chat */}
-                          <div className={`w-10 h-10 rounded-full border-2 overflow-hidden shadow-sm flex-shrink-0 bg-white ${isExpert ? 'border-gray-200' : 'border-[#fd6410]/20'}`}>
-                            <img
-                              src={isExpert
-                                ? (expertUser?.profile_picture || expertUser?.avatar || "/images/dummy-expert.jpg")
-                                : (selectedSession.user?.profile_picture || selectedSession.user?.avatar || "/images/dummy-expert.jpg")
-                              }
-                              alt="Avatar"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className={`flex flex-col ${isUserSide ? 'items-end' : 'items-start'}`}>
-                            <div className={`p-4 shadow-sm relative ${isUserSide
-                              ? 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none'
-                              : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none'
-                              }`}>
-                              <p className="text-[14px] leading-relaxed whitespace-pre-wrap m-0 font-medium">{content}</p>
-                            </div>
-                            <span className="text-[10px] mt-2 px-1 text-gray-400 font-black uppercase tracking-widest">
-                              {new Date(msg.created_at || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
+                  {/* Net Earning Box */}
+                  <div className="w-full p-8 bg-green-50/50 rounded-[2.5rem] border-2 border-green-100 relative overflow-hidden group mb-8">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-green-100/30 rounded-full -mr-10 -mt-10 blur-xl" />
+                    <div className="relative z-10 text-center">
+                      <p className="text-[10px] font-black text-green-600 uppercase tracking-[0.25em] mb-2">Your Net Earning</p>
+                      <p className="text-5xl font-black text-green-700 tracking-tighter mb-4">₹{Number(selectedSession.expertShare || 0).toFixed(2)}</p>
+                      
+                      <div className="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-green-100/50 mt-2">
+                        <div className="flex items-center gap-1.5">
+                          <LucideIcons.Clock size={12} className="text-green-600/50" />
+                          <span className="text-[10px] font-black text-green-900/40 uppercase tracking-widest">{selectedSession.durationString || "0s"}</span>
+                        </div>
+                        <div className="w-1 h-1 bg-green-200 rounded-full" />
+                        <div className="flex items-center gap-1.5">
+                          <LucideIcons.Zap size={12} className="text-green-600/50" />
+                          <span className="text-[10px] font-black text-green-900/40 uppercase tracking-widest">₹{selectedSession.rate || 0}/min</span>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  </div>
+
+                  {/* Termination Info Bar */}
+                  {selectedSession.terminatedBy && (
+                    <div className="w-full flex items-center justify-center gap-3 py-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <LucideIcons.Power size={14} className="text-gray-400" />
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                        Session Ended By: <span className="text-gray-900 ml-1">{selectedSession.terminatedBy === 'EXPERT' ? 'Expert (You)' : 'Client (User)'}</span>
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedSession.metadata?.recordingUrl && (
+                    <div className="w-full mt-6 p-4 bg-blue-50/30 rounded-[2rem] border border-blue-100/50">
+                      <label className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">
+                        <LucideIcons.PlayCircle size={14} />
+                        Session Recording
+                      </label>
+                      <audio controls className="w-full h-10 accent-[#fd6410]">
+                        <source src={selectedSession.metadata.recordingUrl} type="audio/mpeg" />
+                      </audio>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Footer - Styled like Main App */}
-            <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center sm:flex-row flex-col gap-4">
+            {/* Modal Footer - Simplified Refined */}
+            <div className="p-6 bg-white border-t border-gray-100 flex justify-between items-center sm:flex-row flex-col gap-4">
               <div className="flex gap-3 items-center">
-                <div className="bg-white px-4 py-2 rounded-2xl border border-gray-200 shadow-sm flex flex-col min-w-[100px]">
-                  <span className="text-[8px] text-gray-400 uppercase font-black tracking-[0.2em] mb-0.5">Duration</span>
-                  <span className="font-black text-gray-800 flex items-center gap-1.5 text-xs">
-                    <Clock size={12} className="text-[#fd6410]" />
-                    {selectedSession.durationString || `${selectedSession.durationMins || 0} mins`}
-                  </span>
-                </div>
-                <div className="bg-white px-4 py-2 rounded-2xl border border-gray-200 shadow-sm flex flex-col min-w-[100px]">
-                  <span className="text-[8px] text-gray-400 uppercase font-black tracking-[0.2em] mb-0.5">Earnings</span>
-                  <span className="font-black text-emerald-600 flex items-center gap-1.5 text-xs">
-                    <IndianRupee size={12} />
-                    ₹{selectedSession.total_cost || selectedSession.totalCost || 0}
+                <div className="bg-gray-50 px-4 py-2.5 rounded-2xl border border-gray-100 flex flex-col min-w-[120px]">
+                  <span className="text-[8px] text-gray-400 uppercase font-black tracking-[0.2em] mb-0.5">Consultation Type</span>
+                  <span className="font-black text-gray-800 flex items-center gap-1.5 text-[10px] uppercase">
+                    {(selectedSession.type || "").toLowerCase().includes('video') ? <LucideIcons.Video size={10} /> : <LucideIcons.Phone size={10} />}
+                    {selectedSession.type || "N/A"}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="text-[10px] text-slate-600 font-bold font-mono tracking-tighter">
-                  ID: {selectedSession.id}
-                </div>
                 <button
                   onClick={() => setShowChatModal(false)}
-                  className="bg-slate-600 hover:bg-slate-700 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-md active:scale-95"
+                  className="bg-neutral-900 hover:bg-black text-white px-10 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-neutral-950/20 active:scale-95 flex items-center gap-2"
                 >
-                  Close
+                  Close Records
+                  <LucideIcons.ArrowRight size={14} />
                 </button>
               </div>
             </div>

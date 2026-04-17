@@ -15,7 +15,7 @@ export default function CallRoomPage() {
     showRatingModal, setShowRatingModal, reviewRating, setReviewRating,
     reviewComment, setReviewComment, reviewSubmitting, reviewSubmitted,
     localVideoRef, remoteVideoRef, handleEndCall, toggleMute, toggleCamera,
-    handleSubmitReview
+    handleSubmitReview, toggleSpeaker, isSpeakerOn
   } = useCallLogic();
 
   const formatDuration = (seconds: number) => {
@@ -201,7 +201,10 @@ export default function CallRoomPage() {
             )}
 
             {callType === "audio" && (
-              <button disabled className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center opacity-30 cursor-not-allowed">
+              <button
+                onClick={toggleSpeaker}
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${isSpeakerOn ? "bg-white text-black" : "bg-white/10 hover:bg-white/20"}`}
+              >
                 <Volume2 className="w-6 h-6" />
               </button>
             )}

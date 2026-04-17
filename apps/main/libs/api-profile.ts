@@ -42,6 +42,10 @@ export const getAllChatSessions = async (): Promise<[any | null, ApiError | null
     return await api.get('/chat/sessions/my-sessions');
 };
 
+export const getConsultationHistory = async (params?: { page?: number, limit?: number }): Promise<[any | null, ApiError | null]> => {
+    return await api.get('/consultations/history', { params } as any);
+};
+
 export const getChatHistory = async (sessionId: number): Promise<[any | null, ApiError | null]> => {
     return await api.get(`/chat/history/${sessionId}`);
 };

@@ -9,7 +9,11 @@ import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const Image = NextImage as any;
-const { ChevronLeft, Phone, Video, User, Calendar, MapPin, UserX, ShieldCheck } = LucideIcons as any;
+import { VerificationPopup } from "@repo/ui";
+import { UserX } from "lucide-react";
+const { ChevronLeft, Phone, Video, User, Calendar, MapPin, ShieldCheck } = LucideIcons as any;
+
+import { Expert } from "@/lib/types";
 
 interface ExpertData {
     id: string | number;
@@ -39,6 +43,7 @@ function CallPrepContent() {
     const [actionLoading, setActionLoading] = useState(false);
     const [userBalance, setUserBalance] = useState<number>(0);
     const [showSecurityModal, setShowSecurityModal] = useState(false);
+    const [showOfflinePopup, setShowOfflinePopup] = useState(false);
     const { isClientAuthenticated } = useAuthStore();
 
     useEffect(() => {
@@ -87,6 +92,12 @@ function CallPrepContent() {
             toast.error("Please login to start call");
             return;
         }
+
+        if (expert && !expert.is_available) {
+            setShowOfflinePopup(true);
+            return;
+        }
+
         setShowSecurityModal(true);
     };
 
@@ -361,6 +372,22 @@ function CallPrepContent() {
                     </div>
                 </div>
             )}
+
+            <VerificationPopup
+                isOpen={showOfflinePopup}
+                onClose={() => setShowOfflinePopup(false)}
+                title="Expert is Offline"
+                buttonText="I Understand"
+                icon={<UserX className="w-10 h-10 text-orange-500" />}
+                description={
+                    <>
+                        Right now{" "}
+                        <span className="font-bold text-gray-900">{expert?.name}</span>{" "}
+                        is offline. <br />
+                        Please try again later when the expert is available.
+                    </>
+                }
+            />
         </div>
     );
 }

@@ -12,6 +12,7 @@ export interface Client {
     rating: number;
     review: string;
     payment: number;
+    terminatedBy?: string;
 }
 
 export type SortKey = "lastConsultation.date" | "payment" | null;

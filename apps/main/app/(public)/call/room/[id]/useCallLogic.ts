@@ -254,6 +254,8 @@ export const useCallLogic = () => {
     handleCallEnded();
   };
 
+  const [isSpeakerOn, setIsSpeakerOn] = useState(false);
+
   const toggleMute = () => {
     if (callType === "video") {
       callRef.current?.localParticipant?.audioTracks?.forEach((pub: any) => {
@@ -271,6 +273,51 @@ export const useCallLogic = () => {
         isCameraOff ? pub.track.enable() : pub.track.disable();
       });
       setIsCameraOff(!isCameraOff);
+    }
+  };
+
+  const toggleSpeaker = async () => {
+    // Note: Manual output switching (setSinkId) is not supported on most mobile browsers.
+    // However, we can try to use Twilio's audio management if supported.
+    if (callType !== "audio") {
+      toast.info("Speaker is managed automatically for video calls.");
+      return;
+    }
+
+    const device = deviceRef.current;
+    if (!device) return;
+
+    try {
+      if (!device.audio.isOutputSelectionSupported) {
+        toast.info("Speaker switching is not supported on this browser.");
+        // We still toggle state for UI feedback, but it might not have hardware effect
+        setIsSpeakerOn(!isSpeakerOn);
+        return;
+      }
+
+      const availableDevices = await device.audio.getAvailableOutputDevices();
+      const speakerDevice = Array.from(availableDevices.values()).find((d: any) => 
+        d.label.toLowerCase().includes('speaker') || d.label.toLowerCase().includes('output')
+      );
+
+      if (speakerDevice) {
+        if (!isSpeakerOn) {
+          await device.audio.speakerDevices.set([(speakerDevice as any).deviceId]);
+          toast.success("Speaker ON");
+        } else {
+          await device.audio.speakerDevices.set(['default']);
+          toast.success("Speaker OFF");
+        }
+        setIsSpeakerOn(!isSpeakerOn);
+      } else {
+        // Fallback: Just toggle state if no specific speaker device identified,
+        // often mobile browsers handle this internally when earpiece is not detected.
+        setIsSpeakerOn(!isSpeakerOn);
+        toast.info("Switching to speaker...");
+      }
+    } catch (err) {
+      console.error("Failed to toggle speaker:", err);
+      toast.error("Could not switch speaker.");
     }
   };
 
@@ -302,7 +349,7 @@ export const useCallLogic = () => {
     status, isMuted, isCameraOff, callDuration, sessionData, callType,
     showRatingModal, setShowRatingModal, reviewRating, setReviewRating,
     reviewComment, setReviewComment, reviewSubmitting, reviewSubmitted,
-    localVideoRef, remoteVideoRef, handleEndCall, toggleMute, toggleCamera,
-    handleSubmitReview
+    localVideoRef, remoteVideoRef, handleEndCall, toggleMute, toggleCamera, toggleSpeaker,
+    handleSubmitReview, isSpeakerOn
   };
 };

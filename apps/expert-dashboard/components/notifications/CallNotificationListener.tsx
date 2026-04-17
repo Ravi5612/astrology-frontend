@@ -6,10 +6,19 @@ import { callSocket } from "@/lib/socket";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { api } from "@/lib/api";
 
 export const CallNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
+
+    const handleReject = async (sessionId: number) => {
+        toast.dismiss();
+        const [_, error] = await api.post(`/consultations/reject/${sessionId}`);
+        if (error) {
+            console.error("[CallNotification] Failed to reject session:", error);
+        }
+    };
 
     const registerExpert = useCallback(() => {
         if (!user) return;
@@ -43,20 +52,39 @@ export const CallNotificationListener: React.FC = () => {
             const { session } = data;
             const callerName = session.user?.name || "A Client";
             const callType = session.type || 'audio';
+            const callerAvatar = 
+                session.user?.avatar || 
+                session.user?.image || 
+                session.user?.profile_client?.profile_picture || 
+                session.user_image;
 
             toast.info(
-                (<div className="p-1">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-                            {callType === 'video' ? <Video className="text-primary" /> : <Phone className="text-primary" />}
+                (<div className="p-2">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="relative">
+                            <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden border-2 border-orange-500/20">
+                                {callerAvatar ? (
+                                    <img src={callerAvatar} alt="Caller" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-xl">
+                                        {callerName.charAt(0)}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-lg">
+                                {callType === 'video' ? <Video className="w-3.5 h-3.5 text-orange-600" /> : <Phone className="w-3.5 h-3.5 text-orange-600" />}
+                            </div>
+                            {/* Pulsing ring */}
+                            <div className="absolute inset-0 rounded-full border-2 border-orange-500 animate-ping opacity-40" />
                         </div>
-                        <div>
-                            <p className="font-black text-sm uppercase tracking-wider text-neutral-800">Incoming {callType} Call</p>
-                            <p className="text-xs font-bold text-neutral-500">{callerName} is calling...</p>
+                        <div className="flex-1">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 mb-0.5">Incoming {callType} Call</h4>
+                            <p className="text-sm font-black text-neutral-900 leading-tight">{callerName}</p>
+                            <p className="text-[10px] font-bold text-neutral-400 mt-0.5 italic">Astro-Secure Line Connected...</p>
                         </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3 mt-2">
                         <button
                             onClick={() => {
                                 toast.dismiss();
@@ -65,13 +93,13 @@ export const CallNotificationListener: React.FC = () => {
                                     : `/dashboard/call/${session.id}`;
                                 router.push(route);
                             }}
-                            className="flex-1 bg-primary text-white py-2.5 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+                            className="flex-[2] bg-[#fd6410] text-white py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl shadow-orange-500/30 hover:bg-[#e55a0e] transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             Accept & Join
                         </button>
                         <button
-                            onClick={() => toast.dismiss()}
-                            className="px-4 py-2.5 rounded-xl border-2 border-neutral-100 font-bold text-neutral-400 text-[10px] uppercase hover:bg-neutral-50 transition-all"
+                            onClick={() => handleReject(session.id)}
+                            className="flex-1 bg-neutral-100 text-neutral-400 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-neutral-200 transition-all border border-neutral-200/50"
                         >
                             Ignore
                         </button>
@@ -82,7 +110,7 @@ export const CallNotificationListener: React.FC = () => {
                     autoClose: false,
                     closeOnClick: false,
                     draggable: false,
-                    className: "rounded-3xl shadow-2xl border border-primary/10 p-0 overflow-hidden",
+                    className: "rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-white/20 p-2 bg-white/95 backdrop-blur-md overflow-hidden min-w-[320px]",
                 }
             );
 
