@@ -131,7 +131,7 @@ export default function AgentDashboardHome() {
                             { label: "Add New Puja Shop", href: "/dashboard/registration", icon: ShoppingBag },
                             { label: "View Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
                         ].map(({ label, href, icon: Icon }) => (
-                            <Link key={href} href={href} className="block">
+                            <Link key={label} href={href} className="block">
                                 {/* @repo/ui Button */}
                                 <Button variant="outline" fullWidth icon={Icon} className="!rounded-xl justify-start !text-sm !font-semibold">
                                     {label}
