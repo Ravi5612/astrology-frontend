@@ -19,7 +19,6 @@ interface CommissionRow {
 
 const TYPE_BADGE: Record<string, string> = {
     expert: "bg-yellow-100 text-yellow-700",
-    client: "bg-blue-100 text-blue-700",
     mandir: "bg-orange-100 text-orange-700",
     puja_shop: "bg-purple-100 text-purple-700",
     video_call: "bg-pink-100 text-pink-700",
@@ -29,7 +28,6 @@ const TYPE_BADGE: Record<string, string> = {
 };
 const TYPE_LABEL: Record<string, string> = {
     expert: "Expert",
-    client: "Client",
     mandir: "Mandir",
     puja_shop: "Puja Shop",
     video_call: "Video Call",
