@@ -22,11 +22,13 @@ import {
     Menu,
     Handshake,
     List,
+    Wallet,
 } from "lucide-react";
 
 // ── Menu config ─────────────────────────────────────────────
 interface MenuItem {
     label: string;
+    labelKey?: string;
     href: string;
     icon: React.ElementType;
     submenu?: Omit<MenuItem, "submenu">[];
@@ -38,6 +40,7 @@ const MENU_ITEMS: MenuItem[] = [
     { label: "Registration", href: "/dashboard/registration", icon: UserPlus },
     { label: "Listings", href: "/dashboard/listings", icon: List },
     { label: "Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
+    { label: "Payouts", href: "/dashboard/payouts", icon: Wallet },
     { label: "Signout", href: "#", icon: LogOut },
 ];
 

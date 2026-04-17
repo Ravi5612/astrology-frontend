@@ -149,3 +149,16 @@ export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | 
     }
     return [data, null];
 };
+
+// ── Wallet ───────────────────────────────────────────────────────────────────
+export const getAgentWalletBalance = async (): Promise<[any | null, ApiError | null]> => {
+    return api.get(API_ROUTES.AGENTS.WALLET.BALANCE);
+};
+
+export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | null]> => {
+    return api.get(API_ROUTES.AGENTS.WALLET.WITHDRAWALS);
+};
+
+export const requestAgentWithdrawal = async (amount: number): Promise<[any | null, ApiError | null]> => {
+    return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount });
+};
