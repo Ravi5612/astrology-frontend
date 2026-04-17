@@ -171,7 +171,7 @@ const SessionHistory = () => {
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Total Paid</p>
-                                                <h6 className="text-lg font-black text-orange-600 tabular-nums uppercase">₹{session.amount || 0}</h6>
+                                                <h6 className="text-lg font-black text-orange-600 tabular-nums uppercase">₹{session.total_cost || session.amount || 0}</h6>
                                             </div>
                                         </div>
 
@@ -288,7 +288,7 @@ const SessionHistory = () => {
                                 </div>
                                 <div className="p-6 bg-orange-50/50 rounded-[2.5rem] border border-orange-100/50 space-y-1 text-center sm:text-left">
                                     <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest leading-none">Total Paid</p>
-                                    <h6 className="text-2xl font-black text-[#fd6410] tabular-nums">₹{Number(selectedSession.amount || 0).toFixed(2)}</h6>
+                                    <h6 className="text-2xl font-black text-[#fd6410] tabular-nums">₹{Number(selectedSession.total_cost || selectedSession.amount || 0).toFixed(2)}</h6>
                                 </div>
                             </div>
 
@@ -304,11 +304,11 @@ const SessionHistory = () => {
                                 </div>
                             </div>
 
-                            {selectedSession.terminated_by && (
+                            {selectedSession.terminatedBy && (
                                 <div className="flex items-center justify-between px-8 py-4 bg-slate-50 rounded-2xl border border-slate-100">
                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Session Ended By</p>
                                     <span className="text-[10px] font-black text-slate-950 uppercase tracking-widest px-3 py-1 bg-white border border-slate-200 rounded-lg shadow-sm">
-                                        {selectedSession.terminated_by.toUpperCase() === 'CLIENT' ? 'You (Client)' : 'Expert'}
+                                        {selectedSession.terminatedBy.toUpperCase() === 'USER' ? 'You (Client)' : 'Expert'}
                                     </span>
                                 </div>
                             )}

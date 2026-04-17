@@ -174,7 +174,11 @@ export default function ExpertCallRoom() {
             deviceRef.current = null;
         }
 
-        if (data?.summary) {
+        // Handle standardized V2.1 object or legacy summary string
+        if (data && typeof data === 'object' && (data.terminatedBy || data.split)) {
+            setSummaryData(data);
+            setShowSummary(true);
+        } else if (data?.summary) {
             setSummaryData(data.summary);
             setShowSummary(true);
         } else if (typeof data === 'string' && data.split(':').length >= 3) {
@@ -187,7 +191,11 @@ export default function ExpertCallRoom() {
     };
 
     const handleEndCall = async () => {
-        const [data, error] = await api.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
+        const [data, error] = await api.post<any>(`/call/end`, { 
+            sessionId: parseInt(sessionId),
+            endedBy: 'EXPERT',
+            reason: 'Expert clicked end button'
+        });
         if (error) {
             console.error('[ExpertCallRoom] Failed to end call on backend', error);
         }
@@ -287,6 +295,14 @@ export default function ExpertCallRoom() {
             <SummaryModal 
                 isOpen={showSummary && !!summaryData} 
                 data={(() => {
+                    if (typeof summaryData === 'object') {
+                        return {
+                            totalAmount: summaryData.split?.totalCost || 0,
+                            platformFee: summaryData.split?.platformFee || 0,
+                            expertShare: summaryData.split?.expertShare || 0,
+                            terminatedBy: summaryData.terminatedBy || 'N/A'
+                        };
+                    }
                     const [totalAmount, platformFee, expertShare, terminatedBy] = (summaryData || "").split(':');
                     return { totalAmount, platformFee, expertShare, terminatedBy };
                 })()} 

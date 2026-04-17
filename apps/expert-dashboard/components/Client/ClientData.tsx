@@ -83,8 +83,8 @@ export default function ClientsPage() {
         // Map API response to Client interface using top-level standardized fields
         const mappedClients: Client[] = sessions.map((session: any) => {
           const totalCost = Number(session.total_cost || session.amount || 0);
-          const expertShare = Number(session.expert_earning || session.expert_share || session.payment || (totalCost * 0.8));
-          const platformFee = Number(session.platform_fee || (totalCost - expertShare) || 0);
+          const expertShare = Number(session.expert_earning || session.expert_share || session.payment || 0);
+          const platformFee = Number(session.platform_fee || 0);
 
           return {
             id: session.id,

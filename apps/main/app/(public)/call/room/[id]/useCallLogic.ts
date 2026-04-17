@@ -265,7 +265,11 @@ export const useCallLogic = () => {
     if (callRef.current?.disconnect) callRef.current.disconnect();
     
     // Explicitly call end API without try-catch
-    const [_, endError] = await http.post<any>(`/call/end`, { sessionId: parseInt(sessionId) });
+    const [_, endError] = await http.post<any>(`/call/end`, { 
+      sessionId: parseInt(sessionId),
+      endedBy: 'USER',
+      reason: 'User clicked end button'
+    });
     if (endError) {
       console.error("Failed to end call via API:", endError);
     }

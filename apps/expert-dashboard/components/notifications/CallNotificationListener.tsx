@@ -120,6 +120,16 @@ export const CallNotificationListener: React.FC = () => {
 
         const handleAutoDismiss = (data: any) => {
             toast.dismiss();
+            
+            // For V2.1: Show a summary toast if metadata is present
+            if (data && data.split) {
+                const expertShare = data.split.expertShare || 0;
+                const terminatedBy = data.terminatedBy === 'EXPERT' ? 'You' : 'User';
+                toast.success(`Session Ended. Your Earning: ₹${expertShare.toFixed(2)} (By: ${terminatedBy})`, {
+                    position: "bottom-right",
+                    autoClose: 5000
+                });
+            }
         };
 
         callSocket.on('connect', onConnect);
