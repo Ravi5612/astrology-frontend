@@ -159,3 +159,7 @@ export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | nul
 export const requestAgentWithdrawal = async (amount: number): Promise<[any | null, ApiError | null]> => {
     return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount });
 };
+
+export const settleAgentCommissions = async (): Promise<[any | null, ApiError | null]> => {
+    return api.post(API_ROUTES.AGENTS.WALLET.SETTLE, {});
+};

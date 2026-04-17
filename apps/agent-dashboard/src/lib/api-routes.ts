@@ -16,6 +16,7 @@ export const API_ROUTES = {
             BALANCE: '/agent/wallet/balance',
             WITHDRAWALS: '/agent/wallet/withdrawals',
             WITHDRAW: '/agent/wallet/withdraw',
+            SETTLE: '/agent/wallet/settle',
         }
     },
 } as const;

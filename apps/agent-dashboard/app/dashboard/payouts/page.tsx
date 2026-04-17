@@ -10,14 +10,18 @@ import {
     XCircle, 
     AlertCircle,
     IndianRupee,
-    ArrowRight
+    ArrowRight,
+    RefreshCw,
+    TrendingUp
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
     getAgentWalletBalance, 
     getAgentWithdrawals, 
     requestAgentWithdrawal,
-    getAgentProfile
+    getAgentProfile,
+    settleAgentCommissions,
+    getAgentDashboardStats
 } from "@/src/services/agent.service";
 
 interface PayoutRequest {
@@ -38,12 +42,16 @@ const STATUS_COLOR: Record<string, string> = {
     cancelled: "bg-gray-100 text-gray-700",
 };
 
+const MIN_PAYOUT = 100;
+
 export default function PayoutPage() {
     const [balance, setBalance] = useState<number>(0);
+    const [totalEarned, setTotalEarned] = useState<number>(0);
     const [withdrawals, setWithdrawals] = useState<PayoutRequest[]>([]);
     const [profile, setProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [settling, setSettling] = useState(false);
     const [amount, setAmount] = useState<string>("");
 
     const fetchData = async () => {
@@ -51,11 +59,13 @@ export default function PayoutPage() {
             const [
                 [balData, balErr],
                 [wdData, wdErr],
-                [profData, profErr]
+                [profData, profErr],
+                [statsData, statsErr]
             ] = await Promise.all([
                 getAgentWalletBalance(),
                 getAgentWithdrawals(),
-                getAgentProfile()
+                getAgentProfile(),
+                getAgentDashboardStats()
             ]);
 
             if (balErr) toast.error("Failed to load balance");
@@ -64,6 +74,7 @@ export default function PayoutPage() {
             if (balData) setBalance(Number(balData.balance || 0));
             if (wdData) setWithdrawals(wdData);
             if (profData) setProfile(profData);
+            if (statsData) setTotalEarned(Number(statsData.commissionEarned || 0));
         } catch (error) {
             console.error("Error fetching payout data:", error);
         } finally {
@@ -74,6 +85,12 @@ export default function PayoutPage() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const unclaimedAmount = useMemo(() => {
+        const totalAlreadyPaidOut = balance + 
+            withdrawals.filter(w => w.status === 'completed' || w.status === 'pending').reduce((sum, w) => sum + Number(w.amount), 0);
+        return Math.max(0, totalEarned - totalAlreadyPaidOut);
+    }, [balance, withdrawals, totalEarned]);
 
     const stats: StatConfig[] = useMemo(() => {
         const totalWithdrawn = withdrawals
@@ -86,20 +103,20 @@ export default function PayoutPage() {
 
         return [
             { 
-                title: "Available Balance", 
+                title: "Available to Withdraw", 
                 value: `₹${balance.toLocaleString("en-IN")}`, 
-                icon: Wallet, 
+                icon: IndianRupee, 
+                iconColor: "text-emerald-600", 
+                iconBgColor: "bg-emerald-100", 
+                valueColor: "text-emerald-700" 
+            },
+            { 
+                title: "Total Earnings", 
+                value: `₹${totalEarned.toLocaleString("en-IN")}`, 
+                icon: TrendingUp, 
                 iconColor: "text-blue-600", 
                 iconBgColor: "bg-blue-100", 
                 valueColor: "text-blue-700" 
-            },
-            { 
-                title: "Total Withdrawn", 
-                value: `₹${totalWithdrawn.toLocaleString("en-IN")}`, 
-                icon: CheckCircle, 
-                iconColor: "text-green-600", 
-                iconBgColor: "bg-green-100", 
-                valueColor: "text-green-700" 
             },
             { 
                 title: "Pending Payout", 
@@ -110,27 +127,44 @@ export default function PayoutPage() {
                 valueColor: "text-orange-700" 
             },
             { 
-                title: "Payout Requests", 
-                value: withdrawals.length.toString(), 
-                icon: ArrowUpCircle, 
+                title: "Total Withdrawn", 
+                value: `₹${totalWithdrawn.toLocaleString("en-IN")}`, 
+                icon: CheckCircle, 
                 iconColor: "text-purple-600", 
                 iconBgColor: "bg-purple-100", 
                 valueColor: "text-purple-700" 
             },
         ];
-    }, [balance, withdrawals]);
+    }, [balance, withdrawals, totalEarned]);
+
+    const handleSettleCommissions = async () => {
+        setSettling(true);
+        try {
+            const [res, err] = await settleAgentCommissions();
+            if (err) {
+                toast.error(err.message || "Settlement failed");
+            } else {
+                toast.success(res.message || "Earnings settled into wallet");
+                fetchData();
+            }
+        } catch (error) {
+            toast.error("An error occurred during settlement");
+        } finally {
+            setSettling(false);
+        }
+    };
 
     const handleRequestPayout = async (e: React.FormEvent) => {
         e.preventDefault();
         const amt = parseFloat(amount);
         
-        if (isNaN(amt) || amt < 500) {
-            toast.error("Minimum payout amount is ₹500");
+        if (isNaN(amt) || amt < MIN_PAYOUT) {
+            toast.error(`Minimum payout amount is ₹${MIN_PAYOUT}`);
             return;
         }
 
         if (amt > balance) {
-            toast.error("Insufficient balance");
+            toast.error("Insufficient available balance");
             return;
         }
 
@@ -156,70 +190,120 @@ export default function PayoutPage() {
         }
     };
 
-    if (loading) return <Loading fullScreen text="Loading Payouts..." />;
+    if (loading) return <Loading fullScreen text="Loading Performance Data..." />;
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-12">
             {/* Stats Header */}
-            <StatsCards stats={stats} columns={4} />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="flex-1">
+                    <StatsCards stats={stats} columns={4} />
+                </div>
+            </div>
+
+            {unclaimedAmount > 10 && (
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl shadow-blue-200 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                        <RefreshCw className="w-32 h-32" />
+                    </div>
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <h2 className="text-2xl font-black mb-2 flex items-center gap-2">
+                                <TrendingUp className="w-8 h-8" />
+                                Unsettled Earnings Ready!
+                            </h2>
+                            <p className="text-white/80 font-medium">
+                                You have <span className="text-white font-black text-xl">₹{unclaimedAmount.toLocaleString("en-IN")}</span> in accrued commissions that can be moved to your withdrawable balance.
+                            </p>
+                        </div>
+                        <button
+                            onClick={handleSettleCommissions}
+                            disabled={settling}
+                            className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 transition-all shadow-lg active:scale-95 ${
+                                settling 
+                                    ? "bg-white/20 text-white cursor-not-allowed" 
+                                    : "bg-white text-blue-700 hover:bg-blue-50 hover:shadow-white/20"
+                            }`}
+                        >
+                            {settling ? <RefreshCw className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
+                            {settling ? "Settling..." : "Claim & Add to Wallet"}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Request Payout Form */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden sticky top-24">
-                        <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-primary to-primary-hover">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm flex items-center gap-2">
-                                <ArrowUpCircle className="w-5 h-5" />
-                                Request Payout
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100 overflow-hidden sticky top-24">
+                        <div className="p-8 border-b border-gray-50 bg-gray-50/50">
+                            <h3 className="text-gray-900 font-black uppercase tracking-widest text-sm flex items-center gap-2">
+                                <ArrowUpCircle className="w-5 h-5 text-primary" />
+                                Initiate Payout
                             </h3>
-                            <p className="text-white/70 text-xs mt-1">Withdraw your earnings to bank</p>
+                            <p className="text-gray-400 text-[10px] mt-1 font-bold uppercase tracking-tight">Withdraw to Bank Account</p>
                         </div>
                         
-                        <div className="p-6">
-                            <form onSubmit={handleRequestPayout} className="space-y-4">
+                        <div className="p-8">
+                            <form onSubmit={handleRequestPayout} className="space-y-6">
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
-                                        Amount to Withdraw
-                                    </label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <span className="text-gray-400 font-bold">₹</span>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                            Amount
+                                        </label>
+                                        <span className="text-[10px] font-bold text-primary">Available: ₹{balance.toFixed(2)}</span>
+                                    </div>
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <span className="text-gray-400 font-black">₹</span>
                                         </div>
                                         <input
                                             type="number"
                                             value={amount}
                                             onChange={(e) => setAmount(e.target.value)}
-                                            placeholder="Min. 500"
-                                            className="block w-full pl-8 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-gray-300"
+                                            placeholder={`Min. ${MIN_PAYOUT}`}
+                                            className="block w-full pl-10 pr-12 py-4 bg-gray-50/50 border-2 border-transparent rounded-2xl text-gray-900 font-black text-lg focus:bg-white focus:border-primary/20 focus:ring-0 transition-all placeholder:text-gray-300 group-hover:bg-gray-100/50"
                                             required
                                         />
-                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <span className="text-[10px] font-bold text-gray-400">INR</span>
+                                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setAmount(balance.toFixed(0))}
+                                                className="text-[10px] font-black text-primary uppercase hover:bg-primary/5 px-2 py-1 rounded-lg"
+                                            >
+                                                Max
+                                            </button>
                                         </div>
                                     </div>
-                                    <p className="mt-2 text-[10px] text-gray-400 flex items-center gap-1 font-medium">
-                                        <AlertCircle className="w-3 h-3" />
-                                        Max daily limit: ₹10,000
+                                    <p className="mt-3 text-[10px] text-gray-400 flex items-center gap-1.5 font-bold uppercase tracking-tight">
+                                        <AlertCircle className="w-3.3 h-3.3" />
+                                        Processed within 24-48 hours
                                     </p>
                                 </div>
 
-                                <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
-                                    <h4 className="text-[10px] font-black text-blue-800 uppercase tracking-widest mb-2">Destination Account</h4>
+                                <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-2 opacity-5 -mr-2 -mt-2 group-hover:rotate-12 transition-transform">
+                                        < IndianRupee className="w-12 h-12" />
+                                    </div>
+                                    <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-3">Target Bank Account</h4>
                                     {profile?.bank_name ? (
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-bold text-gray-800">{profile.bank_name}</p>
-                                            <p className="text-xs text-gray-500 font-medium">A/C: {profile.account_number.replace(/.(?=.{4})/g, '*')}</p>
-                                            <p className="text-xs text-gray-500 font-medium uppercase">IFSC: {profile.ifsc_code}</p>
+                                        <div className="space-y-1.5 relative z-10">
+                                            <p className="text-sm font-black text-gray-900">{profile.bank_name}</p>
+                                            <p className="text-xs text-gray-500 font-bold tracking-wider">A/C: {profile.account_number.replace(/.(?=.{4})/g, '*')}</p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] bg-white px-2 py-0.5 rounded-md border border-gray-100 text-gray-400 font-black uppercase tracking-widest">{profile.ifsc_code}</span>
+                                                <span className="text-[10px] text-emerald-600 font-black uppercase tracking-widest">Verified</span>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div className="text-center py-2">
-                                            <p className="text-xs text-red-500 font-medium mb-2">No bank details found</p>
+                                        <div className="text-center py-2 relative z-10">
+                                            <p className="text-xs text-red-500 font-bold mb-3">No bank details added</p>
                                             <button 
                                                 type="button"
                                                 onClick={() => window.location.href = '/dashboard/profile'}
-                                                className="text-[10px] font-black text-primary uppercase hover:underline"
+                                                className="w-full py-2.5 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-red-100 hover:bg-red-100 transition-colors"
                                             >
-                                                Add Bank Details
+                                                Add Details in Profile
                                             </button>
                                         </div>
                                     )}
@@ -227,15 +311,15 @@ export default function PayoutPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={submitting || balance < 500}
-                                    className={`w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all ${
-                                        submitting || balance < 500
-                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                            : "bg-primary text-white hover:bg-primary-hover hover:shadow-primary/20 active:scale-[0.98]"
+                                    disabled={submitting || balance < MIN_PAYOUT}
+                                    className={`w-full py-5 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl transition-all active:scale-[0.97] ${
+                                        submitting || balance < MIN_PAYOUT
+                                            ? "bg-gray-100 text-gray-300 cursor-not-allowed shadow-none"
+                                            : "bg-primary text-white hover:bg-primary-hover hover:shadow-primary/30"
                                     }`}
                                 >
-                                    {submitting ? "Processing..." : balance < 500 ? "Minimum ₹500 required" : "Initiate Payout"}
-                                    {!submitting && balance >= 500 && <ArrowRight className="w-4 h-4" />}
+                                    {submitting ? "Initiating..." : balance < MIN_PAYOUT ? `Min ₹${MIN_PAYOUT} required` : "Withdraw Now"}
+                                    {!submitting && balance >= MIN_PAYOUT && <ArrowRight className="w-4 h-4" />}
                                 </button>
                             </form>
                         </div>
@@ -244,73 +328,89 @@ export default function PayoutPage() {
 
                 {/* Payout History */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
-                                <Clock className="w-5 h-5 text-gray-400" />
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100 overflow-hidden">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-50 bg-gray-50/30">
+                            <h3 className="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                <Clock className="w-5 h-5 text-gray-300" />
                                 Payout History
                             </h3>
+                            <div className="flex gap-2">
+                                {["all", "pending", "completed"].map(f => (
+                                    <span key={f} className="text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-primary cursor-pointer transition-colors px-2 py-1 rounded-md bg-white border border-gray-100">{f}</span>
+                                ))}
+                            </div>
                         </div>
 
                         {withdrawals.length === 0 ? (
-                            <div className="p-16 text-center">
-                                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                                    <IndianRupee className="w-10 h-10 text-gray-300" />
+                            <div className="p-20 text-center">
+                                <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-100/50">
+                                    <IndianRupee className="w-12 h-12 text-gray-200" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900">No Payouts Yet</h3>
-                                <p className="text-gray-500 text-sm max-w-xs mx-auto mt-1">
-                                    When you request a payout, it will appear here with its current status.
+                                <h3 className="text-xl font-black text-gray-900">No History Yet</h3>
+                                <p className="text-gray-400 text-xs max-w-xs mx-auto mt-2 font-medium">
+                                    Your future payout requests will appear here with detailed status tracking.
                                 </p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="bg-gray-50/50">
-                                            {["Date", "Amount", "Destination", "Status"].map((h) => (
-                                                <th key={h} className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>
+                                        <tr className="bg-gray-50/30">
+                                            {["Transaction Date", "Payout Amount", "Status"].map((h) => (
+                                                <th key={h} className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">{h}</th>
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-50">
                                         {withdrawals.map((w) => (
-                                            <tr key={w.id} className="hover:bg-gray-50/50 transition-colors">
-                                                <td className="px-6 py-4">
-                                                    <p className="font-bold text-gray-900">
-                                                        {new Date(w.created_at).toLocaleDateString("en-IN", {
-                                                            day: "2-digit",
-                                                            month: "short",
-                                                            year: "numeric"
-                                                        })}
-                                                    </p>
-                                                    <p className="text-[10px] text-gray-400 font-medium">
-                                                        {new Date(w.created_at).toLocaleTimeString("en-IN", {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        })}
-                                                    </p>
+                                            <tr key={w.id} className="hover:bg-gray-50/30 transition-colors group">
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                                                            <Clock className="w-5 h-5 text-gray-300" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-black text-gray-900 text-sm">
+                                                                {new Date(w.created_at).toLocaleDateString("en-IN", {
+                                                                    day: "2-digit",
+                                                                    month: "long",
+                                                                    year: "numeric"
+                                                                })}
+                                                            </p>
+                                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-0.5">
+                                                                {new Date(w.created_at).toLocaleTimeString("en-IN", {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                    hour12: true
+                                                                })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <span className="text-lg font-black text-gray-900">
-                                                        ₹{Number(w.amount).toLocaleString("en-IN")}
-                                                    </span>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-lg font-black text-gray-900">
+                                                            ₹{Number(w.amount).toLocaleString("en-IN")}
+                                                        </span>
+                                                        <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tight mt-0.5">
+                                                            TO: {w.merchant_bank_name || 'REGISTER_ACC'} ({w.merchant_account_number?.slice(-4).padStart(8, '•')})
+                                                        </span>
+                                                    </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <p className="text-xs font-bold text-gray-700">{w.merchant_bank_name || 'Bank Account'}</p>
-                                                    <p className="text-[10px] text-gray-500 font-medium">A/C: {w.merchant_account_number?.replace(/.(?=.{4})/g, '*') || '••••'}</p>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${STATUS_COLOR[w.status] || "bg-gray-100"}`}>
-                                                        {w.status === 'completed' && <CheckCircle className="w-3 h-3" />}
-                                                        {w.status === 'pending' && <Clock className="w-3 h-3" />}
-                                                        {(w.status === 'rejected' || w.status === 'failed') && <XCircle className="w-3 h-3" />}
-                                                        {w.status}
-                                                    </span>
-                                                    {w.remark && (
-                                                        <p className="mt-1 text-[10px] text-gray-400 italic max-w-[150px] truncate" title={w.remark}>
-                                                            "{w.remark}"
-                                                        </p>
-                                                    )}
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest w-fit shadow-sm ${STATUS_COLOR[w.status] || "bg-gray-100"}`}>
+                                                            {w.status === 'completed' && <CheckCircle className="w-3 h-3" />}
+                                                            {w.status === 'pending' && <Clock className="w-3 h-3" />}
+                                                            {(w.status === 'rejected' || w.status === 'failed') && <XCircle className="w-3 h-3" />}
+                                                            {w.status}
+                                                        </span>
+                                                        {w.remark && (
+                                                            <p className="text-[10px] text-gray-400 font-bold italic max-w-[180px] leading-tight" title={w.remark}>
+                                                                {w.remark}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -324,3 +424,4 @@ export default function PayoutPage() {
         </div>
     );
 }
+
