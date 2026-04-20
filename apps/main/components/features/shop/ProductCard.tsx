@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Button } from "@repo/ui";
 import NextImage from "next/image";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { useCartStore } from "@/store/useCartStore"; // Changed import
