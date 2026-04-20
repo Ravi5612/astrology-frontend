@@ -22,6 +22,7 @@ type Props = {
   handleRemoveCoupon: () => void;
   discountAmount: number;
   total: number;
+  handleQuantityChange?: (qty: number) => void;
 };
 
 const OrderSummary = ({
@@ -44,6 +45,7 @@ const OrderSummary = ({
   handleRemoveCoupon,
   discountAmount,
   total,
+  handleQuantityChange,
 }: Props) => {
   return (
     <div className="w-full lg:w-[400px] shrink-0 space-y-6">
@@ -144,9 +146,30 @@ const OrderSummary = ({
               {buyNowInfo ? (
                 /* Direct Product Buy Summary */
                 directProduct ? (
-                  <div className="flex justify-between items-center group">
-                    <span className="text-sm font-black text-gray-500 group-hover:text-gray-900 transition-colors uppercase tracking-tight">{directProduct.name} <span className="text-orange mx-1 text-xs">x{buyNowInfo.quantity}</span></span>
-                    <span className="text-sm font-black text-gray-900 italic">₹{(Number(directProduct.sale_price || directProduct.price || 0)) * buyNowInfo.quantity}</span>
+                  <div className="flex justify-between items-center group bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:border-orange/20 transition-all">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-black text-gray-900 uppercase tracking-tight">{directProduct.name}</span>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Quantity:</span>
+                        <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
+                          <button 
+                            onClick={() => handleQuantityChange?.(buyNowInfo.quantity - 1)}
+                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-orange transition-all active:scale-90 disabled:opacity-30"
+                            disabled={buyNowInfo.quantity <= 1}
+                          >
+                            <i className="fa-solid fa-minus text-[8px]"></i>
+                          </button>
+                          <span className="w-8 text-center text-xs font-black text-gray-900">{buyNowInfo.quantity}</span>
+                          <button 
+                            onClick={() => handleQuantityChange?.(buyNowInfo.quantity + 1)}
+                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-orange transition-all active:scale-90"
+                          >
+                            <i className="fa-solid fa-plus text-[8px]"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-lg font-black text-gray-900 italic">₹{(Number(directProduct.sale_price || directProduct.price || 0)) * buyNowInfo.quantity}</span>
                   </div>
                 ) : (
                   <div className="flex justify-center py-4">

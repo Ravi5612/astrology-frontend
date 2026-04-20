@@ -30,6 +30,7 @@ const CheckoutContent = () => {
     clientBalance,
     handlePayment,
     isProcessing,
+    handleQuantityChange,
   } = useCheckout();
 
   return (
@@ -80,6 +81,7 @@ const CheckoutContent = () => {
               handleRemoveCoupon={handleRemoveCoupon}
               discountAmount={discountAmount}
               total={total}
+              handleQuantityChange={handleQuantityChange}
             />
 
             {/* Right: Payment */}

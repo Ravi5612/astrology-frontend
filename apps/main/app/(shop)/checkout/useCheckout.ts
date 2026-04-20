@@ -393,12 +393,23 @@ export const useCheckout = () => {
     }
   };
 
+  const handleQuantityChange = (newQty: number) => {
+    if (newQty < 1) return;
+    setBuyNowInfo((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, quantity: newQty };
+      sessionStorage.setItem("buyNowItem", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return {
     isOrder,
     loadingProfile,
     address,
     handleAddressChange,
     buyNowInfo,
+    handleQuantityChange,
     directProduct,
     cartItems,
     expertName,
