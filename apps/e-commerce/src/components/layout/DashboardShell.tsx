@@ -14,7 +14,9 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
-    // Fetch real profile data
+    const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+    const isAuthPage = pathname === "/" || authRoutes.some(route => pathname?.startsWith(route));
+
     // Fetch real profile data - only if NOT on an auth page
     const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile({ 
         enabled: !isAuthPage 
@@ -25,9 +27,6 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    
-    const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
-    const isAuthPage = pathname === "/" || authRoutes.some(route => pathname?.startsWith(route));
 
     // If it's an auth page, just render the content without sidebar/header
     if (isAuthPage) {

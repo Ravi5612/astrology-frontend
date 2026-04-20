@@ -1,52 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter, useParams } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   ArrowLeft, Upload, X, Plus, Tag, IndianRupee, Package, FileText, Save, Image as ImageIcon, Loader2
 } from "lucide-react";
 import { productService } from "@/services/product.service";
 
-export default function AddProductPage() {
+export default function EditProductPage() {
   const router = useRouter();
+  const params = useParams();
+  const productId = params.id as string;
   const queryClient = useQueryClient();
   
   // Form State
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
 
-  // Mutation to create product
-  const createMutation = useMutation({
+  // Fetch product data
+  const { data: product, isLoading: isFetching } = useQuery({
+    queryKey: ['merchant-product', productId],
+    queryFn: async () => {
+      const [data, error] = await productService.getProduct(productId);
+      if (error) throw new Error(error.message || "Failed to fetch product");
+      return data;
+    },
+    enabled: !!productId
+  });
+
+  // Sync state with fetched data
+  useEffect(() => {
+    if (product) {
+      setName(product.name || "");
+      setCategory(product.category || "");
+      setDescription(product.description || "");
+      setPrice(String(product.price || ""));
+      setStock(String(product.stock || ""));
+      setImages(product.imageUrl ? [product.imageUrl] : []);
+    }
+  }, [product]);
+
+  // Mutation to update product
+  const updateMutation = useMutation({
     mutationFn: async (status: 'active' | 'draft') => {
       const payload = {
         name,
         category,
-
         description,
         price: Number(price),
         stock: Number(stock),
-        // Send the first image as imageUrl for now, if any.
         imageUrl: images.length > 0 ? images[0] : "",
         status
       };
 
-      const [data, error] = await productService.createProduct(payload);
-
+      const [data, error] = await productService.updateProduct(productId, payload);
       if (error) {
-        throw new Error(error.message || "Failed to create product");
+        throw new Error(error.message || "Failed to update product");
       }
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
+      queryClient.invalidateQueries({ queryKey: ['merchant-product', productId] });
+      alert("Product updated successfully!");
       router.push("/products");
     },
     onError: (err: any) => {
@@ -71,12 +94,12 @@ export default function AddProductPage() {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handlePublish = () => {
+  const handleUpdate = () => {
     if (!name || !price || !category) {
       alert("Please fill in the required fields: Title, Category, and Price.");
       return;
     }
-    createMutation.mutate("active");
+    updateMutation.mutate("active");
   };
 
   const handleSaveDraft = () => {
@@ -84,40 +107,49 @@ export default function AddProductPage() {
       alert("Title is required even for drafts.");
       return;
     }
-    createMutation.mutate("draft");
+    updateMutation.mutate("draft");
   };
 
+  if (isFetching) {
+     return (
+        <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+           <Loader2 className="w-12 h-12 text-[#fd6410] animate-spin" />
+           <p className="text-gray-500 font-medium animate-pulse uppercase tracking-widest text-[10px]">Retrieving Product Details...</p>
+        </div>
+     );
+  }
+
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20 font-outfit">
       {/* Back & Title */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-8">
         <div className="space-y-1">
           <Link href="/products" className="flex items-center text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[#fd6410] transition-colors mb-2 group">
             <ArrowLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Inventory
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Create New Product</h1>
-          <p className="text-gray-500 text-sm italic">Add details about your divine product to attract more customers.</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Edit Product</h1>
+          <p className="text-gray-500 text-sm italic">Modifying <span className="text-[#fd6410] font-bold">"{product?.name}"</span></p>
         </div>
         <div className="flex items-center space-x-3">
           <button 
             onClick={handleSaveDraft}
-            disabled={createMutation.isPending}
+            disabled={updateMutation.isPending}
             className="px-6 py-3 border border-gray-200 rounded-2xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
           >
-            {createMutation.isPending && createMutation.variables === "draft" ? <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> : null}
+            {updateMutation.isPending && updateMutation.variables === "draft" ? <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> : null}
             Save as Draft
           </button>
           <button 
-            onClick={handlePublish}
-            disabled={createMutation.isPending}
+            onClick={handleUpdate}
+            disabled={updateMutation.isPending}
             className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {createMutation.isPending && createMutation.variables === "active" ? (
+            {updateMutation.isPending && updateMutation.variables === "active" ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <Save className="w-5 h-5 group-hover:animate-pulse" />
             )}
-            <span>Publish Product</span>
+            <span>Update Product</span>
           </button>
         </div>
       </div>

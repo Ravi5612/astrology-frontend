@@ -20,6 +20,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { productService } from "@/services/product.service";
 
 interface Product {
   id: string;
@@ -43,17 +44,17 @@ export default function ProductListing() {
   const { data, isLoading } = useQuery({
     queryKey: ['merchant-products', activeTab, searchTerm],
     queryFn: async () => {
-      const params = new URLSearchParams();
+      const params: Record<string, string> = {};
       if (activeTab !== "All") {
-        params.append("status", activeTab === "Out of Stock" ? "out_of_stock" : activeTab.toLowerCase());
+        params.status = activeTab === "Out of Stock" ? "out_of_stock" : activeTab.toLowerCase();
       }
       if (searchTerm) {
-        params.append("search", searchTerm);
+        params.search = searchTerm;
       }
       
-      const res = await fetch(`/api/v1/merchant/products?${params.toString()}`, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch products");
-      return res.json();
+      const [data, error] = await productService.getProducts(params);
+      if (error) throw new Error(error.message || "Failed to fetch products");
+      return data;
     }
   });
 
@@ -62,11 +63,8 @@ export default function ProductListing() {
   // Mutations
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/v1/merchant/products/${id}`, {
-        method: "DELETE",
-        credentials: "include"
-      });
-      if (!res.ok) throw new Error("Failed to delete product");
+      const [data, error] = await productService.deleteProduct(id);
+      if (error) throw new Error(error.message || "Failed to delete product");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
@@ -76,13 +74,8 @@ export default function ProductListing() {
 
   const bulkStatusMutation = useMutation({
     mutationFn: async ({ ids, status }: { ids: string[], status: 'active' | 'out_of_stock' }) => {
-      const res = await fetch(`/api/v1/merchant/products/bulk-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids, status }),
-        credentials: "include"
-      });
-      if (!res.ok) throw new Error("Failed to update status");
+      const [data, error] = await productService.bulkUpdateStatus(ids, status);
+      if (error) throw new Error(error.message || "Failed to update status");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
