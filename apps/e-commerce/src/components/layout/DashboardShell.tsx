@@ -15,7 +15,10 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
     // Fetch real profile data
-    const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
+    // Fetch real profile data - only if NOT on an auth page
+    const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile({ 
+        enabled: !isAuthPage 
+    });
     const updateOnlineStatus = useUpdateOnlineStatus();
     
     const isOnline = profileData?.profile?.isOnline ?? false;

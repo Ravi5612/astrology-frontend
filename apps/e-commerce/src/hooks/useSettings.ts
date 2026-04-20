@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 /**
  * Hook to fetch merchant profile settings
  */
-export const useMerchantProfile = () => {
+export const useMerchantProfile = (options = {}) => {
   return useQuery({
     queryKey: ['merchant-profile'],
     queryFn: async () => {
@@ -23,6 +23,7 @@ export const useMerchantProfile = () => {
       };
     },
     staleTime: 0, // Ensure real-time status updates are reflected
+    ...options
   });
 };
 
