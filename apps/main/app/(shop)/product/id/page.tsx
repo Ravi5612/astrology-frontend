@@ -9,11 +9,20 @@ import FAQ from "./FAQ";
 import Reviews from "./Reviews";
 import ShopByPurpose from "./ShopByPurpose";
 import Features from "./Features";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "react-toastify";
 
 const Page = () => {
   const [isSticky, setIsSticky] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const router = useRouter();
+  const { isClientAuthenticated } = useAuthStore();
+  const { addToCart, isAdding } = useCart();
 
   const product = {
+    id: 102,
     title: "Crystal Healing Bracelet",
     tagline: "Unleash your inner calm and prosperity",
     price: 349,
@@ -76,6 +85,31 @@ const Page = () => {
     avgRating: 4.4,
   };
 
+  const handleBuyNow = () => {
+    if (!isClientAuthenticated) {
+      toast.error("Please login first to buy products", {
+        onClick: () => router.push("/sign-in"),
+        autoClose: 3000,
+        style: { cursor: 'pointer' }
+      });
+      return;
+    }
+    sessionStorage.setItem('buyNowItem', JSON.stringify({ productId: product.id, quantity }));
+    router.push(`/checkout?type=order`);
+  };
+
+  const handleAddToCartClick = () => {
+    if (!isClientAuthenticated) {
+      toast.error("Please login first to add products to cart", {
+        onClick: () => router.push("/sign-in"),
+        autoClose: 3000,
+        style: { cursor: 'pointer' }
+      });
+      return;
+    }
+    addToCart({ productId: product.id, quantity });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const topOffset = window.scrollY;
@@ -100,13 +134,23 @@ const Page = () => {
       <div className="max-w-7xl mx-auto px-4 py-12 md:py-24">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
           <Gallery images={product.images} />
-          <ProductInfo product={product} />
+          <ProductInfo 
+            product={product} 
+            quantity={quantity} 
+            setQuantity={setQuantity}
+            onBuyNow={handleBuyNow}
+            onAddToCart={handleAddToCartClick}
+            isAdding={isAdding}
+          />
         </div>
 
         <FloatingBar
           isSticky={isSticky}
           title={product.title}
           price={product.price}
+          onBuyNow={handleBuyNow}
+          onAddToCart={handleAddToCartClick}
+          isAdding={isAdding}
         />
 
         <div className="my-24 h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>

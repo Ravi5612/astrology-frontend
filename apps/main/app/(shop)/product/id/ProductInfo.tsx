@@ -3,6 +3,7 @@
 import React from "react";
 
 interface Product {
+  id: number;
   title: string;
   tagline: string;
   price: number;
@@ -15,6 +16,11 @@ interface Product {
 
 interface ProductInfoProps {
   product: Product;
+  quantity: number;
+  setQuantity: (q: number) => void;
+  onBuyNow: () => void;
+  onAddToCart: () => void;
+  isAdding: boolean;
 }
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) =>
@@ -25,7 +31,14 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) =>
     ></i>
   ));
 
-const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+const ProductInfo: React.FC<ProductInfoProps> = ({ 
+  product, 
+  quantity, 
+  setQuantity, 
+  onBuyNow, 
+  onAddToCart, 
+  isAdding 
+}) => {
   return (
     <div className="w-full lg:w-1/2 space-y-8" id="product-info-section">
       <div className="space-y-4">
@@ -101,27 +114,41 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         <div className="flex items-center gap-6">
           <label className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Quantity:</label>
           <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-             <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm">
+             <button 
+               onClick={() => setQuantity(Math.max(1, quantity - 1))}
+               className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm"
+             >
               <i className="fa-solid fa-minus text-xs"></i>
             </button>
             <input
               type="number"
-              defaultValue={1}
+              value={quantity}
+              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
               min={1}
               className="w-16 bg-transparent text-center font-black text-gray-900 outline-none border-none focus:ring-0"
             />
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm">
+            <button 
+              onClick={() => setQuantity(quantity + 1)}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm"
+            >
               <i className="fa-solid fa-plus text-xs"></i>
             </button>
           </div>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-          <button className="flex-1 px-10 py-5 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all flex items-center justify-center gap-3 group/cart">
+          <button 
+            onClick={onAddToCart}
+            disabled={isAdding}
+            className="flex-1 px-10 py-5 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all flex items-center justify-center gap-3 group/cart"
+          >
             <i className="fa-solid fa-shopping-cart group-hover/cart:scale-110 transition-transform"></i>
-            Add to your Cart
+            {isAdding ? "Adding..." : "Add to your Cart"}
           </button>
-          <button className="flex-1 px-10 py-5 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center justify-center gap-3">
+          <button 
+            onClick={onBuyNow}
+            className="flex-1 px-10 py-5 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center justify-center gap-3"
+          >
             <i className="fa-solid fa-bolt"></i>
             Proceed to Buy
           </button>

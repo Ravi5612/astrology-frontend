@@ -43,6 +43,7 @@ export const useCheckout = () => {
       const urlQuantity = searchParams.get("quantity");
 
       if (urlProductId) {
+        console.log("[CHECKOUT] Setting buyNowInfo from URL:", urlProductId, urlQuantity);
         setBuyNowInfo({
           productId: urlProductId,
           quantity: parseInt(urlQuantity || "1"),
@@ -51,12 +52,18 @@ export const useCheckout = () => {
         const stored = sessionStorage.getItem("buyNowItem");
         if (stored) {
           try {
-            setBuyNowInfo(JSON.parse(stored));
+            const parsed = JSON.parse(stored);
+            console.log("[CHECKOUT] Setting buyNowInfo from Storage:", parsed);
+            setBuyNowInfo(parsed);
           } catch (e) {
             console.error("Error parsing buyNowItem:", e);
           }
         }
       }
+    } else {
+      // Not a product order (maybe consultation), clear buyNowItem
+      sessionStorage.removeItem("buyNowItem");
+      setBuyNowInfo(null);
     }
   }, [isOrder, searchParams]);
 
@@ -208,6 +215,7 @@ export const useCheckout = () => {
           coupon_code: appliedCoupon?.code || undefined,
           payment_method: "wallet",
         };
+        console.log("[CHECKOUT] Wallet order payload:", payload);
         endpoint = "/order";
       } else {
         payload = {
@@ -260,6 +268,7 @@ export const useCheckout = () => {
           quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
           coupon_code: appliedCoupon?.code || undefined,
         };
+        console.log("[CHECKOUT] Razorpay order payload (initial):", orderPayload);
         const [createOrderRes, createError] = await http.post<any>(
           "/order",
           orderPayload,

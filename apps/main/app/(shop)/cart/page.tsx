@@ -26,6 +26,9 @@ const CartPage: React.FC = () => {
   const [suggestedProducts, setSuggestedProducts] = React.useState<any[]>([]);
 
   React.useEffect(() => {
+    // Clear any stale single-purchase data when moving to the cart
+    sessionStorage.removeItem("buyNowItem");
+
     // Only redirect if we ARE NOT loading anymore and we ARE NOT authenticated
     if (!clientLoading && !isClientAuthenticated) {
       router.push("/sign-in");

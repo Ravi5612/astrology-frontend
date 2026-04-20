@@ -6,9 +6,19 @@ interface FloatingBarProps {
   isSticky: boolean;
   title: string;
   price: number;
+  onBuyNow: () => void;
+  onAddToCart: () => void;
+  isAdding: boolean;
 }
 
-const FloatingBar: React.FC<FloatingBarProps> = ({ isSticky, title, price }) => {
+const FloatingBar: React.FC<FloatingBarProps> = ({ 
+  isSticky, 
+  title, 
+  price,
+  onBuyNow,
+  onAddToCart,
+  isAdding
+}) => {
   return (
     <div
       className={`fixed bottom-0 left-0 w-full z-50 transition-all duration-700 ease-in-out hidden md:block ${
@@ -36,11 +46,18 @@ const FloatingBar: React.FC<FloatingBarProps> = ({ isSticky, title, price }) => 
             </div>
             
             <div className="flex gap-4">
-              <button className="px-8 py-4 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all flex items-center gap-3 group">
+              <button 
+                onClick={onAddToCart}
+                disabled={isAdding}
+                className="px-8 py-4 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-orange hover:text-orange hover:bg-orange/5 transition-all flex items-center gap-3 group"
+              >
                 <i className="fa-solid fa-cart-plus group-hover:scale-110 transition-transform"></i>
-                Add to Cart
+                {isAdding ? "Adding..." : "Add to Cart"}
               </button>
-              <button className="px-10 py-4 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center gap-3">
+              <button 
+                onClick={onBuyNow}
+                className="px-10 py-4 bg-orange text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:shadow-2xl hover:bg-orange/90 transition-all flex items-center gap-3"
+              >
                 <i className="fa-solid fa-bolt"></i>
                 Buy Now
               </button>
