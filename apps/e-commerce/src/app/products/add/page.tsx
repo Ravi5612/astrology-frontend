@@ -15,7 +15,7 @@ export default function AddProductPage() {
   // Form State
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [sku, setSku] = useState("");
+
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
@@ -28,7 +28,7 @@ export default function AddProductPage() {
       const payload = {
         name,
         category,
-        sku,
+
         description,
         price: Number(price),
         stock: Number(stock),
@@ -159,31 +159,19 @@ export default function AddProductPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Category *</label>
-                  <select 
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] appearance-none transition-all"
-                  >
-                    <option value="">Select Category</option>
-                    <option value="Spiritual Items">Spiritual Items</option>
-                    <option value="Puja Samagri">Puja Samagri</option>
-                    <option value="Vedic Clothing">Vedic Clothing</option>
-                    <option value="Books">Books & Literature</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Product ID / SKU</label>
-                  <input 
-                    type="text" 
-                    value={sku}
-                    onChange={(e) => setSku(e.target.value)}
-                    placeholder="e.g. PR-001" 
-                    className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Category *</label>
+                <select 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] appearance-none transition-all"
+                >
+                  <option value="">Select Category</option>
+                  <option value="Spiritual Items">Spiritual Items</option>
+                  <option value="Puja Samagri">Puja Samagri</option>
+                  <option value="Vedic Clothing">Vedic Clothing</option>
+                  <option value="Books">Books & Literature</option>
+                </select>
               </div>
 
               <div className="space-y-2">

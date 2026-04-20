@@ -195,15 +195,7 @@ export default function ProductViewPage() {
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-y border-gray-100 py-10">
-              <div className="flex items-start gap-4">
-                 <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                    <Tag className="w-6 h-6" />
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">SKU Number</p>
-                    <p className="font-bold text-gray-900 mt-1 uppercase tracking-tighter italic">{product.sku || 'NOT SET'}</p>
-                 </div>
-              </div>
+
               <div className="flex items-start gap-4">
                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
                     <Calendar className="w-6 h-6" />
