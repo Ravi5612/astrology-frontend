@@ -151,6 +151,8 @@ export default function PayoutInfo() {
                                         </div>
                                         <input
                                             type="text"
+                                            name={`holder_${Math.random().toString(36).substring(7)}`}
+                                            autoComplete="off"
                                             value={formData.account_holder_name || ""}
                                             onChange={(e) => handleFieldChange('account_holder_name', e.target.value)}
                                             placeholder="Full Name as per Bank Records"
@@ -166,6 +168,8 @@ export default function PayoutInfo() {
                                         </div>
                                         <input
                                             type="text"
+                                            name={`bank_${Math.random().toString(36).substring(7)}`}
+                                            autoComplete="off"
                                             value={formData.bank_name || ""}
                                             onChange={(e) => handleFieldChange('bank_name', e.target.value)}
                                             placeholder="e.g. State Bank of India, HDFC, etc."
@@ -181,6 +185,8 @@ export default function PayoutInfo() {
                                         </div>
                                         <input
                                             type="password"
+                                            name={`acc_no_${Math.random().toString(36).substring(7)}`}
+                                            autoComplete="new-password"
                                             value={formData.account_number || ""}
                                             onChange={(e) => handleFieldChange('account_number', e.target.value)}
                                             placeholder="Enter Bank Account Number"
@@ -196,6 +202,8 @@ export default function PayoutInfo() {
                                         </div>
                                         <input
                                             type="text"
+                                            name={`confirm_acc_no_${Math.random().toString(36).substring(7)}`}
+                                            autoComplete="off"
                                             value={confirmAccNo}
                                             onChange={(e) => setConfirmAccNo(e.target.value)}
                                             placeholder="Re-enter Account Number"
@@ -214,6 +222,8 @@ export default function PayoutInfo() {
                                         </div>
                                         <input
                                             type="text"
+                                            name={`ifsc_${Math.random().toString(36).substring(7)}`}
+                                            autoComplete="off"
                                             value={formData.ifsc_code || ""}
                                             onChange={(e) => handleFieldChange('ifsc_code', e.target.value.toUpperCase())}
                                             placeholder="IFSC (e.g. SBIN0001234)"
@@ -247,7 +257,13 @@ export default function PayoutInfo() {
                                 </Button>
                                 <Button
                                     onClick={saveCurrentEdit}
-                                    disabled={!formData.account_number || formData.account_number !== confirmAccNo}
+                                    disabled={
+                                        !formData.account_holder_name || 
+                                        !formData.bank_name || 
+                                        !formData.account_number || 
+                                        !formData.ifsc_code || 
+                                        formData.account_number !== confirmAccNo
+                                    }
                                     variant="primary"
                                     className="flex items-center gap-2"
                                 >

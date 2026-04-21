@@ -1,6 +1,4 @@
-"use client";
-
-import React from "react";
+import Link from "next/link";
 import { LucideIcon, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +10,7 @@ interface DashboardCardProps {
   iconBgColor?: string;
   trend?: string | null;
   className?: string;
+  href?: string;
 }
 
 export const DashboardCard: React.FC<DashboardCardProps> = ({
@@ -21,15 +20,11 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   iconColor = "text-[#fd6410]",
   iconBgColor = "bg-orange-50",
   trend,
-  className
+  className,
+  href
 }) => {
-  return (
-    <div 
-      className={cn(
-        "group relative bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 hover:scale-105 overflow-hidden cursor-pointer",
-        className
-      )}
-    >
+  const CardContent = (
+    <>
       {/* Background Accent Circle */}
       <div className="absolute -right-4 -top-4 w-24 h-24 bg-gray-50/50 rounded-full group-hover:scale-[2.5] transition-transform duration-700 opacity-50" />
       
@@ -57,6 +52,31 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.15em] leading-none mb-1">{title}</p>
         <h4 className="text-3xl font-black text-gray-900 tracking-tight group-hover:text-[#fd6410] transition-colors duration-300">{value}</h4>
       </div>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "group block relative bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 hover:scale-105 overflow-hidden cursor-pointer",
+          className
+        )}
+      >
+        {CardContent}
+      </Link>
+    );
+  }
+
+  return (
+    <div 
+      className={cn(
+        "group relative bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 hover:scale-105 overflow-hidden cursor-pointer",
+        className
+      )}
+    >
+      {CardContent}
     </div>
   );
 };

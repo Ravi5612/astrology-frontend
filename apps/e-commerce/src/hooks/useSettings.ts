@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { settingsService } from "@/services/settings.service";
+import { productService } from "@/services/product.service";
 import { toast } from "react-toastify";
 
 /**
@@ -93,7 +94,7 @@ export const useMerchantProducts = () => {
   return useQuery({
     queryKey: ['merchant-products'],
     queryFn: async () => {
-      const [data, error] = await settingsService.getProducts();
+      const [data, error] = await productService.getProducts();
       if (error) {
         const body = (error as any).body;
         const message = body?.message 

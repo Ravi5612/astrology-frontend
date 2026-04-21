@@ -3,6 +3,7 @@
 import React from 'react';
 import { ShoppingCart, Package, Star, MessageSquare, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MerchantActivity } from "@/types/dashboard";
 
 export interface Activity {
   id: string;
@@ -14,7 +15,7 @@ export interface Activity {
 }
 
 interface ActivityFeedProps {
-  activities?: Activity[];
+  activities?: readonly MerchantActivity[];
   isLoading?: boolean;
 }
 
@@ -55,7 +56,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities = [], isL
           [...Array(4)].map((_, i) => <SkeletonItem key={i} />)
         ) : activities.length > 0 ? (
           activities.map((activity, index) => {
-            const { icon: Icon, bg, text } = iconMap[activity.type] || iconMap.message;
+            const { icon: Icon, bg, text } = (iconMap as any)[activity.type] || iconMap.message;
             return (
               <motion.div
                 key={activity.id || `activity-${index}`}
@@ -71,17 +72,12 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities = [], isL
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-black text-gray-900 truncate tracking-tight">{activity.title}</p>
                     <span className="text-[10px] font-bold text-[#fd6410] bg-orange-100 px-2 py-0.5 rounded-full shrink-0 group-hover:bg-[#fd6410] group-hover:text-white transition-colors">
-                      {activity.time}
+                      {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1 font-medium italic opacity-80 group-hover:opacity-100 transition-opacity">
                     {activity.description}
                   </p>
-                  {activity.relativeTime && (
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 mt-2 group-hover:text-gray-400 transition-colors">
-                      {activity.relativeTime}
-                    </p>
-                  )}
                 </div>
               </motion.div>
             );

@@ -2,18 +2,10 @@
 
 import React, { useState } from "react";
 import { Search, ShoppingBag, Eye, Download } from "lucide-react";
-
-export interface Order {
-  id: string;
-  customerName: string;
-  email?: string;
-  date: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-}
+import { DashboardOrder } from "@/types/dashboard";
 
 interface RecentOrdersProps {
-  orders?: Order[];
+  orders?: readonly DashboardOrder[];
   isLoading?: boolean;
 }
 
@@ -40,8 +32,8 @@ export const RecentOrders: React.FC<RecentOrdersProps> = ({ orders = [], isLoadi
 
   const filtered = orders.filter(
     (order) =>
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase())
+      order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -86,19 +78,18 @@ export const RecentOrders: React.FC<RecentOrdersProps> = ({ orders = [], isLoadi
             ) : filtered.length > 0 ? (
               filtered.map((order) => (
                 <tr key={order.id} className="hover:bg-orange-50/30 transition-colors group">
-                  <td className="py-5 px-4 font-black text-[#fd6410] tracking-tighter italic">{order.id}</td>
+                  <td className="py-5 px-4 font-black text-[#fd6410] tracking-tighter italic">#{order.id}</td>
                   <td className="py-5 px-4">
                     <div className="flex flex-col">
-                      <span className="font-bold text-gray-900">{order.customerName}</span>
-                      {order.email && <span className="text-[10px] text-gray-400 font-medium">{order.email}</span>}
+                      <span className="font-bold text-gray-900">User #{order.user_id}</span>
                     </div>
                   </td>
                   <td className="py-5 px-4 text-gray-500 text-[11px] font-bold italic">
-                    {new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
-                  <td className="py-5 px-4 font-black text-gray-900 tracking-tight">₹{order.amount.toLocaleString('en-IN')}</td>
+                  <td className="py-5 px-4 font-black text-gray-900 tracking-tight">₹{parseFloat(order.total_amount).toLocaleString('en-IN')}</td>
                   <td className="py-5 px-4 text-center">
-                    <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${STATUS_STYLES[order.status]}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${(STATUS_STYLES as any)[order.status] || STATUS_STYLES.pending}`}>
                       {order.status}
                     </span>
                   </td>
