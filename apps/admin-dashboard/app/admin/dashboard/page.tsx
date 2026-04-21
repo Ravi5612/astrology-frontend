@@ -21,6 +21,8 @@ const MoreVerticalIcon = MoreVertical as any;
 
 
 export default function DashboardPage() {
+  console.log("DashboardPage - Rendering started");
+  // HMR Trigger: Refreshing route map
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [revenueTrend, setRevenueTrend] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

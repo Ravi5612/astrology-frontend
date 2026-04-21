@@ -48,7 +48,7 @@ export default function AdminPayoutsPage() {
         fetchPayouts();
     }, []);
 
-    const handleAction = async (id: number, status: 'completed' | 'rejected') => {
+    const handleAction = async (id: number, status: 'approved' | 'rejected') => {
         setProcessingId(id);
         const [_, error] = await updateWithdrawalStatus(id, { status });
         
@@ -59,7 +59,7 @@ export default function AdminPayoutsPage() {
             return;
         }
 
-        toast.success(`Withdrawal ${status === 'completed' ? 'Approved' : 'Rejected'} successfully`);
+        toast.success(`Withdrawal ${status === 'approved' ? 'Approved' : 'Rejected'} successfully`);
         await fetchPayouts(); // Refresh list
         setProcessingId(null);
     };
@@ -184,7 +184,7 @@ export default function AdminPayoutsPage() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button
-                                                    onClick={() => handleAction(request.id, 'completed')}
+                                                    onClick={() => handleAction(request.id, 'approved')}
                                                     disabled={processingId === request.id}
                                                     className="text-green-600 hover:text-green-900 mr-4 disabled:opacity-50"
                                                 >

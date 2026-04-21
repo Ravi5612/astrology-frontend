@@ -219,7 +219,11 @@ function ChatRoomContent() {
     }, [showFreeEndPrompt, continuationTimer]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        // Use a small timeout to ensure the DOM has rendered the new message
+        const timer = setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        return () => clearTimeout(timer);
     }, [messages, typingStatus]);
 
     const formatTime = (seconds: number) => {

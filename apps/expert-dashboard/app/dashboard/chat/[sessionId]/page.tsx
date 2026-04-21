@@ -530,7 +530,7 @@ function ExpertChatRoomContent() {
                                         </>
                                     )}
                                     <p className={`text-[9px] mt-1 opacity-60 font-bold ${isExpert ? "text-white" : isAdmin ? "text-red-400" : "text-gray-400"}`}>
-                                        {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                                        {(msg.createdAt || (msg as any).created_at) ? new Date(msg.createdAt || (msg as any).created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
                                     </p>
                                 </div>
                             </div>

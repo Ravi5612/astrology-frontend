@@ -19,19 +19,6 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
 
     const handleWithdraw = () => {
         const numAmount = parseFloat(amount);
-        if (isNaN(numAmount) || numAmount <= 0) {
-            toast.error("Please enter a valid amount");
-            return;
-        }
-        if (numAmount > availableBalance) {
-            toast.error("Amount exceeds available balance");
-            return;
-        }
-        if (!selectedBankId) {
-            toast.error("Please select a bank account");
-            return;
-        }
-
         onWithdraw(numAmount, selectedBankId);
         setAmount("");
     };
@@ -59,17 +46,10 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="Enter Amount"
-                                    className={`w-full pl-8 pr-4 py-3 bg-gray-50 border ${parseFloat(amount) > availableBalance ? 'border-red-500 ring-4 ring-red-500/10' : 'border-gray-200 focus:ring-4 focus:ring-orange/10 focus:border-orange'} rounded-2xl outline-none transition-all font-bold text-gray-800`}
+                                    className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 focus:ring-4 focus:ring-orange/10 focus:border-orange rounded-2xl outline-none transition-all font-bold text-gray-800"
                                 />
                             </div>
                             <div className="mt-2 ml-1 flex flex-col gap-1">
-                                {parseFloat(amount) > availableBalance && (
-                                    <p className="text-[10px] text-red-600 font-bold flex items-center gap-1">
-                                        {/* @ts-ignore */}
-                                        <AlertCircle className="w-3 h-3 text-red-500" />
-                                        Insufficient Balance! You only have ₹{(availableBalance ?? 0).toLocaleString('en-IN')}
-                                    </p>
-                                )}
                                 <p className="text-[10px] text-gray-400 font-medium flex items-center gap-1">
                                     {/* @ts-ignore */}
                                     <AlertCircle className="w-3 h-3" /> Min. withdrawal ₹500
@@ -103,7 +83,7 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
 
                 <Button
                     onClick={handleWithdraw}
-                    disabled={!amount || bankAccounts.length === 0 || parseFloat(amount) > availableBalance}
+                    disabled={isLoading || !amount || bankAccounts.length === 0}
                     variant="primary"
                     size="lg"
                     rightIcon={<ArrowRight className="w-4 h-4" />}

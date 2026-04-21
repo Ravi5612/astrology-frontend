@@ -382,7 +382,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             ? tx.amount.amount || tx.amount.value || tx.amount.total || 0
                             : tx.amount || 0;
 
-                        const isDebit = tx.type?.toLowerCase() === "debit";
+                        const isNegative = ["debit", "hold"].includes(tx.type?.toLowerCase());
+                        const isHold = tx.type?.toLowerCase() === "hold";
+                        const isRelease = tx.type?.toLowerCase() === "release";
 
                         return (
                           <tr
@@ -414,9 +416,11 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             <td className="px-8 py-6 text-center">
                               <span
                                 className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
-                                  isDebit
-                                    ? "bg-orange/5 text-orange border-orange/10"
-                                    : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                  isHold
+                                    ? "bg-amber-50 text-amber-600 border-amber-100"
+                                    : isNegative
+                                      ? "bg-orange/5 text-orange border-orange/10"
+                                      : "bg-emerald-50 text-emerald-600 border-emerald-100"
                                 }`}
                               >
                                 {tx.type || "credit"}
@@ -424,10 +428,14 @@ const WalletTab: React.FC<WalletTabProps> = ({
                             </td>
                             <td
                               className={`px-8 py-6 text-right font-black text-base ${
-                                isDebit ? "text-orange" : "text-emerald-500"
+                                isHold
+                                  ? "text-amber-500"
+                                  : isNegative
+                                    ? "text-orange"
+                                    : "text-emerald-500"
                               }`}
                             >
-                              {isDebit ? "-" : "+"}₹{amount.toLocaleString()}
+                              {isNegative ? "-" : "+"}₹{amount.toLocaleString()}
                             </td>
                             <td className="px-8 py-6 text-right">
                               <span

@@ -101,7 +101,7 @@ a.btn-ask-expert,
 /* Scrollbar Styles */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+  scrollbar-color: #FF6B00 transparent;
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -115,12 +115,12 @@ a.btn-ask-expert,
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: #FF6B00;
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: #E65100;
 }
 
 /* Animations */

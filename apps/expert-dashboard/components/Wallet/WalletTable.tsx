@@ -10,20 +10,26 @@ interface WalletTableProps {
 export default function WalletTable({ transactions }: WalletTableProps) {
     const getStatusStyles = (status: string) => {
         switch (status) {
+            case 'success':
             case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
             case 'pending': return 'bg-orange-50 text-orange-600 border-orange-100';
+            case 'approved': return 'bg-purple-50 text-purple-600 border-purple-100';
             case 'processing': return 'bg-blue-50 text-blue-600 border-blue-100';
             case 'failed': return 'bg-red-50 text-red-600 border-red-100';
+            case 'reversed': return 'bg-amber-50 text-amber-600 border-amber-100';
             default: return 'bg-gray-50 text-gray-600 border-gray-100';
         }
     };
 
     const StatusIcon = ({ status }: { status: string }) => {
         switch (status) {
+            case 'success':
             case 'completed': return <CheckCircle2 className="w-3 h-3" />;
+            case 'approved': return <CheckCircle2 className="w-3 h-3 opacity-50" />;
             case 'pending': return <Clock className="w-3 h-3" />;
             case 'processing': return <Clock className="w-3 h-3 animate-pulse" />;
             case 'failed': return <XCircle className="w-3 h-3" />;
+            case 'reversed': return <ArrowDownLeft className="w-3 h-3" />;
             default: return null;
         }
     };

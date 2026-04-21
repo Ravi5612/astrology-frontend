@@ -85,6 +85,8 @@ export default function ClientsPage() {
           const totalCost = Number(session.total_cost || session.amount || 0);
           const expertShare = Number(session.expert_earning || session.expert_share || session.payment || 0);
           const platformFee = Number(session.platform_fee || 0);
+          const gst = Number(session.gst || 0);
+          const agentCommission = Number(session.agent_commission || 0);
 
           return {
             id: session.id,
@@ -101,7 +103,7 @@ export default function ClientsPage() {
             review: session.comment || "No review yet",
             payment: Number(expertShare.toFixed(2)),
             terminatedBy: session.terminatedBy,
-            rawSession: { ...session, totalCost, expertShare, platformFee }
+            rawSession: { ...session, totalCost, expertShare, platformFee, gst, agentCommission }
           };
         });
 
@@ -349,7 +351,7 @@ export default function ClientsPage() {
                           </div>
 
                           {/* Row 2: Stats Summary Bar - Styled like Main App */}
-                          <div className="bg-[#fcfcfc] rounded-[2rem] p-2 border border-gray-100 flex flex-wrap items-center gap-4 mb-8">
+                          <div className="bg-[#fcfcfc] rounded-[2rem] p-2 border border-gray-100 flex flex-wrap items-center gap-4 mb-4">
                              <div className="flex-1 min-w-[150px] bg-white rounded-[1.8rem] py-4 px-6 shadow-sm border border-gray-50 flex items-center justify-center gap-4">
                                 <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
                                   (session?.type || session?.session_type || "").toLowerCase().includes('chat') ? 'bg-orange-50 text-[#fd6410]' : 'bg-blue-50 text-blue-600'
@@ -375,6 +377,68 @@ export default function ClientsPage() {
                                   </span>
                                 </div>
                              </div>
+                          </div>
+
+                          {/* Row 3: Fare Breakdown Section (Upgraded) */}
+                          <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                            <div className="bg-gray-50/50 rounded-2xl p-3 border border-gray-100 flex flex-col">
+                              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                <IndianRupee size={10} /> User Paid
+                              </span>
+                              <span className="text-base font-black text-gray-700">₹{Number(session.total_cost || session.totalCost || 0).toFixed(2)}</span>
+                            </div>
+                            
+                            {(() => {
+                              const total = Number(session.total_cost || 0);
+                              let pFee = Number(session.platform_fee || 0);
+                              let gstAmt = Number(session.gst || 0);
+                              
+                              // Legacy Fix: If GST is 0 but platform_fee exists, it's likely the old merged value
+                              if (gstAmt === 0 && pFee > 0 && total > 0) {
+                                // Logic: Old platform_fee included 18% GST
+                                // Amount = PlatformFeeShare + (PlatformFeeShare * 0.18)
+                                // Amount = PlatformFeeShare * 1.18
+                                const platformShare = pFee / 1.18;
+                                gstAmt = pFee - platformShare;
+                                pFee = platformShare;
+                              }
+
+                              const pPercentage = total > 0 ? Math.round((pFee / total) * 100) : 0;
+
+                              return (
+                                <>
+                                  <div className="bg-rose-50/30 rounded-2xl p-3 border border-rose-100/50 flex flex-col">
+                                    <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                      <LucideIcons.Percent size={10} /> Platform Fee ({pPercentage}%)
+                                    </span>
+                                    <span className="text-base font-black text-rose-500">-₹{pFee.toFixed(2)}</span>
+                                  </div>
+
+                                  <div className="bg-rose-50/30 rounded-2xl p-3 border border-rose-100/50 flex flex-col">
+                                    <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                      <LucideIcons.ShieldAlert size={10} /> GST (18%)
+                                    </span>
+                                    <span className="text-base font-black text-rose-500">-₹{gstAmt.toFixed(2)}</span>
+                                  </div>
+                                </>
+                              );
+                            })()}
+
+                            {Number(session.agent_commission || session.agentCommission || 0) > 0 && (
+                            <div className="bg-blue-50/30 rounded-2xl p-3 border border-blue-100/50 flex flex-col">
+                              <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                <LucideIcons.Users size={10} /> Agent Share
+                              </span>
+                              <span className="text-base font-black text-blue-500">-₹{Number(session.agent_commission || session.agentCommission || 0).toFixed(2)}</span>
+                            </div>
+                            )}
+
+                            <div className="bg-emerald-50/50 rounded-2xl p-3 border border-emerald-100 flex flex-col">
+                              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                <LucideIcons.Wallet size={10} /> Net Payout
+                              </span>
+                              <span className="text-base font-black text-emerald-700">₹{Number(session.expert_earning || session.expertShare || client.payment).toFixed(2)}</span>
+                            </div>
                           </div>
 
                           {/* Client Feedback Tray */}

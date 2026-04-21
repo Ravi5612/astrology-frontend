@@ -11,6 +11,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated || !user) {
+        console.log("AdminGuard - No auth, redirecting to login");
         window.location.href = "/";
         return;
       }

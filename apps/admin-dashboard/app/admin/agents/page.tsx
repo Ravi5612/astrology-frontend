@@ -426,7 +426,8 @@ export default function AgentsPage() {
     const [settings, setSettings] = useState<Record<string, string>>({
         COMMISION_FROM_ASTROLOGER: "3",
         COMMISION_FROM_CLIENT: "3",
-        COMMISION_FROM_PUJA_SHOP: "3"
+        COMMISION_FROM_PUJA_SHOP: "3",
+        GST_PERCENTAGE: "18"
     });
     const [isSavingSettings, setIsSavingSettings] = useState(false);
     const [isFetchingSettings, setIsFetchingSettings] = useState(true);
@@ -604,7 +605,7 @@ export default function AgentsPage() {
                             </Button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Agent Commission (for Expert) (%)</label>
                                 <div className="relative">
@@ -620,7 +621,7 @@ export default function AgentsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Admin's Commission (Platform Fee) (%)</label>
+                                <label className="text-sm font-semibold text-gray-700">Platform Fee (%)</label>
                                 <div className="relative">
                                     <input
                                         type="number"
@@ -642,6 +643,20 @@ export default function AgentsPage() {
                                         onChange={(e) => setSettings(prev => ({ ...prev, COMMISION_FROM_PUJA_SHOP: e.target.value }))}
                                         className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-bold text-gray-800"
                                         placeholder="3"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">GST (%)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={settings.GST_PERCENTAGE}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, GST_PERCENTAGE: e.target.value }))}
+                                        className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all font-bold text-gray-800"
+                                        placeholder="18"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
                                 </div>

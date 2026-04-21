@@ -36,7 +36,10 @@ export default function MessageArea({
     }, []);
 
     return (
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scrollbar-hide">
+        <div 
+            className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar"
+            data-lenis-prevent
+        >
             <div className="max-w-4xl mx-auto space-y-8">
                 <div className="flex justify-center mb-10">
                     <div className={`px-6 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] transition-all border ${sessionSummary?.status === 'terminated' ? 'bg-red-500/10 text-red-500 border-red-500/20' : isDarkMode ? 'bg-white/5 opacity-30 border-white/5' : 'bg-[#fd6410]/10 text-[#fd6410] border-[#fd6410]/20'}`}>
