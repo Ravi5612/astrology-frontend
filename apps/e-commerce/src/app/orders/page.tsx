@@ -89,10 +89,27 @@ export default function OrdersPage() {
     }
   });
 
+  // OTP Sending Mutation
+  const sendOtpMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const [data, error] = await orderService.sendOtp(id);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Verification OTP sent to customer");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to send OTP");
+    }
+  });
+
   const handleStatusChange = (orderId: string, newStatus: string) => {
     if (newStatus === "delivered") {
       setVerifyingOrderId(orderId);
       setOtpModalOpen(true);
+      // Trigger OTP send when modal opens
+      sendOtpMutation.mutate(orderId);
     } else {
       updateStatusMutation.mutate({ id: orderId, status: newStatus });
     }
@@ -376,6 +393,16 @@ export default function OrdersPage() {
                       <span>Verify & Complete</span>
                     )}
                   </button>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                     <span className="text-xs text-gray-400">Didn't get the code?</span>
+                     <button 
+                        onClick={() => verifyingOrderId && sendOtpMutation.mutate(verifyingOrderId)}
+                        disabled={sendOtpMutation.isPending}
+                        className="text-xs font-bold text-[#fd6410] hover:underline disabled:opacity-50"
+                     >
+                        {sendOtpMutation.isPending ? "Sending..." : "Resend OTP"}
+                     </button>
+                  </div>
                   <button 
                     onClick={() => setOtpModalOpen(false)}
                     className="w-full py-4 bg-white text-gray-400 font-bold rounded-2xl hover:text-gray-600 transition-colors"

@@ -33,5 +33,9 @@ export const orderService = {
   verifyOtp: async (id: string | number, otp: string) => {
     const [response, error] = await api.post<ApiResponse<any>>(`/merchant/orders/${id}/verify-otp`, { otp });
     return [response?.data, error] as const;
+  },
+  sendOtp: async (id: string | number) => {
+    const [response, error] = await api.post<ApiResponse<any>>(`/merchant/orders/${id}/send-otp`);
+    return [response?.data, error] as const;
   }
 };
