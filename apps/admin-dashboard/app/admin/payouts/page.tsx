@@ -18,30 +18,41 @@ export default function AdminPayoutsPage() {
 
     const fetchPayouts = async () => {
         setLoading(true);
-        const [[payoutsData, payoutsError], [statsData, statsError]] = await Promise.all([
-            getPendingWithdrawals(),
-            getWithdrawalStats()
-        ]);
-
-        if (payoutsError || statsError) {
-            console.error("Failed to fetch payouts or stats:", payoutsError || statsError);
-            toast.error("Failed to load payout data");
-            setLoading(false);
-            return;
-        }
-
-        setPayoutRequests((payoutsData as any)?.items || payoutsData || []);
+        console.log("DEBUG: Fetching payouts and stats...");
         
-        if (statsData) {
-            setStats({
-                totalPending: (statsData as any).totalPending || 0,
-                totalApproved: (statsData as any).totalApproved || 0,
-                totalRejected: (statsData as any).totalRejected || 0,
-                totalAmount: (statsData as any).totalAmountPending || 0,
-                totalPaid: (statsData as any).totalAmountApproved || 0,
-            });
+        try {
+            const [[payoutsData, payoutsError], [statsData, statsError]] = await Promise.all([
+                getPendingWithdrawals(),
+                getWithdrawalStats()
+            ]);
+
+            console.log("DEBUG: Payouts response:", { payoutsData, payoutsError });
+            console.log("DEBUG: Stats response:", { statsData, statsError });
+
+            if (payoutsError || statsError) {
+                console.error("DEBUG: Failed to fetch payouts or stats:", payoutsError || statsError);
+                toast.error("Failed to load payout data");
+                setLoading(false);
+                return;
+            }
+
+            setPayoutRequests((payoutsData as any)?.items || payoutsData || []);
+            
+            if (statsData) {
+                setStats({
+                    totalPending: (statsData as any).totalPending || 0,
+                    totalApproved: (statsData as any).totalApproved || 0,
+                    totalRejected: (statsData as any).totalRejected || 0,
+                    totalAmount: (statsData as any).totalAmountPending || 0,
+                    totalPaid: (statsData as any).totalAmountApproved || 0,
+                });
+            }
+        } catch (err) {
+            console.error("DEBUG: Unexpected error in fetchPayouts:", err);
+            toast.error("An unexpected error occurred");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {

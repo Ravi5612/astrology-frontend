@@ -13,9 +13,7 @@ export const api = createSafeFetchInstance({
 });
 
 export async function adminLoginAction(formData: any) {
-    const [data, error] = await api.post<any>(`/auth/email/login`, {
-        body: JSON.stringify(formData),
-    });
+    const [data, error] = await api.post<any>(`/auth/email/login`, formData);
 
     if (error) {
         return { error: error.body?.message || error.message || "Login failed" };
