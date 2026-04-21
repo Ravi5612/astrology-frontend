@@ -21,15 +21,7 @@ import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
 
-interface Order {
-  id: string;
-  orderNumber?: string;
-  customerName: string;
-  amount: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  date: string;
-  itemsCount: number;
-}
+import { orderService, Order } from "@/services/order.service";
 
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("All");
@@ -41,25 +33,21 @@ export default function OrdersPage() {
   const queryClient = useQueryClient();
 
   // Queries
-  const { data, isLoading } = useQuery({
+  const { data: orderData, isLoading } = useQuery({
     queryKey: ['merchant-orders', activeTab, searchTerm],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (activeTab !== "All") {
-        params.append("status", activeTab.toLowerCase());
-      }
-      if (searchTerm) {
-        params.append("search", searchTerm);
-      }
+      const params: Record<string, string> = {};
+      if (activeTab !== "All") params.status = activeTab.toLowerCase();
+      if (searchTerm) params.search = searchTerm;
       
-      const res = await fetch(`/api/v1/merchant/orders?${params.toString()}`, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      return res.json();
+      const [data, error] = await orderService.getOrders(params);
+      if (error) throw error;
+      return data;
     }
   });
 
-  const orders: Order[] = data?.orders || [];
-  const statistics = data?.stats || {
+  const orders: Order[] = orderData?.orders || [];
+  const statistics = orderData?.stats || {
     total: 0,
     pending: 0,
     shipped: 0,
@@ -69,13 +57,9 @@ export default function OrdersPage() {
   // Status Update Mutation
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const res = await fetch(`/api/v1/merchant/orders/${id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-        credentials: "include"
-      });
-      if (!res.ok) throw new Error("Failed to update status");
+      const [data, error] = await orderService.updateStatus(id, status);
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
@@ -89,16 +73,9 @@ export default function OrdersPage() {
   // OTP Verification Mutation
   const verifyOtpMutation = useMutation({
     mutationFn: async ({ id, otp }: { id: string, otp: string }) => {
-      const res = await fetch(`/api/v1/merchant/orders/${id}/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp }),
-        credentials: "include"
-      });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Invalid OTP. Please try again.");
-      }
+      const [data, error] = await orderService.verifyOtp(id, otp);
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       toast.success("Delivery verified and payment released!");
@@ -108,7 +85,7 @@ export default function OrdersPage() {
       queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
     },
     onError: (error: any) => {
-      toast.error(error.message);
+      toast.error(error.message || "Invalid OTP. Please try again.");
     }
   });
 

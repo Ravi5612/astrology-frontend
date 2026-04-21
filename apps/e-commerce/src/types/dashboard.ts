@@ -1,0 +1,58 @@
+export interface StatValue {
+  value: number | string;
+  trend: string;
+}
+
+export interface MerchantStats {
+  totalOrders: StatValue;
+  todayOrders: StatValue;
+  totalProducts: StatValue;
+  totalEarnings: StatValue;
+  monthlyEarnings: StatValue;
+}
+
+export interface OrderItem {
+  id: number;
+  product_id: number;
+  quantity: number;
+  price: string;
+  product?: {
+    id: number;
+    name: string;
+    image_url: string;
+  };
+}
+
+export interface DashboardOrder {
+  id: number;
+  user_id: number;
+  total_amount: string;
+  status: string;
+  created_at: string;
+  items: OrderItem[];
+}
+
+export interface MerchantActivity {
+  id: number;
+  type: string;
+  title: string;
+  description: string;
+  timestamp: string;
+}
+
+export interface MerchantPerformance {
+  weeklyTargetProgress: number;
+  currentTier: string;
+  rating: number;
+  reviewCount: number;
+  salesData?: {
+    date: string;
+    sales: number;
+  }[];
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}

@@ -9,32 +9,32 @@ export const productService = {
    */
   getProducts: async (params?: Record<string, string>) => {
     const query = params ? '?' + new URLSearchParams(params).toString() : '';
-    const [data, error] = await api.get<any>(`/merchant/products${query}`);
-    return [data, error];
+    const [response, error] = await api.get<any>(`/merchant/products${query}`);
+    return [response?.data || { products: [], total: 0 }, error];
   },
 
   /**
    * Fetch a single product by ID
    */
   getProduct: async (id: string | number) => {
-    const [data, error] = await api.get<any>(`/merchant/products/${id}`);
-    return [data, error];
+    const [response, error] = await api.get<any>(`/merchant/products/${id}`);
+    return [response?.data || null, error];
   },
 
   /**
    * Create a new product
    */
   createProduct: async (productData: any) => {
-    const [data, error] = await api.post<any>('/merchant/products', productData);
-    return [data, error];
+    const [response, error] = await api.post<any>('/merchant/products', productData);
+    return [response?.data || null, error];
   },
 
   /**
    * Update an existing product
    */
   updateProduct: async (id: string | number, productData: any) => {
-    const [data, error] = await api.put<any>(`/merchant/products/${id}`, productData);
-    return [data, error];
+    const [response, error] = await api.put<any>(`/merchant/products/${id}`, productData);
+    return [response?.data || null, error];
   },
 
   /**
