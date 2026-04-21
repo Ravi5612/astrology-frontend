@@ -1,16 +1,19 @@
 "use server";
 
 import { cookies } from "next/headers";
-import safeFetch from "@repo/safe-fetch";
+import { createSafeFetchInstance } from "@repo/safe-fetch";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
+export const api = createSafeFetchInstance({
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include",
+  timeoutMs: 30_000,
+});
 
 export async function adminLoginAction(formData: any) {
-    const [data, error] = await safeFetch<any>(`${API_BASE_URL}/auth/email/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+    const [data, error] = await api.post<any>(`/auth/email/login`, {
         body: JSON.stringify(formData),
     });
 
@@ -35,8 +38,8 @@ export async function adminLoginAction(formData: any) {
     if (data.accessToken) {
         cookieStore.set("accessToken", data.accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true, // Required for SameSite=None
+            sameSite: "none", // Allow cross-domain cookies
             path: "/",
             maxAge: 60 * 60 * 24 * 7, // 7 days
         });
@@ -45,8 +48,8 @@ export async function adminLoginAction(formData: any) {
     if (data.refreshToken) {
         cookieStore.set("refreshToken", data.refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             path: "/",
             maxAge: 60 * 60 * 24 * 30, // 30 days
         });
