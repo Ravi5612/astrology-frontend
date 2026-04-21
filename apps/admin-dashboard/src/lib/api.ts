@@ -13,6 +13,7 @@ export const api = createSafeFetchInstance({
   headers: {
     "Content-Type": "application/json",
   },
+  credentials: "include",
   timeoutMs: 30_000,
 });
 
