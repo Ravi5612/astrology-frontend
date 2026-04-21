@@ -25,8 +25,8 @@ export const orderService = {
     return [response?.data || { orders: [], stats: { total: 0, pending: 0, shipped: 0, revenue: 0 } }, error] as const;
   },
 
-  updateStatus: async (id: string | number, status: string) => {
-    const [response, error] = await api.patch<ApiResponse<any>>(`/merchant/orders/${id}/status`, { status });
+  updateStatus: async (id: string | number, status: string, cancellationReason?: string) => {
+    const [response, error] = await api.patch<ApiResponse<any>>(`/merchant/orders/${id}/status`, { status, cancellationReason });
     return [response?.data, error] as const;
   },
 
