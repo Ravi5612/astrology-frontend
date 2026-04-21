@@ -30,5 +30,11 @@ export const dashboardService = {
     const [response, error] = await api.get<ApiResponse<MerchantPerformance>>('/merchant/performance');
     if (error) return [null, error] as const;
     return [response?.data ?? null, null] as const;
+  },
+
+  getAnalytics: async () => {
+    const [response, error] = await api.get<ApiResponse<any>>('/merchant/analytics');
+    if (error) return [null, error] as const;
+    return [response?.data ?? null, null] as const;
   }
 };

@@ -27,8 +27,11 @@ export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancellationReason, setCancellationReason] = useState("");
   const [otpValue, setOtpValue] = useState("");
   const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
   
   const queryClient = useQueryClient();
 
@@ -56,14 +59,17 @@ export default function OrdersPage() {
 
   // Status Update Mutation
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const [data, error] = await orderService.updateStatus(id, status);
+    mutationFn: async ({ id, status, cancellationReason }: { id: string, status: string, cancellationReason?: string }) => {
+      const [data, error] = await orderService.updateStatus(id, status, cancellationReason);
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
       toast.success("Status updated successfully");
+      setCancelModalOpen(false);
+      setCancellationReason("");
+      setCancellingOrderId(null);
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to update status");
@@ -89,10 +95,30 @@ export default function OrdersPage() {
     }
   });
 
+  // OTP Sending Mutation
+  const sendOtpMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const [data, error] = await orderService.sendOtp(id);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Verification OTP sent to customer");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to send OTP");
+    }
+  });
+
   const handleStatusChange = (orderId: string, newStatus: string) => {
     if (newStatus === "delivered") {
       setVerifyingOrderId(orderId);
       setOtpModalOpen(true);
+      // Trigger OTP send when modal opens
+      sendOtpMutation.mutate(orderId);
+    } else if (newStatus === "cancelled") {
+      setCancellingOrderId(orderId);
+      setCancelModalOpen(true);
     } else {
       updateStatusMutation.mutate({ id: orderId, status: newStatus });
     }
@@ -376,6 +402,16 @@ export default function OrdersPage() {
                       <span>Verify & Complete</span>
                     )}
                   </button>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                     <span className="text-xs text-gray-400">Didn't get the code?</span>
+                     <button 
+                        onClick={() => verifyingOrderId && sendOtpMutation.mutate(verifyingOrderId)}
+                        disabled={sendOtpMutation.isPending}
+                        className="text-xs font-bold text-[#fd6410] hover:underline disabled:opacity-50"
+                     >
+                        {sendOtpMutation.isPending ? "Sending..." : "Resend OTP"}
+                     </button>
+                  </div>
                   <button 
                     onClick={() => setOtpModalOpen(false)}
                     className="w-full py-4 bg-white text-gray-400 font-bold rounded-2xl hover:text-gray-600 transition-colors"
@@ -397,6 +433,57 @@ export default function OrdersPage() {
         </div>
       )}
 
+      {/* Cancellation Modal */}
+      {cancelModalOpen && (
+        <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => !updateStatusMutation.isPending && setCancelModalOpen(false)}></div>
+          
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8 sm:p-10">
+              <div className="w-16 h-16 bg-red-100 rounded-3xl flex items-center justify-center mb-6 mx-auto">
+                 <XSquare className="w-8 h-8 text-red-600" />
+              </div>
+
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-black text-gray-900 mb-2">Cancel Order</h3>
+                <p className="text-gray-500 text-sm">Please provide a reason for cancelling this order. This will be sent to the customer.</p>
+              </div>
+
+              <div className="space-y-6">
+                <textarea 
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all min-h-[120px] resize-none"
+                  placeholder="e.g. Out of stock, Delivery area unavailable..."
+                  value={cancellationReason}
+                  onChange={(e) => setCancellationReason(e.target.value)}
+                />
+
+                <div className="flex flex-col gap-3">
+                  <button 
+                    onClick={() => cancellingOrderId && updateStatusMutation.mutate({ id: cancellingOrderId, status: "cancelled", cancellationReason })}
+                    disabled={!cancellationReason.trim() || updateStatusMutation.isPending}
+                    className="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-red-700 transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-3 active:scale-95"
+                  >
+                    {updateStatusMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <span>Cancel Order</span>
+                    )}
+                  </button>
+                  <button 
+                    onClick={() => setCancelModalOpen(false)}
+                    className="w-full py-4 bg-white text-gray-400 font-bold rounded-2xl hover:text-gray-600 transition-colors"
+                  >
+                    Go Back
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
