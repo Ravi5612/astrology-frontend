@@ -140,8 +140,8 @@ export const terminateSession = async (id: number, data: { userMessage?: string;
 };
 
 // Payouts / Withdrawals
-export const getPendingWithdrawals = async (params?: { page?: number; limit?: number }): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/withdrawals/pending", { params });
+export const getWithdrawals = async (params?: { page?: number; limit?: number; status?: string }): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/withdrawals", { params });
 };
 
 export const updateWithdrawalStatus = async (id: number, data: { status: string; remark?: string }): Promise<[any | null, any | null]> => {
