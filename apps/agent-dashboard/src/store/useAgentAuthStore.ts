@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export interface AgentUser {
     id: number;
-    agent_id: string;   // e.g. AGT-0001
+    uid: string;   // e.g. AIB-AGT-A8K2XP
     name: string;
     email: string;
     phone: string;

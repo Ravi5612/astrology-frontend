@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { StatsCards, NotFound, Loading } from "@repo/ui";
+import { StatsCards, NotFound } from "@repo/ui";
+import { CommissionSkeleton } from "../../components/Skeleton";
 import type { StatConfig } from "@repo/ui";
 import { IndianRupee, CheckCircle, Clock, Filter, BadgeIndianRupee } from "lucide-react";
 
@@ -103,7 +104,7 @@ export default function CommissionsPage() {
         { title: "Transactions", value: commissions.length, icon: IndianRupee, iconColor: "text-gray-600", iconBgColor: "bg-gray-100" },
     ], [statsData, commissions]);
 
-    if (loading) return <Loading fullScreen text="Loading Commissions..." />;
+    if (loading) return <CommissionSkeleton />;
 
     return (
         <div className="space-y-6">

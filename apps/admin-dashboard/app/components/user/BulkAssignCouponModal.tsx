@@ -132,7 +132,7 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
             onSuccess?.();
             onClose();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to assign coupon");
+            toast.error(error.body?.message || error.message || "Failed to assign coupon");
         } finally {
             setLoading(false);
         }

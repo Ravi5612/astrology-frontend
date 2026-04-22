@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import { StatsCards, Loading } from "@repo/ui";
+import { StatsCards } from "@repo/ui";
+import { PayoutSkeleton } from "../../components/Skeleton";
 import type { StatConfig } from "@repo/ui";
 import { 
     Wallet, 
@@ -190,7 +191,7 @@ export default function PayoutPage() {
         }
     };
 
-    if (loading) return <Loading fullScreen text="Loading Performance Data..." />;
+    if (loading) return <PayoutSkeleton />;
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-12">

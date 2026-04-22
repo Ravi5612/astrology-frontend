@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { getReferredUsers, type ReferredUser } from "@/src/services/agent.service";
 import { toast } from "react-toastify";
+import { ListingsSkeleton } from "../../components/Skeleton";
 
 // ── Tab config ───────────────────────────────────────────────────────────────
 
@@ -443,26 +444,7 @@ export default function ListingsPage() {
 
             {/* Grid */}
             {loading ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="bg-white rounded-2xl border border-gray-200 p-5 h-44 animate-pulse"
-                        >
-                            <div className="flex items-start gap-3">
-                                <div className="w-11 h-11 rounded-xl bg-gray-200" />
-                                <div className="flex-1 space-y-2">
-                                    <div className="h-3 bg-gray-200 rounded w-32" />
-                                    <div className="h-2.5 bg-gray-100 rounded w-20" />
-                                </div>
-                            </div>
-                            <div className="mt-4 space-y-2">
-                                <div className="h-2.5 bg-gray-100 rounded w-full" />
-                                <div className="h-2.5 bg-gray-100 rounded w-3/4" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <ListingsSkeleton />
             ) : data.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
                     <EmptyState search={search} onClear={() => setSearch("")} />

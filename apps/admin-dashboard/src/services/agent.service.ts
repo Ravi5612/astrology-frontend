@@ -19,7 +19,7 @@ export const getAgents = async (params?: {
     search?: string;
     status?: string;
 }) => {
-    const [data] = await api.get<{ data: Agent[]; total: number }>("/admin/agents", {
+    const [data, error] = await api.get<{ data: Agent[]; total: number }>("/admin/agents", {
         params: {
             page: params?.page,
             limit: params?.limit,
@@ -27,21 +27,25 @@ export const getAgents = async (params?: {
             status: params?.status === "" ? undefined : params?.status
         }
     });
+    if (error) throw error;
     return data as { data: Agent[]; total: number };
 };
 
 export const getAgentStats = async () => {
-    const [data] = await api.get<AgentStats>("/admin/agents/stats");
+    const [data, error] = await api.get<AgentStats>("/admin/agents/stats");
+    if (error) throw error;
     return data as AgentStats;
 };
 
 export const getAgentById = async (id: string | number) => {
-    const [data] = await api.get<Agent>(`/admin/agents/${id}`);
+    const [data, error] = await api.get<Agent>(`/admin/agents/${id}`);
+    if (error) throw error;
     return data as Agent;
 };
 
 export const createAgent = async (formData: FormData) => {
-    const [data] = await api.upload<any>("/admin/agents", formData);
+    const [data, error] = await api.upload<any>("/admin/agents", formData);
+    if (error) throw error;
     return data;
 };
 
@@ -49,24 +53,28 @@ export const updateAgentStatus = async (
     id: string | number,
     status: Agent["status"]
 ) => {
-    const [data] = await api.patch<any>(`/admin/agents/${id}`, { status });
+    const [data, error] = await api.patch<any>(`/admin/agents/${id}`, { status });
+    if (error) throw error;
     return data;
 };
 
 // ─── OTP Verification ─────────────────────────────────────────────────────────
 export const sendAgentOtp = async (email: string) => {
-    const [data] = await api.post<any>("/admin/agents/send-otp", { email });
+    const [data, error] = await api.post<any>("/admin/agents/send-otp", { email });
+    if (error) throw error;
     return data;
 };
 
 export const verifyAgentOtp = async (email: string, otp: string) => {
-    const [data] = await api.post<any>("/admin/agents/verify-otp", { email, otp });
+    const [data, error] = await api.post<any>("/admin/agents/verify-otp", { email, otp });
+    if (error) throw error;
     return data;
 };
 
 // ─── Listings ─────────────────────────────────────────────────────────────────
 export const getListingsByAgent = async (agent_id: string) => {
-    const [data] = await api.get<AgentListing[]>(`/admin/agents/${agent_id}/listings`);
+    const [data, error] = await api.get<AgentListing[]>(`/admin/agents/${agent_id}/listings`);
+    if (error) throw error;
     return data as AgentListing[];
 };
 
@@ -76,7 +84,7 @@ export const getAllListings = async (params?: {
     page?: number;
     limit?: number;
 }) => {
-    const [data] = await api.get<{ data: AgentListing[]; total: number; stats: any }>("/admin/listings", {
+    const [data, error] = await api.get<{ data: AgentListing[]; total: number; stats: any }>("/admin/listings", {
         params: {
             type: params?.type === "" ? undefined : params?.type,
             search: params?.search,
@@ -84,6 +92,7 @@ export const getAllListings = async (params?: {
             limit: params?.limit
         }
     });
+    if (error) throw error;
     return data;
 };
 
@@ -92,7 +101,8 @@ export const updateListingStatus = async (
     status: "approved" | "rejected" | "pending",
     reason?: string
 ) => {
-    const [data] = await api.patch<any>(`/admin/listings/${id}/status`, { status, reason });
+    const [data, error] = await api.patch<any>(`/admin/listings/${id}/status`, { status, reason });
+    if (error) throw error;
     return data;
 };
 
@@ -101,12 +111,14 @@ export const getCommissions = async (params?: {
     agent_id?: string;
     status?: string;
 }) => {
-    const [data] = await api.get<{ data: Commission[] }>("/admin/commissions", { params });
+    const [data, error] = await api.get<{ data: Commission[] }>("/admin/commissions", { params });
+    if (error) throw error;
     return data as { data: Commission[] };
 };
 
 export const markCommissionPaid = async (id: number) => {
-    const [data] = await api.patch<any>(`/admin/commissions/${id}/pay`);
+    const [data, error] = await api.patch<any>(`/admin/commissions/${id}/pay`);
+    if (error) throw error;
     return data;
 };
 
@@ -117,7 +129,7 @@ export const getAdminMerchantProfiles = async (params?: {
     search?: string;
     status?: string;
 }) => {
-    const [data] = await api.get<{ merchants: any[]; total: number }>("/admin/merchants", {
+    const [data, error] = await api.get<{ merchants: any[]; total: number }>("/admin/merchants", {
         params: {
             page: params?.page || 1,
             limit: params?.limit || 10,
@@ -125,6 +137,7 @@ export const getAdminMerchantProfiles = async (params?: {
             status: params?.status === "" ? undefined : params?.status
         }
     });
+    if (error) throw error;
     // Return unified structure
     return {
         data: (data as any)?.merchants || (data as any)?.data || [],
@@ -136,6 +149,7 @@ export const updateMerchantProfileStatus = async (
     id: string | number,
     status: string
 ) => {
-    const [data] = await api.patch<any>(`/admin/merchants/${id}/status`, { status });
+    const [data, error] = await api.patch<any>(`/admin/merchants/${id}/status`, { status });
+    if (error) throw error;
     return data;
 };

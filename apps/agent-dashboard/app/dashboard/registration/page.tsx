@@ -408,14 +408,24 @@ function PlaceForm({ type }: { type: "mandir" | "puja_shop" }) {
     );
 }
 
+import { RegistrationSkeleton } from "../../components/Skeleton";
+import { useEffect } from "react";
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function RegisterUserPage() {
     const [activeTab, setActiveTab] = useState<TabId>("expert");
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const currentTab = TABS.find((t) => t.id === activeTab)!;
 
+    if (!mounted) return <RegistrationSkeleton />;
+
     return (
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div>
                 <h2 className="text-xl font-black text-gray-900">Register / Add Listing</h2>

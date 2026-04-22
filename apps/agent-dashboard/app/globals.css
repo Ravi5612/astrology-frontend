@@ -35,3 +35,45 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a29e;
 }
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  .animate-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: #e5e7eb; /* gray-200 */
+  }
+  .animate-shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      110deg,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0.3) 40%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.3) 60%,
+      rgba(255, 255, 255, 0) 80%
+    );
+    animation: shimmer-wave 1.8s infinite;
+  }
+  @keyframes shimmer-wave {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}

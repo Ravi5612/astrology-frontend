@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { useAgentAuthStore } from "@/src/store/useAgentAuthStore";
-import { Avatar, Button, Loading } from "@repo/ui";
+import { Avatar, Button } from "@repo/ui";
+import { ProfileSkeleton } from "../../components/Skeleton";
 import { Phone, Mail, BadgeCheck, User, CreditCard, Landmark, PiggyBank, Hash, UserCircle2, Save, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { getAgentProfile, updateAgentProfile } from "@/src/services/agent.service";
@@ -79,7 +80,7 @@ export default function ProfilePage() {
         { label: "Puja Shop Referral", rate: "3%", className: "bg-purple-50 text-purple-700 border-purple-200" },
     ];
 
-    if (loading) return <Loading fullScreen text="Loading Profile..." />;
+    if (loading) return <ProfileSkeleton />;
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

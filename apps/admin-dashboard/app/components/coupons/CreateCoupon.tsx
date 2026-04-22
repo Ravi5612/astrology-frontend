@@ -49,7 +49,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} coupon`);
+      toast.error(error.body?.message || error.message || `Failed to ${isEditing ? 'update' : 'create'} coupon`);
     } finally {
       setLoading(false);
     }

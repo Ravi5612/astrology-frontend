@@ -98,7 +98,7 @@ export const useProfileBaseLogic = () => {
             }
         } catch (error: any) {
             console.error("❌ Error loading profile:", error);
-            if (error.response?.status !== 404) {
+            if (error.status !== 404) {
                 toast.error("Failed to load profile data");
             }
         } finally {
@@ -130,7 +130,7 @@ export const useProfileBaseLogic = () => {
                 try {
                     await updateClientProfile({ profile_picture: imageUrl });
                 } catch (err: any) {
-                    const status = err?.status ?? err?.response?.status;
+                    const status = err?.status;
                     if (status === 404) {
                         await createClientProfile({ profile_picture: imageUrl });
                     } else {
@@ -145,7 +145,7 @@ export const useProfileBaseLogic = () => {
             }
         } catch (error: any) {
             const errorDetail =
-                error.response?.data?.message || error.message || "Unknown error";
+                error.body?.message || error.message || "Unknown error";
             setErrorMessage(`Failed to upload profile picture: ${errorDetail}`);
             setTimeout(() => setErrorMessage(""), 8000);
         } finally {
@@ -300,7 +300,7 @@ export const useProfileBaseLogic = () => {
         } catch (error: any) {
             console.error(`❌ Error updating ${section}:`, error);
             const errMsg =
-                error.response?.data?.message || error.message || "Unknown error";
+                error.body?.message || error.message || "Unknown error";
             toast.error(`Failed to update ${section}: ${errMsg}`);
         } finally {
             setSavingSections((prev) => ({ ...prev, [section]: false }));

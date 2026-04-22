@@ -45,7 +45,7 @@ const AssignCouponModal = ({ user, onClose }: Props) => {
             toast.success(`Coupon ${selectedCouponCode} assigned to ${user.name}`);
             onClose();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to assign coupon");
+            toast.error(error.body?.message || error.message || "Failed to assign coupon");
         } finally {
             setLoading(false);
         }

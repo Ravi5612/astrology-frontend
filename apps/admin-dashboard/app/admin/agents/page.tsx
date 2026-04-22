@@ -135,7 +135,8 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
             onClose();
         } catch (error: any) {
             console.error("Agent creation failed", error);
-            toast.error(error.response?.data?.message || "Failed to create agent");
+            const errorMsg = error.body?.message || error.message || "Failed to create agent";
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }

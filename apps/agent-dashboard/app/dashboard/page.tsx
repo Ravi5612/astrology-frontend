@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAgentDashboardStats } from "@/src/services/agent.service";
-import { Loading } from "@repo/ui";
+import { DashboardSkeleton } from "../components/Skeleton";
 
 // ── Mock summary ─────────────────────────────────────────────
 const SUMMARY = {
@@ -83,7 +83,7 @@ export default function AgentDashboardHome() {
         },
     ], [statsData, loading]);
 
-    if (loading && !statsData) return <Loading fullScreen text="Loading Dashboard..." />;
+    if (loading && !statsData) return <DashboardSkeleton />;
 
     return (
         <div className="space-y-8">
@@ -95,7 +95,7 @@ export default function AgentDashboardHome() {
                 <div className="relative z-10">
                     <p className="text-orange-200 text-sm font-bold uppercase tracking-widest mb-1">Welcome back 🙏</p>
                     <h2 className="text-3xl font-black text-white mb-1">{mounted ? (agent?.name ?? "Agent") : "Agent"}</h2>
-                    <p className="text-orange-100 text-sm font-medium font-mono bg-white/10 w-fit px-2 py-0.5 rounded-md">ID: <span className="text-white font-black">{mounted ? (agent?.agent_id || "...") : "..."}</span></p>
+                    <p className="text-orange-100 text-sm font-medium font-mono bg-white/10 w-fit px-2 py-0.5 rounded-md">ID: <span className="text-white font-black">{mounted ? (agent?.uid || "...") : "..."}</span></p>
                     <div className="mt-6 flex flex-wrap items-center gap-6">
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Total Earned</p>

@@ -134,7 +134,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             toast.success("Added to wishlist");
             await get().fetchWishlist(true);
         } catch (error: any) {
-            if (error.response?.status === 409) {
+            if (error.status === 409) {
                 toast.info("Already in wishlist");
                 await get().fetchWishlist(true);
             } else {
@@ -169,7 +169,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             toast.success("Added to liked experts");
             await get().fetchWishlist(true);
         } catch (error: any) {
-            if (error.response?.status === 409) {
+            if (error.status === 409) {
                 toast.info("Already in liked list");
                 await get().fetchWishlist(true);
             } else {
@@ -230,7 +230,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             }
             await fetchWishlist(true);
         } catch (error: any) {
-            if (error.response?.status === 409) {
+            if (error.status === 409) {
                 toast.info("Already liked");
                 await fetchWishlist(true);
             } else {
@@ -261,7 +261,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             toast.success("Store added to your favorites");
             await get().fetchWishlist(true);
         } catch (error: any) {
-            if (error.response?.status === 409) {
+            if (error.status === 409) {
                 toast.info("Already in your favorites");
                 await get().fetchWishlist(true);
             } else {

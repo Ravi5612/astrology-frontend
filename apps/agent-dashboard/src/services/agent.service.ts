@@ -8,7 +8,11 @@ export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> 
 };
 
 export const updateAgentProfile = async (payload: any): Promise<[any | null, ApiError | null]> => {
-    return api.patch(API_ROUTES.AGENTS.PROFILE, payload);
+    const [res, error] = await api.patch(API_ROUTES.AGENTS.PROFILE, payload);
+    if (error && error.body && (error.body as any).message) {
+        error.message = (error.body as any).message;
+    }
+    return [res, error];
 };
 
 // ── Listings ─────────────────────────────────────────────────────────────────
@@ -101,7 +105,11 @@ export const getAgentCommissions = async (params?: { page?: number; limit?: numb
 
 
 export const createListing = async (payload: CreateListingPayload): Promise<[any | null, ApiError | null]> => {
-    return api.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>);
+    const [res, error] = await api.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>);
+    if (error && error.body && (error.body as any).message) {
+        error.message = (error.body as any).message;
+    }
+    return [res, error];
 };
 
 // ── Register User/Expert ─────────────────────────────────────────────────────
@@ -133,7 +141,13 @@ export const registerUserByAgent = async (payload: RegisterUserPayload): Promise
         ...rest,
         roles: [userType], // 'expert', 'client', or 'merchant'
     };
-    return api.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
+    const [res, error] = await api.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>);
+    
+    if (error && error.body && (error.body as any).message) {
+        error.message = (error.body as any).message;
+    }
+    
+    return [res, error];
 };
 
 // ── Dashboard Stats ──────────────────────────────────────────────────────────
