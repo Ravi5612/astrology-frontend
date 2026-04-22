@@ -128,37 +128,6 @@ export default function DashboardHome() {
         )}
       </AnimatePresence>
 
-      {/* Analytics & Performance */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2">
-          <SalesChart data={perfData?.salesData} isLoading={perfLoading} />
-        </div>
-        <div className="space-y-10">
-           <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-200 relative overflow-hidden group h-full flex flex-col justify-between">
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000" />
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Seller Milestone</p>
-                <h3 className="text-2xl font-black tracking-tight">{perfData?.currentTier ?? "Silver"} Tier Merchant</h3>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-sm font-black uppercase tracking-widest">Weekly Goal</span>
-                  <span className="text-2xl font-black">{perfData?.weeklyTargetProgress ?? 0}%</span>
-                </div>
-                <div className="h-4 bg-white/20 rounded-full overflow-hidden border border-white/10 p-0.5">
-                  <motion.div 
-                    initial={{ width: 0 }} 
-                    animate={{ width: `${perfData?.weeklyTargetProgress ?? 0}%` }} 
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="h-full bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)]" 
-                  />
-                </div>
-                <p className="text-xs font-bold text-white/70 italic">Complete your weekly orders to unlock special perks.</p>
-              </div>
-           </div>
-        </div>
-      </section>
-
       {/* Stats Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {stats.map((stat, index) => (
@@ -176,14 +145,16 @@ export default function DashboardHome() {
         ))}
       </section>
 
-      {/* Activity & Orders Grid */}
-      <section className="grid grid-cols-1 xl:grid-cols-3 gap-10">
-        <div className="xl:col-span-2 space-y-8">
+      {/* Orders Grid - Now Full Width */}
+      <section className="grid grid-cols-1 gap-10">
+        <div className="space-y-8">
           <RecentOrders orders={ordersData || []} isLoading={ordersLoading} />
         </div>
-        <div className="space-y-10 flex flex-col h-full">
-          <ActivityFeed activities={activityData || []} isLoading={activityLoading} />
-        </div>
+      </section>
+
+      {/* Dynamic Analytics & Performance Chart - Moved to Bottom */}
+      <section className="animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-300">
+        <SalesChart data={perfData?.salesData} isLoading={perfLoading} />
       </section>
     </main>
   );

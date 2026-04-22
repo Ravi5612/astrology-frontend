@@ -15,7 +15,8 @@ import {
   X,
   Package,
   ShoppingBag,
-  ShieldCheck
+  ShieldCheck,
+  BarChart3
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -33,6 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, toggleSidebar }) 
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Orders", icon: ShoppingBag, href: "/orders" },
     { name: "Manage Products", icon: Package, href: "/products" },
+    { name: "Analytics", icon: BarChart3, href: "/analytics" },
     { name: "Earnings", icon: Wallet, href: "/earnings" },
     { name: "Verification", icon: ShieldCheck, href: "/profile" },
     { name: "Shop Profile", icon: Settings, href: "/settings" },
