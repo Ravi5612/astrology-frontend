@@ -23,7 +23,28 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     });
     const updateOnlineStatus = useUpdateOnlineStatus();
     
-    const isOnline = profileData?.profile?.isOnline ?? false;
+    // Use local state for optimistic UI updates
+    const [localOnlineStatus, setLocalOnlineStatus] = useState<boolean | null>(null);
+    
+    // Sync local state with profile data when it loads
+    React.useEffect(() => {
+        if (profileData?.profile) {
+            setLocalOnlineStatus(!!profileData.profile.isOnline);
+        }
+    }, [profileData]);
+
+    const isOnline = localOnlineStatus ?? !!(profileData?.profile?.isOnline);
+    
+    const handleToggle = () => {
+        const newStatus = !isOnline;
+        setLocalOnlineStatus(newStatus);
+        updateOnlineStatus.mutate(newStatus, {
+            onError: () => {
+                // Revert on error
+                setLocalOnlineStatus(isOnline);
+            }
+        });
+    };
     
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -83,10 +104,10 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
                                     {isOnline ? "Online" : "Offline"}
                                 </span>
                                 <button
-                                    onClick={() => updateOnlineStatus.mutate(!isOnline)}
+                                    onClick={handleToggle}
                                     disabled={updateOnlineStatus.isPending || isProfileLoading}
-                                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-all duration-300 ${
-                                        isOnline ? "bg-green-500" : "bg-red-500"
+                                    className={`relative inline-flex items-center h-6 rounded-full w-11 transition-all duration-500 ease-in-out ${
+                                        isOnline ? "bg-green-500 shadow-lg shadow-green-200" : "bg-red-500 shadow-lg shadow-red-200"
                                     } ${(updateOnlineStatus.isPending || isProfileLoading) ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
                                     <span className={`inline-block w-4 h-4 transform transition-transform duration-300 bg-white rounded-full shadow-md ${isOnline ? "translate-x-6" : "translate-x-1"}`} />

@@ -80,6 +80,8 @@ export const useUpdateOnlineStatus = () => {
     onSuccess: (_, isOnline) => {
       toast.success(`You are now ${isOnline ? 'Online' : 'Offline'}`);
       queryClient.invalidateQueries({ queryKey: ["merchant-profile"] });
+      // Force a refetch to be sure
+      queryClient.refetchQueries({ queryKey: ["merchant-profile"] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
