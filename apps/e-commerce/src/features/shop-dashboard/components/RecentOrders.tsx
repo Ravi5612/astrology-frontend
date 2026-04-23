@@ -11,7 +11,9 @@ interface RecentOrdersProps {
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
+  paid: "bg-yellow-100 text-yellow-700",
   processing: "bg-blue-100 text-blue-700",
+  packed: "bg-orange-100 text-orange-700",
   shipped: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
@@ -81,13 +83,13 @@ export const RecentOrders: React.FC<RecentOrdersProps> = ({ orders = [], isLoadi
                   <td className="py-5 px-4 font-black text-[#fd6410] tracking-tighter italic">#{order.id}</td>
                   <td className="py-5 px-4">
                     <div className="flex flex-col">
-                      <span className="font-bold text-gray-900">User #{order.user_id}</span>
+                      <span className="font-bold text-gray-900">{order.customerName || `User #${order.user_id}`}</span>
                     </div>
                   </td>
                   <td className="py-5 px-4 text-gray-500 text-[11px] font-bold italic">
-                    {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(order.date || order.created_at || "").toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
-                  <td className="py-5 px-4 font-black text-gray-900 tracking-tight">₹{parseFloat(order.total_amount).toLocaleString('en-IN')}</td>
+                  <td className="py-5 px-4 font-black text-gray-900 tracking-tight">₹{parseFloat((order.amount || order.total_amount || 0).toString()).toLocaleString('en-IN')}</td>
                   <td className="py-5 px-4 text-center">
                     <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${(STATUS_STYLES as any)[order.status] || STATUS_STYLES.pending}`}>
                       {order.status}

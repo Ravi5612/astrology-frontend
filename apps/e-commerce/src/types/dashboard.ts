@@ -24,12 +24,15 @@ export interface OrderItem {
 }
 
 export interface DashboardOrder {
-  id: number;
-  user_id: number;
-  total_amount: string;
+  id: string | number;
+  user_id?: number;
+  customerName?: string;
+  total_amount?: string;
+  amount?: number | string;
   status: string;
-  created_at: string;
-  items: OrderItem[];
+  created_at?: string;
+  date?: string;
+  items?: OrderItem[];
 }
 
 export interface MerchantActivity {
