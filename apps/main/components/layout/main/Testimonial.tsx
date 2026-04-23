@@ -1,13 +1,35 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import homepageData from "../../../public/data/homepage.json";
+import { api as http } from "../../../lib/api";
 import { useLanguageStore } from "../../../store/languageStore";
 import { homeTranslations } from "../../../lib/translations/home";
 
 const Testimonial = () => {
   const { lang } = useLanguageStore();
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const [data, err] = await http.get("/reviews/platform/approved?limit=6");
+        console.log("[Testimonial] API Response:", { data, err });
+        if (!err && Array.isArray(data)) {
+          setReviews(data);
+          data.forEach((r: any, i: number) => {
+            console.log(`[Testimonial] Review ${i} User:`, r.user);
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch testimonials:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, []);
 
   return (
     <section className="!bg-[#edeef1] py-10 md:py-16">
@@ -19,40 +41,77 @@ const Testimonial = () => {
             </span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {t.testimonials.list.map((testi, index) => {
-              const originalTesti = homepageData.testimonials[index] || homepageData.testimonials[0];
-              if (!originalTesti) return null; // Defensive check
-
-              return (
-                <div key={index} className="h-full">
+            {loading ? (
+              // Loading Skeletons
+              [...Array(3)].map((_, i) => (
+                <div key={i} className="h-full">
+                  <div className="bg-white rounded-[18px] p-6 border border-gray-100 shadow-[0_10px_25px_rgba(0,0,0,0.05)] animate-pulse">
+                    <div className="flex items-center mb-4">
+                      <div className="w-14 h-14 rounded-full bg-gray-200" />
+                      <div className="ml-4 space-y-2">
+                        <div className="h-4 w-24 bg-gray-200 rounded" />
+                        <div className="h-3 w-16 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-4 w-20 bg-gray-200 rounded mb-4" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-full bg-gray-100 rounded" />
+                      <div className="h-3 w-5/6 bg-gray-100 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : reviews.length > 0 ? (
+              reviews.map((testi, index) => (
+                <div key={testi.id || index} className="h-full">
                   <div className="bg-white rounded-[18px] p-6 transition-all duration-300 border border-gray-100 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-lg hover:-translate-y-1.5 flex flex-col h-full">
                     <div className="flex items-center mb-4">
-                      <Image
-                        src={originalTesti.image}
-                        alt={testi.name}
-                        width={56}
-                        height={56}
-                        className="w-14 h-14 rounded-full object-cover border-2 border-orange p-0.5"
-                      />
+                      {testi.user?.avatar ? (
+                        <Image
+                          src={testi.user.avatar}
+                          alt={testi.user.name}
+                          width={56}
+                          height={56}
+                          className="w-14 h-14 rounded-full object-cover border-2 border-orange p-0.5"
+                          onError={(e) => console.error(`[Testimonial] Image Load Error for ${testi.user.name}:`, testi.user.avatar)}
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center border-2 border-orange text-orange font-bold text-xl uppercase">
+                          {testi.user?.name?.charAt(0) || "U"}
+                        </div>
+                      )}
                       <div className="ml-4">
                         <h5 className="text-lg font-bold text-[#32131a] m-0">
-                          {testi.name}
+                          {testi.user?.name}
                         </h5>
                         <span className="text-sm text-gray-500 font-medium">
-                          {testi.location}
+                          Verified User
                         </span>
                       </div>
                     </div>
                     <div className="text-orange text-2xl mb-2 tracking-[2px]">
-                      {"★".repeat(originalTesti.rating)}
+                      {"★".repeat(testi.rating)}
                     </div>
+                    {testi.tags && testi.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {testi.tags.map((tag: string) => (
+                          <span key={tag} className="px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-bold rounded-full uppercase tracking-tighter">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <p className="text-base text-[#311219] leading-relaxed flex-grow italic">
-                      "{testi.text}"
+                      "{testi.comment || testi.text}"
                     </p>
                   </div>
                 </div>
-              );
-            })}
+              ))
+            ) : (
+              <div className="col-span-full py-10 text-center text-gray-400 font-medium italic">
+                Be the first to share your experience!
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ import type { Review } from "@/app/components/reviews/review";
 
 export default function ReviewsPage() {
   const [filter, setFilter] = useState("all");
+  const [reviewType, setReviewType] = useState("all"); // 'all' | 'platform' | 'expert' | 'merchant'
   const [searchQuery, setSearchQuery] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +46,7 @@ export default function ReviewsPage() {
         limit: 15,
         ratingType: filter === "all" ? undefined : filter,
         search: searchQuery || undefined,
+        review_type: reviewType === "all" ? undefined : reviewType,
       });
 
       if (error) throw new Error(error.message);
@@ -59,7 +61,10 @@ export default function ReviewsPage() {
         date: r.created_at || r.createdAt || r.date,
         status: r.status || "pending",
         avatar: (r.user?.name || "U").charAt(0).toUpperCase(),
+        avatarUrl: r.user?.avatar || null,
         sessionId: r.session_id || r.sessionId || r.orderId,
+        tags: r.tags || [],
+        review_type: r.review_type || "expert",
       }));
 
       if (isNewSearch) {
@@ -74,7 +79,7 @@ export default function ReviewsPage() {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [filter, searchQuery]);
+  }, [filter, searchQuery, reviewType]);
 
   useEffect(() => {
     fetchStats();
@@ -83,7 +88,7 @@ export default function ReviewsPage() {
   useEffect(() => {
     setPage(1);
     fetchReviews(1, true);
-  }, [filter, searchQuery, fetchReviews]);
+  }, [filter, searchQuery, reviewType, fetchReviews]);
 
   const loadMore = () => {
     const nextPage = page + 1;
@@ -146,6 +151,30 @@ export default function ReviewsPage() {
       </header>
 
       <StatsCards stats={statsConfig} columns={4} />
+
+      {/* Review Type Tabs */}
+      <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
+        {[
+          { value: "all", label: "All Reviews", emoji: "📋" },
+          { value: "platform", label: "🌟 Platform Reviews", emoji: "" },
+          { value: "expert", label: "Expert Reviews", emoji: "👨‍💼" },
+          { value: "merchant", label: "Shop Reviews", emoji: "🏪" },
+        ].map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => { setReviewType(value); setPage(1); }}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
+              reviewType === value
+                ? value === "platform"
+                  ? "bg-brand-orange text-white shadow-md shadow-orange-100/50"
+                  : "bg-gray-800 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {filterButtons.map(({ value, label, variant }) => (

@@ -153,24 +153,24 @@ export const getWithdrawalStats = async (): Promise<[any | null, any | null]> =>
 };
 
 // Review Management
-export const getReviews = async (params?: { page?: number; limit?: number; rating?: number; ratingType?: string; status?: string; search?: string }): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/reviews", { params });
+export const getReviews = async (params?: { page?: number; limit?: number; rating?: number; ratingType?: string; status?: string; search?: string; review_type?: string }): Promise<[any | null, any | null]> => {
+  return await api.get("/reviews/admin/all", { params });
 };
 
 export const getReviewStats = async (): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/reviews/stats");
+  return await api.get("/reviews/admin/stats");
 };
 
 export const updateReviewStatus = async (id: number, status: string): Promise<[any | null, any | null]> => {
-  return await api.patch(`/admin/reviews/${id}/status`, { status });
+  return await api.patch(`/reviews/admin/${id}/status`, { status });
 };
 
 export const deleteReviewResource = async (id: number): Promise<[any | null, any | null]> => {
-  return await api.delete(`/admin/reviews/${id}`);
+  return await api.delete(`/reviews/admin/${id}`);
 };
 
 export const sendReviewResponse = async (id: number, message: string): Promise<[any | null, any | null]> => {
-  return await api.post(`/admin/reviews/${id}/response`, { message });
+  return await api.post(`/reviews/admin/${id}/response`, { message });
 };
 
 // Commission Settings
