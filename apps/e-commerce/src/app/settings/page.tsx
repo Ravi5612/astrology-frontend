@@ -66,10 +66,17 @@ export default function ShopProfileSettings() {
     return () => clearInterval(interval);
   }, [products.length, isPaused]);
   
-  // Local state for files to be uploaded
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Default to editing mode if profile doesn't exist yet
+  useEffect(() => {
+    if (exists === false) {
+      setIsEditing(true);
+    }
+  }, [exists]);
 
   // Real-time Preview State
   const [formData, setFormData] = useState({
@@ -172,7 +179,34 @@ export default function ShopProfileSettings() {
     if (selectedImage) data.append('image', selectedImage);
     if (selectedVideo) data.append('video', selectedVideo);
 
-    updateProfileMutation.mutate(data);
+    const res = await updateProfileMutation.mutateAsync(data);
+    if (res) {
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (profile) {
+      // Revert local state to saved profile data
+      setFormData({
+        storeName: profile.name || "",
+        managerName: profile.managerName || "",
+        phone: profile.phone || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        pincode: profile.pincode || "",
+        openTime: profile.operationalHours?.split(" - ")[0] || "10:00 AM",
+        closeTime: profile.operationalHours?.split(" - ")[1] || "08:30 PM",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        trustScore: profile.trustScore || ""
+      });
+      if (profile.image) setShopImagePreview(profile.image);
+      if (profile.video) setShopVideoPreview(profile.video);
+      setSelectedImage(null);
+      setSelectedVideo(null);
+    }
+    setIsEditing(false);
   };
 
   if (isProfileLoading) {
@@ -203,18 +237,38 @@ export default function ShopProfileSettings() {
               : "Set up your shop identity and location to start selling."}
           </p>
         </div>
-        <button 
-          onClick={handleSave}
-          disabled={updateProfileMutation.isPending}
-          className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {updateProfileMutation.isPending ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
+        <div className="flex items-center gap-3">
+          {!isEditing ? (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group"
+            >
+              <Camera className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <span>Edit Profile</span>
+            </button>
           ) : (
-            <Save className="w-5 h-5 group-hover:animate-pulse" />
+            <>
+              <button 
+                onClick={handleCancel}
+                className="px-6 py-3.5 text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSave}
+                disabled={updateProfileMutation.isPending}
+                className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {updateProfileMutation.isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Save className="w-5 h-5 group-hover:animate-pulse" />
+                )}
+                <span>{updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}</span>
+              </button>
+            </>
           )}
-          <span>{updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}</span>
-        </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -243,10 +297,12 @@ export default function ShopProfileSettings() {
                       </div>
                     )}
                   </div>
-                  <label className="absolute bottom-2 right-2 p-3 bg-[#fd6410] text-white rounded-xl cursor-pointer hover:bg-orange-600 transition-all shadow-lg group-hover:scale-105">
-                    <Camera className="w-5 h-5" />
-                    <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
-                  </label>
+                  {isEditing && (
+                    <label className="absolute bottom-2 right-2 p-3 bg-[#fd6410] text-white rounded-xl cursor-pointer hover:bg-orange-600 transition-all shadow-lg group-hover:scale-105">
+                      <Camera className="w-5 h-5" />
+                      <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
+                    </label>
+                  )}
                 </div>
               </div>
 
@@ -264,10 +320,12 @@ export default function ShopProfileSettings() {
                       </div>
                     )}
                   </div>
-                  <label className="absolute bottom-2 right-2 p-3 bg-[#fd6410] text-white rounded-xl cursor-pointer hover:bg-orange-600 transition-all shadow-lg group-hover:scale-105">
-                    <Video className="w-5 h-5" />
-                    <input type="file" className="hidden" onChange={handleVideoChange} accept="video/*" />
-                  </label>
+                  {isEditing && (
+                    <label className="absolute bottom-2 right-2 p-3 bg-[#fd6410] text-white rounded-xl cursor-pointer hover:bg-orange-600 transition-all shadow-lg group-hover:scale-105">
+                      <Video className="w-5 h-5" />
+                      <input type="file" className="hidden" onChange={handleVideoChange} accept="video/*" />
+                    </label>
+                  )}
                 </div>
               </div>
             </div>
@@ -284,8 +342,9 @@ export default function ShopProfileSettings() {
                     name="storeName"
                     value={formData.storeName}
                     onChange={handleInputChange}
+                    disabled={!isEditing}
                     type="text" 
-                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all disabled:text-gray-500 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -300,8 +359,9 @@ export default function ShopProfileSettings() {
                     name="managerName"
                     value={formData.managerName}
                     onChange={handleInputChange}
+                    disabled={!isEditing}
                     type="text" 
-                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all disabled:text-gray-500 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -316,8 +376,9 @@ export default function ShopProfileSettings() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
+                    disabled={!isEditing}
                     type="tel" 
-                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono disabled:text-gray-500 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -337,8 +398,9 @@ export default function ShopProfileSettings() {
                         placeholder="e.g. 10:00 AM"
                         value={formData.openTime}
                         onChange={handleInputChange}
+                        disabled={!isEditing}
                         type="text" 
-                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all disabled:bg-gray-50 disabled:text-gray-500"
                       />
                     </div>
                   </div>
@@ -351,8 +413,9 @@ export default function ShopProfileSettings() {
                         placeholder="e.g. 08:30 PM"
                         value={formData.closeTime}
                         onChange={handleInputChange}
+                        disabled={!isEditing}
                         type="text" 
-                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all disabled:bg-gray-50 disabled:text-gray-500"
                       />
                     </div>
                   </div>
@@ -370,8 +433,9 @@ export default function ShopProfileSettings() {
                     placeholder="e.g. 99.8"
                     value={formData.trustScore}
                     onChange={handleInputChange}
+                    disabled={!isEditing}
                     type="text" 
-                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                    className="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono disabled:text-gray-500 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -392,8 +456,9 @@ export default function ShopProfileSettings() {
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
+                  disabled={!isEditing}
                   rows={3} 
-                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all resize-none"
+                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all resize-none disabled:text-gray-500 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -403,8 +468,9 @@ export default function ShopProfileSettings() {
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
+                  disabled={!isEditing}
                   type="text" 
-                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all"
+                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all disabled:text-gray-500 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -414,8 +480,9 @@ export default function ShopProfileSettings() {
                   name="pincode"
                   value={formData.pincode}
                   onChange={handleInputChange}
+                  disabled={!isEditing}
                   type="text" 
-                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                  className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono disabled:text-gray-500 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -425,19 +492,21 @@ export default function ShopProfileSettings() {
                     <Navigation className="w-3 h-3 mr-1" />
                     GPS Coordinates
                   </label>
-                  <button
-                    type="button"
-                    onClick={handleDetectLocation}
-                    disabled={isDetecting}
-                    className="flex items-center text-[10px] font-bold bg-[#fd6410]/10 text-[#fd6410] px-3 py-1.5 rounded-full hover:bg-[#fd6410]/20 transition-all border border-[#fd6410]/20 disabled:opacity-50"
-                  >
-                    {isDetecting ? (
-                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    ) : (
-                      <Navigation className="w-3 h-3 mr-1" />
-                    )}
-                    {isDetecting ? "Detecting..." : "Detect My Location"}
-                  </button>
+                  {isEditing && (
+                    <button
+                      type="button"
+                      onClick={handleDetectLocation}
+                      disabled={isDetecting}
+                      className="flex items-center text-[10px] font-bold bg-[#fd6410]/10 text-[#fd6410] px-3 py-1.5 rounded-full hover:bg-[#fd6410]/20 transition-all border border-[#fd6410]/20 disabled:opacity-50"
+                    >
+                      {isDetecting ? (
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                      ) : (
+                        <Navigation className="w-3 h-3 mr-1" />
+                      )}
+                      {isDetecting ? "Detecting..." : "Detect My Location"}
+                    </button>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -448,8 +517,9 @@ export default function ShopProfileSettings() {
                       placeholder="e.g. 28.6139"
                       value={formData.latitude}
                       onChange={handleInputChange}
+                      disabled={!isEditing}
                       type="text" 
-                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono disabled:bg-gray-50 disabled:text-gray-500"
                     />
                   </div>
 
@@ -460,8 +530,9 @@ export default function ShopProfileSettings() {
                       placeholder="e.g. 77.2090"
                       value={formData.longitude}
                       onChange={handleInputChange}
+                      disabled={!isEditing}
                       type="text" 
-                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono"
+                      className="w-full px-5 py-4 bg-white border border-gray-200 rounded-[1.5rem] text-sm focus:outline-none focus:ring-2 focus:ring-[#fd6410]/20 focus:border-[#fd6410] transition-all font-mono disabled:bg-gray-50 disabled:text-gray-500"
                     />
                   </div>
                 </div>

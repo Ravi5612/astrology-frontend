@@ -9,7 +9,9 @@ export const settingsService = {
    */
   getProfile: async () => {
     const [response, error] = await api.get<any>('/merchant/profile');
-    return [response?.data || null, error];
+    // Backend returns { success, exists, data: {...} }
+    // We return the full response object so the hook can read .data and .exists
+    return [response || null, error];
   },
 
   /**
@@ -18,12 +20,12 @@ export const settingsService = {
    */
   updateProfile: async (formData: FormData) => {
     const [response, error] = await api.patch<any>('/merchant/profile', formData);
-    return [response?.data || null, error];
+    return [response || null, error];
   },
 
   updateOnlineStatus: async (isOnline: boolean) => {
     const [response, error] = await api.patch<any>('/merchant/profile', { isOnline });
-    return [response?.data || null, error];
+    return [response || null, error];
   },
 
 };
