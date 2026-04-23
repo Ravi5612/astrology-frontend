@@ -10,7 +10,7 @@ import { createSafeFetchInstance, ApiError } from '@repo/safe-fetch';
 const baseApi = createSafeFetchInstance({
   baseUrl: 'http://localhost:6543/api/v1',
   credentials: 'include',
-  timeoutMs: 15_000,
+  timeoutMs: 120_000, // Increased to 120s for media uploads
 });
 
 // Prevent infinite refresh loops
