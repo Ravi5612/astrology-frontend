@@ -31,7 +31,7 @@ export default function ClientLayout({
   return (
     <div className="flex flex-col min-h-screen">
       {mounted && <ToastProvider />}
-      {mounted && !isAdminRoute && !isChatRoom && (
+      {!isAdminRoute && !isChatRoom && (
         <Header
           authState={isClientAuthenticated}
           userData={clientUser}
@@ -42,7 +42,7 @@ export default function ClientLayout({
       )}
       <main suppressHydrationWarning className="flex-1">{children}</main>
       {mounted && !isAdminRoute && !isChatRoom && <FloatingChatButton />}
-      {mounted && !isAdminRoute && !isChatRoom && <Footer />}
+      {!isAdminRoute && !isChatRoom && <Footer />}
     </div>
   );
 }

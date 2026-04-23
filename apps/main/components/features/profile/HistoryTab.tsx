@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface HistoryTabProps {
     loadingHistory: boolean;
@@ -43,13 +44,28 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
       </div>
       <div className="p-6 md:p-8">
         {loadingHistory ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="relative w-12 h-12 mb-4">
-              <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
-            </div>
-            <p className="text-gray-400 font-medium" style={fontStyle}>
-              {t.loading}
-            </p>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border border-gray-100 rounded-3xl p-6 bg-white shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex gap-8">
+                    <div className="space-y-2">
+                      <Skeleton width={60} height={12} />
+                      <Skeleton width={80} height={20} />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton width={60} height={12} />
+                      <Skeleton width={100} height={20} />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton width={60} height={12} />
+                      <Skeleton width={70} height={20} />
+                    </div>
+                  </div>
+                  <Skeleton width={100} height={32} className="rounded-full" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : consultationHistory.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">

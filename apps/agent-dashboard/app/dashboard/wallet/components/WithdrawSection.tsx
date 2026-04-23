@@ -77,9 +77,9 @@ export const WithdrawSection: React.FC<WithdrawSectionProps> = ({
                     <Button
                         type="submit"
                         disabled={loading || !amount || parseFloat(amount) < 500 || parseFloat(amount) > balance || !hasBankDetails}
-                        className="rounded-2xl bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-xl shadow-orange-500/20 px-12 py-7 h-auto text-white font-black uppercase tracking-widest text-sm transition-all active:scale-95 disabled:grayscale"
+                        className="rounded-[1.5rem] bg-[#F25E0A] hover:bg-[#d45209] text-white font-black uppercase tracking-widest text-[12px] px-10 py-5 h-auto transition-all duration-300 shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:grayscale active:scale-95 border-none"
                     >
-                        {loading ? "Processing..." : "Withdraw Now →"}
+                        {loading ? "Processing..." : "Withdraw Now"}
                     </Button>
 
                     <div className="flex items-center gap-2.5 px-5 py-3.5 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-600">

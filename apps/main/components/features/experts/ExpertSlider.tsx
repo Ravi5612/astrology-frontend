@@ -44,44 +44,18 @@ const ExpertSlider: React.FC<ExpertSliderProps> = ({
         }}
         className="astro-swiper !py-4"
       >
-        {experts.length > 0 ? (
+        {experts.length === 0 ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <SwiperSlide key={`skeleton-${i}`}>
+              <SkeletonCard />
+            </SwiperSlide>
+          ))
+        ) : (
           experts.map((item) => (
             <SwiperSlide key={item.id}>
               <ExpertCard expertData={item} cardClassName="h-full" />
             </SwiperSlide>
           ))
-        ) : !loading && initialError ? (
-          <div className="w-full text-center py-10 flex flex-col items-center justify-center">
-            <p className="text-red-500 font-semibold mb-2 text-white">
-              {lang === "hi"
-                ? "ज्योतिषियों को लोड करने में विफल"
-                : "Failed to load experts"}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-primary text-white rounded-full text-sm"
-            >
-              {lang === "hi" ? "पुन: प्रयास करें" : "Retry"}
-            </button>
-          </div>
-        ) : !loading && experts.length === 0 ? (
-          <div className="w-full text-center py-10">
-            <p className="text-gray-500 font-medium">No results found.</p>
-          </div>
-        ) : (
-          Array.from({ length: 4 }).map((_, i) => (
-            <SwiperSlide key={i}>
-              <SkeletonCard />
-            </SwiperSlide>
-          ))
-        )}
-
-        {loading && experts.length > 0 && (
-          <SwiperSlide className="flex items-center justify-center">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </SwiperSlide>
         )}
       </Swiper>
 

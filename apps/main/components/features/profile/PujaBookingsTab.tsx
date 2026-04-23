@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "../../../lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface PujaBookingsTabProps {
   loading: boolean;
@@ -85,9 +86,31 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="w-12 h-12 border-4 border-orange/10 border-t-orange animate-spin rounded-full mb-4"></div>
-        <p className="text-gray-500 font-medium tracking-wide" style={fontStyle}>{t.pujas.loading}</p>
+      <div className="space-y-6">
+        {[1, 2].map((i) => (
+          <div key={i} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex flex-col items-center">
+                <Skeleton width={96} height={96} variant="circular" />
+                <Skeleton width={80} height={16} className="mt-4" />
+                <Skeleton width={60} height={12} className="mt-1" />
+              </div>
+              <div className="flex-1 space-y-4">
+                <div className="flex justify-between">
+                  <div className="space-y-2">
+                    <Skeleton width={200} height={24} />
+                    <Skeleton width={100} height={16} />
+                  </div>
+                  <Skeleton width={80} height={32} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton width="100%" height={50} className="rounded-2xl" />
+                  <Skeleton width="100%" height={50} className="rounded-2xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

@@ -71,7 +71,9 @@ export const useExpertListLogic = (
   const searchParams = useSearchParams();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const [experts, setExperts] = useState<ClientExpertProfile[]>([]);
+  const [experts, setExperts] = useState<ClientExpertProfile[]>(() => 
+    initialExperts ? initialExperts.map(mapExpert) : []
+  );
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -137,6 +139,7 @@ export const useExpertListLogic = (
     }
     if (initialExperts && offset === 0) {
       setExperts(initialExperts.map(mapExpert));
+      setLoading(false); // Done loading initial data
       if (initialExperts.length < limit) setHasMore(false);
       else if (initialPagination) setHasMore(initialPagination.hasMore);
     }
@@ -168,6 +171,8 @@ export const useExpertListLogic = (
       else nextParams.set(key, String(value));
     });
     if (nextParams.toString() !== searchParams.toString()) {
+      setLoading(true);
+      setExperts([]); // Clear list to show skeletons
       router.replace(`${window.location.pathname}?${nextParams.toString()}`, { scroll: false });
       setOffset(0);
     }

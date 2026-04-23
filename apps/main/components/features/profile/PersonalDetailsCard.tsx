@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@repo/ui";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface PersonalDetailsCardProps {
   lang: string;
@@ -14,6 +15,7 @@ interface PersonalDetailsCardProps {
   handleInputChange: (key: string, value: any) => void;
   handleSave: () => void;
   setShowPhoneVerify: (val: boolean) => void;
+  loading?: boolean;
 }
 
 const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
@@ -27,6 +29,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
   handleInputChange,
   handleSave,
   setShowPhoneVerify,
+  loading = false,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -55,7 +58,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
           </span>
           {t.personalDetails.title}
         </h5>
-        {!editing ? (
+        {!loading && !editing && (
           <Button
             variant="primary"
             size="md"
@@ -69,7 +72,8 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
             <i className="fa-solid fa-pen-to-square mr-2"></i>
             {t.personalDetails.edit}
           </Button>
-        ) : (
+        )}
+        {editing && (
           <div className="flex gap-3">
             <Button
               variant="secondary"
@@ -102,6 +106,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
             </Button>
           </div>
         )}
+        {loading && <Skeleton width={100} height={40} />}
       </div>
       <div className="p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -118,253 +123,139 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
               {t.personalDetails.userId}
             </label>
             <div className="flex items-center gap-3">
-              <span
-                className="font-bold px-4 py-1.5 rounded-full text-xs"
-                style={{
-                  backgroundColor: "rgba(255,107,0,0.1)",
-                  color: "#FF6B00",
-                  letterSpacing: "0.05em",
-                  fontFamily: "monospace",
-                }}
-              >
-                {displayUid || t.personalDetails.notAssigned}
-              </span>
-              {displayUid && (
-                <button
-                  type="button"
-                  title={
-                    copied ? t.personalDetails.copied : t.personalDetails.copyId
-                  }
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-semibold transition-all duration-200 ${
-                    copied
-                      ? "bg-green-100 text-green-700 border-green-200"
-                      : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200"
-                  } border`}
-                  onClick={handleCopy}
-                >
-                  <i
-                    className={`fa-${copied ? "solid fa-check" : "regular fa-copy"}`}
-                  ></i>
-                  {copied && (
-                    <span
-                      style={{
-                        fontFamily:
-                          lang === "hi"
-                            ? "'Noto Sans Devanagari', sans-serif"
-                            : "inherit",
-                      }}
+              {loading ? (
+                <Skeleton width={120} height={24} className="rounded-full" />
+              ) : (
+                <>
+                  <span
+                    className="font-bold px-4 py-1.5 rounded-full text-xs"
+                    style={{
+                      backgroundColor: "rgba(255,107,0,0.1)",
+                      color: "#FF6B00",
+                      letterSpacing: "0.05em",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {displayUid || t.personalDetails.notAssigned}
+                  </span>
+                  {displayUid && (
+                    <button
+                      type="button"
+                      title={
+                        copied ? t.personalDetails.copied : t.personalDetails.copyId
+                      }
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-semibold transition-all duration-200 ${
+                        copied
+                          ? "bg-green-100 text-green-700 border-green-200"
+                          : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200"
+                      } border`}
+                      onClick={handleCopy}
                     >
-                      {t.personalDetails.copied}
-                    </span>
+                      <i
+                        className={`fa-${copied ? "solid fa-check" : "regular fa-copy"}`}
+                      ></i>
+                      {copied && (
+                        <span
+                          style={{
+                            fontFamily:
+                              lang === "hi"
+                                ? "'Noto Sans Devanagari', sans-serif"
+                                : "inherit",
+                          }}
+                        >
+                          {t.personalDetails.copied}
+                        </span>
+                      )}
+                    </button>
                   )}
-                </button>
+                </>
               )}
             </div>
           </div>
 
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.fullName}
-            </label>
-            {editing ? (
-              <input
-                type="text"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.full_name || ""}
-                onChange={(e) => handleInputChange("full_name", e.target.value)}
-              />
-            ) : (
-              <p
-                className="font-bold text-gray-900 m-0"
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                {profileData.full_name || clientUser?.name || t.personalDetails.notSet}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.userName}
-            </label>
-            {editing ? (
-              <input
-                type="text"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.username || ""}
-                onChange={(e) => handleInputChange("username", e.target.value)}
-              />
-            ) : (
-              <p
-                className="font-bold text-gray-900 m-0"
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                {profileData.username || t.personalDetails.notSet}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.email}
-            </label>
-            <p
-              className="font-bold text-gray-900 m-0"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {clientUser?.email || t.personalDetails.notSet}
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-3 mb-1.5">
+          {[
+            { label: t.personalDetails.fullName, value: profileData.full_name || clientUser?.name, key: "full_name" },
+            { label: t.personalDetails.userName, value: profileData.username, key: "username" },
+            { label: t.personalDetails.email, value: clientUser?.email, key: "email", noEdit: true },
+            { label: t.personalDetails.phone, value: profileData.phone, key: "phone", isPhone: true },
+            { label: t.personalDetails.gender, value: profileData.gender, key: "gender", isSelect: true },
+            { label: t.personalDetails.maritalStatus, value: profileData.marital_status, key: "marital_status", isSelect: true },
+            { label: t.personalDetails.occupation, value: profileData.occupation, key: "occupation" },
+          ].map((field, idx) => (
+            <div key={idx}>
               <label
-                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 m-0"
+                className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
                 style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
               >
-                {t.personalDetails.phone}
+                {field.label}
               </label>
-              {profileData.phone &&
-                (profileData.phone_verified_at ? (
-                  <span
-                    className="flex items-center gap-1 px-2 py-0.5 rounded bg-green-50 text-green-600 text-[9px] font-bold"
+              {loading ? (
+                <Skeleton width="100%" height={24} />
+              ) : editing && !field.noEdit ? (
+                field.isSelect ? (
+                  <select
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
+                    value={field.value || ""}
+                    onChange={(e) => handleInputChange(field.key, e.target.value)}
                     style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
                   >
-                    <i className="fa-solid fa-circle-check"></i> {t.personalDetails.verified}
-                  </span>
+                    {field.key === "gender" ? (
+                      <>
+                        <option value="male">{t.personalDetails.genders.male}</option>
+                        <option value="female">{t.personalDetails.genders.female}</option>
+                        <option value="other">{t.personalDetails.genders.other}</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="">{t.personalDetails.maritalStatuses.select}</option>
+                        <option value="single">{t.personalDetails.maritalStatuses.single}</option>
+                        <option value="married">{t.personalDetails.maritalStatuses.married}</option>
+                        <option value="divorced">{t.personalDetails.maritalStatuses.divorced}</option>
+                        <option value="widowed">{t.personalDetails.maritalStatuses.widowed}</option>
+                        <option value="other">{t.personalDetails.maritalStatuses.other}</option>
+                      </>
+                    )}
+                  </select>
                 ) : (
-                  <span
-                    className="flex items-center gap-1 px-2 py-0.5 rounded bg-red-50 text-red-600 text-[9px] font-bold"
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
+                    value={field.value || ""}
+                    onChange={(e) => handleInputChange(field.key, e.target.value)}
+                  />
+                )
+              ) : (
+                <div className="flex items-center gap-3">
+                  <p
+                    className="font-bold text-gray-900 m-0 capitalize"
                     style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
                   >
-                    <i className="fa-solid fa-circle-xmark"></i> {t.personalDetails.unverified}
-                  </span>
-                ))}
+                    {field.isSelect 
+                      ? (field.value ? (field.key === "gender" ? t.personalDetails.genders[field.value] : t.personalDetails.maritalStatuses[field.value]) : t.personalDetails.notSet)
+                      : (field.value || t.personalDetails.notSet)}
+                  </p>
+                  {field.isPhone && field.value && !profileData.phone_verified_at && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPhoneVerify(true)}
+                      className="px-3 py-1 bg-orange text-white text-[10px] font-bold rounded-lg shadow-sm hover:bg-orange/90 transition-all border-0"
+                      style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
+                    >
+                      {t.personalDetails.verifyNow}
+                    </button>
+                  )}
+                  {field.isPhone && field.value && profileData.phone_verified_at && (
+                    <span
+                      className="flex items-center gap-1 px-2 py-0.5 rounded bg-green-50 text-green-600 text-[9px] font-bold"
+                      style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
+                    >
+                      <i className="fa-solid fa-circle-check"></i> {t.personalDetails.verified}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
-            {editing ? (
-              <input
-                type="text"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.phone || ""}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-              />
-            ) : (
-              <div className="flex items-center gap-3">
-                <p className="font-bold text-gray-900 m-0">
-                  {profileData.phone || t.personalDetails.notSet}
-                </p>
-                {profileData.phone && !profileData.phone_verified_at && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPhoneVerify(true)}
-                    className="px-3 py-1 bg-orange text-white text-[10px] font-bold rounded-lg shadow-sm hover:bg-orange/90 transition-all border-0"
-                    style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-                  >
-                    {t.personalDetails.verifyNow}
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.gender}
-            </label>
-            {editing ? (
-              <select
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.gender || ""}
-                onChange={(e) => handleInputChange("gender", e.target.value as any)}
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                <option value="male">{t.personalDetails.genders.male}</option>
-                <option value="female">{t.personalDetails.genders.female}</option>
-                <option value="other">{t.personalDetails.genders.other}</option>
-              </select>
-            ) : (
-              <p
-                className="font-bold text-gray-900 m-0 capitalize"
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                {profileData.gender
-                  ? t.personalDetails.genders[
-                      profileData.gender as keyof typeof t.personalDetails.genders
-                    ]
-                  : t.personalDetails.notSet}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.maritalStatus}
-            </label>
-            {editing ? (
-              <select
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.marital_status || ""}
-                onChange={(e) => handleInputChange("marital_status", e.target.value)}
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                <option value="">{t.personalDetails.maritalStatuses.select}</option>
-                <option value="single">{t.personalDetails.maritalStatuses.single}</option>
-                <option value="married">{t.personalDetails.maritalStatuses.married}</option>
-                <option value="divorced">{t.personalDetails.maritalStatuses.divorced}</option>
-                <option value="widowed">{t.personalDetails.maritalStatuses.widowed}</option>
-                <option value="other">{t.personalDetails.maritalStatuses.other}</option>
-              </select>
-            ) : (
-              <p
-                className="font-bold text-gray-900 m-0 capitalize"
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                {profileData.marital_status
-                  ? t.personalDetails.maritalStatuses[
-                      profileData.marital_status as keyof typeof t.personalDetails.maritalStatuses
-                    ]
-                  : t.personalDetails.notSet}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5"
-              style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-            >
-              {t.personalDetails.occupation}
-            </label>
-            {editing ? (
-              <input
-                type="text"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
-                value={profileData.occupation || ""}
-                onChange={(e) => handleInputChange("occupation", e.target.value)}
-                placeholder={t.personalDetails.occupationPlaceholder}
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              />
-            ) : (
-              <p
-                className="font-bold text-gray-900 m-0"
-                style={lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {}}
-              >
-                {profileData.occupation || t.personalDetails.notSet}
-              </p>
-            )}
-          </div>
+          ))}
 
           <div className="md:col-span-2">
             <label
@@ -373,7 +264,9 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
             >
               {t.personalDetails.aboutMe}
             </label>
-            {editing ? (
+            {loading ? (
+              <Skeleton width="100%" height={80} />
+            ) : editing ? (
               <textarea
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-900 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all resize-none"
                 rows={3}

@@ -2,6 +2,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface RewardsTabProps {
     notifications?: any[]; // It was in the code, but maybe not used in this tab. The file name is RewardsTab.
@@ -32,13 +33,20 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
       </div>
       <div className="p-6 md:p-8 pt-6">
         {loadingRewards ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="relative w-12 h-12 mb-4">
-              <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
-            </div>
-            <p className="text-gray-400 font-medium" style={fontStyle}>
-              {t.loading}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="border-2 border-dashed border-gray-100 rounded-3xl p-6 bg-white space-y-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton width={56} height={56} className="rounded-2xl" />
+                  <div className="space-y-2">
+                    <Skeleton width={120} height={20} />
+                    <Skeleton width={80} height={16} />
+                  </div>
+                </div>
+                <Skeleton width="100%" height={32} className="rounded-2xl" />
+                <Skeleton width="100%" height={40} className="rounded-2xl" />
+              </div>
+            ))}
           </div>
         ) : rewards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">

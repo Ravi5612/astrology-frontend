@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { api as http } from "@/lib/api";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface ExpertUser {
     name: string;
@@ -74,11 +75,22 @@ const TopExpertsSection: React.FC = () => {
                 Top Rated Experts
             </h3>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {expertsLoading ? (
-                    <div className="col-span-full flex justify-center py-12">
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange"></div>
-                    </div>
-                ) : topExperts.length > 0 ? (
+                {expertsLoading || topExperts.length === 0 ? (
+                    [1, 2, 3].map((_, idx) => (
+                        <div className="w-full" key={idx}>
+                            <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center animate-pulse">
+                                <div className="relative inline-block mb-3">
+                                    <Skeleton variant="circular" width={80} height={80} className="border-2 border-orange/20 p-1" />
+                                </div>
+                                <div className="flex flex-col items-center gap-2 mb-2">
+                                    <Skeleton width="70%" height={16} className="rounded-md" />
+                                    <Skeleton width={40} height={12} className="rounded-full" />
+                                </div>
+                                <Skeleton width="50%" height={10} className="rounded-md mx-auto" />
+                            </div>
+                        </div>
+                    ))
+                ) : (
                     topExperts.map((expert, idx) => (
                         <div className="group" key={expert.id || idx}>
                             <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center hover:border-orange/20 hover:shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300">
@@ -104,16 +116,6 @@ const TopExpertsSection: React.FC = () => {
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate block opacity-70">
                                     {expert.specialization || "Astrology"}
                                 </span>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    [1, 2, 3].map((_, idx) => (
-                        <div className="opacity-50" key={idx}>
-                            <div className="bg-white rounded-3xl border-2 border-gray-50 p-4 text-center">
-                                <div className="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-3 animate-pulse"></div>
-                                <div className="h-4 bg-gray-50 rounded w-2/3 mx-auto mb-2 animate-pulse"></div>
-                                <div className="h-3 bg-gray-50 rounded w-1/2 mx-auto animate-pulse"></div>
                             </div>
                         </div>
                     ))

@@ -1,6 +1,7 @@
 import React from "react";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface NotificationsTabProps {
     loadingNotifications: boolean;
@@ -44,13 +45,19 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
       </div>
       <div className="p-6 md:p-8">
         {loadingNotifications ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="relative w-12 h-12 mb-4">
-              <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
-            </div>
-            <p className="text-gray-400 font-medium" style={fontStyle}>
-              {t.loading}
-            </p>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="p-5 rounded-2xl border border-gray-100 bg-white">
+                <div className="flex gap-4">
+                  <Skeleton width={48} height={48} className="rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton width={150} height={18} />
+                    <Skeleton width="100%" height={14} />
+                    <Skeleton width={100} height={12} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">

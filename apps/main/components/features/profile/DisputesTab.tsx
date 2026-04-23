@@ -1,6 +1,7 @@
 import React from "react";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface DisputesTabProps {
     disputes: any[];
@@ -15,13 +16,31 @@ const DisputesTab: React.FC<DisputesTabProps> = ({ disputes, loading, onViewChat
 
   if (loading) {
     return (
-      <div className="bg-white border-0 shadow-premium rounded-2xl p-20 text-center flex flex-col items-center justify-center">
-        <div className="relative w-12 h-12 mb-4">
-          <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
+      <div className="bg-white border-0 shadow-premium rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 bg-white border-b border-gray-100 flex justify-between items-center">
+            <Skeleton width={150} height={24} />
         </div>
-        <p className="text-gray-400 font-medium" style={fontStyle}>
-          {t.loading}
-        </p>
+        <div className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50/50">
+                   {[1, 2, 3, 4].map(i => <th key={i} className="px-6 py-4"><Skeleton width={60} height={12} /></th>)}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {[1, 2, 3].map(i => (
+                  <tr key={i}>
+                    <td className="px-6 py-5"><Skeleton width={80} height={20} className="mb-1" /><Skeleton width={100} height={12} /></td>
+                    <td className="px-6 py-5"><Skeleton width={100} height={16} className="mb-2" /><Skeleton width={200} height={14} /></td>
+                    <td className="px-6 py-5"><Skeleton width={80} height={24} className="rounded-full" /></td>
+                    <td className="px-6 py-5 text-right"><Skeleton width={100} height={40} className="ml-auto rounded-xl" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }

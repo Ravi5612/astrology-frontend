@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
-import { SkeletonCard } from "../../features/experts/SkeletonCard";
+import { ExpertGridSkeleton, SkeletonCard } from "../../features/experts/SkeletonCard";
 import ExpertCard from "@/components/features/experts/ExpertCard";
 
 import { useLanguageStore } from "../../../store/languageStore";
@@ -140,6 +140,7 @@ const OurExpert = () => {
 
     useEffect(() => {
         setOffset(0);
+        setExperts([]); // Clear list to show skeletons during filter/search change
         fetchExperts(0);
     }, [debouncedSearch, selectedSpecialization, sortOption, filterState, fetchExperts]);
 
@@ -423,10 +424,8 @@ const OurExpert = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mt-4">
-                    {loading && experts.length === 0 ? (
-                        Array.from({ length: 8 }).map((_, i) => (
-                            <SkeletonCard key={i} />
-                        ))
+                    {experts.length === 0 ? (
+                        <ExpertGridSkeleton count={4} />
                     ) : (
                         experts.map((item) => (
                             <ExpertCard key={item.id} expertData={item} />
@@ -435,19 +434,10 @@ const OurExpert = () => {
                 </div>
 
                 {loading && experts.length > 0 && (
-                    <div className="text-center my-4">
-                        <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div>
-                    </div>
-                )}
-
-                {!loading && experts.length === 0 && (
-                    <div className="text-center my-10 py-10 bg-orange-50 rounded-2xl border border-dashed border-primary/20">
-                        <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                            <i className="fa-solid fa-magnifying-glass fa-2x text-primary/30"></i>
-                        </div>
-                        <h4 className="text-[#13070b] font-bold">{t.expertSection.noResults.title}</h4>
-                        <p className="text-gray-500 mb-4">{t.expertSection.noResults.desc}</p>
-                        <button onClick={() => { setSearchQuery(""); setSelectedSpecialization(""); resetFilters(); setSortOption("newest"); }} className="btn bg-primary text-white px-4 py-2 font-semibold rounded-lg shadow-md hover:opacity-90 transition">{t.expertSection.noResults.resetBtn}</button>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mt-8">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonCard key={`more-${i}`} />
+                        ))}
                     </div>
                 )}
 

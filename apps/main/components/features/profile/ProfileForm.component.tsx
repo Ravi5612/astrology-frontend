@@ -37,6 +37,7 @@ interface ProfileFormProps {
     section: "personal" | "address" | "astro" | "settings",
   ) => void;
   refreshProfile?: () => Promise<void>;
+  loading?: boolean;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
@@ -49,6 +50,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   handleAddressChange,
   handleSaveSection,
   refreshProfile,
+  loading = false,
 }) => {
   const { lang } = useLanguageStore();
   const t =
@@ -72,6 +74,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         handleInputChange={handleInputChange}
         handleSave={() => handleSaveSection("personal")}
         setShowPhoneVerify={setShowPhoneVerify}
+        loading={loading}
       />
 
       <AddressDetailsCard
@@ -85,6 +88,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         }
         handleAddressChange={handleAddressChange}
         handleSave={() => handleSaveSection("address")}
+        loading={loading}
       />
 
       <AstroDetailsCard
@@ -98,6 +102,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         }
         handleInputChange={handleInputChange}
         handleSave={() => handleSaveSection("astro")}
+        loading={loading}
       />
 
       <PhoneVerifyModal

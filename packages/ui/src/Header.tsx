@@ -89,6 +89,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMobileSubMenu, setShowMobileSubMenu] = useState(false);
@@ -158,6 +159,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   // API functions for notifications
   const fetchNotifications = useCallback(async () => {
     try {
+      setLoadingNotifications(true);
       const [res, error] = await api.get('/notifications');
       if (error) throw error;
       const payload = unwrapResponse(res);
@@ -165,6 +167,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
       setNotifications(rawList.map(normalizeNotification));
     } catch (err) {
       console.error('Failed to fetch notifications', err);
+    } finally {
+      setLoadingNotifications(false);
     }
   }, []);
 
@@ -465,7 +469,21 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               )}
                             </div>
                             <div data-lenis-prevent className="overflow-y-auto overscroll-contain" style={{ maxHeight: '400px' }}>
-                              {notifications.length === 0 ? (
+                              {loadingNotifications ? (
+                                <div className="divide-y divide-gray-100">
+                                  {[1, 2, 3].map((i) => (
+                                    <div key={i} className="px-4 py-4 animate-pulse">
+                                      <div className="flex justify-between mb-2">
+                                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                                        <div className="h-2 bg-gray-100 rounded w-4"></div>
+                                      </div>
+                                      <div className="h-3 bg-gray-100 rounded w-full mb-1"></div>
+                                      <div className="h-3 bg-gray-100 rounded w-3/4"></div>
+                                      <div className="h-2 bg-orange-50 rounded w-1/4 mt-3"></div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
                                   <div className="w-16 h-16 bg-orange/5 rounded-full flex items-center justify-center mb-4 border border-orange/10 shadow-inner">
                                     <i className="fa-solid fa-bell-slash text-2xl text-orange/60"></i>
@@ -890,74 +908,96 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
         </div>
       </header>
 
-      {
-        isClient && (
-          <header className="bg-orange shadow-[0_4px_15px_rgba(0,0,0,0.1)] z-10 relative">
-            <div className="max-w-[1320px] mx-auto px-2 lg:px-4 py-[5px]">
-              <div className="flex items-center gap-2">
-                <div className="custom-swiper-prev flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
-                  <i className="fa-solid fa-chevron-left text-xs" />
-                </div>
-                <div className="flex-1 overflow-hidden">
-              <Swiper
-                modules={[Navigation, Autoplay]}
-                navigation={{
-                  prevEl: '.custom-swiper-prev',
-                  nextEl: '.custom-swiper-next',
-                }}
-                spaceBetween={25}
-                slidesPerView={1}
-                grabCursor={true}
-                loop={SERVICES_DATA_KEYS.length > 5}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: false,
-                }}
-                breakpoints={{
-                  640: { slidesPerView: 3 },
-                  768: { slidesPerView: 4 },
-                  1024: { slidesPerView: 5 },
-                }}
-                className="w-full relative"
-              >
-
-                {SERVICES_DATA_KEYS.map((service) => (
-                  <SwiperSlide key={service.id}>
-                    <div className="flex justify-center w-full p-[5px]">
-                      <a
-                        href={service.href}
-                        onClick={(e) => {
-                          if (service.isInternal && (service.href as any) !== "#") {
-                            e.preventDefault();
-                            router.push(service.href);
-                          }
-                        }}
-                        className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] transition-all duration-300 hover:bg-[#4a1923] hover:border-white hover:-translate-y-0.5 hover:shadow-lg no-underline cursor-pointer"
-                      >
-                        <NextImage
-                          src={`/${service.icon}`}
-                          className="w-[30px] mr-1 flex-shrink-0"
-                          alt={(t as any)[service.key] || service.key}
-                          width={40}
-                          height={40}
-                        />
-                        <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">
-                          {(t as any)[service.key] || service.key}
-                        </span>
-                      </a>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-                </div>
-                <div className="custom-swiper-next flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
-                  <i className="fa-solid fa-chevron-right text-xs" />
-                </div>
-              </div>
+      <header className="bg-orange shadow-[0_4px_15px_rgba(0,0,0,0.1)] z-10 relative">
+        <div className="max-w-[1320px] mx-auto px-2 lg:px-4 py-[5px]">
+          <div className="flex items-center gap-2">
+            <div className="custom-swiper-prev flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
+              <i className="fa-solid fa-chevron-left text-xs" />
             </div>
-          </header>
-        )
-      }
+            
+            <div className="flex-1 overflow-hidden">
+              {!isClient ? (
+                /* Static fallback for SSR to prevent layout shift */
+                <div className="flex items-center gap-[25px] overflow-hidden">
+                  {SERVICES_DATA_KEYS.slice(0, 5).map((service) => (
+                    <div key={service.id} className="flex-1 min-w-0" style={{ flexBasis: '20%' }}>
+                      <div className="flex justify-center w-full p-[5px]">
+                        <div className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] opacity-80">
+                          <NextImage
+                            src={`/${service.icon}`}
+                            className="w-[30px] mr-1 flex-shrink-0"
+                            alt={(t as any)[service.key] || service.key}
+                            width={40}
+                            height={40}
+                          />
+                          <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">
+                            {(t as any)[service.key] || service.key}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Full Swiper for Client */
+                <Swiper
+                  modules={[Navigation, Autoplay]}
+                  navigation={{
+                    prevEl: '.custom-swiper-prev',
+                    nextEl: '.custom-swiper-next',
+                  }}
+                  spaceBetween={25}
+                  slidesPerView={1}
+                  grabCursor={true}
+                  loop={SERVICES_DATA_KEYS.length > 5}
+                  autoplay={{
+                    delay: 3000,
+                    disableOnInteraction: false,
+                  }}
+                  breakpoints={{
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                  }}
+                  className="w-full relative"
+                >
+                  {SERVICES_DATA_KEYS.map((service) => (
+                    <SwiperSlide key={service.id}>
+                      <div className="flex justify-center w-full p-[5px]">
+                        <a
+                          href={service.href}
+                          onClick={(e) => {
+                            if (service.isInternal && (service.href as any) !== "#") {
+                              e.preventDefault();
+                              router.push(service.href);
+                            }
+                          }}
+                          className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] transition-all duration-300 hover:bg-[#4a1923] hover:border-white hover:-translate-y-0.5 hover:shadow-lg no-underline cursor-pointer"
+                        >
+                          <NextImage
+                            src={`/${service.icon}`}
+                            className="w-[30px] mr-1 flex-shrink-0"
+                            alt={(t as any)[service.key] || service.key}
+                            width={40}
+                            height={40}
+                          />
+                          <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">
+                            {(t as any)[service.key] || service.key}
+                          </span>
+                        </a>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              )}
+            </div>
+
+            <div className="custom-swiper-next flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#ce4c04] cursor-pointer transition-all duration-300 shadow-md hover:bg-[#301118] hover:text-white hover:scale-110">
+              <i className="fa-solid fa-chevron-right text-xs" />
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Profile Image Preview Modal */}
       {showImageModal && (

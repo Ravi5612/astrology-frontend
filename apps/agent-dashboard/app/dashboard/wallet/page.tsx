@@ -5,7 +5,7 @@ import { getAgentWalletBalance, getAgentWithdrawals, requestAgentWithdrawal, get
 import { useAgentAuthStore } from "@/src/store/useAgentAuthStore";
 
 // Components
-import { ProfileSkeleton } from "../../components/Skeleton";
+import { WalletSkeleton } from "../../components/Skeleton";
 import { Wallet, Landmark, Clock } from "lucide-react";
 import { StatCard } from "./components/StatCard";
 import { WithdrawSection } from "./components/WithdrawSection";
@@ -74,8 +74,10 @@ export default function WalletPage() {
     };
 
     if (loading) return (
-        <div className="max-w-7xl mx-auto p-10">
-            <ProfileSkeleton />
+        <div className="min-h-screen bg-[#FDFCFB] p-4 md:p-10 lg:p-12">
+            <div className="max-w-7xl mx-auto">
+                <WalletSkeleton />
+            </div>
         </div>
     );
 

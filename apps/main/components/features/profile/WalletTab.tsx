@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@repo/ui";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface WalletTabProps {
     walletBalance: number;
@@ -352,18 +353,15 @@ const WalletTab: React.FC<WalletTabProps> = ({
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {loadingTransactions ? (
-                      <tr>
-                        <td colSpan={5} className="px-8 py-20 text-center">
-                          <div className="flex flex-col items-center justify-center">
-                            <div className="relative w-12 h-12 mb-4">
-                              <div className="absolute inset-0 rounded-full border-4 border-orange/10 border-t-orange animate-spin"></div>
-                            </div>
-                            <p className="text-gray-400 font-medium text-sm" style={fontStyle}>
-                              {t.loadingTransactions}
-                            </p>
-                          </div>
-                        </td>
-                      </tr>
+                      [1, 2, 3, 4, 5].map((i) => (
+                        <tr key={i} className="border-b border-gray-50">
+                          <td className="px-8 py-6"><Skeleton width={80} height={16} /></td>
+                          <td className="px-8 py-6"><Skeleton width={150} height={16} /></td>
+                          <td className="px-8 py-6 text-center"><Skeleton width={60} height={20} className="mx-auto rounded-full" /></td>
+                          <td className="px-8 py-6 text-right"><Skeleton width={60} height={16} className="ml-auto" /></td>
+                          <td className="px-8 py-6 text-right"><Skeleton width={70} height={20} className="ml-auto rounded-lg" /></td>
+                        </tr>
+                      ))
                     ) : !Array.isArray(transactions) || transactions.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="px-8 py-20 text-center">

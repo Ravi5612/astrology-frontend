@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import ExpertList from "./ExpertList";
 import { getExperts } from "@/libs/api-experts";
+import { ExpertGridSkeleton } from "./SkeletonCard";
 
 import { ExpertListWrapperProps } from "@/lib/types";
 
@@ -40,24 +41,24 @@ async function ExpertListServer({ searchParams, layout, title }: ExpertListWrapp
 
 function LoadingSkeleton() {
     return (
-        <section className="expert-list back-img">
-            <div className="container">
-                <h2 className="title-line color-light">
-                    <span>Find Your Expert</span>
-                </h2>
-                <div className="flex overflow-x-auto gap-4 py-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div className="skeleton-card min-w-[300px]" key={i}>
-                            <div className="vid-part">
-                                <div className="skeleton skeleton-circle" style={{ width: '120px', height: '120px' }}></div>
-                            </div>
-                            <div className="skeleton skeleton-text" style={{ width: '60%', marginTop: '15px' }}></div>
-                            <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
-                            <div className="skeleton skeleton-text" style={{ width: '40%' }}></div>
-                            <div className="skeleton skeleton-text" style={{ width: '50%' }}></div>
-                            <div className="skeleton skeleton-text" style={{ width: '70%', height: '35px', borderRadius: '25px', marginTop: '10px' }}></div>
-                        </div>
-                    ))}
+        <section className="py-[100px] relative overflow-hidden" 
+            style={{
+                backgroundColor: '#301118',
+                backgroundImage: 'url(/images/bg-dark.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundAttachment: 'fixed',
+                backgroundRepeat: 'no-repeat',
+                minHeight: '100vh'
+            }}
+        >
+            <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16 w-full">
+                <div className="relative mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Find Your Expert</h2>
+                    <div className="w-48 h-1 bg-orange"></div>
+                </div>
+                <div className="w-full">
+                    <ExpertGridSkeleton count={8} />
                 </div>
             </div>
         </section>

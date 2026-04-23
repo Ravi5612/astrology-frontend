@@ -2,7 +2,7 @@
 
 import React from "react";
 import ExpertCard from "./ExpertCard";
-import { SkeletonCard } from "./SkeletonCard";
+import { ExpertGridSkeleton, SkeletonCard } from "./SkeletonCard";
 import { ClientExpertProfile } from "@/lib/types";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { FaSpinner } from "react-icons/fa";
@@ -30,7 +30,13 @@ const ExpertGrid: React.FC<ExpertGridProps> = ({
     <div className="mt-12 w-full">
       {/* Dynamic Grid System */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
-        {experts.length > 0 ? (
+        {experts.length === 0 ? (
+           Array.from({ length: 4 }).map((_, i) => (
+             <div key={`skeleton-${i}`} className="w-full h-full">
+               <SkeletonCard />
+             </div>
+           ))
+        ) : (
           experts.map((item, idx) => (
             <div 
               key={item.id} 
@@ -38,37 +44,6 @@ const ExpertGrid: React.FC<ExpertGridProps> = ({
               style={{ animationDelay: `${idx * 50}ms` }}
             >
               <ExpertCard expertData={item} />
-            </div>
-          ))
-        ) : !loading && initialError ? (
-          <div className="col-span-full text-center py-24 bg-red-50/50 rounded-[3rem] border border-red-100/50 backdrop-blur-sm">
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500 shadow-inner">
-               <i className="fa-solid fa-circle-exclamation text-3xl"></i>
-            </div>
-            <p className="text-xl font-black text-red-950 uppercase tracking-tight mb-6">
-              {lang === "hi"
-                ? "ज्योतिषियों को लोड करने में विफल"
-                : "Failed to load experts"}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="group relative px-10 py-4 bg-red-600 text-white rounded-full font-black text-[10px] uppercase tracking-[0.3em] shadow-xl hover:bg-orange transition-all duration-500 active:scale-95"
-            >
-              {lang === "hi" ? "पुन: प्रयास करें" : "Retry Analysis"}
-            </button>
-          </div>
-        ) : !loading && experts.length === 0 ? (
-          <div className="col-span-full text-center py-32 bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 text-slate-200 shadow-sm">
-               <i className="fa-solid fa-user-slash text-4xl"></i>
-            </div>
-            <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-2">No experts found</h4>
-            <p className="text-slate-400 font-bold italic">Adjust your filters or search criteria.</p>
-          </div>
-        ) : (
-          Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="w-full h-full opacity-60">
-              <SkeletonCard />
             </div>
           ))
         )}

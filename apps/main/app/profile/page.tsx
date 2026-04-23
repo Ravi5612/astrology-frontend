@@ -19,6 +19,7 @@ import PujaBookingsTab from "@/components/features/profile/PujaBookingsTab";
 import { useProfileLogic } from "@/components/features/profile/useProfileLogic";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
+import Skeleton from "@/components/ui/Skeleton";
 
 const ProfileContent: React.FC = () => {
   const { lang } = useLanguageStore();
@@ -76,19 +77,8 @@ const ProfileContent: React.FC = () => {
     reviewModalOpen, setReviewModalOpen, handleOpenReviewModal, handleReviewSubmit
   } = useProfileLogic();
 
-  // Only show full-page loader if we are doing initial load and have no data yet
-  if ((loading || clientLoading) && !profileData?.id) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium" style={fontStyle}>
-            {t.loading.title}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Determine overall loading state for components
+  const isInitialLoading = (loading || clientLoading) && !profileData?.id;
 
   // Handle report success and optionally open chat
   const handleReportSuccess = (newDispute?: any) => {
@@ -113,6 +103,7 @@ const ProfileContent: React.FC = () => {
                 imagePreview={imagePreview}
                 handleImageChange={handleImageChange}
                 savingSections={savingSections}
+                loading={isInitialLoading}
               />
             </div>
 
@@ -150,6 +141,7 @@ const ProfileContent: React.FC = () => {
                   handleAddressChange={handleAddressChange}
                   handleSaveSection={handleSaveSection}
                   refreshProfile={loadProfile}
+                  loading={isInitialLoading}
                 />
               )}
 
@@ -338,8 +330,42 @@ export default function ProfilePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div className="min-h-screen bg-[#FFF9F4] py-8 md:py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-2xl p-6 shadow-premium">
+                  <div className="flex items-center gap-4 mb-8">
+                    <Skeleton variant="circular" width={64} height={64} />
+                    <div className="space-y-2">
+                      <Skeleton width={100} height={16} />
+                      <Skeleton width={60} height={12} />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Skeleton key={i} width="100%" height={40} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-3 space-y-6">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-white rounded-2xl p-8 shadow-premium">
+                    <Skeleton width={200} height={24} className="mb-6" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {[1, 2, 3, 4].map((j) => (
+                        <div key={j} className="space-y-2">
+                          <Skeleton width={80} height={12} />
+                          <Skeleton width="100%" height={24} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       }
     >

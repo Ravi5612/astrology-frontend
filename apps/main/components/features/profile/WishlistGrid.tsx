@@ -11,6 +11,7 @@ import { PujaCard } from "@/components/features/puja/PujaCard";
 import { useLanguageStore } from "@/store/languageStore";
 import { profileTranslations } from "@/lib/translations/profile";
 import { getProductImageUrl } from "@/utils/image-utils";
+import Skeleton from "@/components/ui/Skeleton";
 
 const WishlistGrid: React.FC = () => {
     const { wishlistItems, expertWishlistItems, pujaWishlistItems, isLoading } = useWishlistStore();
@@ -20,14 +21,23 @@ const WishlistGrid: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm animate-pulse">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
-                    <div className="relative w-16 h-16 bg-white rounded-2xl shadow-lg border border-primary/10 flex items-center justify-center text-primary">
-                        <FaSpinner className="animate-spin text-2xl" />
+            <div className="space-y-12">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-8">
+                    <div className="space-y-2">
+                        <Skeleton width={100} height={20} className="rounded-full" />
+                        <Skeleton width={200} height={32} />
                     </div>
+                    <Skeleton width={80} height={16} />
                 </div>
-                <p className="mt-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]" style={fontStyle}>{t.wishlist.loading}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="space-y-4">
+                            <Skeleton width="100%" height={200} className="rounded-3xl" />
+                            <Skeleton width="100%" height={24} />
+                            <Skeleton width="60%" height={16} />
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }

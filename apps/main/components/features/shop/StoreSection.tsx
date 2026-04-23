@@ -14,19 +14,7 @@ import { homeTranslations } from "@/lib/translations/home";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const StoreCardSkeleton = () => (
-    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden animate-pulse">
-        <div className="h-48 bg-gray-100"></div>
-        <div className="p-6 space-y-4">
-            <div className="h-4 bg-gray-100 rounded w-1/4"></div>
-            <div className="h-6 bg-gray-100 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-100 rounded w-1/2"></div>
-            <div className="space-y-2 pt-4">
-               <div className="h-10 bg-gray-100 rounded-2xl w-full"></div>
-            </div>
-        </div>
-    </div>
-);
+import { StoreSkeletonCard } from "./StoreSkeletonCard";
 
 const StoreSection = () => {
     const { lang } = useLanguageStore();
@@ -155,9 +143,9 @@ const StoreSection = () => {
                 </div>
 
                 <div className="relative group px-4 md:px-12">
-                    {isStoresLoading ? (
+                    {isStoresLoading && stores.length === 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10">
-                            {[1, 2, 3].map((i) => <StoreCardSkeleton key={i} />)}
+                            {[1, 2, 3].map((i) => <StoreSkeletonCard key={`store-skeleton-${i}`} />)}
                         </div>
                     ) : stores.length > 0 ? (
                         <Swiper
@@ -188,17 +176,8 @@ const StoreSection = () => {
                             ))}
                         </Swiper>
                     ) : (
-                        <div className="text-center py-24 bg-black/20 rounded-[3rem] border border-white/5 shadow-2xl backdrop-blur-md">
-                            <StoreIcon className="w-16 h-16 text-orange-500/30 mx-auto mb-6" />
-                            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight" style={fontStyle}>{t.noResults}</h3>
-                            <p className="text-gray-500 font-medium" style={fontStyle}>{t.noResultsDesc}</p>
-                            <button 
-                                onClick={() => { setSearchQuery(""); setSelectedCity(t.allCities); }}
-                                className="mt-8 text-orange-500 font-black uppercase text-[10px] tracking-widest hover:text-orange-400 transition-colors"
-                                style={fontStyle}
-                            >
-                                {t.btnClear}
-                            </button>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10">
+                            {[1, 2, 3].map((i) => <StoreSkeletonCard key={`empty-store-skeleton-${i}`} />)}
                         </div>
                     )}
 

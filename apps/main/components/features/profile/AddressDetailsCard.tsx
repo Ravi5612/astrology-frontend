@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Button } from "@repo/ui";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface AddressDetailsCardProps {
   lang: string;
@@ -12,6 +13,7 @@ interface AddressDetailsCardProps {
   setEditing: (val: boolean) => void;
   handleAddressChange: (index: number, key: string, value: string) => void;
   handleSave: () => void;
+  loading?: boolean;
 }
 
 const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
@@ -23,6 +25,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
   setEditing,
   handleAddressChange,
   handleSave,
+  loading = false,
 }) => {
   return (
     <div className="bg-white border-0 shadow-premium rounded-2xl mb-6 overflow-hidden">
@@ -39,7 +42,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
           </span>
           {t.addressDetails.title}
         </h5>
-        {!editing ? (
+        {!loading && !editing && (
           <Button
             variant="primary"
             size="md"
@@ -53,7 +56,8 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
             <i className="fa-solid fa-pen-to-square mr-2"></i>
             {t.addressDetails.edit}
           </Button>
-        ) : (
+        )}
+        {editing && (
           <div className="flex gap-3">
             <Button
               variant="secondary"
@@ -86,9 +90,16 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
             </Button>
           </div>
         )}
+        {loading && <Skeleton width={100} height={40} />}
       </div>
       <div className="p-6 md:p-8">
-        {editing ? (
+        {loading ? (
+          <div className="space-y-4">
+            <Skeleton width="100%" height={20} />
+            <Skeleton width="80%" height={20} />
+            <Skeleton width="60%" height={20} />
+          </div>
+        ) : editing ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-12">
               <label
@@ -266,7 +277,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
                     style={{
                       fontFamily:
                         lang === "hi"
-                          ? "'Noto Sans Devanagari', sans-serif"
+                           ? "'Noto Sans Devanagari', sans-serif"
                           : "inherit",
                     }}
                   >

@@ -14,6 +14,7 @@ import { Swiper as SwiperComp, SwiperSlide as SwiperSlideComp } from "swiper/rea
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { PujaSkeletonCard } from "./PujaSkeletonCard";
 
 const Swiper = SwiperComp as any;
 const SwiperSlide = SwiperSlideComp as any;
@@ -141,15 +142,21 @@ const PujaListSection = () => {
                     </div>
                 </div>
 
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-                        <p className="text-orange-200/40 font-bold animate-pulse uppercase tracking-[0.2em] text-xs" style={fontStyle}>{t.page.loading}</p>
+                {loading && pujas.length === 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-4">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div key={`puja-skeleton-${i}`} className="w-full h-full">
+                                <PujaSkeletonCard />
+                            </div>
+                        ))}
                     </div>
                 ) : filteredPujas.length === 0 ? (
-                    <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5 shadow-2xl">
-                        <h2 className="text-xl font-bold text-white mb-2" style={fontStyle}>{t.page.noPujas}</h2>
-                        <p className="text-gray-500" style={fontStyle}>{t.page.noPujasHint}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-4">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div key={`empty-puja-skeleton-${i}`} className="w-full h-full">
+                                <PujaSkeletonCard />
+                            </div>
+                        ))}
                     </div>
                 ) : (
                     <div className="relative puja-swiper-wrapper mt-4 md:px-12 mb-8 z-10">

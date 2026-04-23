@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useLanguageStore } from '@/store/languageStore';
 import { profileTranslations } from '@/lib/translations/profile';
+import Skeleton from '@/components/ui/Skeleton';
 
 interface ProfileSidebarProps {
     profileData: any;
@@ -15,6 +16,7 @@ interface ProfileSidebarProps {
         astro: boolean;
         settings: boolean;
     };
+    loading?: boolean;
 }
 
 const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
@@ -23,7 +25,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     setActiveTab,
     imagePreview,
     handleImageChange,
-    savingSections
+    savingSections,
+    loading = false,
 }) => {
     const { lang } = useLanguageStore();
     const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
@@ -54,7 +57,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                 <div className="flex items-center gap-4">
                     <div className="relative flex-shrink-0">
                         <div className="w-[64px] h-[64px] rounded-full overflow-hidden border-2 border-white shadow-md">
-                            {savingSections.personal ? (
+                            {loading ? (
+                                <Skeleton width="100%" height="100%" variant="circular" />
+                            ) : savingSections.personal ? (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-50">
                                     <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                                 </div>
@@ -68,34 +73,45 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                                 />
                             )}
                         </div>
-                        <label
-                            htmlFor="profile-upload"
-                            className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer border border-gray-100 hover:bg-gray-50 transition-colors"
-                            title={t.sidebar.updatePhoto}
-                        >
-                            <i className="fa-solid fa-camera text-[10px] text-brown"></i>
-                            <input
-                                id="profile-upload"
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    if (e.target.files && e.target.files[0]) {
-                                        handleImageChange(e.target.files[0]);
-                                    }
-                                }}
-                            />
-                        </label>
+                        {!loading && (
+                            <label
+                                htmlFor="profile-upload"
+                                className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer border border-gray-100 hover:bg-gray-50 transition-colors"
+                                title={t.sidebar.updatePhoto}
+                            >
+                                <i className="fa-solid fa-camera text-[10px] text-brown"></i>
+                                <input
+                                    id="profile-upload"
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            handleImageChange(e.target.files[0]);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        )}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0" style={fontStyle}>
-                            {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
-                            <i className="fa-solid fa-check-circle text-orange/80 text-[12px]"></i>
-                        </h6>
-                        <p className="text-xs text-gray-500 mt-0.5 truncate" style={fontStyle}>
-                            {lang === "hi" ? "उपयोगकर्ता खाता" : "User Account"}
-                        </p>
+                        {loading ? (
+                            <div className="space-y-1">
+                                <Skeleton width={100} height={16} />
+                                <Skeleton width={60} height={12} />
+                            </div>
+                        ) : (
+                            <>
+                                <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0" style={fontStyle}>
+                                    {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
+                                    <i className="fa-solid fa-check-circle text-orange/80 text-[12px]"></i>
+                                </h6>
+                                <p className="text-xs text-gray-500 mt-0.5 truncate" style={fontStyle}>
+                                    {lang === "hi" ? "उपयोगकर्ता खाता" : "User Account"}
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
