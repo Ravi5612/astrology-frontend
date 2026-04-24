@@ -4,9 +4,11 @@ import {
     Star, Users, Building2, ShoppingBag, LayoutList,
     Mail, Phone, Calendar, Search, X, UserCheck, UserX,
     MapPin, Flame, Clock, RefreshCw, CheckCircle, AlertCircle,
+    BadgeIndianRupee
 } from "lucide-react";
-import { getReferredUsers, type ReferredUser } from "@/src/services/agent.service";
+import { getReferredUsers, getAgentDashboardStats, type ReferredUser } from "@/src/services/agent.service";
 import { toast } from "react-toastify";
+import { StatsCards } from "@repo/ui";
 import { ListingsSkeleton } from "../../components/Skeleton";
 
 // ── Tab config ───────────────────────────────────────────────────────────────
@@ -266,6 +268,7 @@ export default function ListingsPage() {
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [statsData, setStatsData] = useState<any>(null);
 
     // Debounce search
     useEffect(() => {
@@ -298,6 +301,14 @@ export default function ListingsPage() {
     }, [activeTab, debouncedSearch, refreshKey]);
 
     useEffect(() => {
+        const fetchStats = async () => {
+            const [stats, error] = await getAgentDashboardStats();
+            if (!error) setStatsData(stats);
+        };
+        fetchStats();
+    }, [refreshKey]); // Fetch stats only once or when manual refresh is triggered
+
+    useEffect(() => {
         fetchData();
     }, [fetchData]);
 
@@ -318,8 +329,43 @@ export default function ListingsPage() {
         return null;
     };
 
+    const stats: any[] = useMemo(() => [
+        {
+            title: "Expert Earnings",
+            value: loading ? "..." : `₹${(statsData?.expertEarnings || 0).toLocaleString("en-IN")}`,
+            icon: Star,
+            iconColor: "text-yellow-600",
+            iconBgColor: "bg-yellow-100",
+        },
+        {
+            title: "Mandir Earnings",
+            value: loading ? "..." : `₹${(statsData?.mandirEarnings || 0).toLocaleString("en-IN")}`,
+            icon: Building2,
+            iconColor: "text-orange-600",
+            iconBgColor: "bg-orange-100",
+        },
+        {
+            title: "Shop Earnings",
+            value: loading ? "..." : `₹${(statsData?.shopEarnings || 0).toLocaleString("en-IN")}`,
+            icon: ShoppingBag,
+            iconColor: "text-purple-600",
+            iconBgColor: "bg-purple-100",
+        },
+        {
+            title: "Total Listings Earned",
+            value: loading ? "..." : `₹${(statsData?.totalListingsEarnings || 0).toLocaleString("en-IN")}`,
+            icon: BadgeIndianRupee,
+            iconColor: "text-green-600",
+            iconBgColor: "bg-green-100",
+            valueColor: "text-green-700",
+        },
+    ], [statsData, loading]);
+
     return (
         <div className="space-y-6">
+            {/* Stats Cards Section - Always visible to prevent jumping */}
+            <div className="mb-8"><StatsCards stats={stats} columns={4} /></div>
+
             {/* Header */}
             <div className="flex items-start justify-between gap-4">
                 <div>

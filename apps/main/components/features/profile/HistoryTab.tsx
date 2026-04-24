@@ -13,6 +13,9 @@ interface HistoryTabProps {
     onReportIssue: (session: any) => void;
     consultationDisputes?: Record<number, any>;
     onViewDispute?: (dispute: any) => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
+    onLoadMore?: () => void;
 }
 
 const HistoryTab: React.FC<HistoryTabProps> = ({
@@ -23,7 +26,10 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
     onViewDetails,
     onReportIssue,
     consultationDisputes = {},
-    onViewDispute
+    onViewDispute,
+    hasMore,
+    loadingMore,
+    onLoadMore
 }) => {
     const { lang } = useLanguageStore();
     const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).history;
@@ -314,6 +320,39 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                 )}
               </div>
             ))}
+
+            {/* Load More Button */}
+            {hasMore ? (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={onLoadMore}
+                  disabled={loadingMore}
+                  className="px-10 py-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-2xl hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50/30 transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95 disabled:opacity-50"
+                  style={fontStyle}
+                >
+                  {loadingMore ? (
+                    <>
+                      <i className="fa-solid fa-circle-notch fa-spin"></i>
+                      <span>{lang === "hi" ? "और लोड हो रहा है..." : "Loading More..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-arrow-down-long"></i>
+                      <span>{lang === "hi" ? "और लोड करें" : "Load More History"}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : consultationHistory.length > 0 && (
+              <div className="flex flex-col items-center justify-center mt-12 py-8 border-t border-dashed border-gray-100">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mb-3 text-gray-300">
+                  <i className="fa-solid fa-check"></i>
+                </div>
+                <p className="text-gray-400 text-sm font-medium" style={fontStyle}>
+                  {lang === "hi" ? "आपने अपनी पूरी हिस्ट्री देख ली है" : "You've reached the end of your history"}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

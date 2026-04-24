@@ -23,6 +23,7 @@ import {
     Handshake,
     List,
     Wallet,
+    BarChart3,
 } from "lucide-react";
 
 // ── Menu config ─────────────────────────────────────────────
@@ -38,9 +39,9 @@ const MENU_ITEMS: MenuItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "My Profile", href: "/dashboard/profile", icon: User },
     { label: "My Wallet", href: "/dashboard/wallet", icon: Wallet },
+    { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { label: "Registration", href: "/dashboard/registration", icon: UserPlus },
     { label: "Listings", href: "/dashboard/listings", icon: List },
-    { label: "Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
     { label: "Payouts", href: "/dashboard/payouts", icon: Handshake },
     { label: "Signout", href: "#", icon: LogOut },
 ];
@@ -163,7 +164,7 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = memo(
                 {/* Sidebar */}
                 <aside
                     className={cn(
-                        "fixed left-0 top-0 h-full w-64 flex flex-col bg-primary text-white transition-transform duration-300 ease-in-out z-50 shadow-xl shadow-gray-400",
+                        "fixed left-0 top-0 h-full w-64 flex flex-col bg-[#301118] text-white transition-transform duration-300 ease-in-out z-50 shadow-xl shadow-gray-400",
                         isOpen ? "translate-x-0" : "-translate-x-full",
                         "lg:translate-x-0"
                     )}
@@ -279,7 +280,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Main Content */}
             <div className="flex-1 lg:ml-64">
                 {/* Header — same as admin */}
-                <header className="bg-white px-6 py-4 border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+                <header className="bg-white/40 backdrop-blur-xl px-6 py-4 border-b border-white/20 sticky top-0 z-30 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <button

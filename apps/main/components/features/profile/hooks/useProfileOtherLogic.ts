@@ -24,6 +24,9 @@ export const useProfileOtherLogic = (
     // Notifications
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loadingNotifications, setLoadingNotifications] = useState(false);
+    const [notificationsPage, setNotificationsPage] = useState(1);
+    const [notificationsHasMore, setNotificationsHasMore] = useState(true);
+    const [loadingMoreNotifications, setLoadingMoreNotifications] = useState(false);
 
     // Rewards
     const [rewards, setRewards] = useState<any[]>([]);
@@ -38,21 +41,48 @@ export const useProfileOtherLogic = (
     const [loadingSupportSettings, setLoadingSupportSettings] = useState(false);
 
     // Load Notifications
-    const loadNotifications = useCallback(async () => {
+    const loadNotifications = useCallback(async (pageNumber = 1) => {
         if (activeTab === "notifications" && isClientAuthenticated) {
-            setLoadingNotifications(true);
+            if (pageNumber === 1) setLoadingNotifications(true);
+            else setLoadingMoreNotifications(true);
+
             try {
-                const [data, error] = await getNotifications() as any;
-                if (!error && data) {
-                    setNotifications(Array.isArray(data) ? data : data.data || []);
+                const limit = 10;
+                const offset = (pageNumber - 1) * limit;
+                const [result, error] = await getNotifications({ limit, offset }) as any;
+                
+                if (!error && result) {
+                    const myNotifs = result.data || [];
+                    const totalCount = result.meta?.totalCount || 0;
+
+                    if (pageNumber === 1) {
+                        setNotifications(myNotifs);
+                        setNotificationsHasMore(myNotifs.length < totalCount);
+                    } else {
+                        setNotifications(prev => {
+                            const existingIds = new Set(prev.map(n => n.id));
+                            const newNotifs = myNotifs.filter((n: any) => !existingIds.has(n.id));
+                            const updatedList = [...prev, ...newNotifs];
+                            setNotificationsHasMore(updatedList.length < totalCount);
+                            return updatedList;
+                        });
+                    }
+                    setNotificationsPage(pageNumber);
                 }
             } catch (error) {
                 console.error("Failed to load notifications:", error);
             } finally {
                 setLoadingNotifications(false);
+                setLoadingMoreNotifications(false);
             }
         }
     }, [activeTab, isClientAuthenticated]);
+
+    const loadMoreNotifications = () => {
+        if (!loadingMoreNotifications && notificationsHasMore) {
+            loadNotifications(notificationsPage + 1);
+        }
+    };
 
     useEffect(() => {
         loadNotifications();
@@ -175,6 +205,9 @@ export const useProfileOtherLogic = (
     return {
         notifications,
         loadingNotifications,
+        notificationsHasMore,
+        loadingMoreNotifications,
+        loadMoreNotifications,
         handleMarkAsRead,
         handleClearAllNotifs,
         rewards,

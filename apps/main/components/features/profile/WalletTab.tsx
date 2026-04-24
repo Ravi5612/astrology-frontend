@@ -17,6 +17,9 @@ interface WalletTabProps {
     loadingTransactions: boolean;
     walletPurpose: string | undefined;
     setWalletPurpose: (purpose: string | undefined) => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
+    onLoadMore?: () => void;
 }
 
 const WalletTab: React.FC<WalletTabProps> = ({
@@ -31,7 +34,10 @@ const WalletTab: React.FC<WalletTabProps> = ({
     transactions,
     loadingTransactions,
     walletPurpose,
-    setWalletPurpose
+    setWalletPurpose,
+    hasMore,
+    loadingMore,
+    onLoadMore
 }) => {
     const { lang } = useLanguageStore();
     const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).wallet;
@@ -464,6 +470,39 @@ const WalletTab: React.FC<WalletTabProps> = ({
                   </tbody>
                 </table>
               </div>
+
+              {/* Load More Button */}
+              {hasMore ? (
+                <div className="flex justify-center py-8 border-t border-gray-50 bg-gray-50/30">
+                  <button
+                    onClick={onLoadMore}
+                    disabled={loadingMore}
+                    className="px-10 py-3.5 bg-white border border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-orange/30 hover:text-orange hover:bg-orange-50/50 transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95 disabled:opacity-50"
+                    style={fontStyle}
+                  >
+                    {loadingMore ? (
+                      <>
+                        <i className="fa-solid fa-circle-notch fa-spin"></i>
+                        <span>{lang === "hi" ? "और लोड हो रहा है..." : "Loading More..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-arrow-down-long"></i>
+                        <span>{lang === "hi" ? "और लेनदेन लोड करें" : "Load More Transactions"}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : transactions.length > 0 && (
+                <div className="flex flex-col items-center justify-center py-8 border-t border-dashed border-gray-100 bg-gray-50/20">
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mb-2 text-gray-400">
+                    <i className="fa-solid fa-check text-xs"></i>
+                  </div>
+                  <p className="text-gray-400 text-xs font-medium" style={fontStyle}>
+                    {lang === "hi" ? "आपने सभी लेनदेन देख लिए हैं" : "You've viewed all transactions"}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}

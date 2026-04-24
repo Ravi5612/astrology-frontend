@@ -1,114 +1,114 @@
 import React from "react";
-import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, XCircle, Landmark } from "lucide-react";
-import { WalletTransaction } from "@/types/wallet";
-import Button from "../ui/Button";
+import { Clock, CheckCircle2, XCircle } from "lucide-react";
 
-interface WalletTableProps {
-    transactions: WalletTransaction[];
+interface Transaction {
+    id: string;
+    info: string;
+    type: string;
+    amount: number;
+    status: string;
+    createdAt: string;
 }
 
-export default function WalletTable({ transactions }: WalletTableProps) {
-    const getStatusStyles = (status: string) => {
-        switch (status) {
-            case 'success':
-            case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-            case 'pending': return 'bg-orange-50 text-orange-600 border-orange-100';
-            case 'approved': return 'bg-purple-50 text-purple-600 border-purple-100';
-            case 'processing': return 'bg-blue-50 text-blue-600 border-blue-100';
-            case 'failed': return 'bg-red-50 text-red-600 border-red-100';
-            case 'reversed': return 'bg-amber-50 text-amber-600 border-amber-100';
-            default: return 'bg-gray-50 text-gray-600 border-gray-100';
-        }
-    };
+interface TransactionTableProps {
+    transactions: Transaction[];
+}
 
-    const StatusIcon = ({ status }: { status: string }) => {
-        switch (status) {
-            case 'success':
-            case 'completed': return <CheckCircle2 className="w-3 h-3" />;
-            case 'approved': return <CheckCircle2 className="w-3 h-3 opacity-50" />;
-            case 'pending': return <Clock className="w-3 h-3" />;
-            case 'processing': return <Clock className="w-3 h-3 animate-pulse" />;
-            case 'failed': return <XCircle className="w-3 h-3" />;
-            case 'reversed': return <ArrowDownLeft className="w-3 h-3" />;
-            default: return null;
-        }
-    };
-
+export const WalletTable: React.FC<TransactionTableProps> = ({ transactions }) => {
     return (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 flex items-center justify-between sticky top-0 bg-white z-20">
-                <div>
-                    <h2 className="text-lg font-black text-gray-900">Transaction History</h2>
-                    <p className="text-xs text-gray-400 font-medium">Detailed log of all credits and withdrawals</p>
-                </div>
+        <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
+            <div className="p-8 border-b border-gray-50 space-y-1">
+                <h3 className="text-xl font-black text-gray-900 tracking-tight">Transaction History</h3>
+                <p className="text-sm font-medium text-gray-400">Detailed log of all credits and withdrawals</p>
             </div>
 
-            <div className="overflow-x-auto max-h-[500px] overflow-y-auto custom-scrollbar-orange">
-                <table className="w-full text-left border-separate border-spacing-0">
-                    <thead className="sticky top-0 z-10 whitespace-nowrap">
-                        <tr className="bg-gray-50/90 backdrop-blur-sm">
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Transaction Info</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Type</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Amount</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Status</th>
-                            <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Date</th>
+            <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                    <thead>
+                        <tr className="bg-gray-50/50 border-b border-gray-50">
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction Info</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Type</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Amount</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Date</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                        {transactions.map((tx) => (
-                            <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-xl ${tx.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
-                                            {tx.type === 'credit' ? <ArrowDownLeft className="w-4 h-4" /> : <Landmark className="w-4 h-4" />}
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-800">{tx.description}</p>
-                                            {tx.bankAccount && (
-                                                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">Bank: {tx.bankAccount}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${tx.type === 'credit' ? 'text-emerald-600 bg-emerald-50' : 'text-orange-600 bg-orange-50'}`}>
-                                        {tx.type}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <p className={`text-sm font-black ${tx.type === 'credit' ? 'text-emerald-600' : 'text-gray-800'}`}>
-                                        {tx.type === 'credit' ? '+' : '-'} ₹{tx.amount.toLocaleString('en-IN')}
-                                    </p>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={`flex items-center gap-1.5 w-fit px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusStyles(tx.status)}`}>
-                                        <StatusIcon status={tx.status} />
-                                        {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <p className="text-xs font-bold text-gray-500">
-                                        {new Date(tx.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                    </p>
+                        {transactions.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="p-20 text-center opacity-40">
+                                    <p className="text-[12px] font-black uppercase tracking-[0.3em]">No transactions recorded yet</p>
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            transactions.map((tx) => (
+                                <tr key={tx.id} className="relative hover:bg-gray-50/80 transition-all duration-300 group cursor-default">
+                                    {/* Left Accent Line on Hover */}
+                                    <td className="absolute left-0 top-0 bottom-0 w-1 bg-[#F25E0A] opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    
+                                    <td className="px-8 py-6">
+                                        <div className="flex items-center gap-4 transition-transform duration-300 group-hover:translate-x-1">
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 ${
+                                                tx.type === 'credit' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                                            }`}>
+                                                {tx.type === 'credit' ? '↙' : '↗'}
+                                            </div>
+                                            <span className="text-[13px] font-bold text-gray-900 group-hover:text-black transition-colors">{tx.info}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <span className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-current ${
+                                            tx.type === 'credit' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                                        }`}>
+                                            {tx.type === 'credit' ? 'Credit' : 'Debit'}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-6 text-center">
+                                        <span className={`text-[15px] font-black ${
+                                            tx.type === 'credit' ? 'text-green-600' : 'text-gray-900'
+                                        }`}>
+                                            {tx.type === 'credit' ? '+' : '-'} ₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-6 text-center">
+                                        <StatusBadge status={tx.status} />
+                                    </td>
+                                    <td className="px-8 py-6 text-right">
+                                        <span className="text-[12px] font-bold text-gray-500">
+                                            {new Date(tx.createdAt).toLocaleDateString('en-IN', { 
+                                                day: '2-digit', 
+                                                month: 'short', 
+                                                year: 'numeric' 
+                                            })}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-
-                {transactions.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-20 bg-gray-50/20">
-                        <div className="bg-gray-100 p-4 rounded-full mb-4">
-                            <ArrowUpRight className="w-8 h-8 text-gray-300" />
-                        </div>
-                        <p className="text-gray-400 font-bold">No transactions found</p>
-                    </div>
-                )}
             </div>
-
-
         </div>
     );
-}
+};
 
+const StatusBadge = ({ status }: { status: string }) => {
+    const config: any = {
+        'PENDING': { color: 'text-amber-600', bg: 'bg-amber-50', icon: Clock },
+        'PROCESSING': { color: 'text-blue-600', bg: 'bg-blue-50', icon: Clock },
+        'SUCCESS': { color: 'text-green-600', bg: 'bg-green-50', icon: CheckCircle2 },
+        'COMPLETED': { color: 'text-green-600', bg: 'bg-green-50', icon: CheckCircle2 },
+        'REJECTED': { color: 'text-red-600', bg: 'bg-red-50', icon: XCircle },
+        'FAILED': { color: 'text-red-600', bg: 'bg-red-50', icon: XCircle },
+    };
 
+    const { color, bg, icon: Icon } = config[status.toUpperCase()] || config['PENDING'];
+
+    return (
+        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${bg} ${color} border border-current opacity-80`}>
+            <Icon className="w-2.5 h-2.5" />
+            <span className="text-[8px] font-black uppercase tracking-widest">{status}</span>
+        </div>
+    );
+};
+export default WalletTable;

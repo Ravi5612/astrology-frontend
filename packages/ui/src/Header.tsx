@@ -90,6 +90,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [loadingMoreNotifications, setLoadingMoreNotifications] = useState(false);
+  const [notificationsOffset, setNotificationsOffset] = useState(0);
+  const [notificationsHasMore, setNotificationsHasMore] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMobileSubMenu, setShowMobileSubMenu] = useState(false);
@@ -157,20 +160,52 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   }, []);
 
   // API functions for notifications
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (isLoadMore = false) => {
     try {
-      setLoadingNotifications(true);
-      const [res, error] = await api.get('/notifications');
+      if (isLoadMore) setLoadingMoreNotifications(true);
+      else {
+        setLoadingNotifications(true);
+        setNotificationsOffset(0);
+      }
+
+      const limit = 10;
+      const offset = isLoadMore ? notificationsOffset + limit : 0;
+
+      const [res, error] = await api.get('/notifications', { params: { limit, offset } } as any);
       if (error) throw error;
       const payload = unwrapResponse(res);
-      const rawList = Array.isArray(payload) ? payload : (payload?.items || payload?.data || []);
-      setNotifications(rawList.map(normalizeNotification));
+      const rawList = Array.isArray(payload) ? payload : (payload?.data || []);
+      const totalCount = payload?.meta?.totalCount || 0;
+
+      const normalizedList = rawList.map(normalizeNotification);
+
+      if (isLoadMore) {
+        setNotifications(prev => {
+          const existingIds = new Set(prev.map(n => n.id));
+          const newList = normalizedList.filter((n: any) => !existingIds.has(n.id));
+          const updated = [...prev, ...newList];
+          setNotificationsHasMore(updated.length < totalCount);
+          return updated;
+        });
+        setNotificationsOffset(offset);
+      } else {
+        setNotifications(normalizedList);
+        setNotificationsHasMore(normalizedList.length < totalCount);
+        setNotificationsOffset(0);
+      }
     } catch (err) {
       console.error('Failed to fetch notifications', err);
     } finally {
       setLoadingNotifications(false);
+      setLoadingMoreNotifications(false);
     }
-  }, []);
+  }, [notificationsOffset]);
+
+  const fetchMoreNotifications = () => {
+    if (!loadingMoreNotifications && notificationsHasMore) {
+      fetchNotifications(true);
+    }
+  };
 
   const fetchUnreadCount = useCallback(async () => {
     try {
@@ -512,6 +547,31 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                     </p>
                                   </div>
                                 ))
+                              )}
+
+                              {notificationsHasMore && notifications.length > 0 && !loadingNotifications && (
+                                <div className="p-2 text-center border-t border-gray-50">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      fetchMoreNotifications();
+                                    }}
+                                    disabled={loadingMoreNotifications}
+                                    className="w-full py-2 text-xs font-bold text-gray-500 hover:text-orange hover:bg-orange-50 rounded-lg transition-all border-0 bg-transparent flex items-center justify-center gap-2"
+                                  >
+                                    {loadingMoreNotifications ? (
+                                      <>
+                                        <i className="fa-solid fa-circle-notch fa-spin"></i>
+                                        {lang === 'hi' ? 'और लोड हो रहा है...' : 'Loading...'}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <i className="fa-solid fa-chevron-down"></i>
+                                        {lang === 'hi' ? 'और देखें' : 'Load More'}
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
                               )}
                             </div>
                             <div className="px-3 py-3 border-t text-center bg-gray-50">

@@ -17,6 +17,9 @@ export const useProfileOrdersHistoryLogic = (
     // History
     const [consultationHistory, setConsultationHistory] = useState<any[]>([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [selectedSession, setSelectedSession] = useState<any>(null);
     const [chatMessages, setChatMessages] = useState<any[]>([]);
     const [showChatModal, setShowChatModal] = useState(false);
@@ -25,6 +28,9 @@ export const useProfileOrdersHistoryLogic = (
     // Orders
     const [orders, setOrders] = useState<any[]>([]);
     const [loadingOrders, setLoadingOrders] = useState(false);
+    const [ordersPage, setOrdersPage] = useState(1);
+    const [ordersHasMore, setOrdersHasMore] = useState(true);
+    const [loadingMoreOrders, setLoadingMoreOrders] = useState(false);
     const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
     const [orderDisputes, setOrderDisputes] = useState<Record<number, any>>({});
     const [consultationDisputes, setConsultationDisputes] = useState<Record<number, any>>({});
@@ -43,15 +49,30 @@ export const useProfileOrdersHistoryLogic = (
     const [reportItemDetails, setReportItemDetails] = useState<any>(null);
 
     // Load History
-    const loadConsultationHistory = useCallback(async () => {
+    const loadConsultationHistory = useCallback(async (pageNumber = 1) => {
         if (activeTab === "history" && isClientAuthenticated) {
-            setLoadingHistory(true);
+            if (pageNumber === 1) setLoadingHistory(true);
+            else setLoadingMore(true);
+
             try {
-                const [result, error] = await getConsultationHistory({ limit: 50 }) as any;
-                let sessions = Array.isArray(result) ? result : (result?.items || result?.data || []);
+                const limit = 10;
+                const offset = (pageNumber - 1) * limit;
+                const [result, error] = await getConsultationHistory({ offset, limit }) as any;
                 
+                if (error) throw error;
+
+                const sessions = result?.data || [];
+                const totalCount = result?.meta?.totalCount || 0;
+                
+                // Check if we have more pages based on totalCount
+                if (consultationHistory.length + sessions.length >= totalCount) {
+                    setHasMore(false);
+                } else {
+                    setHasMore(true);
+                }
+
                 // Map backend fields to frontend expected ones for a logic-less UI
-                sessions = sessions.map((s: any) => ({
+                const mappedSessions = sessions.map((s: any) => ({
                     ...s,
                     expert_name: s.expert_name ?? s.expert?.user?.name ?? "Astro Expert",
                     expert_image: s.expert_image ?? s.expert?.user?.avatar ?? s.expert?.user?.profile_picture ?? "/images/dummy-expert.jpg",
@@ -62,37 +83,80 @@ export const useProfileOrdersHistoryLogic = (
                     durationString: s.durationString ?? (s.duration ? `${Math.floor(s.duration / 60)}m ${s.duration % 60}s` : "0s")
                 }));
 
-                setConsultationHistory(!error ? sessions : []);
+                if (pageNumber === 1) {
+                    setConsultationHistory(mappedSessions);
+                } else {
+                    // Prevent duplicates just in case
+                    setConsultationHistory(prev => {
+                        const existingIds = new Set(prev.map(p => p.id));
+                        const newSessions = mappedSessions.filter((s: any) => !existingIds.has(s.id));
+                        return [...prev, ...newSessions];
+                    });
+                }
+                setPage(pageNumber);
             } catch (error) {
                 console.error("Failed to load consultation history:", error);
                 toast.error("Failed to load consultation history");
             } finally {
                 setLoadingHistory(false);
+                setLoadingMore(false);
             }
         }
     }, [activeTab, isClientAuthenticated]);
+
+    const loadMoreHistory = () => {
+        if (!loadingMore && hasMore) {
+            loadConsultationHistory(page + 1);
+        }
+    };
 
     useEffect(() => {
         loadConsultationHistory();
     }, [loadConsultationHistory]);
 
     // Load Orders & Disputes
-    const loadOrdersAndDisputes = useCallback(async () => {
+    const loadOrdersAndDisputes = useCallback(async (pageNumber = 1) => {
         if (isClientAuthenticated) {
-            setLoadingOrders(true);
+            if (pageNumber === 1) setLoadingOrders(true);
+            else setLoadingMoreOrders(true);
+
             try {
+                const limit = 10;
+                const offset = (pageNumber - 1) * limit;
+
                 const [ordersResult, disputesResult] = await Promise.allSettled([
-                    getMyOrders(),
+                    getMyOrders({ limit, offset }),
                     getMyDisputes(),
                 ]);
 
                 if (ordersResult.status === "fulfilled") {
                     const [ordersData, ordersError] = ordersResult.value as any;
-                    const myOrders = ordersData;
-                    const orderArray = Array.isArray(myOrders)
-                        ? myOrders
-                        : myOrders?.items || myOrders?.data || myOrders?.orders || [];
-                    setOrders(!ordersError ? orderArray : []);
+                    if (ordersError) throw ordersError;
+
+                    const myOrders = ordersData?.data || [];
+                    const totalCount = ordersData?.meta?.totalCount || 0;
+
+                    console.log("DEBUG Orders Pagination:", {
+                        pageNumber,
+                        receivedItems: myOrders.length,
+                        currentTotalInState: orders.length,
+                        totalCountFromBackend: totalCount,
+                        hasMoreCalculation: (orders.length + myOrders.length < totalCount)
+                    });
+                    
+                    if (pageNumber === 1) {
+                        setOrders(myOrders);
+                        setOrdersHasMore(myOrders.length < totalCount);
+                    } else {
+                        setOrders(prev => {
+                            const existingIds = new Set(prev.map(o => o.trackingId));
+                            const newOrders = myOrders.filter((o: any) => !existingIds.has(o.trackingId));
+                            const updatedList = [...prev, ...newOrders];
+                            setOrdersHasMore(updatedList.length < totalCount);
+                            return updatedList;
+                        });
+                    }
+                    setOrdersPage(pageNumber);
                 } else {
                     throw ordersResult.reason;
                 }
@@ -133,9 +197,16 @@ export const useProfileOrdersHistoryLogic = (
                 toast.error("Failed to load orders");
             } finally {
                 setLoadingOrders(false);
+                setLoadingMoreOrders(false);
             }
         }
-    }, [isClientAuthenticated]);
+    }, [isClientAuthenticated, orders.length]);
+
+    const loadMoreOrders = () => {
+        if (!loadingMoreOrders && ordersHasMore) {
+            loadOrdersAndDisputes(ordersPage + 1);
+        }
+    };
 
     useEffect(() => {
         if ((activeTab === "orders" || activeTab === "disputes") && isClientAuthenticated) {
@@ -204,6 +275,9 @@ export const useProfileOrdersHistoryLogic = (
     return {
         consultationHistory,
         loadingHistory,
+        hasMore,
+        loadingMore,
+        loadMoreHistory,
         expandedSessions,
         toggleSession,
         selectedSession,
@@ -214,6 +288,9 @@ export const useProfileOrdersHistoryLogic = (
         orders,
         setOrders,
         loadingOrders,
+        ordersHasMore,
+        loadingMoreOrders,
+        loadMoreOrders,
         expandedOrders,
         toggleOrder,
         orderDisputes,

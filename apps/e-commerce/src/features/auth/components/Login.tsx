@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,9 @@ import { env } from "@/lib/config/env";
 
 // ─── Branding Section (Expert Style) ─────────────────────────────────────────
 
-const BrandingSection = () => (
+const BrandingSection = ({ stats }: { stats: { totalMerchants: string; totalProductsSold: string } }) => (
   <div className="relative hidden lg:block h-full min-h-[600px] overflow-hidden">
-    <div className="absolute inset-0 bg-[#fd6410]/95 flex flex-col items-center justify-center text-white p-12 text-center">
+    <div className="absolute inset-0 bg-[#fd6410]/95 flex flex-col items-center justify-start text-white pt-2 pb-12 px-12 text-center">
       {/* Decorative Floating Circles */}
       <motion.div 
         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
@@ -68,16 +68,16 @@ const BrandingSection = () => (
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="mt-12 grid grid-cols-2 gap-4 w-full max-w-xs"
+        className="mt-8 grid grid-cols-2 gap-4 w-full max-w-xs"
       >
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/20 transition-all cursor-default group">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/30 hover:scale-105 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 cursor-default group">
           <TrendingUp className="w-5 h-5 mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-          <p className="text-2xl font-black italic tracking-tighter">1 Lakh+</p>
+          <p className="text-2xl font-black italic tracking-tighter">{stats.totalProductsSold}</p>
           <p className="text-[10px] uppercase font-bold tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">Product Sold</p>
         </div>
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/20 transition-all cursor-default group">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/30 hover:scale-105 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 cursor-default group">
           <Users className="w-5 h-5 mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-          <p className="text-2xl font-black italic tracking-tighter">10k+</p>
+          <p className="text-2xl font-black italic tracking-tighter">{stats.totalMerchants}</p>
           <p className="text-[10px] uppercase font-bold tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">Merchants</p>
         </div>
       </motion.div>
@@ -93,6 +93,39 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [stats, setStats] = useState({ 
+    totalMerchants: "10k+", 
+    totalProductsSold: "1 Lakh+" 
+  });
+
+  const formatNumber = (num: number, type: 'merchants' | 'products') => {
+    if (type === 'products') {
+      if (num >= 100000) return `${(num / 100000).toFixed(1)} Lakh+`;
+      if (num >= 1000) return `${(num / 1000).toFixed(0)}k+`;
+    } else {
+      if (num >= 100000) return `${(num / 100000).toFixed(1)} Lakh+`;
+      if (num >= 1000) return `${(num / 1000).toFixed(0)}k+`;
+    }
+    return num.toString();
+  };
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/public/stats/merchant-hub`);
+        const json = await response.json();
+        if (json.success) {
+          setStats({
+            totalMerchants: formatNumber(json.data.totalMerchants, 'merchants'),
+            totalProductsSold: formatNumber(json.data.totalProductsSold, 'products')
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const {
     register,
@@ -135,7 +168,7 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-6xl h-full max-h-[850px] grid grid-cols-1 lg:grid-cols-2 rounded-[40px] shadow-2xl bg-white border border-gray-100 overflow-hidden">
         
         {/* Branding Section */}
-        <BrandingSection />
+        <BrandingSection stats={stats} />
 
         {/* Form Section */}
         <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white overflow-y-auto no-scrollbar">

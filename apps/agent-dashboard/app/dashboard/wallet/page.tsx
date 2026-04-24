@@ -74,7 +74,7 @@ export default function WalletPage() {
     };
 
     if (loading) return (
-        <div className="min-h-screen bg-[#FDFCFB] p-4 md:p-10 lg:p-12">
+        <div className="min-h-screen bg-transparent p-4 md:p-10 lg:p-12">
             <div className="max-w-7xl mx-auto">
                 <WalletSkeleton />
             </div>
@@ -82,7 +82,7 @@ export default function WalletPage() {
     );
 
     return (
-        <div className="min-h-screen bg-[#FDFCFB] p-4 md:p-10 lg:p-12 animate-in fade-in duration-1000">
+        <div className="min-h-screen bg-transparent p-4 md:p-10 lg:p-12 animate-in fade-in duration-1000">
             <div className="max-w-7xl mx-auto space-y-8 pb-20">
                 {/* Header */}
                 <div className="space-y-1">
@@ -126,7 +126,7 @@ export default function WalletPage() {
                     balance={balance} 
                     onWithdraw={handleWithdrawalRequest} 
                     loading={requestLoading}
-                    hasBankDetails={!!agent?.bank_name}
+                    agent={agent}
                 />
 
                 {/* Transaction Table */}

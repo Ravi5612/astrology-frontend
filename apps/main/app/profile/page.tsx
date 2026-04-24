@@ -38,22 +38,22 @@ const ProfileContent: React.FC = () => {
     // Wallet
     rechargeAmount, setRechargeAmount,
     isProcessing, rechargeOptions,
-    walletTransactions, loadingTransactions,
+    walletTransactions, loadingTransactions, transactionsHasMore, loadingMoreTransactions, loadMoreTransactions,
     walletView, setWalletView,
     walletPurpose, setWalletPurpose,
     handleRecharge,
 
     // History
-    consultationHistory, loadingHistory, expandedSessions, toggleSession,
+    consultationHistory, loadingHistory, hasMore, loadingMore, loadMoreHistory, expandedSessions, toggleSession,
     selectedSession, chatMessages, showChatModal, setShowChatModal,
     handleViewChat,
 
     // Orders
-    orders, loadingOrders, expandedOrders, toggleOrder,
+    orders, loadingOrders, ordersHasMore, loadingMoreOrders, loadMoreOrders, expandedOrders, toggleOrder,
     orderDisputes, consultationDisputes, pujaDisputes, allDisputes, selectedDispute, setSelectedDispute, showDisputeChat, setShowDisputeChat,
 
     // Notifications
-    notifications, loadingNotifications,
+    notifications, loadingNotifications, notificationsHasMore, loadingMoreNotifications, loadMoreNotifications,
     handleMarkAsRead, handleClearAllNotifs,
 
     // Rewards
@@ -176,6 +176,9 @@ const ProfileContent: React.FC = () => {
                   rechargeOptions={rechargeOptions}
                   transactions={walletTransactions}
                   loadingTransactions={loadingTransactions}
+                  hasMore={transactionsHasMore}
+                  loadingMore={loadingMoreTransactions}
+                  onLoadMore={loadMoreTransactions}
                   walletPurpose={walletPurpose}
                   setWalletPurpose={setWalletPurpose}
                 />
@@ -189,6 +192,9 @@ const ProfileContent: React.FC = () => {
                 <HistoryTab
                   loadingHistory={loadingHistory}
                   consultationHistory={consultationHistory}
+                  hasMore={hasMore}
+                  loadingMore={loadingMore}
+                  onLoadMore={loadMoreHistory}
                   expandedSessions={expandedSessions}
                   toggleSession={toggleSession}
                   onViewDetails={handleViewChat}
@@ -209,6 +215,9 @@ const ProfileContent: React.FC = () => {
                 <OrdersTab
                   orders={orders}
                   loadingOrders={loadingOrders}
+                  hasMore={ordersHasMore}
+                  loadingMore={loadingMoreOrders}
+                  onLoadMore={loadMoreOrders}
                   expandedOrders={expandedOrders}
                   toggleOrder={toggleOrder}
                   orderDisputes={orderDisputes}
@@ -247,6 +256,9 @@ const ProfileContent: React.FC = () => {
                 <NotificationsTab
                   loadingNotifications={loadingNotifications}
                   notifications={notifications}
+                  hasMore={notificationsHasMore}
+                  loadingMore={loadingMoreNotifications}
+                  onLoadMore={loadMoreNotifications}
                   onMarkAsRead={(id) => handleMarkAsRead(Number(id))}
                   onClearAll={handleClearAllNotifs}
                 />

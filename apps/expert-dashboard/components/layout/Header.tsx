@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   }, [user, isOnline]);
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-40 shadow-sm">
+    <header className="bg-transparent px-4 sm:px-6 py-3 sm:py-4 z-40">
       <div className="flex items-center justify-between gap-3">
         {/* Left Section */}
         <div className="flex items-center space-x-3 sm:space-x-4">

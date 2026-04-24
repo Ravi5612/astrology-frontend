@@ -26,6 +26,9 @@ interface OrdersTabProps {
     onCloseReviewModal: () => void;
     onOpenReviewModal: (merchantId: any, orderId: any) => void;
     onReviewSubmit: (data: any) => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
+    onLoadMore?: () => void;
 }
 
 const OrdersTab: React.FC<OrdersTabProps> = ({
@@ -41,7 +44,10 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
     reviewModalOpen,
     onCloseReviewModal,
     onOpenReviewModal,
-    onReviewSubmit
+    onReviewSubmit,
+    hasMore,
+    loadingMore,
+    onLoadMore
 }) => {
     const { lang } = useLanguageStore();
     const t = (profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en).orders;
@@ -485,6 +491,39 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
               </div>
               );
             })}
+
+            {/* Load More Button */}
+            {hasMore ? (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={onLoadMore}
+                  disabled={loadingMore}
+                  className="px-10 py-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-2xl hover:border-orange-200 hover:text-orange hover:bg-orange-50/30 transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95 disabled:opacity-50"
+                  style={fontStyle}
+                >
+                  {loadingMore ? (
+                    <>
+                      <i className="fa-solid fa-circle-notch fa-spin"></i>
+                      <span>{lang === "hi" ? "और लोड हो रहा है..." : "Loading More..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-arrow-down-long"></i>
+                      <span>{lang === "hi" ? "और ऑर्डर लोड करें" : "Load More Orders"}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : orders.length > 0 && (
+              <div className="flex flex-col items-center justify-center mt-12 py-8 border-t border-dashed border-gray-100">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mb-3 text-gray-300">
+                  <i className="fa-solid fa-check"></i>
+                </div>
+                <p className="text-gray-400 text-sm font-medium" style={fontStyle}>
+                  {lang === "hi" ? "आपने अपने सभी ऑर्डर देख लिए हैं" : "You've viewed all your orders"}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

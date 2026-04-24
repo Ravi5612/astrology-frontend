@@ -18,6 +18,10 @@ export const useProfileWalletLogic = (
     const rechargeOptions = [100, 200, 500, 1000, 2000, 5000];
     const [walletTransactions, setWalletTransactions] = useState<any[]>([]);
     const [loadingTransactions, setLoadingTransactions] = useState(false);
+    const [transactionsPage, setTransactionsPage] = useState(1);
+    const [transactionsHasMore, setTransactionsHasMore] = useState(true);
+    const [loadingMoreTransactions, setLoadingMoreTransactions] = useState(false);
+
     const [walletView, setWalletView] = useState<"recharge" | "history">(
         "recharge",
     );
@@ -36,26 +40,56 @@ export const useProfileWalletLogic = (
         localStorage.setItem("profileWalletView", walletView);
     }, [walletView]);
 
-    const loadTransactions = useCallback(async () => {
+    const loadTransactions = useCallback(async (pageNumber = 1) => {
         if (isClientAuthenticated) {
-            setLoadingTransactions(true);
-            const params = walletPurpose ? { purpose: walletPurpose } : {};
-            const [transactions, error] = await getWalletTransactions(params);
-            
-            if (error) {
-                console.error("Failed to load wallet transactions:", error);
-            } else {
-                const txArray = Array.isArray(transactions)
-                    ? transactions
-                    : transactions?.items ||
-                      transactions?.transactions ||
-                      transactions?.data ||
-                      [];
-                setWalletTransactions(txArray);
+            if (pageNumber === 1) setLoadingTransactions(true);
+            else setLoadingMoreTransactions(true);
+
+            try {
+                const limit = 10;
+                const offset = (pageNumber - 1) * limit;
+                const params = {
+                    limit,
+                    offset,
+                    ...(walletPurpose ? { purpose: walletPurpose } : {})
+                };
+                
+                const [result, error] = await getWalletTransactions(params) as any;
+                
+                if (error) {
+                    console.error("Failed to load wallet transactions:", error);
+                } else {
+                    const txArray = result?.data || [];
+                    const totalCount = result?.meta?.totalCount || 0;
+
+                    if (pageNumber === 1) {
+                        setWalletTransactions(txArray);
+                        setTransactionsHasMore(txArray.length < totalCount);
+                    } else {
+                        setWalletTransactions(prev => {
+                            const existingIds = new Set(prev.map(t => t.id));
+                            const newTxs = txArray.filter((t: any) => !existingIds.has(t.id));
+                            const updatedList = [...prev, ...newTxs];
+                            setTransactionsHasMore(updatedList.length < totalCount);
+                            return updatedList;
+                        });
+                    }
+                    setTransactionsPage(pageNumber);
+                }
+            } catch (err) {
+                console.error("Wallet transaction loading error:", err);
+            } finally {
+                setLoadingTransactions(false);
+                setLoadingMoreTransactions(false);
             }
-            setLoadingTransactions(false);
         }
     }, [isClientAuthenticated, walletPurpose]);
+
+    const loadMoreTransactions = () => {
+        if (!loadingMoreTransactions && transactionsHasMore) {
+            loadTransactions(transactionsPage + 1);
+        }
+    };
 
     useEffect(() => {
         if (activeTab === "wallet") {
@@ -149,6 +183,9 @@ export const useProfileWalletLogic = (
         rechargeOptions,
         walletTransactions,
         loadingTransactions,
+        transactionsHasMore,
+        loadingMoreTransactions,
+        loadMoreTransactions,
         walletView,
         setWalletView,
         walletPurpose,

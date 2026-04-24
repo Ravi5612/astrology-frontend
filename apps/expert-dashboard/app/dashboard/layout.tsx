@@ -44,13 +44,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <ChatNotificationListener />
       <CallNotificationListener />
-      <div className="min-h-screen flex bg-[#FFF9F4] relative" suppressHydrationWarning>
+      <div 
+        className="min-h-screen flex bg-cover bg-center bg-no-repeat relative" 
+        style={{ backgroundImage: "url('/images/back-image.webp')" }}
+        suppressHydrationWarning
+      >
         {/* Sidebar */}
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
         {/* Main Section */}
         <div className="flex-1 min-w-0 lg:ml-64 flex flex-col min-h-screen">
-          <Header toggleSidebar={toggleSidebar} />
+          {/* Transparent Glass Header */}
+          <header className="bg-white/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-30 shadow-sm">
+            <Header toggleSidebar={toggleSidebar} />
+          </header>
+          
           <main className="p-4 sm:p-6 text-black flex-1"> {children}</main>
         </div>
       </div>

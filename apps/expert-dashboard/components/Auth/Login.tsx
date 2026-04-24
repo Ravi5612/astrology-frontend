@@ -18,9 +18,9 @@ import { CLIENT_API_URL } from "@/lib/config";
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 
-const BrandingSection = () => (
+const BrandingSection = ({ stats }: { stats: { totalSeekers: string; averageRating: string } }) => (
   <div className="relative hidden lg:block h-full min-h-[600px]">
-    <div className="absolute inset-0 bg-orange-600/95 flex flex-col items-center justify-center text-white p-12 text-center">
+    <div className="absolute inset-0 bg-orange-600/95 flex flex-col items-center justify-start text-white pt-4 pb-12 px-12 text-center">
       <motion.div 
         animate={{ y: [-10, 10, -10] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -41,13 +41,13 @@ const BrandingSection = () => (
       </p>
       
       <div className="mt-12 grid grid-cols-2 gap-4 w-full max-w-xs">
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
-          <p className="text-2xl font-black">50k+</p>
-          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Seekers</p>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 cursor-default group">
+          <p className="text-2xl font-black">{stats.totalExperts}</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">Total Experts</p>
         </div>
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
-          <p className="text-2xl font-black">4.9/5</p>
-          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Rating</p>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 cursor-default group">
+          <p className="text-2xl font-black">{stats.totalServices}</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">Services Given</p>
         </div>
       </div>
     </div>
@@ -60,6 +60,10 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [stats, setStats] = useState({ 
+    totalExperts: "0+", 
+    totalServices: "0+" 
+  });
 
   const {
     register,
@@ -78,7 +82,26 @@ const LoginPage: React.FC = () => {
       toast.error(message);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+    fetchStats();
   }, []);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${CLIENT_API_URL}/public/stats/expert-hub`);
+      const json = await response.json();
+      if (json.success && json.data) {
+        const experts = json.data.totalExperts ?? 0;
+        const services = json.data.totalServices ?? 0;
+        
+        setStats({
+          totalExperts: `${experts}+`,
+          totalServices: `${services}+`
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch expert stats:", error);
+    }
+  };
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
@@ -115,7 +138,7 @@ const LoginPage: React.FC = () => {
       </Head>
 
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-[32px] sm:rounded-[40px] shadow-premium bg-white border border-gray-100 max-h-[95vh] overflow-y-auto no-scrollbar">
-        <BrandingSection />
+        <BrandingSection stats={stats} />
 
         <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white min-h-fit">
           <div className="mb-10 text-center lg:text-left">

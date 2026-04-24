@@ -4,7 +4,10 @@ import { cookies } from "next/headers";
 import { api } from "@/lib/api";
 
 export async function expertLoginAction(formData: any) {
-    const [data, error] = await api.post<any>('/auth/login', formData);
+    const [data, error] = await api.post<any>('/auth/login', {
+        ...formData,
+        requiredRole: "expert"
+    });
 
     if (error) {
         return { error: error.body?.message || error.message || "Login failed" };
@@ -13,15 +16,6 @@ export async function expertLoginAction(formData: any) {
     // Token existence check
     if (!data?.accessToken) {
         return { error: "No access token received" };
-    }
-
-    // Role check - Ensure user is an EXPERT (Expert)
-    const isExpert = data?.user?.roles?.some(
-        (r: any) => (typeof r === 'string' ? r : r.name).toUpperCase() === "EXPERT"
-    );
-
-    if (!isExpert) {
-        return { error: "Access denied: Not an expert account" };
     }
 
     // Set httpOnly cookies

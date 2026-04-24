@@ -99,11 +99,11 @@ export default function AgentDashboardHome() {
                     <div className="mt-6 flex flex-wrap items-center gap-6">
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Total Earned</p>
-                            <p className="text-2xl font-black">₹{(statsData?.commissionEarned || 0).toLocaleString("en-IN")}</p>
+                            <p className="text-2xl font-black">₹{(statsData?.totalListingsEarnings || 0).toLocaleString("en-IN")}</p>
                         </div>
                         <div className="w-px h-10 bg-white/20 hidden sm:block" />
                         <div>
-                            <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Commission</p>
+                            <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Wallet Balance</p>
                             <p className="text-2xl font-black">₹{(statsData?.totalEarned || 0).toLocaleString("en-IN")}</p>
                         </div>
                         <div className="w-px h-10 bg-white/20 hidden sm:block" />
@@ -129,7 +129,6 @@ export default function AgentDashboardHome() {
                             { label: "Add New Astrologer", href: "/dashboard/registration", icon: Star },
                             { label: "Add New Mandir", href: "/dashboard/registration", icon: Building2 },
                             { label: "Add New Puja Shop", href: "/dashboard/registration", icon: ShoppingBag },
-                            { label: "View Commissions", href: "/dashboard/commissions", icon: BadgeIndianRupee },
                         ].map(({ label, href, icon: Icon }) => (
                             <Link key={label} href={href} className="block">
                                 {/* @repo/ui Button */}

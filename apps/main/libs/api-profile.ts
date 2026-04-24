@@ -42,7 +42,7 @@ export const getAllChatSessions = async (): Promise<[any | null, ApiError | null
     return await api.get('/chat/sessions/my-sessions');
 };
 
-export const getConsultationHistory = async (params?: { page?: number, limit?: number }): Promise<[any | null, ApiError | null]> => {
+export const getConsultationHistory = async (params?: { page?: number, limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
     return await api.get('/consultations/history', { params } as any);
 };
 
@@ -54,12 +54,12 @@ export const getMyOrders = async (): Promise<[any | null, ApiError | null]> => {
     return await api.get('/orders/my-orders');
 };
 
-export const getWalletTransactions = async (params?: { purpose?: string, page?: number, limit?: number }): Promise<[any | null, ApiError | null]> => {
+export const getWalletTransactions = async (params?: { purpose?: string, limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
     return await api.get('/wallet/transactions', { params } as any);
 };
 
-export const getNotifications = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/notifications');
+export const getNotifications = async (params?: { limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
+    return await api.get('/notifications', { params } as any);
 };
 
 export const getUnreadCount = async (): Promise<[any | null, ApiError | null]> => {
