@@ -50,8 +50,8 @@ export const getChatHistory = async (sessionId: number): Promise<[any | null, Ap
     return await api.get(`/chat/history/${sessionId}`);
 };
 
-export const getMyOrders = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/orders/my-orders');
+export const getMyOrders = async (params?: { limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
+    return await api.get('/orders/my-orders', { params } as any);
 };
 
 export const getWalletTransactions = async (params?: { purpose?: string, limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {

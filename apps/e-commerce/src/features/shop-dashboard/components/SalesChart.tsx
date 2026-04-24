@@ -116,7 +116,7 @@ export function SalesChart({ data, isLoading }: SalesChartProps) {
                 fontSize: '14px',
                 fontWeight: '900'
               }}
-              formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+              formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Revenue']}
               cursor={{ stroke: '#fd6410', strokeWidth: 2, strokeDasharray: '6 6' }}
             />
             <Area

@@ -76,7 +76,7 @@ export function RevenueChart({ data }: { data: any[] }) {
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 900, fill: '#64748b' }} />
             <Tooltip
               contentStyle={{ backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', padding: '16px', fontSize: '14px', fontWeight: '900' }}
-              formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+              formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Revenue']}
             />
             <Area type="monotone" dataKey="revenue" stroke="#fd6410" strokeWidth={5} fillOpacity={1} fill="url(#colorRev)" animationDuration={2000} />
           </AreaChart>
