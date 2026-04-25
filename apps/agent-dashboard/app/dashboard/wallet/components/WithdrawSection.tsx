@@ -44,6 +44,24 @@ export const WithdrawSection: React.FC<WithdrawSectionProps> = ({
         setAmount("");
     };
 
+    // Debugging why button is disabled
+    console.log("[WithdrawSection] Debug:", {
+        amount,
+        numAmount: parseFloat(amount),
+        balance,
+        hasBankDetails,
+        loading,
+        isDisabled: loading || !amount || parseFloat(amount) < 500 || parseFloat(amount) > balance || !hasBankDetails,
+        reason: {
+            loading,
+            noAmount: !amount,
+            tooLow: parseFloat(amount) < 500,
+            insufficient: parseFloat(amount) > balance,
+            noBank: !hasBankDetails
+        }
+    });
+
+
     return (
         <div className="group bg-white p-10 rounded-[1.5rem] border border-gray-100 shadow-sm space-y-8 relative transition-all duration-700 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)] hover:-translate-y-1">
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50/50 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-orange-100/50 transition-colors duration-700" />

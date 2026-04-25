@@ -1,26 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@repo/ui";
 import {
     UserPlus, CheckCircle, X,
-    Star, Users, Building2, ShoppingBag,
+    Star, Building2, ShoppingBag,
     MapPin, Phone, Clock, Flame,
+    Plus, Sparkles, ChevronRight
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { registerUserByAgent, createListing } from "@/src/services/agent.service";
+import { cn } from "@/src/lib/cn";
+import { RegistrationSkeleton } from "../../components/Skeleton";
 
 // ── Tab types ────────────────────────────────────────────────────────────────
 
-type TabId = "expert" | "client" | "merchant" | "mandir" | "puja_shop";
+type TabId = "expert" | "mandir" | "puja_shop";
 
 interface TabConfig {
     id: TabId;
     label: string;
-    emoji: string;
+    description: string;
     icon: React.ElementType;
-    activeBg: string;
-    activeText: string;
-    borderColor: string;
     infoText: string;
 }
 
@@ -28,155 +28,135 @@ const TABS: TabConfig[] = [
     {
         id: "expert",
         label: "Expert",
-        emoji: "⭐",
+        description: "Astrologers & Gurus",
         icon: Star,
-        activeBg: "bg-yellow-700",
-        activeText: "text-white",
-        borderColor: "border-yellow-700",
-        infoText: "Register an expert and earn 3% commission on their total platform earnings.",
+        infoText: "Register an expert and earn recurring commission on their platform activity.",
     },
     {
         id: "mandir",
         label: "Mandir",
-        emoji: "🛕",
+        description: "Temples & Shrines",
         icon: Building2,
-        activeBg: "bg-orange-700",
-        activeText: "text-white",
-        borderColor: "border-orange-700",
-        infoText: "Add a mandir listing and earn 3% commission on every puja service booked there.",
+        infoText: "Add a mandir listing and earn commission on every puja service booked there.",
     },
     {
         id: "puja_shop",
         label: "Puja Shop",
-        emoji: "🪔",
+        description: "Merchants & Items",
         icon: ShoppingBag,
-        activeBg: "bg-purple-800",
-        activeText: "text-white",
-        borderColor: "border-purple-800",
-        infoText: "Register a puja shop merchant and earn 3% commission on their total product sales.",
+        infoText: "Register a puja shop merchant and earn commission on their total product sales.",
     },
 ];
 
-// ── Empty forms ──────────────────────────────────────────────────────────────
-const EMPTY_USER_FORM = { name: "", email: "", phone: "" };
+// ── Shared UI Components ─────────────────────────────────────────────────────
 
-interface MandirForm {
-    name: string;
-    location: string;
-    mainDeity: string;
-    contact: string;
-    openingTime: string;
-    closingTime: string;
-}
-const EMPTY_MANDIR: MandirForm = {
-    name: "", location: "", mainDeity: "",
-    contact: "", openingTime: "", closingTime: "",
-};
-
-// ── Shared input style ───────────────────────────────────────────────────────
 const INPUT_CLS =
-    "w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition placeholder:text-gray-400";
+    "w-full px-4 py-3 rounded-xl border border-gray-200 bg-white/50 backdrop-blur-sm text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition-all duration-200 placeholder:text-gray-400 shadow-sm";
 
-// ── Label ────────────────────────────────────────────────────────────────────
 function FieldLabel({ children }: { children: React.ReactNode }) {
     return (
-        <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">
+        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-[0.15em] mb-1.5 ml-1">
             {children}
         </label>
     );
 }
 
-// ── Success Modal (for user registration) ────────────────────────────────────
-function SuccessModal({
-    registeredUser,
-    onClose,
-}: {
-    registeredUser: any;
-    onClose: () => void;
-}) {
+// ── Modals ───────────────────────────────────────────────────────────────────
+
+function SuccessModal({ registeredUser, onClose }: { registeredUser: any; onClose: () => void }) {
     const roleString = registeredUser.roles?.[0]?.name || registeredUser.role || "user";
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-in fade-in zoom-in-95 duration-200">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+        <div className="fixed inset-0 bg-[#301118]/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+            <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-8 relative animate-in zoom-in-95 duration-300 border border-white/20">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
                     <X className="w-5 h-5" />
                 </button>
 
-                <div className="text-center mb-5">
-                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <CheckCircle className="w-7 h-7 text-green-600" />
+                <div className="text-center mb-6">
+                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg shadow-green-200/50">
+                        <CheckCircle className="w-10 h-10 text-green-500" />
                     </div>
-                    <h3 className="text-lg font-black text-gray-900">Registration Successful!</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                        {registeredUser.name} has been registered as{" "}
-                        <span className="font-bold text-primary capitalize">
+                    <h3 className="text-2xl font-black text-gray-900 leading-tight">Registration<br />Successful!</h3>
+                    <p className="text-sm text-gray-500 mt-2 font-medium">
+                        <span className="font-bold text-gray-900">{registeredUser.name}</span> is now a verified 
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-orange/10 text-brand-orange ml-1.5 capitalize">
                             {roleString}
                         </span>
                     </p>
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-1.5">
-                    <p className="text-xs text-gray-500">Name: <span className="font-bold text-gray-800">{registeredUser.name}</span></p>
-                    <p className="text-xs text-gray-500">Email: <span className="font-bold text-gray-800">{registeredUser.email}</span></p>
-                    <p className="text-xs text-gray-500">Role: <span className="font-bold text-gray-800 capitalize">{roleString}</span></p>
+                <div className="bg-gray-50 rounded-2xl p-5 mb-6 border border-gray-100 space-y-3">
+                    <div className="flex justify-between items-center border-b border-gray-200/50 pb-2">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Login Email</span>
+                        <span className="text-xs font-bold text-gray-800">{registeredUser.email}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-1">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform Role</span>
+                        <span className="text-xs font-bold text-gray-800 capitalize">{roleString}</span>
+                    </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-4 text-center">
-                    <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
-                        <Flame className="w-4 h-4" />
-                        <span className="text-xs font-black uppercase tracking-widest">Credentials Sent</span>
+                <div className="bg-orange-50 border border-orange-100 rounded-2xl p-5 mb-8 text-center">
+                    <div className="flex items-center justify-center gap-2 text-brand-orange mb-2">
+                        <Sparkles className="w-4 h-4 fill-brand-orange" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Credentials Sent</span>
                     </div>
-                    <p className="text-sm text-blue-900 font-bold italic">
-                        The login password and verification link have been sent to 
-                        <span className="block mt-1 font-black underline decoration-blue-300 underline-offset-2">{registeredUser.email}</span>
+                    <p className="text-sm text-orange-900 font-bold leading-relaxed">
+                        Login details sent to the registered email address.
                     </p>
                 </div>
 
-                <p className="text-xs text-center text-slate-400 font-medium px-4 mb-6 italic">
-                    The {roleString} can now log in after verifying their email using the credentials provided in their inbox.
-                </p>
-
-                <Button variant="primary" fullWidth onClick={onClose}>
-                    Great, Done
+                <Button 
+                    onClick={onClose}
+                    className="!bg-brand-orange hover:!bg-primary-hover !text-white !rounded-2xl !py-4 !text-sm !font-black !shadow-xl !shadow-brand-orange/20 transition-all hover:scale-[1.02] active:scale-[0.98]" 
+                    fullWidth
+                >
+                    Return to Dashboard
                 </Button>
             </div>
         </div>
     );
 }
 
-// ── Listing Success Modal (mandir / puja shop) ────────────────────────────────
 function ListingSuccessModal({ name, type, onClose }: { name: string; type: string; onClose: () => void }) {
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-in fade-in zoom-in-95 duration-200">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <div className="fixed inset-0 bg-[#301118]/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+            <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-8 relative animate-in zoom-in-95 duration-300 border border-white/20 text-center">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
                     <X className="w-5 h-5" />
                 </button>
-                <div className="text-center">
-                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <CheckCircle className="w-7 h-7 text-green-600" />
-                    </div>
-                    <h3 className="text-lg font-black text-gray-900">Listing Submitted!</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                        <span className="font-bold text-gray-800">{name}</span> has been submitted as a{" "}
-                        <span className="font-bold text-primary capitalize">{type === "puja_shop" ? "Puja Shop" : "Mandir"}</span> listing.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-3 mb-6">
-                        Your listing is pending review and will go live once approved by the admin.
-                    </p>
-                    <Button variant="primary" fullWidth onClick={onClose}>
-                        Great, Continue
-                    </Button>
+                
+                <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg shadow-orange-200/50">
+                    <Building2 className="w-10 h-10 text-brand-orange" />
                 </div>
+                
+                <h3 className="text-2xl font-black text-gray-900 leading-tight">Listing<br />Submitted!</h3>
+                <p className="text-sm text-gray-500 mt-2 font-medium px-4">
+                    <span className="font-bold text-gray-900">{name}</span> has been added as a 
+                    <span className="text-brand-orange font-bold"> {type === "puja_shop" ? "Puja Shop" : "Mandir"}</span>.
+                </p>
+                
+                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 my-8 text-sm text-gray-600 font-medium">
+                    Our team will verify the details within 24-48 hours.
+                </div>
+
+                <Button 
+                    onClick={onClose}
+                    className="!bg-brand-orange hover:!bg-primary-hover !text-white !rounded-2xl !py-4 !text-sm !font-black !shadow-xl !shadow-brand-orange/20 transition-all hover:scale-[1.02] active:scale-[0.98]" 
+                    fullWidth
+                >
+                    Got it, Thanks
+                </Button>
             </div>
         </div>
     );
 }
 
-// ── Expert / Client / Merchant Form ──────────────────────────────────────────
-function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) {
-    const [form, setForm] = useState(EMPTY_USER_FORM);
+// ── Expert / Merchant Form ───────────────────────────────────────────────────
+
+function UserForm({ userType }: { userType: "expert" | "merchant" }) {
+    const [form, setForm] = useState({ name: "", email: "", phone: "" });
     const [submitting, setSubmitting] = useState(false);
     const [registeredUser, setRegisteredUser] = useState<any>(null);
 
@@ -193,49 +173,62 @@ function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) 
             toast.error(error.message || "Registration failed. Try again.");
         } else if (res) {
             setRegisteredUser(res.user);
-            setForm(EMPTY_USER_FORM);
-            if (res.emailSent === false) {
-                toast.warning(`Registered, but credentials email failed: ${res.emailError || "Unknown error"}. Please check email service.`);
-            } else {
-                let successMsg = "";
-                if (userType === "expert") successMsg = "Expert registered! Credentials sent ✅";
-                else if (userType === "merchant") successMsg = "Puja Shop Merchant registered! Credentials sent ✅";
-                else successMsg = "Client registered! Credentials sent ✅";
-                
-                toast.success(successMsg);
-            }
+            setForm({ name: "", email: "", phone: "" });
         }
         setSubmitting(false);
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-4">
-                    {[
-                        { key: "name", label: userType === "merchant" ? "Shop / Owner Name *" : "Full Name *", placeholder: userType === "expert" ? "Pt. Ramesh Sharma" : userType === "merchant" ? "Shiv Puja Bhandar" : "Rakesh Kumar", type: "text", full: true },
-                        { key: "email", label: "Email *", placeholder: "example@gmail.com", type: "email", full: false },
-                        { key: "phone", label: "Phone / Contact *", placeholder: "9876543210", type: "tel", full: false },
-                    ].map(({ key, label, placeholder, type, full }) => (
-                        <div key={key} className={full ? "sm:col-span-2" : ""}>
-                            <FieldLabel>{label}</FieldLabel>
-                            <input
-                                type={type}
-                                placeholder={placeholder}
-                                value={(form as any)[key]}
-                                onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                                className={INPUT_CLS}
-                            />
-                        </div>
-                    ))}
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-5">
+                    <div className="sm:col-span-2">
+                        <FieldLabel>{userType === "merchant" ? "Shop / Owner Name" : "Full Name"}</FieldLabel>
+                        <input
+                            type="text"
+                            placeholder={userType === "expert" ? "e.g. Pt. Ramesh Sharma" : "e.g. Shiv Puja Bhandar"}
+                            value={form.name}
+                            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                            className={INPUT_CLS}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <FieldLabel>Email Address</FieldLabel>
+                        <input
+                            type="email"
+                            placeholder="example@gmail.com"
+                            value={form.email}
+                            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                            className={INPUT_CLS}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <FieldLabel>Phone / Contact</FieldLabel>
+                        <input
+                            type="tel"
+                            placeholder="9876543210"
+                            value={form.phone}
+                            onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                            className={INPUT_CLS}
+                            required
+                        />
+                    </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 font-medium">
-                    ℹ️ You will earn a <strong>3% Recurring Commission</strong> from this {userType === 'expert' ? 'Expert\'s' : 'Merchant\'s'} platform activity. Login credentials will be sent to their email.
-                </div>
-
-                <Button variant="primary" type="submit" icon={userType === 'merchant' ? ShoppingBag : UserPlus} disabled={submitting} fullWidth>
-                    {submitting ? "Registering…" : `Register ${userType === "expert" ? "Expert" : "Puja Shop Merchant"}`}
+                <Button 
+                    type="submit" 
+                    disabled={submitting} 
+                    fullWidth
+                    className="!bg-brand-orange hover:!bg-primary-hover !text-white !rounded-2xl !py-4 !text-sm !font-black !shadow-xl !shadow-brand-orange/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                >
+                    {submitting ? "Processing..." : (
+                        <span className="flex items-center justify-center gap-2">
+                            {userType === 'expert' ? <UserPlus className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+                            Register {userType === "expert" ? "Expert" : "Merchant"}
+                        </span>
+                    )}
                 </Button>
             </form>
 
@@ -245,173 +238,148 @@ function UserForm({ userType }: { userType: "expert" | "client" | "merchant" }) 
                     onClose={() => { setRegisteredUser(null); }}
                 />
             )}
-        </>
+        </div>
     );
 }
 
-// ── Mandir / Puja Shop Form ──────────────────────────────────────────────────
-function PlaceForm({ type }: { type: "mandir" | "puja_shop" }) {
-    const [form, setForm] = useState<MandirForm>(EMPTY_MANDIR);
+// ── Mandir Form ──────────────────────────────────────────────────────────────
+
+function MandirForm() {
+    const [form, setForm] = useState({ name: "", location: "", mainDeity: "", contact: "", openingTime: "", closingTime: "" });
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
-
-    const isMandir = type === "mandir";
-    const entityLabel = isMandir ? "Mandir" : "Puja Shop";
-    const accentColor = isMandir ? "orange" : "purple";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.name.trim() || !form.location.trim()) {
-            toast.error(`Please fill the ${entityLabel} name and location`);
+            toast.error("Please fill Mandir name and location");
             return;
         }
         setSubmitting(true);
         const [res, error] = await createListing({
-            type: type === "mandir" ? "mandir" : "puja_shop",
+            type: "mandir",
             name: form.name,
             location: form.location,
             phone: form.contact,
             deity: form.mainDeity,
-            // Pass opening/closing time as part of items field for now
             items: `Opening: ${form.openingTime} | Closing: ${form.closingTime}`,
         });
 
         if (error) {
             toast.error(error.message || "Failed to submit listing");
         } else {
-            setForm(EMPTY_MANDIR);
             setSuccess(true);
-            toast.success(`${entityLabel} listing submitted for review! 🙏`);
+            setForm({ name: "", location: "", mainDeity: "", contact: "", openingTime: "", closingTime: "" });
         }
         setSubmitting(false);
     };
 
-    const inputFocusRing = isMandir
-        ? "focus:ring-orange-400/40 focus:border-orange-300"
-        : "focus:ring-purple-400/40 focus:border-purple-300";
-
     return (
-        <>
-            <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Row 1: Name */}
-                <div>
-                    <FieldLabel>{entityLabel} Name *</FieldLabel>
-                    <input
-                        type="text"
-                        placeholder={isMandir ? "e.g. Shri Kashi Vishwanath Mandir" : "e.g. Puja Samagri Bhandar"}
-                        value={form.name}
-                        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                        className={`${INPUT_CLS} ${inputFocusRing}`}
-                    />
-                </div>
-
-                {/* Row 2: Location + Main Deity */}
-                <div className="grid sm:grid-cols-2 gap-4">
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-5">
                     <div>
-                        <FieldLabel>
-                            <span className="flex items-center gap-1.5">
-                                <MapPin className="w-3 h-3" /> Location *
-                            </span>
-                        </FieldLabel>
+                        <FieldLabel>Mandir Name</FieldLabel>
                         <input
                             type="text"
-                            placeholder="City, State"
-                            value={form.location}
-                            onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                            className={`${INPUT_CLS} ${inputFocusRing}`}
+                            placeholder="e.g. Shri Kashi Vishwanath Mandir"
+                            value={form.name}
+                            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                            className={INPUT_CLS}
+                            required
                         />
                     </div>
-                    <div>
-                        <FieldLabel>
-                            <span className="flex items-center gap-1.5">
-                                <Flame className="w-3 h-3" /> Main Deity
-                            </span>
-                        </FieldLabel>
-                        <input
-                            type="text"
-                            placeholder={isMandir ? "e.g. Lord Shiva" : "e.g. Ganesha Items"}
-                            value={form.mainDeity}
-                            onChange={(e) => setForm((f) => ({ ...f, mainDeity: e.target.value }))}
-                            className={`${INPUT_CLS} ${inputFocusRing}`}
-                        />
+
+                    <div className="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <FieldLabel>Location</FieldLabel>
+                            <div className="relative">
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="City, State"
+                                    value={form.location}
+                                    onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
+                                    className={cn(INPUT_CLS, "pl-11")}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <FieldLabel>Main Deity</FieldLabel>
+                            <div className="relative">
+                                <Flame className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Lord Shiva"
+                                    value={form.mainDeity}
+                                    onChange={(e) => setForm((f) => ({ ...f, mainDeity: e.target.value }))}
+                                    className={cn(INPUT_CLS, "pl-11")}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-3 gap-5">
+                        <div>
+                            <FieldLabel>Contact</FieldLabel>
+                            <input
+                                type="tel"
+                                placeholder="9876543210"
+                                value={form.contact}
+                                onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))}
+                                className={INPUT_CLS}
+                            />
+                        </div>
+                        <div>
+                            <FieldLabel>Opening Time</FieldLabel>
+                            <input
+                                type="time"
+                                value={form.openingTime}
+                                onChange={(e) => setForm((f) => ({ ...f, openingTime: e.target.value }))}
+                                className={INPUT_CLS}
+                            />
+                        </div>
+                        <div>
+                            <FieldLabel>Closing Time</FieldLabel>
+                            <input
+                                type="time"
+                                value={form.closingTime}
+                                onChange={(e) => setForm((f) => ({ ...f, closingTime: e.target.value }))}
+                                className={INPUT_CLS}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* Row 3: Contact + Opening + Closing */}
-                <div className="grid sm:grid-cols-3 gap-4">
-                    <div>
-                        <FieldLabel>
-                            <span className="flex items-center gap-1.5">
-                                <Phone className="w-3 h-3" /> Contact
-                            </span>
-                        </FieldLabel>
-                        <input
-                            type="tel"
-                            placeholder="9876543210"
-                            value={form.contact}
-                            onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))}
-                            className={`${INPUT_CLS} ${inputFocusRing}`}
-                        />
-                    </div>
-                    <div>
-                        <FieldLabel>
-                            <span className="flex items-center gap-1.5">
-                                <Clock className="w-3 h-3" /> Opening Time
-                            </span>
-                        </FieldLabel>
-                        <input
-                            type="time"
-                            value={form.openingTime}
-                            onChange={(e) => setForm((f) => ({ ...f, openingTime: e.target.value }))}
-                            className={`${INPUT_CLS} ${inputFocusRing}`}
-                        />
-                    </div>
-                    <div>
-                        <FieldLabel>
-                            <span className="flex items-center gap-1.5">
-                                <Clock className="w-3 h-3" /> Closing Time
-                            </span>
-                        </FieldLabel>
-                        <input
-                            type="time"
-                            value={form.closingTime}
-                            onChange={(e) => setForm((f) => ({ ...f, closingTime: e.target.value }))}
-                            className={`${INPUT_CLS} ${inputFocusRing}`}
-                        />
-                    </div>
-                </div>
-
-                {/* Info box */}
-                <div className={`bg-${accentColor}-50 border border-${accentColor}-100 rounded-xl p-4 text-xs font-medium text-${accentColor}-700`}>
-                    🙏 This {entityLabel} listing will be reviewed by admin. You will earn <strong>3% commission</strong> on transactions related to this listing.
-                </div>
-
-                <Button
-                    variant="primary"
-                    type="submit"
-                    icon={isMandir ? Building2 : ShoppingBag}
-                    disabled={submitting}
+                <Button 
+                    type="submit" 
+                    disabled={submitting} 
                     fullWidth
+                    className="!bg-brand-orange hover:!bg-primary-hover !text-white !rounded-2xl !py-4 !text-sm !font-black !shadow-xl !shadow-brand-orange/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
                 >
-                    {submitting ? "Submitting…" : `Submit ${entityLabel} Listing`}
+                    {submitting ? "Submitting..." : (
+                        <span className="flex items-center justify-center gap-2">
+                            <Plus className="w-4 h-4" />
+                            Submit Mandir Listing
+                        </span>
+                    )}
                 </Button>
             </form>
 
             {success && (
                 <ListingSuccessModal
-                    name={form.name || entityLabel}
-                    type={type}
+                    name={form.name || "Mandir"}
+                    type="mandir"
                     onClose={() => setSuccess(false)}
                 />
             )}
-        </>
+        </div>
     );
 }
 
-import { RegistrationSkeleton } from "../../components/Skeleton";
-import { useEffect } from "react";
-
 // ── Main Page ────────────────────────────────────────────────────────────────
+
 export default function RegisterUserPage() {
     const [activeTab, setActiveTab] = useState<TabId>("expert");
     const [mounted, setMounted] = useState(false);
@@ -420,70 +388,96 @@ export default function RegisterUserPage() {
         setMounted(true);
     }, []);
 
-    const currentTab = TABS.find((t) => t.id === activeTab)!;
-
     if (!mounted) return <RegistrationSkeleton />;
 
+    const currentTab = TABS.find((t) => t.id === activeTab)!;
+
     return (
-        <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header */}
-            <div>
-                <h2 className="text-xl font-black text-gray-900">Register / Add Listing</h2>
-                <p className="text-sm text-gray-500 mt-0.5">
-                    Register a user or add a new mandir / puja shop listing
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            
+            {/* Header Section */}
+            <div className="text-center sm:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange mb-3">
+                    <Sparkles className="w-3.5 h-3.5 fill-brand-orange" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Agent Portal</span>
+                </div>
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight">Onboarding <span className="text-brand-orange">Hub</span></h2>
+                <p className="text-sm text-gray-500 mt-1.5 font-medium">
+                    Expand the network by adding verified Experts, Mandirs, or Puja Shops.
                 </p>
             </div>
 
-            {/* 3 Tab Buttons */}
-            <div className="grid grid-cols-3 gap-2">
+            {/* Premium Tabs */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {TABS.map((tab) => {
-                    const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
+                    const Icon = tab.icon;
                     return (
                         <button
                             key={tab.id}
-                            id={`register-tab-${tab.id}`}
-                            type="button"
                             onClick={() => setActiveTab(tab.id)}
-                            className={`
-                                flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border text-xs font-bold
-                                transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30
-                                ${isActive
-                                    ? `${tab.activeBg} ${tab.activeText} border-transparent shadow-md scale-[1.03]`
-                                    : `bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:border-gray-300`
-                                }
-                            `}
+                            className={cn(
+                                "relative group flex items-start gap-4 p-5 rounded-[2rem] border-2 transition-all duration-300 text-left",
+                                isActive 
+                                    ? "bg-white border-brand-orange shadow-xl shadow-brand-orange/10 -translate-y-1" 
+                                    : "bg-white/50 border-transparent hover:border-gray-200 backdrop-blur-sm"
+                            )}
                         >
-                            <span className="text-xl leading-none">{tab.emoji}</span>
-                            <Icon className={`w-4 h-4 ${isActive ? "text-white/90" : "text-gray-400"}`} />
-                            <span className={isActive ? "text-white" : "text-gray-600"}>{tab.label}</span>
+                            <div className={cn(
+                                "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300",
+                                isActive ? "bg-brand-orange text-white shadow-lg shadow-brand-orange/30" : "bg-gray-100 text-gray-400 group-hover:bg-gray-200"
+                            )}>
+                                <Icon className="w-6 h-6" />
+                            </div>
+                            <div className="flex-1">
+                                <p className={cn("text-xs font-black uppercase tracking-widest leading-none", isActive ? "text-brand-orange" : "text-gray-400")}>
+                                    {tab.label}
+                                </p>
+                                <p className={cn("text-sm font-bold mt-1", isActive ? "text-gray-900" : "text-gray-500")}>
+                                    {tab.description}
+                                </p>
+                            </div>
+                            {isActive && (
+                                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-brand-orange rounded-full" />
+                            )}
                         </button>
                     );
                 })}
             </div>
 
-            {/* Form Card */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                {/* Card header strip */}
-                <div className={`${currentTab.activeBg} px-6 py-3 flex items-center gap-2`}>
-                    <span className="text-lg">{currentTab.emoji}</span>
-                    <p className={`text-sm font-black ${currentTab.activeText}`}>
-                        {activeTab === "expert" && "Register New Expert"}
-                        {activeTab === "mandir" && "Add New Mandir Listing"}
-                        {activeTab === "puja_shop" && "Add New Puja Shop Listing"}
-                    </p>
-                </div>
+            {/* Form Container */}
+            <div className="relative group">
+                {/* Decorative Elements */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange to-primary-hover rounded-[2.5rem] blur opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-500" />
+                
+                <div className="relative bg-white/70 backdrop-blur-xl border border-white rounded-[2.5rem] shadow-sm overflow-hidden min-h-[400px]">
+                    {/* Inner Header */}
+                    <div className="px-8 pt-8 pb-2 flex items-center justify-between">
+                        <div>
+                            <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
+                                {currentTab.label === "Expert" ? "Expert Onboarding" : 
+                                 currentTab.label === "Mandir" ? "Mandir Listing" : "Puja Shop Onboarding"}
+                                <ChevronRight className="w-5 h-5 text-gray-300" />
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-1 font-medium">{currentTab.infoText}</p>
+                        </div>
+                        <div className="hidden sm:flex w-12 h-12 bg-gray-50 rounded-2xl items-center justify-center text-gray-300 border border-gray-100">
+                            <currentTab.icon className="w-6 h-6" />
+                        </div>
+                    </div>
 
-                <div className="p-6">
-                    {(activeTab === "expert" || activeTab === "client") && (
-                        <UserForm key={activeTab} userType={activeTab} />
-                    )}
-                    {activeTab === "puja_shop" && (
-                        <UserForm key="merchant" userType="merchant" />
-                    )}
-                    {activeTab === "mandir" && <PlaceForm key="mandir" type="mandir" />}
+                    <div className="p-8">
+                        {activeTab === "expert" && <UserForm key="expert" userType="expert" />}
+                        {activeTab === "mandir" && <MandirForm key="mandir" />}
+                        {activeTab === "puja_shop" && <UserForm key="puja_shop" userType="merchant" />}
+                    </div>
                 </div>
             </div>
+
+            {/* Footer Tip */}
+            <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] px-8">
+                All data is securely processed according to platform guidelines
+            </p>
         </div>
     );
 }

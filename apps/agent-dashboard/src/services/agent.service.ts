@@ -151,15 +151,14 @@ export const registerUserByAgent = async (payload: RegisterUserPayload): Promise
 };
 
 // ── Dashboard Stats ──────────────────────────────────────────────────────────
-export const getAgentDashboardStats = async (): Promise<[any | null, ApiError | null]> => {
-    const [data, error] = await api.get(API_ROUTES.AGENTS.DASHBOARD_STATS);
+export const getAgentDashboardStats = async (params?: { range?: string; startDate?: string; endDate?: string }): Promise<[any | null, ApiError | null]> => {
+    const [data, error] = await api.get(API_ROUTES.AGENTS.DASHBOARD_STATS, params as Record<string, any>);
     if (error) {
-        // Return null data and any default object if needed by UI, 
-        // but here we stick to the tuple pattern.
         return [null, error];
     }
     return [data, null];
 };
+
 
 // ── Wallet ───────────────────────────────────────────────────────────────────
 export const getAgentWalletBalance = async (): Promise<[any | null, ApiError | null]> => {
@@ -170,9 +169,10 @@ export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | nul
     return api.get(API_ROUTES.AGENTS.WALLET.WITHDRAWALS);
 };
 
-export const requestAgentWithdrawal = async (amount: number): Promise<[any | null, ApiError | null]> => {
-    return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount });
+export const requestAgentWithdrawal = async (amount: number, bankAccountId?: string | number): Promise<[any | null, ApiError | null]> => {
+    return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount, bank_account_id: bankAccountId });
 };
+
 
 export const settleAgentCommissions = async (): Promise<[any | null, ApiError | null]> => {
     return api.post(API_ROUTES.AGENTS.WALLET.SETTLE, {});

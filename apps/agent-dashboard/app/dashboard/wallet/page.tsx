@@ -16,7 +16,9 @@ export default function WalletPage() {
     const [balance, setBalance] = useState(0);
     const [totalWithdrawn, setTotalWithdrawn] = useState(0);
     const [processing, setProcessing] = useState(0);
+    const [pendingPayout, setPendingPayout] = useState(0);
     const [transactions, setTransactions] = useState([]);
+
     const [requestLoading, setRequestLoading] = useState(false);
     const { agent } = useAgentAuthStore() as any;
 
@@ -31,17 +33,24 @@ export default function WalletPage() {
             if (statsRes) {
                 setTotalWithdrawn(statsRes.totalWithdrawn || 0);
                 setProcessing(statsRes.processingWithdrawals || 0);
+                setPendingPayout(statsRes.pendingPayout || 0);
             }
+
 
             if (txRes) {
                 const formattedTxs = txRes.map((tx: any) => ({
-                    id: tx._id || tx.id,
+                    id: tx.id || tx._id,
                     amount: tx.amount,
                     status: tx.status,
-                    createdAt: tx.createdAt,
-                    type: tx.type || 'withdrawal', // 'credit' | 'withdrawal'
-                    info: tx.remark || (tx.type === 'credit' ? 'Consultation' : 'Payout')
+                    createdAt: tx.created_at || tx.createdAt,
+                    type: tx.type || (Number(tx.amount) < 0 ? 'debit' : 'withdrawal'), 
+                    info: tx.description || (tx.status === 'rejected' ? 'Withdrawal (Rejected)' : 'Withdrawal Request'),
+                    remark: tx.remark,
+                    transactionNo: tx.withdrawal_no || tx.transaction_no
+
                 }));
+
+
                 setTransactions(formattedTxs);
             }
         } catch (error) {
@@ -56,13 +65,16 @@ export default function WalletPage() {
         fetchData();
     }, []);
 
-    const handleWithdrawalRequest = async (amount: number) => {
+    const handleWithdrawalRequest = async (amount: number, bankAccountId?: string) => {
         setRequestLoading(true);
         try {
-            const [res, err] = await requestAgentWithdrawal(amount);
+            const [res, err] = await requestAgentWithdrawal(amount, bankAccountId);
+
             if (err) {
-                toast.error(err.message || "Failed to submit request");
+                const errorMsg = (err as any)?.body?.message || (err as any)?.message || "Failed to submit request";
+                toast.error(errorMsg);
             } else {
+
                 toast.success("Withdrawal request submitted successfully!");
                 fetchData(); // Refresh data
             }
@@ -91,7 +103,7 @@ export default function WalletPage() {
                 </div>
 
                 {/* Top Stat Triplets */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <StatCard 
                         label="Available Balance" 
                         value={balance} 
@@ -104,22 +116,32 @@ export default function WalletPage() {
                     <StatCard 
                         label="Total Withdrawn" 
                         value={totalWithdrawn} 
-                        sub="To Bank Account" 
+                        sub="In Bank Account" 
                         subColor="text-primary"
                         icon={Landmark} 
                         iconBg="bg-blue-50" 
                         iconColor="text-blue-500" 
                     />
                     <StatCard 
+                        label="Pending Approval" 
+                        value={pendingPayout} 
+                        sub="Awaiting Admin" 
+                        subColor="text-amber-500"
+                        icon={Clock} 
+                        iconBg="bg-amber-50" 
+                        iconColor="text-amber-500" 
+                    />
+                    <StatCard 
                         label="Processing" 
                         value={processing} 
-                        sub="In Progress" 
-                        subColor="text-red-500"
+                        sub="Transfer in Progress" 
+                        subColor="text-blue-500"
                         icon={Clock} 
-                        iconBg="bg-orange-50" 
-                        iconColor="text-orange-500" 
+                        iconBg="bg-indigo-50" 
+                        iconColor="text-indigo-500" 
                     />
                 </div>
+
 
                 {/* Inline Withdrawal Section */}
                 <WithdrawSection 

@@ -140,17 +140,19 @@ export const terminateSession = async (id: number, data: { userMessage?: string;
 };
 
 // Payouts / Withdrawals
-export const getWithdrawals = async (params?: { page?: number; limit?: number; status?: string }): Promise<[any | null, any | null]> => {
+export const getWithdrawals = async (params?: { page?: number; limit?: number; status?: string; role?: string }): Promise<[any | null, any | null]> => {
   return await api.get("/admin/withdrawals", { params });
 };
+
 
 export const updateWithdrawalStatus = async (id: number, data: { status: string; remark?: string }): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/withdrawals/${id}/status`, data);
 };
 
-export const getWithdrawalStats = async (): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/withdrawals/stats");
+export const getWithdrawalStats = async (role?: string): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/withdrawals/stats", { params: { role } });
 };
+
 
 // Review Management
 export const getReviews = async (params?: { page?: number; limit?: number; rating?: number; ratingType?: string; status?: string; search?: string; review_type?: string }): Promise<[any | null, any | null]> => {

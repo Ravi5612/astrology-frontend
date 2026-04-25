@@ -1,83 +1,266 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { 
+import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, Cell, PieChart, Pie, Legend
 } from "recharts";
-import { 
+import {
     TrendingUp, Users, Target, Award,
     Calendar, Filter, Download, ArrowUpRight
 } from "lucide-react";
 import { getAgentDashboardStats } from "@/src/services/agent.service";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
-// Mock data for charts
-const REVENUE_DATA = [
-    { name: "Jan", value: 4000 },
-    { name: "Feb", value: 3000 },
-    { name: "Mar", value: 2000 },
-    { name: "Apr", value: 2780 },
-    { name: "May", value: 1890 },
-    { name: "Jun", value: 2390 },
-    { name: "Jul", value: 3490 },
+// No mock data here - all data should come from backend stats
+
+// Default empty data for chart fallback
+const DEFAULT_CHART_DATA = [
+    { name: "Expert", value: 0, color: "#F25E0A" },
+    { name: "Mandir", value: 0, color: "#800000" },
+    { name: "User", value: 0, color: "#FFB800" },
+    { name: "Merchant", value: 0, color: "#4B5563" },
 ];
 
-const CATEGORY_DATA = [
-    { name: "Astrologers", value: 45, color: "#F25E0A" },
-    { name: "Numerologists", value: 25, color: "#800000" },
-    { name: "Tarot Readers", value: 20, color: "#FFB800" },
-    { name: "Other", value: 10, color: "#4B5563" },
-];
-
-const REGISTRATION_DATA = [
-    { day: "Mon", count: 12 },
-    { day: "Tue", count: 18 },
-    { day: "Wed", count: 15 },
-    { day: "Thu", count: 25 },
-    { day: "Fri", count: 20 },
-    { day: "Sat", count: 30 },
-    { day: "Sun", count: 22 },
-];
 
 export default function AnalyticsPage() {
+    const dashboardRef = React.useRef<HTMLDivElement>(null);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [isExporting, setIsExporting] = useState(false);
+    const [timeRange, setTimeRange] = useState("30d");
+    const [dateRange, setDateRange] = useState({ start: "", end: "" });
+    const [showCalendar, setShowCalendar] = useState(false);
+    
+    // Calendar state
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+
+    const handleExport = async () => {
+        if (!dashboardRef.current || !stats) return;
+
+        try {
+            setIsExporting(true);
+            
+            // Wait a bit for charts to be fully stable
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const canvas = await html2canvas(dashboardRef.current, {
+                scale: 2, // High resolution
+                useCORS: true,
+                backgroundColor: "#F9FAFB",
+                logging: false,
+                allowTaint: true,
+                onclone: (clonedDoc) => {
+                    // Ensure all SVGs are visible in the clone
+                    const svgs = clonedDoc.querySelectorAll('svg');
+                    svgs.forEach(svg => {
+                        svg.setAttribute('width', svg.getBoundingClientRect().width.toString());
+                        svg.setAttribute('height', svg.getBoundingClientRect().height.toString());
+                    });
+                }
+            });
+
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4",
+            });
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // If dashboard is very long, add more pages
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            let heightLeft = pdfHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`Agent_Performance_Report_${timeRange}.pdf`);
+        } catch (error) {
+            console.error("Export failed:", error);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+
+
+    const fetchStats = async () => {
+
+        setLoading(true);
+        const params: any = { range: timeRange };
+        if (timeRange === "custom" && dateRange.start && dateRange.end) {
+            params.startDate = dateRange.start;
+            params.endDate = dateRange.end;
+        }
+        console.log('--- [FRONTEND] FETCHING STATS WITH PARAMS ---', params);
+        const [data, error] = await getAgentDashboardStats(params);
+        console.log('--- [FRONTEND] RECEIVED STATS DATA ---', data);
+        if (data) setStats(data);
+        setLoading(false);
+    };
+
 
     useEffect(() => {
-        const fetchStats = async () => {
-            const [data, error] = await getAgentDashboardStats();
-            if (data) setStats(data);
-            setLoading(false);
-        };
         fetchStats();
-    }, []);
+    }, [timeRange, dateRange]);
+
+    const handleDateClick = (date: string) => {
+        if (!dateRange.start || (dateRange.start && dateRange.end)) {
+            setDateRange({ start: date, end: "" });
+        } else {
+            if (new Date(date) < new Date(dateRange.start)) {
+                setDateRange({ start: date, end: dateRange.start });
+            } else {
+                setDateRange({ ...dateRange, end: date });
+            }
+        }
+    };
+
+    const renderCalendar = () => {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const days = [];
+        for (let i = 0; i < firstDay; i++) days.push(null);
+        for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+
+        return (
+            <div className="absolute top-full right-0 mt-4 bg-white border border-gray-100 shadow-2xl rounded-2xl p-6 z-[100] w-[320px] animate-in zoom-in-95 duration-200">
+                <div className="flex items-center justify-between mb-6">
+                    <button onClick={() => setCurrentMonth(new Date(year, month - 1))} className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-gray-400">&lt;</button>
+                    <h4 className="text-sm font-black text-gray-900 uppercase tracking-widest">{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</h4>
+                    <button onClick={() => setCurrentMonth(new Date(year, month + 1))} className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-gray-400">&gt;</button>
+                </div>
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                    {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                        <div key={d} className="text-[10px] font-black text-gray-400 text-center uppercase py-2">{d}</div>
+                    ))}
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                    {days.map((date, i) => {
+                        if (!date) return <div key={i} />;
+                        const dateStr = date.toISOString().split('T')[0];
+                        const isStart = dateRange.start === dateStr;
+                        const isEnd = dateRange.end === dateStr;
+                        const isInRange = dateRange.start && dateRange.end && dateStr > dateRange.start && dateStr < dateRange.end;
+                        
+                        return (
+                            <button
+                                key={i}
+                                onClick={() => handleDateClick(dateStr)}
+                                className={`
+                                    h-10 text-[11px] font-bold rounded-lg transition-all relative
+                                    ${isStart || isEnd ? 'bg-[#F25E0A] text-white' : ''}
+                                    ${isInRange ? 'bg-orange-50 text-[#F25E0A]' : 'hover:bg-gray-50 text-gray-700'}
+                                `}
+                            >
+                                {date.getDate()}
+                                {(isStart || isEnd) && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-50" />}
+                            </button>
+                        );
+                    })}
+                </div>
+                <div className="mt-6 flex gap-2">
+                    <button 
+                        onClick={() => { setDateRange({ start: "", end: "" }); setTimeRange("30d"); setShowCalendar(false); }}
+                        className="flex-1 py-2 text-[10px] font-black uppercase text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        Reset
+                    </button>
+                    <button 
+                        onClick={() => setShowCalendar(false)}
+                        className="flex-1 py-2 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-gray-800 transition-colors shadow-lg"
+                    >
+                        Apply
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    // Dynamic chart data from backend stats
+    const networkCompositionData = React.useMemo(() => {
+        if (!stats) return DEFAULT_CHART_DATA;
+        return [
+            { name: "Expert", value: stats.expertsCount || 0, color: "#F25E0A" },
+            { name: "Mandir", value: stats.mandirsCount || 0, color: "#800000" },
+            { name: "User", value: stats.clientsCount || 0, color: "#FFB800" },
+            { name: "Merchant", value: stats.pujaShopsCount || 0, color: "#4B5563" },
+        ];
+    }, [stats]);
+
 
     return (
-        <div className="min-h-screen space-y-8 pb-20 animate-in fade-in duration-700">
+        <div ref={dashboardRef} className="min-h-screen space-y-8 pb-20 animate-in fade-in duration-700 bg-[#F9FAFB] p-8 rounded-[2.5rem]">
             {/* Header with Actions */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight uppercase">Performance Analytics</h1>
                     <p className="text-sm font-medium text-gray-500">Real-time insights and growth metrics for your agent network.</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-600 hover:bg-gray-50 transition-all uppercase tracking-widest shadow-sm">
-                        <Calendar className="w-3.5 h-3.5" />
-                        Last 30 Days
+                <div className="flex items-center gap-3 relative">
+                    <div className="relative group">
+                        <select 
+                            value={timeRange}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setTimeRange(val);
+                                if (val === "custom") setShowCalendar(true);
+                                else { setDateRange({ start: "", end: "" }); setShowCalendar(false); }
+                            }}
+                            className="appearance-none flex items-center gap-2 pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-600 hover:bg-gray-50 transition-all uppercase tracking-widest shadow-sm cursor-pointer outline-none focus:ring-2 focus:ring-[#F25E0A]/20 min-w-[180px]"
+                        >
+                            <option value="7d">Last 7 Days</option>
+                            <option value="30d">Last 30 Days</option>
+                            <option value="6m">Last 6 Months</option>
+                            <option value="1y">Last 1 Year</option>
+                            <option value="custom">{dateRange.start && dateRange.end ? `${dateRange.start} - ${dateRange.end}` : 'Custom Range'}</option>
+                        </select>
+                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                        <Filter className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                    </div>
+
+                    {showCalendar && renderCalendar()}
+
+                    <button 
+                        onClick={handleExport}
+                        disabled={isExporting}
+                        className={`flex items-center gap-2 px-4 py-2.5 bg-[#F25E0A] rounded-xl text-xs font-black text-white hover:bg-[#d45209] transition-all uppercase tracking-widest shadow-lg shadow-orange-500/20 ${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        {isExporting ? (
+                            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <Download className="w-3.5 h-3.5" />
+                        )}
+                        {isExporting ? "Exporting..." : "Export"}
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2.5 bg-[#F25E0A] rounded-xl text-xs font-black text-white hover:bg-[#d45209] transition-all uppercase tracking-widest shadow-lg shadow-orange-500/20">
-                        <Download className="w-3.5 h-3.5" />
-                        Export
-                    </button>
+
+
                 </div>
             </div>
+
 
             {/* Top Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: "Total Revenue", value: "₹45,280", trend: "+12.5%", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-50" },
-                    { label: "Total Referrals", value: stats?.totalUsers || "128", trend: "+8.2%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-                    { label: "Success Rate", value: "94.2%", trend: "+2.1%", icon: Target, color: "text-orange-500", bg: "bg-orange-50" },
-                    { label: "Agent Rank", value: "#14", trend: "Top 5%", icon: Award, color: "text-purple-500", bg: "bg-purple-50" },
+                    { label: "Total Revenue", value: stats ? `₹${(stats.totalEarned || 0).toLocaleString("en-IN")}` : "₹0", trend: "+12.5%", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-50" },
+                    { label: "Total Registration", value: stats?.totalUsers || "0", trend: "+8.2%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+                    { label: "Success Rate", value: stats?.successRate || "94.2%", trend: "+2.1%", icon: Target, color: "text-orange-500", bg: "bg-orange-50" },
+                    { label: "Agent Rank", value: stats?.rank || "#14", trend: "Top 5%", icon: Award, color: "text-purple-500", bg: "bg-purple-50" },
                 ].map((card, i) => (
                     <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-2 transition-all duration-500 group cursor-default">
                         <div className="flex items-center justify-between mb-4">
@@ -111,36 +294,37 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="h-[300px] w-full relative z-10">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={REVENUE_DATA}>
+                            <AreaChart data={stats?.revenueGrowth || []}>
                                 <defs>
                                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#F25E0A" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#F25E0A" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#F25E0A" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#F25E0A" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                                <XAxis 
-                                    dataKey="name" 
-                                    axisLine={false} 
-                                    tickLine={false} 
-                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9CA3AF'}} 
+                                <XAxis
+                                    dataKey="name"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
                                     dy={10}
                                 />
-                                <YAxis 
-                                    axisLine={false} 
-                                    tickLine={false} 
-                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9CA3AF'}} 
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
                                 />
-                                <Tooltip 
+
+                                <Tooltip
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', fontWeight: 'bold' }}
                                 />
-                                <Area 
-                                    type="monotone" 
-                                    dataKey="value" 
-                                    stroke="#F25E0A" 
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="#F25E0A"
                                     strokeWidth={4}
-                                    fillOpacity={1} 
-                                    fill="url(#colorValue)" 
+                                    fillOpacity={1}
+                                    fill="url(#colorValue)"
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -151,13 +335,13 @@ export default function AnalyticsPage() {
                 <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm space-y-6 hover:shadow-[0_40px_80px_-20px_rgba(128,0,0,0.06)] hover:-translate-y-1 transition-all duration-700 group/pie">
                     <div>
                         <h3 className="text-lg font-black text-gray-900 tracking-tight uppercase group-hover/pie:text-[#800000] transition-colors">Network Composition</h3>
-                        <p className="text-xs font-bold text-gray-400">Distribution of registered expert categories.</p>
+                        <p className="text-xs font-bold text-gray-400">Distribution of all registered entities in your network.</p>
                     </div>
                     <div className="h-[300px] w-full flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={CATEGORY_DATA}
+                                    data={networkCompositionData}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={60}
@@ -165,15 +349,16 @@ export default function AnalyticsPage() {
                                     paddingAngle={8}
                                     dataKey="value"
                                 >
-                                    {CATEGORY_DATA.map((entry, index) => (
+                                    {networkCompositionData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                                     ))}
                                 </Pie>
-                                <Tooltip 
+
+                                <Tooltip
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                                 />
-                                <Legend 
-                                    verticalAlign="bottom" 
+                                <Legend
+                                    verticalAlign="bottom"
                                     height={36}
                                     formatter={(value) => <span className="text-[10px] font-black uppercase text-gray-500 tracking-wider ml-2">{value}</span>}
                                 />
@@ -195,37 +380,104 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={REGISTRATION_DATA}>
+                            <BarChart data={stats?.registrationActivity || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                                <XAxis 
-                                    dataKey="day" 
-                                    axisLine={false} 
-                                    tickLine={false} 
-                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9CA3AF'}}
+                                <XAxis
+                                    dataKey="day"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
                                     dy={10}
                                 />
-                                <YAxis 
-                                    axisLine={false} 
-                                    tickLine={false} 
-                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9CA3AF'}}
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
                                 />
-                                <Tooltip 
-                                    cursor={{fill: '#F9FAFB'}}
+                                <Tooltip
+                                    cursor={{ fill: '#F9FAFB' }}
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                                 />
                                 <Bar dataKey="count" radius={[10, 10, 0, 0]}>
-                                    {REGISTRATION_DATA.map((entry, index) => (
-                                        <Cell 
-                                            key={`cell-${index}`} 
-                                            fill={entry.count > 20 ? "#F25E0A" : "#800000"} 
+                                    {(stats?.registrationActivity || []).map((entry: any, index: number) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.count > 20 ? "#F25E0A" : "#800000"}
                                         />
                                     ))}
                                 </Bar>
+
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
+
+            {/* Recent Activity Section */}
+            <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)] transition-all duration-700">
+                <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-black text-gray-900 tracking-tight uppercase">Recent Activity</h3>
+                        <p className="text-xs font-bold text-gray-400">Latest registrations and listings in your network for the selected period.</p>
+                    </div>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-gray-50/50">
+                                <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Name</th>
+                                <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Type</th>
+                                <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Action</th>
+                                <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</th>
+                                <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                            {stats?.recentActivity && stats.recentActivity.length > 0 ? (
+                                stats.recentActivity.map((activity: any, i: number) => (
+                                    <tr key={i} className="hover:bg-gray-50/50 transition-colors group">
+                                        <td className="px-8 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-[#F25E0A] font-black text-xs group-hover:scale-110 transition-transform">
+                                                    {activity.name.charAt(0)}
+                                                </div>
+                                                <span className="text-sm font-black text-gray-900">{activity.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded-md">{activity.type}</span>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <span className="text-xs font-bold text-gray-600">{activity.action}</span>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <span className="text-xs font-bold text-gray-400">{new Date(activity.date).toLocaleDateString()}</span>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Completed</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="px-8 py-20 text-center">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="p-4 bg-gray-50 rounded-full">
+                                                <Calendar className="w-8 h-8 text-gray-300" />
+                                            </div>
+                                            <p className="text-sm font-black text-gray-400 uppercase tracking-widest">No activity found in this period</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
     );
 }
