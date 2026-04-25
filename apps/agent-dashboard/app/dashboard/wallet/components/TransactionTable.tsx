@@ -9,6 +9,7 @@ interface Transaction {
     status: string;
     remark?: string;
     createdAt: string;
+    transactionNo?: string;
 }
 
 interface TransactionTableProps {
