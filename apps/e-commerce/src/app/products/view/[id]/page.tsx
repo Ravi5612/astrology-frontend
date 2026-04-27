@@ -20,6 +20,7 @@ import {
   Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { productService } from "@/services/product.service";
 
 interface Product {
   id: string;
@@ -42,9 +43,9 @@ export default function ProductViewPage() {
   const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: ['merchant-product', id],
     queryFn: async () => {
-      const res = await fetch(`/api/v1/merchant/products/${id}`, { credentials: "include" });
-      if (!res.ok) throw new Error("Product not found");
-      return res.json();
+      const [data, err] = await productService.getProduct(String(id));
+      if (err) throw err;
+      return data;
     }
   });
 
@@ -138,7 +139,7 @@ export default function ProductViewPage() {
                   "px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border shadow-lg backdrop-blur-md",
                   getStatusBadge(product.status)
                 )}>
-                  {product.status.replace('_', ' ')}
+                  {product.status?.replace('_', ' ') || 'N/A'}
                 </span>
              </div>
            </div>
