@@ -71,13 +71,6 @@ export default function DashboardHome() {
     },
   ];
 
-  if (isLoadingInitial) {
-    return (
-      <main className="p-8">
-        <DashboardSkeleton />
-      </main>
-    );
-  }
 
   return (
     <main className="space-y-10 pb-20 animate-in fade-in duration-700">
@@ -140,6 +133,7 @@ export default function DashboardHome() {
               iconBgColor={stat.bgColor} 
               iconColor={stat.color}
               href={stat.href}
+              isLoading={statsLoading}
             />
           </motion.div>
         ))}

@@ -20,6 +20,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { TableSkeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
 
 interface Product {
@@ -256,9 +257,8 @@ export default function ProductListing() {
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="py-24 text-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm font-medium">Loading products from server...</p>
+                <td colSpan={7} className="py-10">
+                   <TableSkeleton rows={8} cols={7} />
                 </td>
               </tr>
             ) : products.map((p: Product) => {

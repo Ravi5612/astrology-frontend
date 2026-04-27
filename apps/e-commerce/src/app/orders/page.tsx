@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
+import { TableSkeleton } from "@/components/ui/Skeleton";
 
 import { orderService, Order } from "@/services/order.service";
 
@@ -204,6 +205,7 @@ export default function OrdersPage() {
             icon={stat.icon}
             iconColor={stat.color}
             trend={stat.trend}
+            isLoading={isLoading}
           />
         ))}
       </div>
@@ -257,11 +259,8 @@ export default function OrdersPage() {
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="py-24 text-center">
-                  <div className="flex flex-col items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mb-4" />
-                    <span className="text-gray-500 font-medium text-sm">Fetching orders...</span>
-                  </div>
+                <td colSpan={6} className="py-10">
+                   <TableSkeleton rows={8} cols={6} />
                 </td>
               </tr>
             ) : orders.length === 0 ? (

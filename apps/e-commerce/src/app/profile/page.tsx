@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
+import { SettingsSkeleton } from "@/components/ui/Skeleton";
 
 export default function MerchantProfilePage() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
@@ -154,15 +155,6 @@ export default function MerchantProfilePage() {
 
   const isVerified = profile?.status === "active";
 
-  if (isProfileLoading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-12 h-12 text-[#fd6410] animate-spin" />
-        <p className="text-gray-500 font-medium animate-pulse text-sm uppercase tracking-widest">Verifying Identity...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-6xl mx-auto space-y-10 pb-20 px-4 pt-4">
       {/* Header Section */}
@@ -179,7 +171,9 @@ export default function MerchantProfilePage() {
           </div>
           <h1 className="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-3">
             Profile & Verification
-            {isVerified ? (
+            {isProfileLoading ? (
+               <Skeleton className="h-8 w-32 rounded-full" />
+            ) : isVerified ? (
               <div className="flex items-center bg-green-50 text-green-600 text-xs px-3 py-1 rounded-full border border-green-100 font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> VERIFIED
               </div>
@@ -197,7 +191,7 @@ export default function MerchantProfilePage() {
 
         <button
           onClick={handleSave}
-          disabled={updateProfileMutation.isPending}
+          disabled={updateProfileMutation.isPending || isProfileLoading}
           className="relative group overflow-hidden bg-[#301118] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-2xl shadow-maroon-900/20"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-10" />
@@ -212,7 +206,11 @@ export default function MerchantProfilePage() {
         </button>
       </motion.div>
       
-      {/* Verification Status Alert Card */}
+      {isProfileLoading ? (
+        <SettingsSkeleton />
+      ) : (
+        <>
+          {/* Verification Status Alert Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -483,7 +481,9 @@ export default function MerchantProfilePage() {
           </motion.div>
         </div>
       </div>
-    </div>
+    </>
+  )}
+</div>
   );
 }
 

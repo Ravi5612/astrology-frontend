@@ -21,6 +21,7 @@ import {
   useMerchantTransactions 
 } from "@/hooks/useFinance";
 import { WithdrawFundsModal } from "@/features/shop-dashboard/components/WithdrawFundsModal";
+import { EarningsSkeleton } from "@/components/ui/Skeleton";
 
 interface Transaction {
   id: string;
@@ -113,17 +114,22 @@ export default function EarningsPage() {
         </div>
       </div>
 
-      {/* Financial Stats Grid */}
+      {statsLoading && txLoading && page === 1 ? (
+        <EarningsSkeleton />
+      ) : (
+        <>
+          {/* Financial Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
           <DashboardCard
             key={idx}
             title={stat.label}
-            value={statsLoading ? "..." : stat.value}
+            value={stat.value}
             icon={stat.icon}
             iconColor={stat.color}
             iconBgColor={stat.bg}
             trend={stat.trend}
+            isLoading={statsLoading}
           />
         ))}
       </div>
@@ -159,14 +165,7 @@ export default function EarningsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {txLoading ? (
-                      <tr>
-                        <td colSpan={4} className="py-20 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mx-auto mb-2" />
-                          <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Fetching Ledger...</span>
-                        </td>
-                      </tr>
-                    ) : transactions.length === 0 ? (
+                    {transactions.length === 0 ? (
                       <tr>
                         <td colSpan={4} className="py-20 text-center text-gray-400 italic text-sm">No transactions found.</td>
                       </tr>
@@ -247,7 +246,7 @@ export default function EarningsPage() {
                  <p className="text-white/50 text-xs mt-1">Automatically scheduled for:</p>
                  <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-6">
                     <div>
-                       <span className="text-3xl font-black">{statsLoading ? "..." : formatPrice(statsData?.pendingPayout)}</span>
+                       <span className="text-3xl font-black">{formatPrice(statsData?.pendingPayout)}</span>
                        <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest mt-1 italic">
                          Expected by {formatDate(statsData?.nextPayoutDate)}
                        </p>
@@ -281,6 +280,8 @@ export default function EarningsPage() {
 
       </div>
 
+        </>
+      )}
     </div>
   );
 }
