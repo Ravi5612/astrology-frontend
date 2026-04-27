@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useMerchantProfile, useUpdateProfile, useMerchantProducts } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
+import { Skeleton, SettingsSkeleton } from "@/components/ui/Skeleton";
 
 export default function ShopProfileSettings() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
@@ -209,11 +210,10 @@ export default function ShopProfileSettings() {
     setIsEditing(false);
   };
 
-  if (isProfileLoading) {
+  if (isProfileLoading && !profile) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-12 h-12 text-[#fd6410] animate-spin" />
-        <p className="text-gray-500 font-medium animate-pulse">Loading Shop Profile...</p>
+      <div className="pt-10">
+        <SettingsSkeleton />
       </div>
     );
   }
@@ -229,16 +229,18 @@ export default function ShopProfileSettings() {
             <span>Shop Profile</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            {exists ? 'Shop Profile Settings' : 'Complete Your Shop Profile'}
+            {isProfileLoading ? <Skeleton className="h-9 w-64" /> : exists ? 'Shop Profile Settings' : 'Complete Your Shop Profile'}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            {exists 
+            {isProfileLoading ? <Skeleton className="h-4 w-96" /> : exists 
               ? "Manage your shop's identity and location details for customers."
               : "Set up your shop identity and location to start selling."}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {!isEditing ? (
+          {isProfileLoading ? (
+            <Skeleton className="h-12 w-40 rounded-2xl" />
+          ) : !isEditing ? (
             <button 
               onClick={() => setIsEditing(true)}
               className="flex items-center justify-center space-x-2 bg-[#fd6410] text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-900/20 active:scale-95 group"
@@ -271,7 +273,10 @@ export default function ShopProfileSettings() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {isProfileLoading ? (
+        <SettingsSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Form Controls (8 out of 12) */}
         <div className="lg:col-span-12 xl:col-span-8 space-y-8">
           
@@ -675,6 +680,7 @@ export default function ShopProfileSettings() {
            </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

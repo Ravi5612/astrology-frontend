@@ -17,6 +17,7 @@ import {
 import { useMerchantProfile } from "@/hooks/useSettings";
 import { useRequestWithdrawal } from "@/hooks/useFinance";
 import { cn } from "@/lib/utils/cn";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface WithdrawFundsModalProps {
   isOpen: boolean;
@@ -139,9 +140,9 @@ export const WithdrawFundsModal: React.FC<WithdrawFundsModalProps> = ({
                  </div>
                  
                  {isProfileLoading ? (
-                    <div className="flex items-center gap-3 py-2">
-                        <Loader2 className="w-4 h-4 animate-spin text-orange-400" />
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Fetching bank details...</span>
+                    <div className="space-y-2 py-1">
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-5 w-40" />
                     </div>
                  ) : (
                     <>

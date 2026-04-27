@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
 import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 import { orderService, Order } from "@/services/order.service";
 
@@ -204,6 +205,7 @@ export default function OrdersPage() {
             icon={stat.icon}
             iconColor={stat.color}
             trend={stat.trend}
+            isLoading={isLoading}
           />
         ))}
       </div>
@@ -256,14 +258,24 @@ export default function OrdersPage() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
-              <tr>
-                <td colSpan={6} className="py-24 text-center">
-                  <div className="flex flex-col items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mb-4" />
-                    <span className="text-gray-500 font-medium text-sm">Fetching orders...</span>
-                  </div>
-                </td>
-              </tr>
+              [...Array(8)].map((_, i) => (
+                <tr key={i}>
+                  <td className="pl-8 pr-4 py-6"><Skeleton className="h-4 w-20" /></td>
+                  <td className="px-4 py-6">
+                    <div className="flex items-center space-x-3">
+                      <Skeleton className="w-10 h-10 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-12" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-6"><Skeleton className="h-4 w-32" /></td>
+                  <td className="px-6 py-6"><Skeleton className="h-4 w-16" /></td>
+                  <td className="px-6 py-6"><Skeleton className="h-6 w-24 rounded-full" /></td>
+                  <td className="px-8 py-6 text-right"><Skeleton className="h-8 w-24 rounded-xl ml-auto" /></td>
+                </tr>
+              ))
             ) : orders.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-32 text-center">

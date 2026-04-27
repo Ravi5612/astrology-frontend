@@ -17,6 +17,7 @@ import {
   Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { StatsSkeleton } from "@/components/ui/Skeleton";
 
 interface SupportSettings {
   email: string;
@@ -87,9 +88,8 @@ export default function HelpCenterPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-10 h-10 animate-spin text-[#fd6410]" />
-          <p className="text-gray-400 text-sm mt-4 italic">Loading support details...</p>
+        <div className="p-8">
+          <StatsSkeleton />
         </div>
       ) : (
         <>

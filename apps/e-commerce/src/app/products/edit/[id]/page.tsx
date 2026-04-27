@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   ArrowLeft, Upload, X, Plus, Tag, IndianRupee, Package, FileText, Save, Image as ImageIcon, Loader2
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
 
 export default function EditProductPage() {
@@ -111,12 +112,29 @@ export default function EditProductPage() {
   };
 
   if (isFetching) {
-     return (
-        <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
-           <Loader2 className="w-12 h-12 text-[#fd6410] animate-spin" />
-           <p className="text-gray-500 font-medium animate-pulse uppercase tracking-widest text-[10px]">Retrieving Product Details...</p>
+    return (
+      <div className="space-y-10 pb-20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 pb-8">
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-10 w-64" />
+          </div>
+          <div className="flex gap-3">
+             <Skeleton className="h-12 w-32 rounded-2xl" />
+             <Skeleton className="h-12 w-48 rounded-2xl" />
+          </div>
         </div>
-     );
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8 space-y-8">
+            <Skeleton className="h-96 rounded-[2.5rem]" />
+            <Skeleton className="h-64 rounded-[2.5rem]" />
+          </div>
+          <div className="lg:col-span-4 space-y-8">
+            <Skeleton className="h-96 rounded-[2.5rem]" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

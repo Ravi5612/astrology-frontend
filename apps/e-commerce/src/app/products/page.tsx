@@ -20,6 +20,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
 
 interface Product {
@@ -255,12 +256,30 @@ export default function ProductListing() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
-              <tr>
-                <td colSpan={7} className="py-24 text-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-[#fd6410] mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm font-medium">Loading products from server...</p>
-                </td>
-              </tr>
+              [...Array(8)].map((_, i) => (
+                <tr key={i}>
+                  <td className="pl-8 pr-4 py-6"><Skeleton className="h-4 w-4 rounded" /></td>
+                  <td className="px-4 py-6">
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="w-14 h-14 rounded-2xl" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-6"><Skeleton className="h-6 w-20 rounded-lg" /></td>
+                  <td className="px-6 py-6"><Skeleton className="h-4 w-16" /></td>
+                  <td className="px-6 py-6">
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-12" />
+                      <Skeleton className="h-1.5 w-16 rounded-full" />
+                    </div>
+                  </td>
+                  <td className="px-6 py-6"><Skeleton className="h-6 w-24 rounded-full" /></td>
+                  <td className="px-8 py-6 text-right"><Skeleton className="h-8 w-24 rounded-xl ml-auto" /></td>
+                </tr>
+              ))
             ) : products.map((p: Product) => {
               const isSelected = selectedIds.includes(p.id);
               return (

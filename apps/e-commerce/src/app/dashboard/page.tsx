@@ -71,11 +71,16 @@ export default function DashboardHome() {
     },
   ];
 
-  if (isLoadingInitial) {
+
+  if (isLoadingInitial && !statsData) {
     return (
-      <main className="p-8">
+      <div className="space-y-10 pb-20">
+        <div className="bg-white p-10 rounded-[3rem] border border-gray-100">
+           <Skeleton className="h-10 w-64 mb-4" />
+           <Skeleton className="h-6 w-96" />
+        </div>
         <DashboardSkeleton />
-      </main>
+      </div>
     );
   }
 
@@ -140,6 +145,7 @@ export default function DashboardHome() {
               iconBgColor={stat.bgColor} 
               iconColor={stat.color}
               href={stat.href}
+              isLoading={statsLoading}
             />
           </motion.div>
         ))}

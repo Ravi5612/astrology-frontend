@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const defaultData = [
   { name: "Mon", sales: 4000 },
@@ -56,11 +57,15 @@ export function SalesChart({ data, isLoading }: SalesChartProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 h-[450px] flex items-center justify-center">
-         <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-orange-100 border-t-[#fd6410] rounded-full animate-spin" />
-            <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Loading Analytics...</p>
+      <div className="bg-white p-10 rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 h-[450px] flex flex-col">
+         <div className="flex items-center justify-between mb-10">
+            <div className="space-y-3">
+               <Skeleton className="h-8 w-48" />
+               <Skeleton className="h-4 w-64" />
+            </div>
+            <Skeleton className="h-12 w-40 rounded-2xl" />
          </div>
+         <Skeleton className="flex-1 w-full rounded-2xl" />
       </div>
     );
   }
