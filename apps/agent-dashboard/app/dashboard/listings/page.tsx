@@ -217,18 +217,30 @@ function ListingCard({ item }: { item: ReferredUser }) {
 
                 {/* Commission Section */}
                 {!isPlace && (item.commission !== undefined) && (
-                    <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                        {/* Expert Earnings (Gross Revenue) */}
+                        {item.type === 'expert' && (
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                                    Expert Earnings
+                                </span>
+                                <span className="text-xs font-bold text-gray-700">
+                                    ₹{(item.totalRevenue || 0).toLocaleString("en-IN")}
+                                </span>
+                            </div>
+                        )}
+                        
+                        {/* Agent Commission */}
                         <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                Commission ({item.commissionPercent}%)
-                            </span>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">
+                                    Your Commission ({item.commissionPercent}%)
+                                </span>
+                            </div>
                             <span className="text-sm font-black text-primary">
                                 ₹{item.commission?.toLocaleString("en-IN")}
                             </span>
                         </div>
-                        <p className="text-[9px] text-gray-400 mt-0.5 italic">
-                            Earned from {item.type === 'expert' ? 'total earnings' : 'total spending'}
-                        </p>
                     </div>
                 )}
             </div>

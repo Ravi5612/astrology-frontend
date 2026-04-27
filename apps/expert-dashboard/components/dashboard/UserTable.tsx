@@ -85,18 +85,15 @@ export const UpcomingAppointments: React.FC = () => {
           return true;
         });
 
-        // Filter to today only
-        const todayAppts: RecentAppointment[] = unique
-          .filter((s) => {
-            const sessionDate = (s.created_at || s.createdAt || "").split("T")[0];
-            return sessionDate === today;
-          })
+        // Remove today-only filter and show most recent ones
+        const recentAppts: RecentAppointment[] = unique
           .sort((a: any, b: any) => {
             return (
               new Date(b.created_at || b.createdAt || 0).getTime() -
               new Date(a.created_at || a.createdAt || 0).getTime()
             );
           })
+          .slice(0, 20) // Show top 20 recent sessions
           .map((s: any) => ({
             id: s.id,
             name: s.user?.name || "Client",
@@ -106,7 +103,7 @@ export const UpcomingAppointments: React.FC = () => {
             terminatedBy: s.terminated_by || s.terminatedBy,
           }));
 
-        setAppointments(todayAppts);
+        setAppointments(recentAppts);
       } catch (err) {
         console.error("[RecentAppointments] Fetch failed:", err);
         setAppointments([]);
@@ -132,7 +129,7 @@ export const UpcomingAppointments: React.FC = () => {
           <CalendarDays className="w-5 h-5 text-purple-500" />
           <h3 className="text-lg font-semibold text-gray-900">Recent Appointments</h3>
           <span className="ml-1 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium">
-            Today
+            Recent
           </span>
         </div>
         <div className="relative w-full sm:w-auto">
@@ -187,7 +184,7 @@ export const UpcomingAppointments: React.FC = () => {
               ) : (
                 <tr>
                   <td colSpan={4} className="py-8 text-center text-gray-400 text-sm">
-                    {searchTerm ? "No appointments match your search." : "No appointments today."}
+                    {searchTerm ? "No appointments match your search." : "No appointments found."}
                   </td>
                 </tr>
               )}

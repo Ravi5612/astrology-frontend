@@ -1,7 +1,9 @@
 export interface WalletStatsData {
   availableBalance: number;
   totalWithdrawn: number;
-  pendingWithdrawals: number;
+  pendingApproval: number;
+  processing: number;
+  totalEarnings: number;
   balanceTrend?: number;
 }
 

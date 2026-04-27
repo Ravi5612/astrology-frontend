@@ -5,7 +5,7 @@ import { StatsCards, Button } from "@repo/ui";
 import type { StatConfig } from "@repo/ui";
 import {
     Star, Building2, ShoppingBag, BadgeIndianRupee,
-    TrendingUp, Clock, CheckCircle, Plus
+    TrendingUp, Clock, CheckCircle, Plus, User
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -117,6 +117,40 @@ export default function AgentDashboardHome() {
 
             {/* @repo/ui StatsCards */}
             <StatsCards stats={stats} columns={4} />
+            
+
+            {/* Commission Structure Section */}
+            <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors duration-700" />
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-1">Commission Structure</h3>
+                        <p className="text-xs font-medium text-gray-400">Your current earnings percentage for each referral type.</p>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 flex-1 max-w-2xl">
+                        {[
+                            { label: "Expert", value: statsData?.commissionRates?.expert || 3, icon: Star, color: "text-yellow-600", bg: "bg-yellow-50" },
+                            { label: "Puja Shop", value: statsData?.commissionRates?.shop || 13, icon: ShoppingBag, color: "text-purple-600", bg: "bg-purple-50" },
+                        ].map((rate) => (
+                            <div key={rate.label} className="bg-gray-50/50 rounded-2xl p-4 border border-gray-100 hover:border-primary/20 hover:-translate-y-2 hover:scale-[1.05] transition-all duration-500 group/rate relative overflow-hidden">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className={`p-1.5 ${rate.bg} rounded-lg`}>
+                                        <rate.icon className={`w-3 h-3 ${rate.color}`} />
+                                    </div>
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-tight">{rate.label}</span>
+                                </div>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-xl font-black text-gray-900">{rate.value}%</span>
+                                    <span className="text-[9px] font-bold text-gray-400 uppercase">Comm.</span>
+                                </div>
+                                
+                                {/* Hover Orange Line */}
+                                <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#F25E0A] transition-all duration-500 group-hover/rate:w-full" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
             {/* Quick Actions + Recent Activity */}
             <div className="grid lg:grid-cols-2 gap-6">
@@ -147,17 +181,21 @@ export default function AgentDashboardHome() {
                         {(statsData?.recentActivity || []).length > 0 ? (
                             statsData.recentActivity.map((item: any) => (
                                 <div key={item.id} className="flex items-start gap-3">
-                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${item.status === "paid" ? "bg-green-100 text-green-600" :
+                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${(item.status === "paid" || item.action === "Listing") ? "bg-green-100 text-green-600" :
                                         item.status === "approved" ? "bg-blue-100 text-blue-600" :
                                             "bg-orange-100 text-orange-600"
                                         }`}>
-                                        {item.status === "paid" ? <CheckCircle className="w-3.5 h-3.5" /> :
+                                        {(item.status === "paid" || item.action === "Listing") ? <CheckCircle className="w-3.5 h-3.5" /> :
                                             item.status === "approved" ? <TrendingUp className="w-3.5 h-3.5" /> :
                                                 <Clock className="w-3.5 h-3.5" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-800 leading-snug">{item.text}</p>
-                                        <p className="text-xs text-gray-400 mt-0.5">{item.time}</p>
+                                        <p className="text-sm font-medium text-gray-800 leading-snug">
+                                            {item.text || `${item.action}: ${item.name}`}
+                                        </p>
+                                        <p className="text-xs text-gray-400 mt-0.5">
+                                            {item.time || new Date(item.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                        </p>
                                     </div>
                                 </div>
                             ))

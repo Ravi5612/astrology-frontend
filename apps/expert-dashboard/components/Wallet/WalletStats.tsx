@@ -1,5 +1,4 @@
-import React from "react";
-import { Wallet, Landmark, Clock, ArrowUpRight } from "lucide-react";
+import { Wallet, Landmark, Clock, RefreshCw } from "lucide-react";
 import { StatsCards } from "@repo/ui";
 import { WalletStatsData } from "@/types/wallet";
 
@@ -28,28 +27,40 @@ export default function WalletStats({ stats }: WalletStatsProps) {
             iconBgColor: "bg-blue-100",
             iconColor: "text-blue-600",
             trend: {
-                value: "To Bank Account",
+                value: "In Bank Account",
                 isPositive: true,
                 period: "Lifetime"
             }
         },
         {
-            title: "Processing",
-            value: `₹${(stats?.pendingWithdrawals ?? 0).toLocaleString('en-IN')}`,
+            title: "Pending Approval",
+            value: `₹${(stats?.pendingApproval ?? 0).toLocaleString('en-IN')}`,
             icon: Clock,
-            iconBgColor: "bg-orange-100",
-            iconColor: "text-orange-600",
+            iconBgColor: "bg-amber-100",
+            iconColor: "text-amber-600",
             trend: {
-                value: "In Progress",
+                value: "Awaiting Admin",
                 isPositive: false,
-                period: "Pending"
+                period: "Current"
+            }
+        },
+        {
+            title: "Processing",
+            value: `₹${(stats?.processing ?? 0).toLocaleString('en-IN')}`,
+            icon: RefreshCw,
+            iconBgColor: "bg-blue-100",
+            iconColor: "text-blue-600",
+            trend: {
+                value: "Transfer in Progress",
+                isPositive: true,
+                period: "Current"
             }
         },
     ];
 
     return (
         <div className="mb-8">
-            <StatsCards stats={statsData} columns={3} />
+            <StatsCards stats={statsData} columns={4} />
         </div>
     );
 }

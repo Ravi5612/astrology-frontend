@@ -72,6 +72,7 @@ export interface ReferredUser {
     commissionPercent?: number;
     totalSpending?: number | null;
     totalEarning?: number | null;
+    totalRevenue?: number | null;
 }
 
 export interface ReferredUsersResponse {

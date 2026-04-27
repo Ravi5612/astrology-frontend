@@ -25,7 +25,9 @@ export default function Wallet() {
     const displayStats = stats || {
         availableBalance: 0,
         totalWithdrawn: 0,
-        pendingWithdrawals: 0
+        pendingApproval: 0,
+        processing: 0,
+        totalEarnings: 0
     };
 
     return (
