@@ -21,12 +21,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
-import { SettingsSkeleton } from "@/components/ui/Skeleton";
+import { SettingsSkeleton, Skeleton } from "@/components/ui/Skeleton";
 
 export default function MerchantProfilePage() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
   const profile = profileData?.profile;
   const updateProfileMutation = useUpdateProfile();
+
+  const [isEditing, setIsEditing] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -114,9 +116,26 @@ export default function MerchantProfilePage() {
     }
   };
 
-  const removeFile = (type: keyof typeof files) => {
-    setFiles(prev => ({ ...prev, [type]: null }));
-    setPreviews(prev => ({ ...prev, [type]: profile?.[type] || null }));
+  const handleCancel = () => {
+    if (profile) {
+      setFormData({
+        gstin: profile.gstin || "",
+        pan: profile.pan || "",
+        bankName: profile.bankName || "",
+        accountHolder: profile.accountHolder || "",
+        accountNumber: profile.accountNumber || "",
+        ifsc: profile.ifsc || "",
+      });
+      if (profile.isGstExempt) setIsGstExempt(true);
+      setPreviews({
+        gstCertificate: profile.gstCertificate || null,
+        panFront: profile.panFront || null,
+        panBack: profile.panBack || null,
+        aadharFront: profile.aadharFront || null,
+        aadharBack: profile.aadharBack || null,
+      });
+    }
+    setIsEditing(false);
   };
 
   const handleSave = async () => {
@@ -150,7 +169,11 @@ export default function MerchantProfilePage() {
     if (files.aadharFront) data.append('aadharFront', files.aadharFront);
     if (files.aadharBack) data.append('aadharBack', files.aadharBack);
 
-    updateProfileMutation.mutate(data);
+    updateProfileMutation.mutate(data, {
+      onSuccess: () => {
+        setIsEditing(false);
+      }
+    });
   };
 
   const isVerified = profile?.status === "active";
@@ -189,21 +212,44 @@ export default function MerchantProfilePage() {
           </p>
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={updateProfileMutation.isPending || isProfileLoading}
-          className="relative group overflow-hidden bg-[#301118] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-2xl shadow-maroon-900/20"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-10" />
-          <div className="flex items-center justify-center gap-3">
-            {updateProfileMutation.isPending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <ShieldCheck className="w-5 h-5 group-hover:animate-bounce" />
-            )}
-            <span>{updateProfileMutation.isPending ? "Saving Details..." : "Submit Updates"}</span>
-          </div>
-        </button>
+        <div className="flex items-center gap-4">
+          {!isEditing ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="relative group overflow-hidden bg-[#301118] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-maroon-900/20"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-10" />
+              <div className="flex items-center justify-center gap-3">
+                <FileText className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                <span>Edit Profile</span>
+              </div>
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleCancel}
+                className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={updateProfileMutation.isPending}
+                className="relative group overflow-hidden bg-[#fd6410] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-2xl shadow-orange-900/20"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-10" />
+                <div className="flex items-center justify-center gap-3">
+                  {updateProfileMutation.isPending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <ShieldCheck className="w-5 h-5 group-hover:animate-bounce" />
+                  )}
+                  <span>{updateProfileMutation.isPending ? "Saving..." : "Save Changes"}</span>
+                </div>
+              </button>
+            </>
+          )}
+        </div>
       </motion.div>
       
       {isProfileLoading ? (
@@ -296,7 +342,8 @@ export default function MerchantProfilePage() {
                   id="gstExempt" 
                   checked={isGstExempt}
                   onChange={(e) => setIsGstExempt(e.target.checked)}
-                  className="w-5 h-5 accent-[#fd6410] cursor-pointer"
+                  className={cn("w-5 h-5 accent-[#fd6410]", !isEditing ? "cursor-not-allowed opacity-50" : "cursor-pointer")}
+                  disabled={!isEditing}
                 />
                 <label htmlFor="gstExempt" className="text-xs font-bold text-gray-700 cursor-pointer select-none">
                   I don't have a GSTIN / My business is GST exempt 
@@ -313,7 +360,7 @@ export default function MerchantProfilePage() {
                   placeholder="22AAAAA0000A1Z5"
                   icon={FileText}
                   hint={isGstExempt ? "Optional" : "15-digit alphanumeric code"}
-                  disabled={isGstExempt}
+                  disabled={!isEditing || isGstExempt}
                 />
                 <InputField
                   label="PAN Number"
@@ -323,6 +370,7 @@ export default function MerchantProfilePage() {
                   placeholder="ABCDE1234F"
                   icon={CreditCard}
                   hint="10-digit alphanumeric code"
+                  disabled={!isEditing}
                 />
               </div>
             </div>
@@ -337,6 +385,7 @@ export default function MerchantProfilePage() {
                 value={formData.bankName}
                 onChange={handleInputChange}
                 placeholder="e.g. HDFC Bank"
+                disabled={!isEditing}
               />
               <InputField
                 label="Account Holder Name"
@@ -344,6 +393,7 @@ export default function MerchantProfilePage() {
                 value={formData.accountHolder}
                 onChange={handleInputChange}
                 placeholder="Same as PAN"
+                disabled={!isEditing}
               />
               <InputField
                 label="Account Number"
@@ -352,6 +402,7 @@ export default function MerchantProfilePage() {
                 onChange={handleInputChange}
                 placeholder="0000 0000 0000 0000"
                 type="text"
+                disabled={!isEditing}
               />
               <InputField
                 label="IFSC Code"
@@ -359,6 +410,7 @@ export default function MerchantProfilePage() {
                 value={formData.ifsc}
                 onChange={handleInputChange}
                 placeholder="HDFC0001234"
+                disabled={!isEditing}
               />
             </div>
           </SectionContainer>
@@ -366,13 +418,14 @@ export default function MerchantProfilePage() {
           {/* Section 3: Document Verification */}
           <SectionContainer title="Document Verification Files" icon={UploadCloud} delay={0.3}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className={cn("transition-opacity duration-500", isGstExempt && "opacity-40 grayscale pointer-events-none")}>
+              <div className={cn("transition-opacity duration-500", (isGstExempt || !isEditing) && "opacity-40 grayscale pointer-events-none")}>
                 <FileUploadCard 
                   label={isGstExempt ? "GST (Not Required)" : "GST Certificate"} 
                   onFileChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'gstCertificate')}
                   preview={previews.gstCertificate}
                   onRemove={() => removeFile('gstCertificate')}
                   file={files.gstCertificate}
+                  disabled={!isEditing || isGstExempt}
                 />
               </div>
               <FileUploadCard
@@ -381,6 +434,7 @@ export default function MerchantProfilePage() {
                 preview={previews.panFront}
                 onRemove={() => removeFile('panFront')}
                 file={files.panFront}
+                disabled={!isEditing}
               />
               <FileUploadCard 
                 label="PAN (Back)" 
@@ -388,6 +442,7 @@ export default function MerchantProfilePage() {
                 preview={previews.panBack}
                 onRemove={() => removeFile('panBack')}
                 file={files.panBack}
+                disabled={!isEditing}
               />
               <FileUploadCard 
                 label="Aadhar (Front)" 
@@ -395,6 +450,7 @@ export default function MerchantProfilePage() {
                 preview={previews.aadharFront}
                 onRemove={() => removeFile('aadharFront')}
                 file={files.aadharFront}
+                disabled={!isEditing}
               />
               <FileUploadCard 
                 label="Aadhar (Back)" 
@@ -402,6 +458,7 @@ export default function MerchantProfilePage() {
                 preview={previews.aadharBack}
                 onRemove={() => removeFile('aadharBack')}
                 file={files.aadharBack}
+                disabled={!isEditing}
               />
             </div>
           </SectionContainer>
@@ -508,7 +565,7 @@ function SectionContainer({ title, icon: Icon, children, delay }: any) {
   );
 }
 
-function InputField({ label, name, value, onChange, placeholder, type = "text", icon: Icon, hint }: any) {
+function InputField({ label, name, value, onChange, placeholder, type = "text", icon: Icon, hint, disabled }: any) {
   return (
     <div className="space-y-2 group">
       <div className="flex items-center justify-between pl-1">
@@ -529,9 +586,11 @@ function InputField({ label, name, value, onChange, placeholder, type = "text", 
           onChange={onChange}
           type={type}
           placeholder={placeholder}
+          disabled={disabled}
           className={cn(
             "w-full pr-5 py-4 bg-gray-50/50 border border-gray-100 rounded-[1.5rem] text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/50 transition-all",
-            Icon ? "pl-11" : "pl-5"
+            Icon ? "pl-11" : "pl-5",
+            disabled && "opacity-60 cursor-not-allowed bg-gray-100"
           )}
         />
       </div>
@@ -539,12 +598,12 @@ function InputField({ label, name, value, onChange, placeholder, type = "text", 
   );
 }
 
-function FileUploadCard({ label, onFileChange, preview, onRemove, file }: any) {
+function FileUploadCard({ label, onFileChange, preview, onRemove, file, disabled }: any) {
   const isImage = preview && (preview.startsWith('data:image') || preview.match(/\.(jpeg|jpg|png|webp)$/i));
   const isPdf = preview && (preview.startsWith('data:application/pdf') || preview.match(/\.pdf$/i));
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", disabled && "opacity-50 grayscale cursor-not-allowed")}>
       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{label}</label>
       <div className="relative group aspect-square">
         <div className={cn(
@@ -576,14 +635,16 @@ function FileUploadCard({ label, onFileChange, preview, onRemove, file }: any) {
                 )}
 
                 {/* Overlay on Hover */}
-                <div className="absolute inset-0 bg-[#301118]/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3">
-                  <button className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors text-white">
-                    <Eye className="w-5 h-5" />
-                  </button>
-                  <button onClick={onRemove} className="p-3 bg-rose-500/20 hover:bg-rose-500/40 rounded-xl transition-colors text-rose-400">
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
+                {!disabled && (
+                  <div className="absolute inset-0 bg-[#301118]/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3">
+                    <button className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors text-white">
+                      <Eye className="w-5 h-5" />
+                    </button>
+                    <button onClick={onRemove} className="p-3 bg-rose-500/20 hover:bg-rose-500/40 rounded-xl transition-colors text-rose-400">
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           ) : (

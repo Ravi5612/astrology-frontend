@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useMerchantProfile, useUpdateProfile, useMerchantProducts } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
-import { SettingsSkeleton } from "@/components/ui/Skeleton";
+import { SettingsSkeleton, Skeleton } from "@/components/ui/Skeleton";
 
 export default function ShopProfileSettings() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
