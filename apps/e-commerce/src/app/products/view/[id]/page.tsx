@@ -20,6 +20,7 @@ import {
   Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
 
 interface Product {
@@ -68,9 +69,33 @@ export default function ProductViewPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#fd6410]" />
-        <p className="text-gray-500 font-medium italic animate-pulse">Fetching product details...</p>
+      <div className="space-y-10 pb-20">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-10 w-32 rounded-xl" />
+          <div className="flex gap-3">
+             <Skeleton className="h-12 w-32 rounded-2xl" />
+             <Skeleton className="h-12 w-12 rounded-2xl" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-5 space-y-8">
+            <Skeleton className="aspect-square rounded-[3rem]" />
+            <div className="grid grid-cols-2 gap-4">
+              <Skeleton className="h-24 rounded-3xl" />
+              <Skeleton className="h-24 rounded-3xl" />
+            </div>
+          </div>
+          <div className="lg:col-span-7 space-y-10">
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <Skeleton className="h-16 w-3/4 rounded-2xl" />
+              </div>
+              <Skeleton className="h-12 w-48 rounded-xl" />
+            </div>
+            <Skeleton className="h-64 rounded-[2.5rem]" />
+          </div>
+        </div>
       </div>
     );
   }

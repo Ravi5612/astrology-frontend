@@ -3,6 +3,7 @@
 import React from 'react';
 import { Star, MessageSquare, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export interface PerformanceData {
   averageRating: number;
@@ -42,15 +43,15 @@ export const ReviewsOverview: React.FC<ReviewsOverviewProps> = ({ data, isLoadin
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 animate-pulse">
-        <div className="h-6 bg-gray-100 rounded w-1/3 mb-10" />
+      <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
+        <Skeleton className="h-6 w-1/3 mb-10" />
         <div className="grid grid-cols-2 gap-10">
           <div className="space-y-3">
-            <div className="h-16 bg-gray-100 rounded w-1/2" />
-            <div className="h-4 bg-gray-100 rounded w-3/4" />
+            <Skeleton className="h-16 w-1/2 rounded-2xl" />
+            <Skeleton className="h-4 w-3/4" />
           </div>
           <div className="space-y-3">
-            {[...Array(5)].map((_, i) => <div key={i} className="h-3 bg-gray-100 rounded" />)}
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-3 w-full" />)}
           </div>
         </div>
       </div>

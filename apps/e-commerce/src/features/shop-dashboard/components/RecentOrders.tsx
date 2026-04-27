@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Search, ShoppingBag, Eye, Download } from "lucide-react";
 import { DashboardOrder } from "@/types/dashboard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface RecentOrdersProps {
   orders?: readonly DashboardOrder[];
@@ -20,12 +21,13 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 const SkeletonRow = () => (
-  <tr className="animate-pulse">
-    {[...Array(6)].map((_, i) => (
-      <td key={i} className="py-5 px-4">
-        <div className="h-4 bg-gray-100 rounded-full w-3/4" />
-      </td>
-    ))}
+  <tr>
+    <td className="py-5 px-4"><Skeleton className="h-4 w-16" /></td>
+    <td className="py-5 px-4"><Skeleton className="h-4 w-32" /></td>
+    <td className="py-5 px-4"><Skeleton className="h-4 w-24" /></td>
+    <td className="py-5 px-4"><Skeleton className="h-4 w-20" /></td>
+    <td className="py-5 px-4"><Skeleton className="h-6 w-24 rounded-full" /></td>
+    <td className="py-5 px-4 text-right"><Skeleton className="h-8 w-16 rounded-lg ml-auto" /></td>
   </tr>
 );
 

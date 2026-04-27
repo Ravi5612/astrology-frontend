@@ -4,6 +4,7 @@ import React from 'react';
 import { ShoppingCart, Package, Star, MessageSquare, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MerchantActivity } from "@/types/dashboard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export interface Activity {
   id: string;
@@ -27,11 +28,11 @@ const iconMap = {
 };
 
 const SkeletonItem = () => (
-  <div className="flex items-start space-x-5 p-4 animate-pulse">
-    <div className="w-12 h-12 bg-gray-100 rounded-2xl shrink-0" />
+  <div className="flex items-start space-x-5 p-4">
+    <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
     <div className="flex-1 space-y-2">
-      <div className="h-4 bg-gray-100 rounded w-3/4" />
-      <div className="h-3 bg-gray-100 rounded w-1/2" />
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-3 w-1/2" />
     </div>
   </div>
 );

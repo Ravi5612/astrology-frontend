@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export function AnalyticsSkeleton() {
   return (
-    <div className="space-y-10 pb-20 animate-pulse">
+    <div className="space-y-10 pb-20">
       {/* Header Skeleton */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-4">

@@ -21,7 +21,7 @@ import {
   useMerchantTransactions 
 } from "@/hooks/useFinance";
 import { WithdrawFundsModal } from "@/features/shop-dashboard/components/WithdrawFundsModal";
-import { EarningsSkeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Transaction {
   id: string;
@@ -114,11 +114,7 @@ export default function EarningsPage() {
         </div>
       </div>
 
-      {statsLoading && txLoading && page === 1 ? (
-        <EarningsSkeleton />
-      ) : (
-        <>
-          {/* Financial Stats Grid */}
+      {/* Financial Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
           <DashboardCard
@@ -165,7 +161,21 @@ export default function EarningsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {transactions.length === 0 ? (
+                    {txLoading ? (
+                      [...Array(8)].map((_, i) => (
+                        <tr key={i}>
+                          <td className="pl-6 py-5">
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-40" />
+                            </div>
+                          </td>
+                          <td className="px-4 py-5 text-center"><Skeleton className="h-6 w-20 rounded-lg mx-auto" /></td>
+                          <td className="px-4 py-5 text-right"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                          <td className="pr-6 py-5 text-right"><Skeleton className="h-6 w-24 rounded-lg ml-auto" /></td>
+                        </tr>
+                      ))
+                    ) : transactions.length === 0 ? (
                       <tr>
                         <td colSpan={4} className="py-20 text-center text-gray-400 italic text-sm">No transactions found.</td>
                       </tr>
@@ -280,8 +290,6 @@ export default function EarningsPage() {
 
       </div>
 
-        </>
-      )}
     </div>
   );
 }
