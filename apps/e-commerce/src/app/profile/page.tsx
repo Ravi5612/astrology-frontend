@@ -116,6 +116,11 @@ export default function MerchantProfilePage() {
     }
   };
 
+  const removeFile = (type: keyof typeof files) => {
+    setFiles(prev => ({ ...prev, [type]: null }));
+    setPreviews(prev => ({ ...prev, [type]: null }));
+  };
+
   const handleCancel = () => {
     if (profile) {
       setFormData({

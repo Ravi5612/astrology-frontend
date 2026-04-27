@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useMerchantProfile } from "@/hooks/useSettings";
 import { dashboardService } from "@/services/dashboard.service";
 import { SalesChart } from "@/features/shop-dashboard/components/SalesChart";
-import { DashboardSkeleton } from "@/components/ui/Skeleton";
+import { DashboardSkeleton, Skeleton } from "@/components/ui/Skeleton";
 
 export default function DashboardHome() {
   const [currentDate, setCurrentDate] = useState("");
