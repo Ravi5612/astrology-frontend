@@ -72,6 +72,18 @@ export default function DashboardHome() {
   ];
 
 
+  if (isLoadingInitial && !statsData) {
+    return (
+      <div className="space-y-10 pb-20">
+        <div className="bg-white p-10 rounded-[3rem] border border-gray-100">
+           <Skeleton className="h-10 w-64 mb-4" />
+           <Skeleton className="h-6 w-96" />
+        </div>
+        <DashboardSkeleton />
+      </div>
+    );
+  }
+
   return (
     <main className="space-y-10 pb-20 animate-in fade-in duration-700">
       {/* Welcome Header */}

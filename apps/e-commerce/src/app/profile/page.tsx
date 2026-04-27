@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, SettingsSkeleton } from "@/components/ui/Skeleton";
 
 export default function MerchantProfilePage() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
@@ -253,17 +253,8 @@ export default function MerchantProfilePage() {
       </motion.div>
       
       {isProfileLoading ? (
-        <div className="space-y-8 px-4">
-          <Skeleton className="h-40 rounded-[2.5rem]" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 space-y-8">
-              <Skeleton className="h-96 rounded-[2.5rem]" />
-              <Skeleton className="h-96 rounded-[2.5rem]" />
-            </div>
-            <div className="lg:col-span-4">
-              <Skeleton className="h-[600px] rounded-[2.5rem]" />
-            </div>
-          </div>
+        <div className="pt-10">
+          <SettingsSkeleton />
         </div>
       ) : (
         <>

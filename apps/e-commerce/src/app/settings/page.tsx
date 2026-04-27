@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useMerchantProfile, useUpdateProfile, useMerchantProducts } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, SettingsSkeleton } from "@/components/ui/Skeleton";
 
 export default function ShopProfileSettings() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
@@ -209,6 +209,14 @@ export default function ShopProfileSettings() {
     }
     setIsEditing(false);
   };
+
+  if (isProfileLoading && !profile) {
+    return (
+      <div className="pt-10">
+        <SettingsSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20 px-4">
