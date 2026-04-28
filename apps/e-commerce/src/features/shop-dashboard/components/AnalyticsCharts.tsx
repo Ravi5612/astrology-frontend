@@ -14,8 +14,10 @@ import {
   Cell,
   PieChart,
   Pie,
+  LabelList
 } from "recharts";
 import { motion } from "framer-motion";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 const COLORS = [
   "#fd6410", // Primary Orange
@@ -57,12 +59,12 @@ export function RevenueChart({ data }: { data: any[] }) {
   }, [data]);
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 h-[450px] flex flex-col">
+    <div className="bg-white p-6 md:p-8 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 min-h-[400px] md:h-[450px] flex flex-col">
       <div className="mb-8">
         <h3 className="text-2xl font-black text-gray-900 tracking-tight">Revenue Timeline</h3>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mt-2">Last 30 Days Growth</p>
       </div>
-      <div className="flex-1 w-full relative">
+      <div className="flex-1 w-full relative min-h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
@@ -90,26 +92,29 @@ import { Legend } from "recharts";
 
 // 2. Product Share (Pie Chart)
 export function ProductShareChart({ data }: { data: any[] }) {
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
+
   const chartData = React.useMemo(() => {
     if (!data || data.length === 0) return [{ name: 'No Data', sales: 1, percentage: 0 }];
     return data;
   }, [data]);
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 h-[450px] flex flex-col">
+    <div className="bg-white p-6 md:p-8 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 min-h-[450px] md:h-[450px] flex flex-col">
       <div className="mb-8">
         <h3 className="text-2xl font-black text-gray-900 tracking-tight">Sales Distribution</h3>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mt-2">By Product Category</p>
       </div>
       <div className="flex-1 w-full relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+        <ResponsiveContainer width="100%" height={isMobile ? 350 : "100%"}>
+          <PieChart margin={{ top: 0, right: 0, left: 0, bottom: isMobile ? 40 : 0 }}>
             <Pie
               data={chartData}
-              cx="40%"
-              cy="50%"
-              innerRadius={70}
-              outerRadius={100}
+              cx={isMobile ? "50%" : "40%"}
+              cy={isMobile ? "40%" : "50%"}
+              innerRadius={isMobile ? 60 : 70}
+              outerRadius={isMobile ? 90 : 100}
               paddingAngle={8}
               dataKey="sales"
               nameKey="name"
@@ -123,11 +128,11 @@ export function ProductShareChart({ data }: { data: any[] }) {
               contentStyle={{ backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', padding: '16px', fontSize: '12px', fontWeight: '900' }}
             />
             <Legend 
-              layout="vertical" 
-              align="right" 
-              verticalAlign="middle" 
+              layout={isMobile ? "horizontal" : "vertical"} 
+              align={isMobile ? "center" : "right"} 
+              verticalAlign={isMobile ? "bottom" : "middle"} 
               iconType="circle"
-              formatter={(value) => <span className="text-[10px] font-black uppercase text-gray-500 tracking-wider ml-2">{value}</span>}
+              formatter={(value) => <span className="text-[10px] font-black uppercase text-gray-500 tracking-wider ml-1">{value}</span>}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -138,20 +143,27 @@ export function ProductShareChart({ data }: { data: any[] }) {
 
 // 3. Stock Level (Bar Chart)
 export function StockChart({ data }: { data: any[] }) {
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
+
   const chartData = React.useMemo(() => {
     if (!data || data.length === 0) return [];
     return data;
   }, [data]);
 
   return (
-    <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 h-[500px] flex flex-col">
-      <div className="mb-10">
+    <div className="bg-white p-6 md:p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 min-h-[500px] flex flex-col">
+      <div className="mb-8 md:mb-10">
         <h3 className="text-2xl font-black text-gray-900 tracking-tight">Catalog Inventory Health</h3>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mt-2">Real-time stock monitoring</p>
       </div>
       <div className="flex-1 w-full relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 100, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={Math.max(400, chartData.length * 40)}>
+          <BarChart 
+            data={chartData} 
+            layout="vertical" 
+            margin={{ top: 0, right: isMobile ? 60 : 80, left: isMobile ? -20 : 20, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
             <XAxis type="number" axisLine={false} tickLine={false} hide />
             <YAxis 
@@ -159,17 +171,24 @@ export function StockChart({ data }: { data: any[] }) {
                 type="category" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fontWeight: 900, fill: '#64748b' }} 
-                width={150} 
+                tick={{ fontSize: 9, fontWeight: 900, fill: '#64748b' }} 
+                width={isMobile ? 100 : 150}
+                interval={0}
             />
             <Tooltip 
                  cursor={{fill: '#fff1f0'}}
                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', fontWeight: '900' }}
             />
-            <Bar dataKey="stock" radius={[0, 15, 15, 0]} barSize={25} animationDuration={2500}>
+            <Bar dataKey="stock" radius={[0, 15, 15, 0]} barSize={isMobile ? 18 : 25} animationDuration={2500}>
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
+              <LabelList 
+                dataKey="stock" 
+                position="right" 
+                style={{ fill: '#64748b', fontSize: 10, fontWeight: 900 }}
+                formatter={(value: any) => `${value} units`}
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
