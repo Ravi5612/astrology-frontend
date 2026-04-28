@@ -24,12 +24,14 @@ export const getWalletTransactions = async (page: number = 1, limit: number = 10
 
     const transactions = (data.items || data.transactions || (Array.isArray(data) ? data : [])).map((tx: any) => ({
         id: tx.id,
-        date: tx.created_at || tx.createdAt || tx.date,
-        description: tx.description || tx.purpose || "Transaction",
+        createdAt: tx.created_at || tx.createdAt || tx.date,
+        info: tx.description || tx.purpose || "Transaction",
         type: tx.type,
         amount: Number(tx.amount || 0),
         status: tx.status || 'completed',
-        bankAccount: tx.bank_account || tx.bankAccount
+        bankAccount: tx.bank_account || tx.bankAccount,
+        remark: tx.remark || null,
+        transactionNo: tx.transaction_no || tx.id
     }));
 
     return [{

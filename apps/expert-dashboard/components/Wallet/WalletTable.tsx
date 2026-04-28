@@ -8,6 +8,8 @@ interface Transaction {
     amount: number;
     status: string;
     createdAt: string;
+    remark?: string | null;
+    transactionNo: string;
 }
 
 interface TransactionTableProps {
@@ -43,17 +45,28 @@ export const WalletTable: React.FC<TransactionTableProps> = ({ transactions }) =
                         ) : (
                             transactions.map((tx) => (
                                 <tr key={tx.id} className="relative hover:bg-gray-50/80 transition-all duration-300 group cursor-default">
-                                    {/* Left Accent Line on Hover */}
-                                    <td className="absolute left-0 top-0 bottom-0 w-1 bg-[#F25E0A] opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    
-                                    <td className="px-8 py-6">
+                                    <td className="px-8 py-6 relative">
+                                        {/* Left Accent Line on Hover */}
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#F25E0A] opacity-0 group-hover:opacity-100 transition-opacity" />
                                         <div className="flex items-center gap-4 transition-transform duration-300 group-hover:translate-x-1">
                                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 ${
                                                 tx.type === 'credit' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                                             }`}>
                                                 {tx.type === 'credit' ? '↙' : '↗'}
                                             </div>
-                                            <span className="text-[13px] font-bold text-gray-900 group-hover:text-black transition-colors">{tx.info}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-[13px] font-bold text-gray-900 group-hover:text-black transition-colors">{tx.info}</span>
+                                                <div className="flex flex-wrap gap-2 mt-1">
+                                                    {tx.remark && (
+                                                        <span className="text-[10px] text-red-500 font-medium italic bg-red-50/50 px-2 py-0.5 rounded w-fit">
+                                                            Note: {tx.remark}
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[9px] text-gray-400 font-medium px-2 py-0.5 bg-gray-50 rounded border border-gray-100">
+                                                        #{tx.transactionNo}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
@@ -75,11 +88,13 @@ export const WalletTable: React.FC<TransactionTableProps> = ({ transactions }) =
                                     </td>
                                     <td className="px-8 py-6 text-right">
                                         <span className="text-[12px] font-bold text-gray-500">
-                                            {new Date(tx.createdAt).toLocaleDateString('en-IN', { 
-                                                day: '2-digit', 
-                                                month: 'short', 
-                                                year: 'numeric' 
-                                            })}
+                                            {tx.createdAt && !isNaN(new Date(tx.createdAt).getTime()) ? 
+                                                new Date(tx.createdAt).toLocaleDateString('en-IN', { 
+                                                    day: '2-digit', 
+                                                    month: 'short', 
+                                                    year: 'numeric' 
+                                                }) : 'N/A'
+                                            }
                                         </span>
                                     </td>
                                 </tr>
