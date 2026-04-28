@@ -223,7 +223,7 @@ export default function AdminPujaShopsPage() {
                 searchKeys={["name", "listing_name", "agent_id", "agent_name"]}
                 title={
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
-                        <span className="text-xl font-bold text-gray-900">Puja Shop Approvals</span>
+                        <span className="text-xl font-bold text-gray-900">Puja Shop Management</span>
                         <div className="flex bg-gray-100/80 backdrop-blur-sm p-1 rounded-2xl border border-gray-200/50">
                             <button 
                                 onClick={() => setViewMode('agent')}
@@ -240,7 +240,7 @@ export default function AdminPujaShopsPage() {
                         </div>
                     </div>
                 }
-                ariaTitle="Puja Shop Approvals"
+                ariaTitle="Puja Shop Management"
                 statsCards={<StatsCards stats={statsConfig} columns={3} />}
                 onSearch={setSearchQuery}
                 isLoading={isLoading}
