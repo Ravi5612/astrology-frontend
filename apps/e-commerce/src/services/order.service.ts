@@ -3,6 +3,7 @@ import { ApiResponse } from '@/types/dashboard';
 
 export interface Order {
   id: string;
+  orderId?: string;
   orderNumber?: string;
   customerName: string;
   amount: number;

@@ -322,7 +322,7 @@ export default function OrdersPage() {
                     <select 
                        className="text-[10px] font-bold uppercase tracking-widest bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer"
                        value={order.status.toLowerCase()}
-                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                       onChange={(e) => handleStatusChange(order.orderId || order.id, e.target.value)}
                        disabled={updateStatusMutation.isPending || verifyOtpMutation.isPending}
                     >
                        <option value="pending">Pending</option>
