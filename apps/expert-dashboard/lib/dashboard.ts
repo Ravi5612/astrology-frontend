@@ -41,11 +41,12 @@ export const getDashboardStats = async (type: string = 'monthly'): Promise<[Dash
 };
 
 export const getRecentAppointments = async (): Promise<[any[] | null, ApiError | null]> => {
-    const [pendingChatRes, completedChatRes, pendingCallRes, completedCallRes] = await Promise.all([
+    const [pendingChatRes, completedChatRes, pendingCallRes, completedCallRes, pujaRes] = await Promise.all([
         api.get<any>("/chat/sessions/appointments/pending"),
         api.get<any>("/chat/sessions/appointments/completed"),
         api.get<any>("/call/sessions/appointments/pending"),
-        api.get<any>("/call/sessions/appointments/completed")
+        api.get<any>("/call/sessions/appointments/completed"),
+        api.get<any>("/puja-appointments/expert")
     ]);
 
     const extractData = (result: [any | null, ApiError | null]) => {
@@ -60,7 +61,8 @@ export const getRecentAppointments = async (): Promise<[any[] | null, ApiError |
         ...extractData(pendingChatRes), 
         ...extractData(completedChatRes),
         ...extractData(pendingCallRes),
-        ...extractData(completedCallRes)
+        ...extractData(completedCallRes),
+        ...extractData(pujaRes)
     ];
 
     // Deduplicate sessions by ID (Note: IDs might collide if chat and call use different sequences, 

@@ -54,12 +54,13 @@ export const UpcomingAppointments: React.FC = () => {
       try {
         const today = new Date().toISOString().split("T")[0];
 
-        const [chatPendingRes, chatCompletedRes, callPendingRes, callCompletedRes] =
+        const [chatPendingRes, chatCompletedRes, callPendingRes, callCompletedRes, pujaRes] =
           await Promise.allSettled([
             api.get("/chat/sessions/appointments/pending"),
             api.get("/chat/sessions/appointments/completed"),
             api.get("/call/sessions/appointments/pending"),
             api.get("/call/sessions/appointments/completed"),
+            api.get("/puja-appointments/expert"),
           ]);
 
         const getSessions = (res: PromiseSettledResult<any>) => {
@@ -74,6 +75,7 @@ export const UpcomingAppointments: React.FC = () => {
           ...getSessions(chatCompletedRes),
           ...getSessions(callPendingRes),
           ...getSessions(callCompletedRes),
+          ...getSessions(pujaRes),
         ];
 
         // Deduplicate by id

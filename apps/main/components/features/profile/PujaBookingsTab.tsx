@@ -250,7 +250,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                   <>
                     <button
                       disabled={isProcessing === booking.id}
-                      onClick={() => handleAction(booking.id, 'accepted')}
+                      onClick={() => handleAction(booking.id, 'confirmed')}
                       className="flex-1 sm:flex-none px-8 py-3 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-2"
                       style={fontStyle}
                     >

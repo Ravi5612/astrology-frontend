@@ -9,7 +9,7 @@ import RescheduleModal from "./RescheduleModal";
 import { Appointment } from "./types";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
-import { chatSocket, callSocket } from "@/lib/socket";
+import { socket, chatSocket, callSocket } from "@/lib/socket";
 import { getReviews } from "@/lib/reviews";
 import { getDashboardStats, DashboardStats } from "@/lib/dashboard";
 import { TableSkeleton, StatsSkeleton } from "../dashboard/DashboardSkeletons";
@@ -206,28 +206,64 @@ export default function AppointmentsPage() {
       const registrationId = expertUser.profileId || expertUser.id;
 
       const connectSocket = () => {
+        if (!socket.connected) {
+          socket.connect();
+        }
+        socket.emit('expert_online', { userId: registrationId });
+
         if (!chatSocket.connected) {
           chatSocket.connect();
         }
-
-        const rid = expertUser.profileId || expertUser.id;
-        chatSocket.emit('register_expert', { expertId: rid });
+        chatSocket.emit('register_expert', { expertId: registrationId });
 
         if (!callSocket.connected) {
           callSocket.connect();
         }
-        callSocket.emit('register_expert', { expertId: rid });
+        callSocket.emit('register_expert', { expertId: registrationId });
       };
 
       // Connect if not connected
       connectSocket();
 
       // Handle reconnection
+      socket.on('connect', () => {
+        connectSocket();
+      });
       chatSocket.on('connect', () => {
         connectSocket();
       });
 
       // 2. Real-time update when NEW request arrives
+      const handleNewPujaRequest = (session: any) => {
+        const newAppt: Appointment = {
+          id: session.id,
+          name: session.user?.name || "Client",
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          service: session.puja?.name || "Puja Service",
+          date: session.scheduled_date || session.created_at || new Date().toISOString(),
+          status: "pending",
+          type: "new",
+          reminder: false,
+          meetingLink: `/dashboard/puja-session/${session.id}`,
+          clientId: session.user_id,
+          expiresAt: session.expires_at || session.expiresAt,
+          isFree: false,
+          freeMinutes: 0,
+          durationMins: 0,
+          pujaId: session.puja_id,
+          askExpertForDate: session.ask_expert_for_date,
+          userMessage: session.user_message,
+          expertMessage: session.expert_message,
+          scheduledTime: session.scheduled_time,
+          pujaMode: session.mode,
+          price: session.price,
+        };
+
+        setAppointments(prev => {
+          if (prev.some(a => a.id === newAppt.id)) return prev;
+          return [newAppt, ...prev];
+        });
+      };
       const handleNewRequest = (session: any) => {
 
         // Safety check for session data
@@ -331,6 +367,7 @@ export default function AppointmentsPage() {
         ));
       };
 
+      socket.on('new_puja_request', handleNewPujaRequest);
       chatSocket.on('new_chat_request', handleNewRequest);
       callSocket.on('new_call_request', handleNewCallRequest);
 
@@ -347,6 +384,8 @@ export default function AppointmentsPage() {
       callSocket.on('call_accepted', handleCallAccepted);
 
       return () => {
+        socket.off('new_puja_request');
+        socket.off('connect');
         chatSocket.off('new_chat_request', handleNewRequest);
         chatSocket.off('session_activated');
         chatSocket.off('session_ended', handleSessionEnded);
