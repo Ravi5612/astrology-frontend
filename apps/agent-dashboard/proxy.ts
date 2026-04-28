@@ -13,7 +13,7 @@ import { getApiUrl } from './src/utils/api-config';
 
 const API_BASE_URL = getApiUrl();
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // 0. Only protect dashboard routes

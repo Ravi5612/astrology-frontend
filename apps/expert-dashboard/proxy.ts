@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import safeFetch from '@repo/safe-fetch';
 
-// Simple JWT parser for proxy
+// Simple JWT parser for middleware
 function parseJwt(token: string) {
     try {
         const base64Url = token.split('.')[1];
@@ -20,21 +20,50 @@ function parseJwt(token: string) {
     }
 }
 
+// 🚀 Standardized API URL (Sushant Sir's Standard) - uses environment variable for production
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
 
-    // 0. Protected Routes Check
-    const isDashboardRoute = pathname.startsWith('/admin');
+    // 0. Define Protected Routes
+    const isDashboardRoute = pathname.startsWith('/dashboard');
 
-    // 1. Get tokens from cookies (standard names)
+    // 1. Capture tokens from URL (e.g. from Social Login or Redirects)
+    const urlAccessToken = searchParams.get('accessToken') || searchParams.get('token');
+    const urlRefreshToken = searchParams.get('refreshToken') || searchParams.get('refresh_token');
+
+    // EXCLUDE verification and reset-password routes from stripping token
+    const isAuthRoute = pathname.includes('/verify-email') || pathname.includes('/reset-password');
+
+    if (urlAccessToken && !isAuthRoute) {
+        const nextResponse = NextResponse.redirect(new URL(pathname, request.url));
+        nextResponse.cookies.set('accessToken', urlAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+        if (urlRefreshToken) {
+            nextResponse.cookies.set('refreshToken', urlRefreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                path: '/',
+                maxAge: 60 * 60 * 24 * 30,
+            });
+        }
+        return nextResponse;
+    }
+
+    // 2. Get tokens from cookies
     let accessToken = request.cookies.get('accessToken')?.value;
     const refreshToken = request.cookies.get('refreshToken')?.value;
 
     let shouldRefresh = false;
 
-    // 2. Expiry Check (5-minute rule)
+    // 3. Expiry Check (5-minute rule)
     if (accessToken) {
         const payload = parseJwt(accessToken);
         if (payload && payload.exp) {
@@ -50,8 +79,9 @@ export async function middleware(request: NextRequest) {
         shouldRefresh = true;
     }
 
-    // 3. Logic for Refreshing Token
+    // 4. Logic for Refreshing Token
     if (shouldRefresh && refreshToken) {
+        // Updated to use standardized URL directly
         const [data, error] = await safeFetch<any>(`${API_BASE_URL}/auth/refresh`, {
             method: "POST",
             headers: {
@@ -75,25 +105,31 @@ export async function middleware(request: NextRequest) {
             }
             return nextResponse;
         } else if (error) {
-            console.error("Proxy refresh error:", error);
+            console.error("Expert Middleware refresh error:", error);
+            // If refresh fails (e.g. 401 Unauthorized), clear cookies and force redirect to login
+            const loginUrl = new URL('/', request.url);
+            const response = NextResponse.redirect(loginUrl);
+            response.cookies.delete('accessToken');
+            response.cookies.delete('refreshToken');
+            return response;
         }
     }
 
-    // 4. Redirect to login if still no accessToken on protected route
+    // 5. Redirect to login if still no accessToken on protected route
     if (isDashboardRoute && !accessToken) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // 5. Redirect to dashboard if logged in and trying to access login page (root)
+    // 6. Redirect to dashboard if logged in and trying to access login page (root)
     const isLoginPage = pathname === '/';
     if (isLoginPage && accessToken) {
-        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+        return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
     return NextResponse.next();
 }
 
-// Config for proxy matcher
+// Matcher config
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images).*)'],
 };
