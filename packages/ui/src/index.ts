@@ -16,4 +16,5 @@ export { VerificationPopup } from "./components/VerificationPopup";
 // Profile components
 export * from "./components/profile";
 
-
+// Utils
+export * from "./utils/socket";

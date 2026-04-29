@@ -146,12 +146,22 @@ export default function AdminPayoutsPage() {
                     >
                         Agent Payouts
                     </button>
+                    <button
+                        onClick={() => setUserRole('merchant')}
+                        className={`px-8 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                            userRole === 'merchant'
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                        }`}
+                    >
+                        Merchant Payouts
+                    </button>
                 </div>
 
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                        {userRole === 'expert' ? 'Expert' : 'Agent'} Payout Management
+                        {userRole === 'expert' ? 'Expert' : userRole === 'agent' ? 'Agent' : 'Merchant'} Payout Management
                     </h1>
                     <p className="text-gray-600">Monitor {userRole} withdrawals, track success rates, and manage pending requests</p>
                 </div>
@@ -258,7 +268,7 @@ export default function AdminPayoutsPage() {
                             <table className="w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{userRole === 'expert' ? 'Expert' : 'Agent'}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{userRole === 'expert' ? 'Expert' : userRole === 'agent' ? 'Agent' : 'Merchant'}</th>
 
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Details</th>

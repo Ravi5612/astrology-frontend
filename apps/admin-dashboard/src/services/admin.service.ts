@@ -183,3 +183,13 @@ export const getCommissionSettings = async (): Promise<[any | null, any | null]>
 export const updateCommissionSettings = async (data: Record<string, string | number>): Promise<[any | null, any | null]> => {
   return await api.post("/admin/settings/commissions", data);
 };
+
+// Merchant Sales
+export const getMerchantSalesOverview = async (): Promise<[any | null, any | null]> => {
+  return await api.get("/admin/merchant-sales");
+};
+
+export const getMerchantSalesDetails = async (id: number): Promise<[any | null, any | null]> => {
+  return await api.get(`/admin/merchant-sales/${id}`);
+};
+

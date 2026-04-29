@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { cn } from "@/src/lib/cn";
 import { Avatar } from "@repo/ui";
 
+import { NotificationCenter } from "../components/NotificationCenter";
+
 import {
     X,
     ChevronDown,
@@ -24,6 +26,7 @@ import {
     Wallet,
     BarChart3,
     Award,
+    Bell
 
 
 } from "lucide-react";
@@ -44,6 +47,7 @@ const MENU_ITEMS: MenuItem[] = [
     { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { label: "Registration", href: "/dashboard/registration", icon: UserPlus },
     { label: "Listings", href: "/dashboard/listings", icon: List },
+    { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
 
     { label: "Signout", href: "#", icon: LogOut },
 ];
@@ -296,8 +300,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </div>
 
                         {/* Agent info — right side (using @repo/ui Avatar) */}
-                        <div className="flex items-center gap-3">
-                            <div className="text-right hidden sm:block">
+                        <div className="flex items-center gap-6">
+                            <NotificationCenter />
+                            <div className="flex items-center gap-3">
+                                <div className="text-right hidden sm:block">
                                 <p className="text-sm font-bold text-gray-800">{mounted ? (agent?.name ?? "Agent") : "Agent"}</p>
                                 <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest flex items-center gap-1 justify-end">
                                     <Award className="w-3 h-3 text-primary-hover" />
@@ -314,7 +320,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             />
                         </div>
                     </div>
-                </header>
+                </div>
+            </header>
 
                 {/* Page content */}
                 <main className="p-6">{children}</main>

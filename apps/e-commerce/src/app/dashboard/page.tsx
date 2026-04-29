@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { ShoppingBag, Users, TrendingUp, Package, AlertTriangle, CheckCircle, Info, Calendar } from "lucide-react";
+import { ShoppingBag, Users, TrendingUp, Package, AlertTriangle, CheckCircle, Info, Calendar, Wallet, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
+import { cn } from "@/lib/utils/cn";
+import { StatsCards } from "@repo/ui";
 import { ActivityFeed } from "@/features/shop-dashboard/components/ActivityFeed";
 import { RecentOrders } from "@/features/shop-dashboard/components/RecentOrders";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -99,82 +101,192 @@ export default function DashboardHome() {
   }
 
   return (
-    <main className="space-y-10 pb-20 animate-in fade-in duration-700">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-50/50 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
-        <div className="relative z-10 space-y-2">
-          <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none">
-            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fd6410] to-orange-400">{(user as any)?.shopName ?? "Shop Owner"}!</span>
-          </h2>
-          <p className="text-gray-500 font-bold italic underline decoration-orange-100 underline-offset-8 decoration-4 decoration-dashed">
-            Manage your inventory and track your spiritual brand growth.
-          </p>
-        </div>
-        <div className="relative z-10 flex items-center gap-5 bg-white/80 backdrop-blur-md px-8 py-5 rounded-3xl border border-orange-100 shadow-sm transition-all hover:border-[#fd6410] hover:shadow-orange-500/10">
-          <div className="w-14 h-14 bg-gradient-to-br from-[#fd6410] to-orange-400 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-500/30">
-            <Calendar className="w-7 h-7" />
+    <main className="space-y-8 pb-20 animate-in fade-in duration-700">
+      
+      {/* Exact Reference Match: Dark Premium Welcome Banner */}
+      <div className="relative overflow-hidden rounded-[2rem] p-8 md:p-10 bg-gradient-to-r from-[#110502] via-[#2a0e06] to-[#fd6410] text-white shadow-2xl">
+          {/* Subtle Circle Gradient on Right */}
+          <div className="absolute -right-10 -top-10 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col h-full justify-between gap-12">
+              {/* Top Section: Welcome & Name */}
+              <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <p className="text-white text-[10px] font-black uppercase tracking-[0.2em] opacity-90">Welcome back 🙏</p>
+                  </div>
+                  <h2 className="text-5xl font-black text-white tracking-tight leading-none">
+                      {(user as any)?.shopName ?? "Arti devi"}
+                  </h2>
+                  <div className="inline-flex items-center px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-lg border border-white/10">
+                      <span className="text-[10px] font-bold text-gray-300 tracking-wider">
+                          ID: <span className="text-white">{(user as any)?.uid || "AIB-AGT-817806"}</span>
+                      </span>
+                  </div>
+              </div>
+
+              {/* Bottom Section: Integrated Stats with Separators */}
+              <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-6">
+                  <div className="space-y-1">
+                      <p className="text-white/70 text-[10px] font-black uppercase tracking-widest">Total Earned</p>
+                      <p className="text-3xl font-black tracking-tight text-white">
+                          ₹{Number(statsData?.totalEarnings?.value ?? 0).toLocaleString("en-IN")}
+                      </p>
+                  </div>
+                  
+                  <div className="hidden md:block w-px h-10 bg-white/20" />
+                  
+                  <div className="space-y-1">
+                      <p className="text-white/70 text-[10px] font-black uppercase tracking-widest">Wallet Balance</p>
+                      <p className="text-3xl font-black tracking-tight text-white">
+                          ₹{Number(statsData?.totalEarnings?.value ?? 0).toLocaleString("en-IN")}
+                      </p>
+                  </div>
+
+                  <div className="hidden md:block w-px h-10 bg-white/20" />
+                  
+                  <div className="space-y-1">
+                      <p className="text-white/70 text-[10px] font-black uppercase tracking-widest">Total Listings</p>
+                      <p className="text-3xl font-black tracking-tight text-white">
+                          {statsData?.totalProducts?.value ?? 0}
+                      </p>
+                  </div>
+              </div>
           </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#fd6410]/70 mb-1">Current Date</p>
-            <p className="text-sm font-black text-gray-900 tracking-tighter">{currentDate}</p>
-          </div>
-        </div>
       </div>
 
-      {/* KYC Status Banners */}
+      {/* KYC Status Banner (Only if pending) */}
       <AnimatePresence mode="wait">
         {status === "pending_verification" && (
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-orange-50 border-2 border-orange-100 rounded-[2.5rem] p-8 flex flex-col sm:flex-row items-center sm:items-start gap-8 shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-xl shadow-orange-500/20">
-              <AlertTriangle className="w-8 h-8 animate-bounce" />
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }} 
+            className="bg-amber-50 border border-amber-100 rounded-3xl p-6 flex items-center gap-5 shadow-sm"
+          >
+            <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20">
+              <AlertTriangle className="w-6 h-6 animate-pulse" />
             </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h4 className="text-2xl font-black text-orange-900 mb-2 tracking-tight">Shop Verification Pending</h4>
-              <p className="text-sm font-bold text-orange-700/80 leading-relaxed mb-6 max-w-2xl italic">
-                Our team is reviewing your GST & PAN documents to ensure the highest quality of service on Bharat. This usually takes 24-48 hours.
+            <div className="flex-1">
+              <h4 className="text-sm font-black text-amber-900 uppercase tracking-tight">Shop Verification Pending</h4>
+              <p className="text-xs font-bold text-amber-700/70 italic">
+                Our team is reviewing your documents. This usually takes 24-48 hours.
               </p>
-              <div className="flex flex-wrap justify-center sm:justify-start gap-3">
-                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-orange-500 bg-white/80 px-4 py-2 rounded-full border border-orange-100 shadow-sm">
-                  <Info className="w-4 h-4" /> Reviewing GST Details
-                </span>
-                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-orange-500 bg-white/80 px-4 py-2 rounded-full border border-orange-100 shadow-sm">
-                  <Info className="w-4 h-4" /> Identity Check In Progress
-                </span>
-              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Stats Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {stats.map((stat, index) => (
-          <motion.div key={stat.title} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: index * 0.1 }}>
-            <DashboardCard 
-              title={stat.title} 
-              value={stat.value} 
-              trend={stat.trend} 
-              icon={stat.icon} 
-              iconBgColor={stat.bgColor} 
-              iconColor={stat.color}
-              href={stat.href}
-              isLoading={statsLoading}
-            />
-          </motion.div>
-        ))}
+      {/* Quick Stats Grid using shared @repo/ui component for 100% consistency */}
+      <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <StatsCards 
+          stats={[
+            {
+              title: "Total Orders",
+              value: statsData?.totalOrders?.value ?? "0",
+              icon: ShoppingBag,
+              iconColor: "text-[#fd6410]",
+              iconBgColor: "bg-orange-50",
+              trend: { value: statsData?.totalOrders?.trend ?? "+0%", isPositive: true, period: "this month" }
+            },
+            {
+              title: "Total Products",
+              value: statsData?.totalProducts?.value ?? "0",
+              icon: Package,
+              iconColor: "text-purple-600",
+              iconBgColor: "bg-purple-50",
+            },
+            {
+              title: "Total Earnings",
+              value: `₹${Number(statsData?.totalEarnings?.value ?? 0).toLocaleString("en-IN")}`,
+              icon: TrendingUp,
+              iconColor: "text-green-600",
+              iconBgColor: "bg-green-50",
+              trend: { value: statsData?.totalEarnings?.trend ?? "+0%", isPositive: true }
+            },
+            {
+              title: "Monthly Revenue",
+              value: `₹${Number(statsData?.monthlyEarnings?.value ?? 0).toLocaleString("en-IN")}`,
+              icon: Wallet,
+              iconColor: "text-blue-600",
+              iconBgColor: "bg-blue-50",
+            }
+          ]} 
+          columns={4} 
+        />
       </section>
 
-      {/* Orders Grid - Now Full Width */}
-      <section className="grid grid-cols-1 gap-10">
-        <div className="space-y-8">
-          <RecentOrders orders={ordersData || []} isLoading={ordersLoading} />
-        </div>
-      </section>
+      {/* Two Column Layout for Actions & Orders */}
+      <div className="grid lg:grid-cols-12 gap-8">
+          {/* Recent Orders - 8 Cols */}
+          <div className="lg:col-span-8 space-y-6">
+              <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                      <ShoppingBag className="w-5 h-5 text-[#fd6410]" /> Recent Orders
+                  </h3>
+                  <Link href="/orders" className="text-[10px] font-black text-[#fd6410] uppercase tracking-widest hover:underline">View All</Link>
+              </div>
+              <RecentOrders orders={ordersData || []} isLoading={ordersLoading} />
+          </div>
 
-      {/* Dynamic Analytics & Performance Chart - Moved to Bottom */}
+          {/* Quick Actions & Charts - 4 Cols */}
+          <div className="lg:col-span-4 space-y-8">
+              {/* Quick Actions */}
+              <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
+                  <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Quick Actions</h3>
+                  <div className="grid gap-3">
+                      {[
+                          { label: "Add New Product", icon: Package, href: "/products/add", color: "bg-orange-50 text-[#fd6410]" },
+                          { label: "View Wallet", icon: Wallet, href: "/wallet", color: "bg-green-50 text-green-600" },
+                          { label: "Shop Analytics", icon: TrendingUp, href: "/analytics", color: "bg-blue-50 text-blue-600" },
+                      ].map((action) => (
+                          <Link key={action.label} href={action.href}>
+                              <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 border border-transparent hover:border-orange-100 hover:bg-white transition-all group">
+                                  <div className="flex items-center gap-4">
+                                      <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110", action.color)}>
+                                          <action.icon className="w-5 h-5" />
+                                      </div>
+                                      <span className="text-sm font-bold text-gray-700">{action.label}</span>
+                                  </div>
+                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#fd6410] transition-colors" />
+                              </div>
+                          </Link>
+                      ))}
+                  </div>
+              </div>
+
+              {/* Mini Performance Summary */}
+              <div className="bg-gray-900 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                  <div className="absolute -right-10 -top-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
+                  <div className="relative z-10 space-y-6">
+                      <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white/10 rounded-lg">
+                              <TrendingUp className="w-5 h-5 text-orange-400" />
+                          </div>
+                          <span className="text-xs font-black uppercase tracking-widest">Growth Rate</span>
+                      </div>
+                      <div>
+                          <p className="text-3xl font-black tracking-tighter">
+                              {perfData?.growthRate || "+18.2%"}
+                          </p>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 italic">Vs Last Month</p>
+                      </div>
+                      <Link href="/analytics" className="block text-center py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-[10px] font-black uppercase tracking-widest border border-white/5">
+                          View Deep Analytics
+                      </Link>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      {/* Main Performance Chart */}
       <section className="animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-300">
-        <SalesChart data={perfData?.salesData} isLoading={perfLoading} />
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+                <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest">Revenue Analytics</h3>
+                <div className="px-4 py-2 bg-gray-50 rounded-xl text-[10px] font-black text-gray-400 uppercase tracking-widest border border-gray-100">Last 30 Days</div>
+            </div>
+            <SalesChart data={perfData?.salesData} isLoading={perfLoading} />
+        </div>
       </section>
     </main>
   );
