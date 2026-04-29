@@ -9,8 +9,8 @@ export const financeService = {
     const [res, err] = await api.get<any>("/merchant/finance/transactions", { params });
     return [res?.data || [], err];
   },
-  requestWithdrawal: async (amount: number) => {
-    const [res, err] = await api.post<any>("/merchant/finance/withdraw", { amount });
+  requestWithdrawal: async (amount: number, bankAccountId?: string) => {
+    const [res, err] = await api.post<any>("/merchant/finance/withdraw", { amount, bankAccountId });
     return [res?.data || null, err];
   },
 };

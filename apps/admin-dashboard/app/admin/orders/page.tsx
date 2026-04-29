@@ -10,13 +10,16 @@ import {
     ChevronUp,
     Search,
     Eye,
-    Box
+    Box,
+    LayoutGrid,
+    ShoppingBag
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { Order, OrderService } from "../../../src/services/orders.service";
 import { SearchInput } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { getNotificationSocket, connectAdminSocket } from "../../../src/utils/socket";
+import MerchantOrders from "./MerchantOrders";
 
 // Cast icons
 const PackageIcon = Package as any;
@@ -38,6 +41,7 @@ export default function OrdersPage() {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [cancelOrderId, setCancelOrderId] = useState<string | null>(null);
     const [cancelReason, setCancelReason] = useState("");
+    const [viewMode, setViewMode] = useState<"standard" | "merchant">("standard");
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -165,199 +169,225 @@ export default function OrdersPage() {
 
     return (
         <div className="p-6">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h1 className="text-2xl font-bold text-gray-800">Order Management</h1>
-                <div className="w-full md:w-64">
-                    <SearchInput
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder="Search Order ID, Name..."
-                    />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">Order Management</h1>
+                    <div className="flex gap-2 mt-2">
+                        <button 
+                            onClick={() => setViewMode("standard")}
+                            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${viewMode === "standard" ? "bg-primary text-white shadow-md shadow-primary/20" : "bg-white border text-gray-600 hover:bg-gray-50"}`}
+                        >
+                            <ShoppingBag className="w-4 h-4" />
+                            Standard View
+                        </button>
+                        <button 
+                            onClick={() => setViewMode("merchant")}
+                            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${viewMode === "merchant" ? "bg-primary text-white shadow-md shadow-primary/20" : "bg-white border text-gray-600 hover:bg-gray-50"}`}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                            Merchant Orders
+                        </button>
+                    </div>
                 </div>
+                {viewMode === "standard" && (
+                    <div className="w-full md:w-64">
+                        <SearchInput
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="Search Order ID, Name..."
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex overflow-x-auto pb-4 mb-4 gap-2 no-scrollbar">
-                {tabs.map(tab => (
-                    <Button
-                        key={tab.id}
-                        onClick={() => setFilterStatus(tab.id)}
-                        variant={filterStatus === tab.id ? 'primary' : 'outline'}
-                        size="sm"
-                        className="rounded-full whitespace-nowrap"
-                    >
-                        {tab.label}
-                    </Button>
-                ))}
-            </div>
+            {viewMode === "merchant" ? (
+                <MerchantOrders />
+            ) : (
+                <>
+                    {/* Filter Tabs */}
+                    <div className="flex overflow-x-auto pb-4 mb-4 gap-2 no-scrollbar">
+                        {tabs.map(tab => (
+                            <Button
+                                key={tab.id}
+                                onClick={() => setFilterStatus(tab.id)}
+                                variant={filterStatus === tab.id ? 'primary' : 'outline'}
+                                size="sm"
+                                className="rounded-full whitespace-nowrap"
+                            >
+                                {tab.label}
+                            </Button>
+                        ))}
+                    </div>
 
-            {/* Orders Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[800px]">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                        <div className="flex justify-center items-center gap-2">
-                                            <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
-                                            Loading Orders...
-                                        </div>
-                                    </td>
-                                </tr>
-                            ) : filteredOrders.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                        No orders found matching your criteria.
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredOrders.map(order => (
-                                    <React.Fragment key={order.id}>
-                                        <tr className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                                #{String(order.id).substring(0, 8)}...
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                {new Date((order as any).created_at || order.createdAt).toLocaleDateString('en-IN', {
-                                                    day: 'numeric', month: 'short', year: 'numeric'
-                                                })}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
-                                                <div className="font-medium">{order.user?.name || "Guest"}</div>
-                                                <div className="text-xs text-gray-400">{order.user?.email}</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                                                ₹{(order as any).total_amount || order.totalAmount}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                                                    {getStatusIcon(order.status)}
-                                                    {order.status.toUpperCase()}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <button
-                                                        onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
-                                                        className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-                                                        title="View Details"
-                                                    >
-                                                        {expandedOrderId === order.id ? <ChevronUpIcon size={18} /> : <EyeIcon size={18} />}
-                                                    </button>
-
-                                                    {/* Status Update Quick Actions */}
-                                                    {order.status === 'pending' && (
-                                                        <button
-                                                            onClick={() => handleStatusUpdate(String(order.id), 'packed')}
-                                                            className="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors"
-                                                        >
-                                                            Mark Packed
-                                                        </button>
-                                                    )}
-                                                    {order.status === 'packed' && (
-                                                        <button
-                                                            onClick={() => handleStatusUpdate(String(order.id), 'shipped')}
-                                                            className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-lg hover:bg-indigo-100 border border-indigo-200 transition-colors"
-                                                        >
-                                                            Mark Shipped
-                                                        </button>
-                                                    )}
-                                                    {order.status === 'shipped' && (
-                                                        <button
-                                                            onClick={() => handleStatusUpdate(String(order.id), 'delivered')}
-                                                            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-medium rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
-                                                        >
-                                                            Mark Delivered
-                                                        </button>
-                                                    )}
+                    {/* Orders Table */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[800px]">
+                                <thead className="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                                <div className="flex justify-center items-center gap-2">
+                                                    <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
+                                                    Loading Orders...
                                                 </div>
                                             </td>
                                         </tr>
-                                        {/* Expanded Details Row */}
-                                        {expandedOrderId === order.id && (
-                                            <tr className="bg-gray-50/50">
-                                                <td colSpan={6} className="px-6 py-4">
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-white rounded-lg border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2">
-                                                        {/* Items */}
-                                                        <div>
-                                                            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Items</h4>
-                                                            <div className="space-y-3">
-                                                                {order.items?.map((item, idx) => (
-                                                                    <div key={idx} className="flex items-start gap-3">
-                                                                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                                                                            <PackageIcon size={20} />
-                                                                        </div>
-                                                                        <div>
-                                                                            <p className="text-sm font-medium text-gray-900">{item.product?.name || "Product"}</p>
-                                                                            <p className="text-xs text-gray-500">Qty: {item.quantity} × ₹{item.price}</p>
-                                                                        </div>
-                                                                        <div className="ml-auto font-medium text-sm">
-                                                                            ₹{item.quantity * item.price}
+                                    ) : filteredOrders.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                                No orders found matching your criteria.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredOrders.map(order => (
+                                            <React.Fragment key={order.id}>
+                                                <tr className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                                        #{String(order.id).substring(0, 8)}...
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                                        {new Date((order as any).created_at || order.createdAt).toLocaleDateString('en-IN', {
+                                                            day: 'numeric', month: 'short', year: 'numeric'
+                                                        })}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                        <div className="font-medium">{order.user?.name || "Guest"}</div>
+                                                        <div className="text-xs text-gray-400">{order.user?.email}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                                                        ₹{(order as any).total_amount || order.totalAmount}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+                                                            {getStatusIcon(order.status)}
+                                                            {order.status.toUpperCase()}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                                                                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                                                                title="View Details"
+                                                            >
+                                                                {expandedOrderId === order.id ? <ChevronUpIcon size={18} /> : <EyeIcon size={18} />}
+                                                            </button>
+
+                                                            {/* Status Update Quick Actions */}
+                                                            {order.status === 'pending' && (
+                                                                <button
+                                                                    onClick={() => handleStatusUpdate(String(order.id), 'packed')}
+                                                                    className="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors"
+                                                                >
+                                                                    Mark Packed
+                                                                </button>
+                                                            )}
+                                                            {order.status === 'packed' && (
+                                                                <button
+                                                                    onClick={() => handleStatusUpdate(String(order.id), 'shipped')}
+                                                                    className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-lg hover:bg-indigo-100 border border-indigo-200 transition-colors"
+                                                                >
+                                                                    Mark Shipped
+                                                                </button>
+                                                            )}
+                                                            {order.status === 'shipped' && (
+                                                                <button
+                                                                    onClick={() => handleStatusUpdate(String(order.id), 'delivered')}
+                                                                    className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-medium rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+                                                                >
+                                                                    Mark Delivered
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {/* Expanded Details Row */}
+                                                {expandedOrderId === order.id && (
+                                                    <tr className="bg-gray-50/50">
+                                                        <td colSpan={6} className="px-6 py-4">
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-white rounded-lg border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2">
+                                                                {/* Items */}
+                                                                <div>
+                                                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Items</h4>
+                                                                    <div className="space-y-3">
+                                                                        {order.items?.map((item, idx) => (
+                                                                            <div key={idx} className="flex items-start gap-3">
+                                                                                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+                                                                                    <PackageIcon size={20} />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <p className="text-sm font-medium text-gray-900">{item.product?.name || "Product"}</p>
+                                                                                    <p className="text-xs text-gray-500">Qty: {item.quantity} × ₹{item.price}</p>
+                                                                                </div>
+                                                                                <div className="ml-auto font-medium text-sm">
+                                                                                    ₹{item.quantity * item.price}
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Shipping Address */}
+                                                                <div>
+                                                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Shipping Details</h4>
+                                                                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm text-gray-600">
+                                                                        <p className="font-medium text-gray-900 mb-1">{order.user?.name}</p>
+                                                                        <p>{((order as any).shipping_address || (order as any).shippingAddress)?.line1}</p>
+                                                                        <p>{((order as any).shipping_address || (order as any).shippingAddress)?.city}, {((order as any).shipping_address || (order as any).shippingAddress)?.state} - {((order as any).shipping_address || (order as any).shippingAddress)?.zipCode}</p>
+                                                                    </div>
+
+                                                                    <div className="mt-4">
+                                                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Update Status</h4>
+                                                                        <div className="flex flex-wrap gap-2">
+                                                                            {['pending', 'packed', 'shipped', 'delivered'].map(s => (
+                                                                                <Button
+                                                                                    key={s}
+                                                                                    onClick={() => handleStatusUpdate(String(order.id), s)}
+                                                                                    disabled={order.status === s}
+                                                                                    size="sm"
+                                                                                    variant={order.status === s ? 'primary' : 'outline'}
+                                                                                    className="capitalize"
+                                                                                >
+                                                                                    {s}
+                                                                                </Button>
+                                                                            ))}
+                                                                            {/* Cancel Button - Opens Modal */}
+                                                                            <Button
+                                                                                onClick={() => openCancelModal(String(order.id))}
+                                                                                disabled={order.status === 'cancelled'}
+                                                                                size="sm"
+                                                                                variant="danger"
+                                                                                className="capitalize"
+                                                                            >
+                                                                                cancelled
+                                                                            </Button>
                                                                         </div>
                                                                     </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Shipping Address */}
-                                                        <div>
-                                                            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Shipping Details</h4>
-                                                            <div className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm text-gray-600">
-                                                                <p className="font-medium text-gray-900 mb-1">{order.user?.name}</p>
-                                                                <p>{((order as any).shipping_address || (order as any).shippingAddress)?.line1}</p>
-                                                                <p>{((order as any).shipping_address || (order as any).shippingAddress)?.city}, {((order as any).shipping_address || (order as any).shippingAddress)?.state} - {((order as any).shipping_address || (order as any).shippingAddress)?.zipCode}</p>
-                                                            </div>
-
-                                                            <div className="mt-4">
-                                                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Update Status</h4>
-                                                                <div className="flex flex-wrap gap-2">
-                                                                    {['pending', 'packed', 'shipped', 'delivered'].map(s => (
-                                                                        <Button
-                                                                            key={s}
-                                                                            onClick={() => handleStatusUpdate(String(order.id), s)}
-                                                                            disabled={order.status === s}
-                                                                            size="sm"
-                                                                            variant={order.status === s ? 'primary' : 'outline'}
-                                                                            className="capitalize"
-                                                                        >
-                                                                            {s}
-                                                                        </Button>
-                                                                    ))}
-                                                                    {/* Cancel Button - Opens Modal */}
-                                                                    <Button
-                                                                        onClick={() => openCancelModal(String(order.id))}
-                                                                        disabled={order.status === 'cancelled'}
-                                                                        size="sm"
-                                                                        variant="danger"
-                                                                        className="capitalize"
-                                                                    >
-                                                                        cancelled
-                                                                    </Button>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </React.Fragment>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {/* Cancellation Modal */}
             {showCancelModal && (

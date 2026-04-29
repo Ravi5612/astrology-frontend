@@ -1,5 +1,6 @@
 
 import { LucideIcon, ArrowUp, ArrowDown } from "lucide-react";
+import { cn } from "../utils/cn";
 
 export interface StatConfig {
     title: string;
@@ -12,6 +13,7 @@ export interface StatConfig {
     trend?: {
         value: string;
         isPositive: boolean;
+        color?: string; // Optional custom color class
         period?: string;
     };
 }
@@ -61,11 +63,11 @@ export function StatsCards({ stats, columns = 4 }: StatsCardsProps) {
                                 {stat.trend && (
                                     <div className="flex items-center flex-wrap gap-1">
                                         {stat.trend.isPositive ? (
-                                            <ArrowUp className="w-4 h-4 text-green-600 group-hover:scale-125 group-hover/card:scale-125 transition-transform" />
+                                            <ArrowUp className={cn("w-4 h-4 group-hover:scale-125 group-hover/card:scale-125 transition-transform", stat.trend.color || "text-green-600")} />
                                         ) : (
-                                            <ArrowDown className="w-4 h-4 text-red-600 group-hover:scale-125 group-hover/card:scale-125 transition-transform" />
+                                            <ArrowDown className={cn("w-4 h-4 group-hover:scale-125 group-hover/card:scale-125 transition-transform", stat.trend.color || "text-red-600")} />
                                         )}
-                                        <span className={`text-sm font-semibold ${stat.trend.isPositive ? "text-green-600" : "text-red-600"}`}>
+                                        <span className={cn("text-sm font-semibold", stat.trend.color || (stat.trend.isPositive ? "text-green-600" : "text-red-600"))}>
                                             {stat.trend.value}
                                         </span>
                                         {stat.trend.period && (

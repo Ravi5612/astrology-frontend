@@ -41,8 +41,8 @@ export const useRequestWithdrawal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (amount: number) => {
-      const [data, error] = await financeService.requestWithdrawal(amount);
+    mutationFn: async ({ amount, bankAccountId }: { amount: number, bankAccountId?: string }) => {
+      const [data, error] = await financeService.requestWithdrawal(amount, bankAccountId);
       if (error) {
         const body = (error as any).body;
         const message = body?.message 

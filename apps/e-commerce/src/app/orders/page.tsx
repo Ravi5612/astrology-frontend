@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
-import { DashboardCard } from "@/features/shop-dashboard/components/DashboardCard";
+import { StatsCards } from "@repo/ui";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 import { orderService, Order } from "@/services/order.service";
@@ -195,19 +195,43 @@ export default function OrdersPage() {
         </button>
       </div>
 
-      {/* Stats Section - Using Unified Component */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        {stats.map((stat, idx) => (
-          <DashboardCard
-            key={idx}
-            title={stat.label}
-            value={stat.value}
-            icon={stat.icon}
-            iconColor={stat.color}
-            trend={stat.trend}
-            isLoading={isLoading}
-          />
-        ))}
+      {/* Stats Section - Using Shared Premium Component */}
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <StatsCards 
+          stats={[
+            {
+              title: "Total Orders",
+              value: statistics.total,
+              icon: ShoppingBag,
+              iconColor: "text-[#fd6410]",
+              iconBgColor: "bg-orange-50",
+              trend: { value: "+12%", isPositive: true, period: "this month" }
+            },
+            {
+              title: "Pending Orders",
+              value: statistics.pending,
+              icon: Clock,
+              iconColor: "text-amber-600",
+              iconBgColor: "bg-amber-50",
+            },
+            {
+              title: "Shipped Orders",
+              value: statistics.shipped,
+              icon: Truck,
+              iconColor: "text-blue-600",
+              iconBgColor: "bg-blue-50",
+            },
+            {
+              title: "Total Revenue",
+              value: formatPrice(statistics.revenue),
+              icon: CheckCircle2,
+              iconColor: "text-green-600",
+              iconBgColor: "bg-green-50",
+              trend: { value: "+5%", isPositive: true }
+            }
+          ]}
+          columns={4}
+        />
       </div>
 
       {/* Logic Tabs & Search */}

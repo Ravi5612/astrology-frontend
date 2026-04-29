@@ -9,9 +9,14 @@ import Link from "next/link";
 import { ToastContainer } from "react-toastify";
 
 import { useMerchantProfile, useUpdateOnlineStatus } from "@/hooks/useSettings";
+import { api } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
+import { connectNotificationSocket, getNotificationSocket } from "@repo/ui";
+import { toast } from "react-toastify";
 
 export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
+    const { user } = useAuthStore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
     const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
@@ -49,6 +54,56 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    const fetchNotifications = React.useCallback(async () => {
+        try {
+            const [res, error] = await api.get("/notifications", { params: { limit: 5 } });
+            if (!error && res) {
+                setNotifications(res.data || []);
+            }
+        } catch (err) {
+            console.error("Failed to fetch notifications", err);
+        }
+    }, []);
+
+    const fetchUnreadCount = React.useCallback(async () => {
+        try {
+            const [res, error] = await api.get("/notifications/unread-count");
+            if (!error && res) {
+                setUnreadCount(res.count || 0);
+            }
+        } catch (err) {
+            console.error("Failed to fetch unread count", err);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (user?.id) {
+            fetchNotifications();
+            fetchUnreadCount();
+            connectNotificationSocket(user.id);
+            const socket = getNotificationSocket();
+
+            const handleNewNotification = (data: any) => {
+                toast.info(data.message || "New notification!", {
+                    icon: <NotificationBell count={0} className="w-4 h-4" />
+                });
+                fetchUnreadCount();
+                fetchNotifications();
+            };
+
+            socket.on("new_notification", handleNewNotification);
+            socket.on("notification", handleNewNotification);
+
+            return () => {
+                socket.off("new_notification", handleNewNotification);
+                socket.off("notification", handleNewNotification);
+            };
+        }
+    }, [user?.id, fetchNotifications, fetchUnreadCount]);
+
     // If it's an auth page, just render the content without sidebar/header
     if (isAuthPage) {
         return (
@@ -57,10 +112,6 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
             </div>
         );
     }
-
-    const notifications = [
-        { id: 1, message: "Welcome to your new Merchant Dashboard!", time: "Just now" }
-    ];
 
     return (
         <div className="flex bg-gray-50 min-h-screen overflow-hidden text-gray-900 font-outfit">
@@ -120,7 +171,7 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
                                     onMouseEnter={() => setIsNotificationOpen(true)}
                                     onMouseLeave={() => setIsNotificationOpen(false)}
                                 >
-                                    <NotificationBell count={notifications.length} className="bg-transparent hover:bg-gray-100" />
+                                    <NotificationBell count={unreadCount} className="bg-transparent hover:bg-gray-100" />
                                     {isNotificationOpen && (
                                         <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                                             <div className="p-4">

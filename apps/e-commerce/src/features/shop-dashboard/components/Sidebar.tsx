@@ -32,12 +32,12 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, toggleSidebar }) 
 
   const menuItems = useMemo(() => [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+    { name: "My Wallet", icon: Wallet, href: "/wallet" },
     { name: "Orders", icon: ShoppingBag, href: "/orders" },
     { name: "Manage Products", icon: Package, href: "/products" },
     { name: "Analytics", icon: BarChart3, href: "/analytics" },
-    { name: "Earnings", icon: Wallet, href: "/earnings" },
-    { name: "Verification", icon: ShieldCheck, href: "/profile" },
-    { name: "Shop Profile", icon: Settings, href: "/settings" },
+    { name: "Profile", icon: ShieldCheck, href: "/profile" },
+    { name: "Shop Settings", icon: Settings, href: "/settings" },
     { name: "Help Center", icon: HelpCircle, href: "/help" },
   ], []);
 

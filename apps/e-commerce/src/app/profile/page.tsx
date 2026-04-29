@@ -22,6 +22,7 @@ import { useMerchantProfile, useUpdateProfile } from "@/hooks/useSettings";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
 import { Skeleton, SettingsSkeleton } from "@/components/ui/Skeleton";
+import { BankDetailsCard } from "./components/BankDetailsCard";
 
 export default function MerchantProfilePage() {
   const { data: profileData, isLoading: isProfileLoading } = useMerchantProfile();
@@ -29,6 +30,7 @@ export default function MerchantProfilePage() {
   const updateProfileMutation = useUpdateProfile();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingBank, setIsEditingBank] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -177,6 +179,17 @@ export default function MerchantProfilePage() {
     updateProfileMutation.mutate(data, {
       onSuccess: () => {
         setIsEditing(false);
+      }
+    });
+  };
+
+  const onSaveBankAccounts = async (accounts: any[]) => {
+    const data = new FormData();
+    data.append('bank_accounts', JSON.stringify(accounts));
+    
+    updateProfileMutation.mutate(data, {
+      onSuccess: () => {
+        setIsEditingBank(false);
       }
     });
   };
@@ -383,44 +396,14 @@ export default function MerchantProfilePage() {
             </div>
           </SectionContainer>
 
-          {/* Section 2: Payout Wallet */}
-          <SectionContainer title="Payout & Bank Details" icon={CreditCard} delay={0.2}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                label="Bank Name"
-                name="bankName"
-                value={formData.bankName}
-                onChange={handleInputChange}
-                placeholder="e.g. HDFC Bank"
-                disabled={!isEditing}
-              />
-              <InputField
-                label="Account Holder Name"
-                name="accountHolder"
-                value={formData.accountHolder}
-                onChange={handleInputChange}
-                placeholder="Same as PAN"
-                disabled={!isEditing}
-              />
-              <InputField
-                label="Account Number"
-                name="accountNumber"
-                value={formData.accountNumber}
-                onChange={handleInputChange}
-                placeholder="0000 0000 0000 0000"
-                type="text"
-                disabled={!isEditing}
-              />
-              <InputField
-                label="IFSC Code"
-                name="ifsc"
-                value={formData.ifsc}
-                onChange={handleInputChange}
-                placeholder="HDFC0001234"
-                disabled={!isEditing}
-              />
-            </div>
-          </SectionContainer>
+          {/* Section 2: Payout Wallet - Upgraded to Multiple Accounts */}
+          <BankDetailsCard 
+            profile={profile}
+            isEditing={isEditingBank}
+            setIsEditing={setIsEditingBank}
+            onSave={onSaveBankAccounts}
+            saving={updateProfileMutation.isPending}
+          />
 
           {/* Section 3: Document Verification */}
           <SectionContainer title="Document Verification Files" icon={UploadCloud} delay={0.3}>
@@ -498,7 +481,7 @@ export default function MerchantProfilePage() {
 
               <div className="space-y-4 pt-4">
                 <VerificationStep step="1" title="Identity Upload" done={formData.pan.length >= 10} />
-                <VerificationStep step="2" title="Bank Integration" done={formData.accountNumber.length > 8} />
+                <VerificationStep step="2" title="Bank Integration" done={(profile?.bank_accounts?.length > 0) || formData.accountNumber.length > 8} />
                 <VerificationStep step="3" title="Manual Review" done={isVerified} />
               </div>
 
