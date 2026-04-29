@@ -269,6 +269,7 @@ export const useCheckout = () => {
           coupon_code: appliedCoupon?.code || undefined,
         };
         console.log("[CHECKOUT] Razorpay order payload (initial):", orderPayload);
+        console.info("[CHECKOUT] Final Order Payload being sent to server:", JSON.stringify(orderPayload, null, 2));
         const [createOrderRes, createError] = await http.post<any>(
           "/order",
           orderPayload,
