@@ -47,27 +47,27 @@ export default function DashboardHome() {
       title: "Total Orders",
       value: String(statsData?.totalOrders?.value ?? "0"),
       trend: statsData?.totalOrders?.trend ?? "+0%",
-      icon: ShoppingBag, color: "text-blue-600", bgColor: "bg-blue-50",
+      icon: ShoppingBag, color: "text-white", bgColor: "bg-[#fd6410]",
       href: "/orders"
     },
     {
       title: "Total Products",
       value: String(statsData?.totalProducts?.value ?? "0"),
       trend: statsData?.totalProducts?.trend ?? "+0",
-      icon: Package, color: "text-purple-600", bgColor: "bg-purple-50",
+      icon: Package, color: "text-white", bgColor: "bg-[#fd6410]",
       href: "/products"
     },
     {
       title: "Total Earnings",
       value: `₹${Number(statsData?.totalEarnings?.value ?? 0).toLocaleString("en-IN")}`,
       trend: statsData?.totalEarnings?.trend ?? "+0%",
-      icon: TrendingUp, color: "text-orange-600", bgColor: "bg-orange-50",
+      icon: TrendingUp, color: "text-white", bgColor: "bg-[#fd6410]",
     },
     {
       title: "Monthly Earnings",
       value: `₹${Number(statsData?.monthlyEarnings?.value ?? 0).toLocaleString("en-IN")}`,
       trend: statsData?.monthlyEarnings?.trend ?? "+0%",
-      icon: TrendingUp, color: "text-green-600", bgColor: "bg-green-50",
+      icon: TrendingUp, color: "text-white", bgColor: "bg-[#fd6410]",
     },
   ];
 
@@ -75,11 +75,25 @@ export default function DashboardHome() {
   if (isLoadingInitial && !statsData) {
     return (
       <div className="space-y-10 pb-20">
-        <div className="bg-white p-10 rounded-[3rem] border border-gray-100">
-           <Skeleton className="h-10 w-64 mb-4" />
-           <Skeleton className="h-6 w-96" />
+        <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm animate-pulse">
+           <div className="h-10 w-64 bg-gray-100 rounded-2xl mb-4" />
+           <div className="h-6 w-96 bg-gray-100 rounded-xl" />
         </div>
-        <DashboardSkeleton />
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6 animate-pulse">
+              <div className="flex justify-between items-start">
+                <div className="w-16 h-16 bg-gray-100 rounded-2xl" />
+                <div className="w-20 h-6 bg-gray-100 rounded-lg" />
+              </div>
+              <div className="space-y-3">
+                <div className="w-24 h-3 bg-gray-100 rounded-full" />
+                <div className="w-40 h-10 bg-gray-100 rounded-xl" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

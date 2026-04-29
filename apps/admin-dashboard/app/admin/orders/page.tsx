@@ -229,7 +229,7 @@ export default function OrdersPage() {
                                                 #{String(order.id).substring(0, 8)}...
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-500">
-                                                {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                                                {new Date((order as any).created_at || order.createdAt).toLocaleDateString('en-IN', {
                                                     day: 'numeric', month: 'short', year: 'numeric'
                                                 })}
                                             </td>
@@ -238,7 +238,7 @@ export default function OrdersPage() {
                                                 <div className="text-xs text-gray-400">{order.user?.email}</div>
                                             </td>
                                             <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                                                ₹{order.totalAmount}
+                                                ₹{(order as any).total_amount || order.totalAmount}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
@@ -315,8 +315,8 @@ export default function OrdersPage() {
                                                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Shipping Details</h4>
                                                             <div className="p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm text-gray-600">
                                                                 <p className="font-medium text-gray-900 mb-1">{order.user?.name}</p>
-                                                                <p>{order.shippingAddress?.line1}</p>
-                                                                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.zipCode}</p>
+                                                                <p>{((order as any).shipping_address || (order as any).shippingAddress)?.line1}</p>
+                                                                <p>{((order as any).shipping_address || (order as any).shippingAddress)?.city}, {((order as any).shipping_address || (order as any).shippingAddress)?.state} - {((order as any).shipping_address || (order as any).shippingAddress)?.zipCode}</p>
                                                             </div>
 
                                                             <div className="mt-4">

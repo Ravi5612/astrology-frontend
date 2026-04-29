@@ -36,7 +36,7 @@ export const OrderService = {
     updateVal: async (id: string, status: string, reason?: string): Promise<[any | null, any | null]> => {
         const body: any = { status };
         if (reason) {
-            body.cancellationReason = reason;
+            body.cancellation_reason = reason;
         }
         return await api.patch(`/orders/${id}/status`, body);
     }

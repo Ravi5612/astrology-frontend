@@ -159,7 +159,7 @@ export default function AdminMandirsPage() {
             data={listings}
             columns={COLUMNS}
             searchKeys={["name", "listing_name", "agent_id", "agent_name"]}
-            title="Mandir Approvals"
+            title="Mandir Management"
             statsCards={<StatsCards stats={statsConfig} columns={3} />}
             onSearch={setSearchQuery}
             isLoading={isLoading}
