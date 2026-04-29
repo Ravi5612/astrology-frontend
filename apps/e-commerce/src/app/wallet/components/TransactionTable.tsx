@@ -11,6 +11,10 @@ interface Transaction {
     remark?: string;
     createdAt: string;
     transactionNo?: string;
+    color?: 'green' | 'red';
+    icon?: 'in' | 'out';
+    typeLabel?: string;
+    amountLabel?: string;
 }
 
 interface TransactionTableProps {

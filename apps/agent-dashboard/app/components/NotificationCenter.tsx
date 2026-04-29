@@ -19,7 +19,7 @@ export const NotificationCenter = () => {
 
     const fetchUnreadCount = useCallback(async () => {
         try {
-            const [res, error] = await api.get("/notifications/unread-count");
+            const [res, error] = await api.get<any>("/notifications/unread-count");
             if (!error && res) {
                 setUnreadCount(res.count || 0);
             }
@@ -31,7 +31,7 @@ export const NotificationCenter = () => {
     const fetchNotifications = useCallback(async () => {
         setLoading(true);
         try {
-            const [res, error] = await api.get("/notifications", { params: { limit: 5 } });
+            const [res, error] = await api.get<any>("/notifications", { params: { limit: 5 } });
             if (!error && res) {
                 setNotifications(res.data || []);
             }

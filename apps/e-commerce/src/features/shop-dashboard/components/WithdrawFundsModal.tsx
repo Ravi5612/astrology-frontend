@@ -48,7 +48,7 @@ export const WithdrawFundsModal: React.FC<WithdrawFundsModalProps> = ({
   const handleSubmit = async () => {
     if (!isAmountValid) return;
     try {
-      await requestWithdrawal.mutateAsync(Number(amount));
+      await requestWithdrawal.mutateAsync({ amount: Number(amount) });
       onClose();
     } catch (err) {
       // Error handled by hook

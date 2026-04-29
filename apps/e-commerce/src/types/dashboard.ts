@@ -48,6 +48,7 @@ export interface MerchantPerformance {
   currentTier: string;
   rating: number;
   reviewCount: number;
+  growthRate?: string;
   salesData?: {
     date: string;
     sales: number;

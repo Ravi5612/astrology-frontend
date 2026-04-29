@@ -14,7 +14,7 @@ export default function NotificationsPage() {
     const fetchNotifications = useCallback(async () => {
         setLoading(true);
         try {
-            const [res, error] = await api.get("/notifications", { params: { limit: 50 } });
+            const [res, error] = await api.get<any>("/notifications", { params: { limit: 50 } });
             if (!error && res) {
                 setNotifications(res.data || []);
                 setTotalCount(res.meta?.totalCount || 0);
