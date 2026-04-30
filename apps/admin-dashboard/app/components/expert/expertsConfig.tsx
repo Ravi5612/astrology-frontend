@@ -10,6 +10,7 @@ export interface ExpertStats {
   totalExperts: number;
   activeExperts: number;
   pendingExperts: number;
+  rejectedExperts: number;
   recentExperts: number;
   blockedExperts: number;
   totalRevenue?: number;
@@ -32,17 +33,17 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
       totalRevenue: data.reduce((acc, curr) => acc + (curr.profile_expert?.total_earnings || (curr as any).totalEarnings || 0), 0),
     };
   } else {
-    // Handle object input (pre-calculated from API)
     stats = {
-      totalExperts: data.totalExperts || 0,
-      activeExperts: data.activeExperts || 0,
-      pendingExperts: data.pendingExperts || 0,
-      recentExperts: data.recentExperts || 0,
-      blockedExperts: data.blockedExperts || 0,
+      totalExperts: (data as any).totalExperts || 0,
+      activeExperts: (data as any).activeExperts || 0,
+      pendingExperts: (data as any).pendingExperts || 0,
+      rejectedExperts: (data as any).rejectedExperts || 0,
+      recentExperts: (data as any).recentExperts || 0,
+      blockedExperts: (data as any).blockedExperts || 0,
     };
   }
 
-  return [
+  const baseStats = [
     {
       title: "Total Experts",
       value: stats.totalExperts,
@@ -67,22 +68,24 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
       valueColor: "text-yellow-600",
     },
     {
-      title: "Recent Join",
-      value: stats.recentExperts,
-      icon: UserPlus,
-      iconColor: "text-purple-600",
-      iconBgColor: "bg-purple-100",
-      valueColor: "text-purple-600",
-    },
-    {
-      title: "Blocked Experts",
-      value: stats.blockedExperts,
+      title: "Rejected Experts",
+      value: stats.rejectedExperts,
       icon: UserX,
       iconColor: "text-red-600",
       iconBgColor: "bg-red-100",
       valueColor: "text-red-600",
     },
+    {
+      title: "Blocked Experts",
+      value: stats.blockedExperts,
+      icon: UserX,
+      iconColor: "text-gray-600",
+      iconBgColor: "bg-gray-100",
+      valueColor: "text-gray-600",
+    }
   ];
+
+  return baseStats;
 };
 
 export const getColumns = () => [

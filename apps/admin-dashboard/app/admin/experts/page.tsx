@@ -34,6 +34,7 @@ export default function ExpertsPage() {
     totalExperts: 0,
     activeExperts: 0,
     pendingExperts: 0,
+    rejectedExperts: 0,
     recentExperts: 0,
     blockedExperts: 0,
   });
