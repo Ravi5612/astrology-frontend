@@ -34,6 +34,11 @@
                     "label": "Order Management",
                     "href": "/admin/orders",
                     "icon": "Package"
+                },
+                {
+                    "label": "Agent Management",
+                    "href": "/admin/agents",
+                    "icon": "Handshake"
                 }
             ]
         },
@@ -71,11 +76,6 @@
             "label": "Products",
             "href": "/admin/products",
             "icon": "ShoppingBag"
-        },
-        {
-            "label": "Agent and Commission",
-            "href": "/admin/agents",
-            "icon": "Handshake"
         },
         {
             "label": "Settings",
