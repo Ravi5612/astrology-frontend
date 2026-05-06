@@ -25,6 +25,10 @@ export const useCallLogic = () => {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [showFreeEndPrompt, setShowFreeEndPrompt] = useState(false);
+  const [freeLimitData, setFreeLimitData] = useState<any>(null);
+  const [continuationTimer, setContinuationTimer] = useState(30);
+  const [endReason, setEndReason] = useState<{ reason: string; message: string } | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -132,9 +136,21 @@ export const useCallLogic = () => {
     };
 
     socket.on("call_accepted", handleCallAccepted);
-    socket.on("call_ended", () => {
-      console.log("📡 [Socket] call_ended received");
+    socket.on("call_ended", (data?: any) => {
+      console.log("📡 [Socket] call_ended received", data);
+      if (data?.reason) setEndReason(data);
       if (!cancelledRef.current) handleCallEnded();
+    });
+
+    socket.on("free_time_ending_soon", (data: any) => {
+      console.log("📡 [Socket] free_time_ending_soon received", data);
+      setFreeLimitData(data);
+      setShowFreeEndPrompt(true);
+      setContinuationTimer(30);
+    });
+
+    socket.on("balance_warning", (data: any) => {
+      toast.warning(data.message || "Low balance warning");
     });
 
     return () => {
@@ -239,12 +255,21 @@ export const useCallLogic = () => {
 
   useEffect(() => {
     if (status === "connected" && sessionData?.max_duration_seconds) {
-      if (callDuration >= sessionData.max_duration_seconds) {
+      if (callDuration >= sessionData.max_duration_seconds && !sessionData.is_free) {
         toast.error("Low balance. Consultation ended.");
         handleEndCall();
       }
     }
   }, [callDuration, sessionData, status]);
+
+  useEffect(() => {
+    if (showFreeEndPrompt && continuationTimer > 0) {
+      const timer = setInterval(() => setContinuationTimer(prev => prev - 1), 1000);
+      return () => clearInterval(timer);
+    } else if (showFreeEndPrompt && continuationTimer === 0) {
+      handleEndCall();
+    }
+  }, [showFreeEndPrompt, continuationTimer]);
 
   const startTimer = () => {
     if (timerRef.current) return;
@@ -374,6 +399,8 @@ export const useCallLogic = () => {
     showRatingModal, setShowRatingModal, reviewRating, setReviewRating,
     reviewComment, setReviewComment, reviewSubmitting, reviewSubmitted,
     localVideoRef, remoteVideoRef, handleEndCall, toggleMute, toggleCamera, toggleSpeaker,
-    handleSubmitReview, isSpeakerOn
+    handleSubmitReview, isSpeakerOn,
+    showFreeEndPrompt, setShowFreeEndPrompt, freeLimitData, continuationTimer, endReason,
+    socket: socketRef.current
   };
 };

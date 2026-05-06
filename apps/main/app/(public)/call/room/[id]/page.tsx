@@ -2,20 +2,23 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import * as LucideIcons from "lucide-react";
 import { useCallLogic } from "./useCallLogic";
+import FreeEndPromptModal from "./free-end-prompt-modal.component";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, User, Loader2, Star, X, Clock } = LucideIcons as any;
 
 export default function CallRoomPage() {
   const router = useRouter();
+  const params = useParams();
   const {
     status, isMuted, isCameraOff, callDuration, sessionData, callType,
     showRatingModal, setShowRatingModal, reviewRating, setReviewRating,
     reviewComment, setReviewComment, reviewSubmitting, reviewSubmitted,
     localVideoRef, remoteVideoRef, handleEndCall, toggleMute, toggleCamera,
-    handleSubmitReview, toggleSpeaker, isSpeakerOn
+    handleSubmitReview, toggleSpeaker, isSpeakerOn,
+    showFreeEndPrompt, freeLimitData, continuationTimer, endReason, socket
   } = useCallLogic();
 
   const formatDuration = (seconds: number) => {
@@ -223,8 +226,12 @@ export default function CallRoomPage() {
           <div className="w-full max-w-md bg-neutral-900 border border-white/10 rounded-3xl p-8 flex flex-col gap-6 animate-in zoom-in-95 duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">Call Ended</p>
-                <h2 className="text-xl font-black text-white">Rate your Experience</h2>
+                <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">
+                  {endReason ? `Call Ended: ${endReason.message}` : "Call Ended"}
+                </p>
+                <h2 className="text-xl font-black text-white">
+                  {endReason?.reason === 'insufficient_balance' ? "Low Balance" : "Rate your Experience"}
+                </h2>
               </div>
               <button onClick={() => { setShowRatingModal(false); router.push("/"); }} className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
                 <X className="w-4 h-4 text-white/50" />
@@ -268,6 +275,20 @@ export default function CallRoomPage() {
           </div>
         </div>
       )}
+        </div>
+      )}
+
+      <FreeEndPromptModal
+        showFreeEndPrompt={showFreeEndPrompt}
+        isDarkMode={true}
+        continuationTimer={continuationTimer}
+        freeLimitData={freeLimitData}
+        expertData={sessionData?.expert}
+        router={router}
+        socket={socket}
+        sessionId={params.id as string}
+        handleEndChat={handleEndCall}
+      />
     </div>
   );
 }

@@ -46,10 +46,18 @@ export default function SessionSummaryModal({
                 <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1">
                     <div className="flex flex-col items-center text-center w-full">
                     <h2 className={`text-2xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-[#2A0A0A]'} tracking-tight uppercase`}>
-                        {sessionSummary?.status === 'expired' ? 'Session Expired' : sessionSummary?.status === 'terminated' ? 'Admin Terminated Session' : 'Session Summary'}
+                        {sessionSummary?.status === 'expired' ? 'Session Expired' : 
+                         sessionSummary?.status === 'terminated' ? 'Admin Terminated Session' : 
+                         sessionSummary?.reason === 'free_limit_ended_no_balance' ? 'Free Session Ended' :
+                         sessionSummary?.reason === 'insufficient_balance' ? 'Low Balance' :
+                         'Session Summary'}
                     </h2>
                     <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-[11px] font-bold tracking-widest uppercase mb-6`}>
-                        {sessionSummary?.status === 'expired' ? 'Expert missed the request' : sessionSummary?.status === 'terminated' ? null : 'Consulation Finished'}
+                        {sessionSummary?.status === 'expired' ? 'Expert missed the request' : 
+                         sessionSummary?.status === 'terminated' ? null : 
+                         sessionSummary?.reason === 'free_limit_ended_no_balance' ? 'Your free consultation has ended' :
+                         sessionSummary?.reason === 'insufficient_balance' ? 'Session ended due to low wallet balance' :
+                         'Consulation Finished'}
                     </p>
 
                     {sessionSummary?.status === 'terminated' && (
