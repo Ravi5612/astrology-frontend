@@ -203,7 +203,7 @@ function ChatRoomContent() {
     useEffect(() => {
         if (sessionStatus === 'active' && timeLeft === 0 && expiresAt && !isFree) {
             console.log("[ChatRoom] 💸 Balance exhausted, auto-terminating chat.");
-            handleEndChat();
+            handleEndChat(true);
         }
     }, [timeLeft, sessionStatus, expiresAt, isFree]);
 
@@ -253,9 +253,9 @@ function ChatRoomContent() {
         setPendingAttachment(null);
     };
 
-    const handleEndChat = () => {
+    const handleEndChat = (force = false) => {
         if (!sessionId) return;
-        if (!confirm("Are you sure you want to end this session?")) return;
+        if (!force && !confirm("Are you sure you want to end this session?")) return;
 
         isEndingSession.current = true;
 

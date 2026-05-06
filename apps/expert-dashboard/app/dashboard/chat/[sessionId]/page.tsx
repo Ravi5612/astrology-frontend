@@ -174,7 +174,7 @@ function ExpertChatRoomContent() {
     useEffect(() => {
         if (sessionStatus === 'active' && timeLeft === 0 && expiresAt) {
             console.log("[ExpertChat] 💸 Time expired, auto-ending session.");
-            handleEndChat();
+            handleEndChat(true);
         }
     }, [timeLeft, sessionStatus, expiresAt]);
 
@@ -261,8 +261,8 @@ function ExpertChatRoomContent() {
         }
     };
 
-    const handleEndChat = async () => {
-        if (!confirm("Are you sure you want to end this consultation?")) return;
+    const handleEndChat = async (force = false) => {
+        if (!force && !confirm("Are you sure you want to end this consultation?")) return;
 
         // Send a system message before ending the chat for history
         if (user && sessionId) {

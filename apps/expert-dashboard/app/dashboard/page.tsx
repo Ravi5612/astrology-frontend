@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Users, CalendarCheck, Clock, Wallet, CheckCircle, XCircle, X } from "lucide-react";
+import { Users, CalendarCheck, Clock, Wallet, CheckCircle, XCircle, X, Coins } from "lucide-react";
 import { StatsCards } from "@repo/ui";
 import { RecentActivity } from "@/components/dashboard/ActivityFeed";
 import { UpcomingAppointments } from "@/components/dashboard/UserTable";
@@ -97,18 +97,18 @@ const Page = () => {
       iconColor: "text-green-600",
     },
     {
-      title: "Average Rating",
-      value: (dashboardStats?.averageRating || 0).toFixed(1),
-      trend: { value: "Quality", isPositive: true, period: "total" },
-      icon: XCircle,
-      iconBgColor: "bg-yellow-100",
-      iconColor: "text-orange-600",
+      title: "Wallet Balance",
+      value: `₹${(dashboardStats?.walletBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      trend: { value: "Withdrawable", isPositive: true, period: "current" },
+      icon: Wallet,
+      iconBgColor: "bg-green-100",
+      iconColor: "text-green-600",
     },
     {
       title: "Total Earnings",
       value: `₹${(dashboardStats?.totalEarnings || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       trend: { value: dashboardStats?.trends?.earnings || "Lifetime", isPositive: true, period: "all time" },
-      icon: Wallet,
+      icon: Coins,
       iconBgColor: "bg-purple-100",
       iconColor: "text-purple-600",
     },
