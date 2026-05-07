@@ -141,7 +141,10 @@ async function executeFetch<T>(
     const data = await parseBody(res);
 
     if (!res.ok) {
-      const error = new ApiError(res.status, res.statusText, data, res.headers);
+      const message = (data && typeof data === 'object' && 'message' in data) 
+        ? (Array.isArray(data.message) ? data.message[0] : data.message) 
+        : res.statusText;
+      const error = new ApiError(res.status, message, data, res.headers);
       if (instanceConfig.onError) await instanceConfig.onError(error);
       return [null, error];
     }
