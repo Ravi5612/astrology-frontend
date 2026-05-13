@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { api } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
+import { getErrorMessage } from "@repo/lib";
 
 import {
   LoginFormData,
@@ -20,10 +21,7 @@ export async function loginAction(formData: LoginFormData): Promise<AuthActionRe
 
   if (error) {
     return {
-      error:
-        error.body?.message ||
-        error.message ||
-        "Login failed. Please check your credentials.",
+      error: getErrorMessage(error),
     };
   }
 
@@ -74,10 +72,7 @@ export async function registerAction(registerData: RegisterFormData): Promise<Au
 
   if (error) {
     return {
-      error:
-        error.body?.message ||
-        error.message ||
-        "Registration failed. Please try again.",
+      error: getErrorMessage(error),
     };
   }
 
@@ -98,10 +93,7 @@ export async function verifyEmailAction(token: string): Promise<AuthActionRespon
 
   if (error) {
     return {
-      error:
-        error.body?.message ||
-        error.message ||
-        "Verification failed. The link might be expired.",
+      error: getErrorMessage(error),
     };
   }
 
