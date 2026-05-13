@@ -5,18 +5,18 @@ export const CartService = {
     getCart: async (): Promise<[any | null, ApiError | null]> => {
         return await api.get("/cart", {
             headers: { "Cache-Control": "no-cache" }
-        });
+        }) as any;
     },
 
     addToCart: async (productId: number, quantity: number): Promise<[any | null, ApiError | null]> => {
-        return await api.post("/cart/add", { productId, quantity });
+        return await api.post("/cart/add", { productId, quantity }) as any;
     },
 
     updateQuantity: async (productId: number, quantity: number): Promise<[any | null, ApiError | null]> => {
-        return await api.put("/cart/update", { productId, quantity });
+        return await api.put("/cart/update", { productId, quantity }) as any;
     },
 
     removeFromCart: async (productId: number): Promise<[any | null, ApiError | null]> => {
-        return await api.delete(`/cart/remove/${productId}`);
+        return await api.delete(`/cart/remove/${productId}`) as any;
     }
 };

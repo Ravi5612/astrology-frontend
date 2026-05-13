@@ -158,7 +158,7 @@ export default function SessionSummaryModal({
 
                                     setReviewSubmitted(true);
                                     
-                                    const [res, err] = await http.post('/reviews', payload);
+                                    const [res, err] = await http.post('/reviews', payload) as any;
 
                                     if (err) {
                                         setReviewSubmitted(false);

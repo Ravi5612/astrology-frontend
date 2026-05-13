@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
 import { CallStatus, CallSession } from "@/lib/types";
 
-export const useCallLogic = () => {
+export const useCallLogic = (): any => {
   const SOCKET_URL = "http://localhost:6543";
   const params = useParams();
   const router = useRouter();

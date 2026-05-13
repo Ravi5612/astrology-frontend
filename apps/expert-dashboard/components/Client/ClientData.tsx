@@ -13,7 +13,7 @@ import { getReviews } from "@/lib/reviews";
 import Button from "../ui/Button";
 import { HistorySkeleton } from "../dashboard/DashboardSkeletons";
 
-const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin, Phone, Video } = LucideIcons as any;
+const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin, Phone, Video, User, AlertCircle } = LucideIcons as any;
 
 import { createPortal } from "react-dom";
 
@@ -620,10 +620,71 @@ export default function ClientsPage() {
                             </div>
                             <div className={`flex flex-col ${isUserSide ? 'items-end' : 'items-start'}`}>
                               <div className={`p-4 shadow-sm relative ${isUserSide
-                                ? 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none'
-                                : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none'
+                                ? (content.startsWith('[INTRO_CARD]') ? 'p-0 bg-transparent border-none' : 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none')
+                                : sType === 'admin' 
+                                  ? 'bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-center w-full shadow-red-100'
+                                  : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none'
                                 }`}>
-                                <p className="text-[14px] leading-relaxed whitespace-pre-wrap m-0 font-medium">{content}</p>
+                                {content.startsWith('[INTRO_CARD]') ? (
+                                  <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-1 rounded-2xl shadow-xl border-2 border-white/50 w-full min-w-[280px]">
+                                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                                      <div className="flex items-center gap-3 mb-4 border-b border-black/5 pb-3">
+                                        <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center">
+                                          <User className="w-4 h-4 text-black" />
+                                        </div>
+                                        <div>
+                                          <h3 className="text-black font-black text-[10px] uppercase tracking-widest">Birth Details</h3>
+                                          <p className="text-black opacity-60 text-[8px] uppercase font-bold tracking-tighter">Shared Profile Info</p>
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        {(() => {
+                                          try {
+                                            const data = JSON.parse(content.replace('[INTRO_CARD]', ''));
+                                            return (
+                                              <>
+                                                <div className="space-y-0.5">
+                                                  <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Name</span>
+                                                  <p className="text-xs font-black text-black truncate">{data.name || "N/A"}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                  <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Gender</span>
+                                                  <p className="text-xs font-black text-black capitalize">{data.gender || "N/A"}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                  <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">DOB</span>
+                                                  <p className="text-xs font-black text-black">{data.dob || "N/A"}</p>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                  <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">TOB</span>
+                                                  <p className="text-xs font-black text-black">{data.tob || "N/A"}</p>
+                                                </div>
+                                                <div className="col-span-2 space-y-0.5">
+                                                  <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">POB</span>
+                                                  <div className="flex items-center gap-1.5">
+                                                    <MapPin className="w-2.5 h-2.5 text-black/40" />
+                                                    <p className="text-xs font-black text-black truncate">{data.pob || "N/A"}</p>
+                                                  </div>
+                                                </div>
+                                              </>
+                                            );
+                                          } catch (e) {
+                                            return <p className="text-red-500 text-[10px]">Invalid Card Data</p>;
+                                          }
+                                        })()}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    {sType === 'admin' && (
+                                      <div className="flex items-center justify-center gap-2 mb-1 text-[10px] font-black uppercase tracking-tighter">
+                                        <AlertCircle className="w-3 h-3" /> System Message
+                                      </div>
+                                    )}
+                                    <p className="text-[14px] leading-relaxed whitespace-pre-wrap m-0 font-medium">{content}</p>
+                                  </>
+                                )}
                               </div>
                               <span className="text-[8px] mt-1.5 px-1 text-gray-400 font-black uppercase tracking-widest">
                                 {new Date(msg.created_at || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

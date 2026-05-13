@@ -9,78 +9,78 @@ export type { SupportSettings, CreateDisputeDto, ClientProfileData, AddressDto }
  */
 
 export const getClientProfile = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/client/profile');
+    return await api.get('/client/profile') as any;
 };
 
 export const updateClientProfile = async (data: Partial<ClientProfileData>): Promise<[any | null, ApiError | null]> => {
-    return await api.patch('/client/profile', data);
+    return await api.patch('/client/profile', data) as any;
 };
 
 export const createClientProfile = async (data: Partial<ClientProfileData>): Promise<[any | null, ApiError | null]> => {
-    return await api.post('/client/profile', data);
+    return await api.post('/client/profile', data) as any;
 };
 
 export const uploadClientDocument = async (file: File): Promise<[{ url: string; message: string } | null, ApiError | null]> => {
     const formData = new FormData();
     formData.append('file', file);
-    return await api.post('/client/profile/upload-document', formData);
+    return await api.post('/client/profile/upload-document', formData) as any;
 };
 
 export const getActiveChatSessions = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/chat/sessions/pending');
+    return await api.get('/chat/sessions/pending') as any;
 };
 
 export const getPendingChatSessions = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/chat/sessions/pending');
+    return await api.get('/chat/sessions/pending') as any;
 };
 
 export const endChatSession = async (sessionId: number): Promise<[any | null, ApiError | null]> => {
-    return await api.post(`/chat/end/${sessionId}`);
+    return await api.post(`/chat/end/${sessionId}`) as any;
 };
 
 export const getAllChatSessions = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/chat/sessions/my-sessions');
+    return await api.get('/chat/sessions/my-sessions') as any;
 };
 
 export const getConsultationHistory = async (params?: { page?: number, limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/consultations/history', { params } as any);
+    return await api.get('/consultations/history', { params } as any) as any;
 };
 
 export const getChatHistory = async (sessionId: number): Promise<[any | null, ApiError | null]> => {
-    return await api.get(`/chat/history/${sessionId}`);
+    return await api.get(`/chat/history/${sessionId}`) as any;
 };
 
 export const getMyOrders = async (params?: { limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/orders/my-orders', { params } as any);
+    return await api.get('/orders/my-orders', { params } as any) as any;
 };
 
 export const getWalletTransactions = async (params?: { purpose?: string, limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/wallet/transactions', { params } as any);
+    return await api.get('/wallet/transactions', { params } as any) as any;
 };
 
 export const getNotifications = async (params?: { limit?: number, offset?: number }): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/notifications', { params } as any);
+    return await api.get('/notifications', { params } as any) as any;
 };
 
 export const getUnreadCount = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/notifications/unread-count');
+    return await api.get('/notifications/unread-count') as any;
 };
 
 export const markNotificationAsRead = async (id: number): Promise<[any | null, ApiError | null]> => {
-    return await api.patch(`/notifications/${id}/read`);
+    return await api.patch(`/notifications/${id}/read`) as any;
 };
 
 export const deleteNotification = async (id: number): Promise<[any | null, ApiError | null]> => {
-    return await api.delete(`/notifications/${id}`);
+    return await api.delete(`/notifications/${id}`) as any;
 };
 
 export const clearAllNotifications = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.delete('/notifications/all');
+    return await api.delete('/notifications/all') as any;
 };
 
 // Rewards & Coupons
 export const getMyRewards = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/coupons/my-rewards');
+    return await api.get('/coupons/my-rewards') as any;
 };
 
 export const applyCoupon = async (code: string, amount: number, serviceType: string): Promise<[any | null, ApiError | null]> => {
@@ -90,11 +90,11 @@ export const applyCoupon = async (code: string, amount: number, serviceType: str
         amount,
         orderValue: amount,
         serviceType
-    });
+    }) as any;
 };
 
 export const getSupportSettings = async (): Promise<[SupportSettings | null, ApiError | null]> => {
-    const [data, error] = await api.get('/settings/support');
+    const [data, error] = await api.get('/settings/support') as any;
     
     // Fallback if backend API is not yet available
     if (error || !data) {
@@ -110,36 +110,36 @@ export const getSupportSettings = async (): Promise<[SupportSettings | null, Api
 
 // Disputes / Support Tickets
 export const createDispute = async (data: CreateDisputeDto): Promise<[any | null, ApiError | null]> => {
-    return await api.post('/support/disputes', data);
+    return await api.post('/support/disputes', data) as any;
 };
 
 export const getMyDisputes = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/support/disputes');
+    return await api.get('/support/disputes') as any;
 };
 
 export const getDisputeById = async (disputeId: number): Promise<[any | null, ApiError | null]> => {
-    return await api.get(`/support/disputes/${disputeId}`);
+    return await api.get(`/support/disputes/${disputeId}`) as any;
 };
 
 export const getDisputeMessages = async (disputeId: number): Promise<[any | null, ApiError | null]> => {
-    return await api.get(`/support/disputes/${disputeId}/messages`);
+    return await api.get(`/support/disputes/${disputeId}/messages`) as any;
 };
 
 export const sendDisputeMessage = async (disputeId: number, data: { message?: string, attachmentUrl?: string, attachmentType?: string }): Promise<[any | null, ApiError | null]> => {
-    return await api.post(`/support/disputes/${disputeId}/messages`, data);
+    return await api.post(`/support/disputes/${disputeId}/messages`, data) as any;
 };
 
 export const markDisputeMessagesRead = async (disputeId: number): Promise<[any | null, ApiError | null]> => {
-    return await api.patch(`/support/disputes/${disputeId}/messages/read`);
+    return await api.patch(`/support/disputes/${disputeId}/messages/read`) as any;
 };
 
 // Puja Bookings
 export const getMyPujaAppointments = async (): Promise<[any | null, ApiError | null]> => {
-    return await api.get('/puja-appointments/user');
+    return await api.get('/puja-appointments/user') as any;
 };
 
 export const updatePujaAppointmentStatus = async (id: number, data: any): Promise<[any | null, ApiError | null]> => {
-    return await api.patch(`/puja-appointments/${id}/status`, data);
+    return await api.patch(`/puja-appointments/${id}/status`, data) as any;
 };
 
 // For backward compatibility during migration, export http as default

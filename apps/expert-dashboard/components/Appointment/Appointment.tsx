@@ -133,7 +133,7 @@ export default function AppointmentsPage() {
         return {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profile_client?.profile_picture || session.user?.profilePicture || session.user_image || session.user_avatar || session.image,
           service: isPuja ? (session.puja?.name || "Puja Service") : (isCall ? `${callTypeLabel} Call` : "Chat Consultation"),
           date: isPuja ? (session.scheduled_date || session.created_at || new Date().toISOString()) : (session.created_at || session.createdAt || new Date().toISOString()),
           status: currentStatus,
@@ -238,7 +238,7 @@ export default function AppointmentsPage() {
         const newAppt: Appointment = {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profile_client?.profile_picture || session.user?.profilePicture || session.user_image || session.user_avatar || session.image,
           service: session.puja?.name || "Puja Service",
           date: session.scheduled_date || session.created_at || new Date().toISOString(),
           status: "pending",
@@ -276,7 +276,7 @@ export default function AppointmentsPage() {
         const newAppt: Appointment = {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profile_client?.profile_picture || session.user?.profilePicture || session.user_image || session.user_avatar || session.image,
           service: "Chat Consultation",
           date: session.created_at || session.createdAt || new Date().toISOString(),
           status: "pending",
@@ -308,7 +308,7 @@ export default function AppointmentsPage() {
         const newAppt: Appointment = {
           id: session.id,
           name: session.user?.name || "Client",
-          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profilePicture,
+          avatar: session.user?.profile_picture || session.user?.avatar || session.user?.profile_client?.profile_picture || session.user?.profilePicture || session.user_image || session.user_avatar || session.image,
           service: session.type === 'video' ? "Video Call" : "Voice Call",
           date: session.created_at || session.createdAt || new Date().toISOString(),
           status: "pending",

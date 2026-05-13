@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, Send, Paperclip, Image as ImageIcon, FileText, Download, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
@@ -29,8 +30,14 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [userEndRequestedAt, setUserEndRequestedAt] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
 
     // Auto-scroll functionality
     const scrollToBottom = () => {
@@ -40,6 +47,13 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, []);
 
     useEffect(() => {
         const socket = getSupportSocket();
@@ -183,13 +197,16 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         }
     };
 
-    return (
+    if (!mounted) return null;
+
+    return createPortal(
         <div
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-10000"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999999] flex items-center justify-center p-4"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg h-[80vh] flex flex-col mx-4 animate-in fade-in zoom-in duration-200"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg h-[80vh] md:h-[75vh] flex flex-col animate-in fade-in zoom-in duration-200 overflow-hidden relative z-[10000000]"
                 onClick={(e) => e.stopPropagation()}
             >
 
@@ -221,7 +238,10 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 bg-gray-50 flex flex-col gap-3 relative">
+                <div 
+                    className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 flex flex-col gap-4 relative custom-scrollbar"
+                    data-lenis-prevent
+                >
                     {/* Persistent sticky status banner if request already exists (e.g. after refresh) */}
                     {userEndRequestedAt && (
                         <div className="sticky top-0 z-20 flex justify-center mb-4 transition-all animate-in fade-in slide-in-from-top-4 duration-500">
@@ -261,19 +281,22 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                         if (msg.message?.includes("📋 ISSUE SUMMARY 📋")) {
                             const isMe = msg.senderType === "user" || !msg.senderType; // Automated is usually user
                             return (
-                                <div key={`summary-${idx}`} className={`flex flex-col w-full! mb-3 ${isMe ? "items-end" : "items-start"}`}>
-                                    <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[95%]`}>
+                                <div key={`summary-${idx}`} className={`flex flex-col w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
+                                    <div className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[92%]`}>
                                         <div className="shrink-0">
                                             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
                                                 <Image
                                                     src={isMe
-                                                        ? "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128"
+                                                        ? (clientUser?.profile_picture || clientUser?.avatar || `https://ui-avatars.com/api/?name=${clientUser?.name || 'U'}&background=f97316&color=fff&size=128`)
                                                         : "https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff&size=128"
                                                     }
                                                     alt={isMe ? "You" : "Admin"}
                                                     width={32}
                                                     height={32}
                                                     className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        (e.target as any).src = "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128";
+                                                    }}
                                                 />
                                             </div>
                                         </div>
@@ -302,19 +325,22 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                         const msgKey = msg.id ? `msg-${msg.id}-${idx}` : `idx-${idx}`;
 
                         return (
-                            <div key={msgKey} className={`flex flex-col w-full! mb-3 ${isMe ? "items-end" : "items-start"}`}>
-                                <div className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[85%]`}>
+                        <div key={msgKey} className={`flex flex-col w-full mb-3 ${isMe ? "items-end" : "items-start"}`}>
+                                <div className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"} items-end max-w-[90%]`}>
                                     <div className="shrink-0">
                                         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 border-2 border-white shadow-sm relative">
                                             <Image
                                                 src={isMe
-                                                    ? "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128"
+                                                    ? (clientUser?.profile_picture || clientUser?.avatar || `https://ui-avatars.com/api/?name=${clientUser?.name || 'U'}&background=f97316&color=fff&size=128`)
                                                     : "https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff&size=128"
                                                 }
                                                 alt={isMe ? "You" : "Admin"}
                                                 width={32}
                                                 height={32}
                                                 className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    (e.target as any).src = "https://ui-avatars.com/api/?name=User&background=f97316&color=fff&size=128";
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -405,7 +431,8 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
                 </div>
 
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 

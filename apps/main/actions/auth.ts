@@ -16,7 +16,7 @@ import {
 // Credentials NEVER appear in the browser Network tab.
 // ─────────────────────────────────────────────────────────
 export async function loginAction(formData: LoginFormData): Promise<AuthActionResponse> {
-  const [data, error] = await api.post<AuthResponse>(API_ROUTES.AUTH.LOGIN, formData);
+  const [data, error] = await api.post<AuthResponse>(API_ROUTES.AUTH.LOGIN, formData) as any;
 
   if (error) {
     return {
@@ -70,7 +70,7 @@ export async function registerAction(registerData: RegisterFormData): Promise<Au
   const [data, error] = await api.post<AuthResponse>(
     API_ROUTES.AUTH.REGISTER,
     registerData,
-  );
+  ) as any;
 
   if (error) {
     return {
@@ -94,7 +94,7 @@ export async function registerAction(registerData: RegisterFormData): Promise<Au
 export async function verifyEmailAction(token: string): Promise<AuthActionResponse> {
   const [data, error] = await api.get<AuthResponse>(
     `${API_ROUTES.AUTH.VERIFY_EMAIL}?token=${encodeURIComponent(token)}`,
-  );
+  ) as any;
 
   if (error) {
     return {

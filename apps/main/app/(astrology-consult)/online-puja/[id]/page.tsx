@@ -34,7 +34,7 @@ const PujaDetailPage = () => {
             if (!id) return;
             setLoading(true);
             const route = API_ROUTES.EXPERT.GET_PUJA_BY_ID.replace(':id', id as string);
-            const [res, error] = await http.get<ExpertPuja>(route);
+            const [res, error] = await http.get<ExpertPuja>(route) as any;
             
             if (error) {
                 console.error("Failed to fetch puja details:", error);
@@ -90,7 +90,7 @@ const PujaDetailPage = () => {
             user_message: userMessage
         };
 
-        const [res, error] = await http.post(API_ROUTES.PUJA.BOOKING, bookingData);
+        const [res, error] = await http.post(API_ROUTES.PUJA.BOOKING, bookingData) as any;
 
         if (error) {
             toast.error(error.message || "Failed to send booking request");

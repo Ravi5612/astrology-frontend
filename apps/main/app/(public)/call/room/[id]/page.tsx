@@ -275,8 +275,6 @@ export default function CallRoomPage() {
           </div>
         </div>
       )}
-        </div>
-      )}
 
       <FreeEndPromptModal
         showFreeEndPrompt={showFreeEndPrompt}

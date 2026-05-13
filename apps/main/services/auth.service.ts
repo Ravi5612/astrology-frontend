@@ -16,7 +16,7 @@ export interface ClientUser {
 
 export const AuthService = {
     logout: async (): Promise<[any | null, ApiError | null]> => {
-        return await api.post(API_ROUTES.AUTH.LOGOUT);
+        return await api.post(API_ROUTES.AUTH.LOGOUT) as any;
     },
 
     fetchProfile: async (serverHeaders?: any): Promise<[any | null, ApiError | null]> => {
@@ -24,11 +24,15 @@ export const AuthService = {
             headers: {
                 ...serverHeaders,
             }
-        });
+        }) as any;
     },
 
     fetchBalance: async (): Promise<[any | null, ApiError | null]> => {
-        return await api.get(API_ROUTES.WALLET.BALANCE);
+        return await api.get(API_ROUTES.WALLET.BALANCE) as any;
+    },
+
+    refreshToken: async (): Promise<[any | null, ApiError | null]> => {
+        return await api.post(API_ROUTES.AUTH.REFRESH) as any;
     }
 };
 

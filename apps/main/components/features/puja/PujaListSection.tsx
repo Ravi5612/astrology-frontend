@@ -35,7 +35,7 @@ const PujaListSection = () => {
     useEffect(() => {
         const fetchPujasItems = async () => {
             setLoading(true);
-            const [res, error] = await http.get<ExpertPuja[]>(API_ROUTES.EXPERT.GET_ALL_PUJAS);
+            const [res, error] = await http.get<ExpertPuja[]>(API_ROUTES.EXPERT.GET_ALL_PUJAS) as any;
             
             if (error) {
                 console.error("Failed to fetch pujas:", error);

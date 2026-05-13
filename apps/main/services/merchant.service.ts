@@ -15,7 +15,7 @@ export const merchantService = {
         if (search) url += `&search=${encodeURIComponent(search)}`;
         if (city && city !== "All Cities") url += `&city=${encodeURIComponent(city)}`;
         
-        const [data, error] = await api.get<any>(url);
+        const [data, error] = await api.get<any>(url) as any;
         // Backend should return { merchants: [...] }
         const merchants = data?.data?.merchants || data?.merchants || data?.data || data;
         return [Array.isArray(merchants) ? merchants : [], error];
@@ -25,7 +25,7 @@ export const merchantService = {
      * Fetch list of unique cities where merchants are active
      */
     getMerchantCities: async () => {
-        const [data, error] = await api.get<any>('/merchants/cities');
+        const [data, error] = await api.get<any>('/merchants/cities') as any;
         // console.log('Main App Cities API Response:', data);
         // Backend might return { cities: [] } or { data: [] }
         const cities = data?.data?.cities || data?.cities || data?.data || data;
@@ -36,7 +36,7 @@ export const merchantService = {
      * Fetch a single merchant by ID
      */
     getMerchantById: async (id: string | number) => {
-        const [data, error] = await api.get<any>(`/merchants/${id}`);
+        const [data, error] = await api.get<any>(`/merchants/${id}`) as any;
         // If the backend wraps the response in a 'data' field, use it. Otherwise use the object itself.
         const merchantData = data?.data || data;
         return [merchantData as Store, error];
@@ -46,7 +46,7 @@ export const merchantService = {
      * Fetch products for a specific merchant
      */
     getMerchantProducts: async (id: string | number, page = 1, limit = 20) => {
-        const [data, error] = await api.get<any>(`/products?merchantId=${id}&page=${page}&limit=${limit}`);
+        const [data, error] = await api.get<any>(`/products?merchantId=${id}&page=${page}&limit=${limit}`) as any;
         // console.log('Raw Store products API Response:', data);
         // Extract array from various possible keys
         const products = data?.data?.products || data?.products || data?.data || data;
@@ -57,7 +57,7 @@ export const merchantService = {
      * Fetch reviews for a specific merchant
      */
     getMerchantReviews: async (id: string | number) => {
-        const [data, error] = await api.get<any>(`/reviews/merchant/${id}`);
+        const [data, error] = await api.get<any>(`/reviews/merchant/${id}`) as any;
         return [data?.data || data || [], error];
     },
 
@@ -73,7 +73,7 @@ export const merchantService = {
             comment: payload.comment
         };
         
-        const [data, error] = await api.post<any>('/reviews', body);
+        const [data, error] = await api.post<any>('/reviews', body) as any;
         return [data, error];
     }
 };
