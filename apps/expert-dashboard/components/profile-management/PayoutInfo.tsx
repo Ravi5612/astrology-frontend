@@ -9,6 +9,7 @@ import {
     deleteBankAccount,
     setPrimaryBankAccount
 } from "@/lib/profile";
+import { getErrorMessage } from "@repo/lib";
 import Button from "../ui/Button";
 
 interface BankAccount {
@@ -70,7 +71,7 @@ export default function PayoutInfo() {
                 toast.success((res as any)?.message || "Account removed successfully");
                 fetchAccounts();
             } else {
-                toast.error(error.message || "Failed to delete account");
+                toast.error(getErrorMessage(error) || "Failed to delete account");
             }
         }
     };
@@ -81,7 +82,7 @@ export default function PayoutInfo() {
             toast.success((res as any)?.message || "Primary account updated");
             fetchAccounts();
         } else {
-            toast.error(error.message || "Failed to set primary account");
+            toast.error(getErrorMessage(error) || "Failed to set primary account");
         }
     };
 
@@ -106,7 +107,7 @@ export default function PayoutInfo() {
             setEditingAccountId(null);
             fetchAccounts();
         } else {
-            toast.error(error.message || "Failed to save bank details");
+            toast.error(getErrorMessage(error) || "Failed to save bank details");
         }
     };
 

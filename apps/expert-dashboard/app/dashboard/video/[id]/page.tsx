@@ -7,6 +7,7 @@ import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
 import { api } from "@/lib/api";
 import { SummaryModal } from "@/components/common/SummaryModal";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, Clock, User } = LucideIcons as any;
 
@@ -41,7 +42,7 @@ export default function ExpertVideoCallPage() {
             
             if (error) {
                 console.error('[ExpertVideo] ❌ Error:', error);
-                toast.error(error.message || 'Failed to connect video call');
+                toast.error(getErrorMessage(error) || 'Failed to connect video call');
                 setTimeout(() => router.push('/dashboard'), 2000);
                 return;
             }
@@ -193,7 +194,7 @@ export default function ExpertVideoCallPage() {
             reason: 'Expert clicked end button'
         });
         if (error) {
-            console.error('[ExpertVideo] Failed to end call on backend', error);
+            console.error('[ExpertVideo] Failed to end call on backend', getErrorMessage(error));
         }
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });
         handleCallEnded(data);

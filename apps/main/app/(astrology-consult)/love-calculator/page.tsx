@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
 import { loveCalculatorTranslations } from "@/lib/translations/calculators/love-calculator";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 import HeroComponent from "./hero.component";
 import SimpleForm from "./simple-form.component";
@@ -109,7 +110,7 @@ const LoveCalculatorPage = () => {
       );
 
       if (err || !data) {
-        toast.error(err?.message || t.form.errors.failedScore);
+        toast.error(getErrorMessage(err) || t.form.errors.failedScore);
       } else if (data.success) {
         setResult({ type: "simple", ...data.data });
         toast.success(t.results.success.score);
@@ -120,7 +121,7 @@ const LoveCalculatorPage = () => {
           });
         }, 300);
       } else {
-        toast.error(data.message || t.form.errors.failedScore);
+        toast.error(getErrorMessage(data) || t.form.errors.failedScore);
       }
     } finally {
       setLoading(false);
@@ -171,7 +172,7 @@ const LoveCalculatorPage = () => {
       );
 
       if (err || !data) {
-        toast.error(err?.message || t.form.errors.generic);
+        toast.error(getErrorMessage(err) || t.form.errors.generic);
       } else if (data.success) {
         setResult({ type: "advanced", data: data.data });
         toast.success(t.results.success.guna);
@@ -182,7 +183,7 @@ const LoveCalculatorPage = () => {
           });
         }, 300);
       } else {
-        toast.error(data.message || t.form.errors.failedMatch);
+        toast.error(getErrorMessage(data) || t.form.errors.failedMatch);
       }
     } finally {
       setLoading(false);

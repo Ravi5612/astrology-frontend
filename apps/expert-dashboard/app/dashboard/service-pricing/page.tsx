@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
 import { ChevronDown } from "lucide-react";
 import { PricingSkeleton } from "@/components/dashboard/DashboardSkeletons";
+import { getErrorMessage } from "@repo/lib";
 
 // ---- Static suggested pujas ----
 const SUGGESTED_PUJAS = [
@@ -150,14 +151,14 @@ const ServicePricingPage = () => {
         // 404 is fine, it means the expert hasn't set up their profile yet
         if (error.status !== 404) {
           console.error("Error fetching profile:", error);
-          toast.error("Failed to load pricing data.");
+          toast.error(getErrorMessage(error) || "Failed to load pricing data.");
         }
       } else if (data) {
         setProfile(data);
       }
     } catch (error) {
       console.error("Failed to fetch profile:", error);
-      toast.error("Failed to load pricing data.");
+      toast.error(getErrorMessage(error) || "Failed to load pricing data.");
     } finally {
       setLoading(false);
     }
@@ -186,14 +187,14 @@ const ServicePricingPage = () => {
       const updated = (profile.custom_services || []).filter(s => s.id !== id);
       const [_, error] = await updateProfile({ custom_services: updated });
       if (error) {
-        toast.error("Failed to remove service.");
+        toast.error(getErrorMessage(error) || "Failed to remove service.");
         return;
       }
       setProfile({ ...profile, custom_services: updated });
       toast.success("Service removed successfully!");
     } catch (error) {
       console.error("Failed to delete service:", error);
-      toast.error("Failed to remove service.");
+      toast.error(getErrorMessage(error) || "Failed to remove service.");
     }
   };
 
@@ -203,7 +204,7 @@ const ServicePricingPage = () => {
     try {
       const [_, error] = await deletePujaApi(id);
       if (error) {
-        toast.error("Failed to remove puja service.");
+        toast.error(getErrorMessage(error) || "Failed to remove puja service.");
         return;
       }
       const updatedPujas = (profile.pujas || []).filter(p => p.id !== id);
@@ -211,7 +212,7 @@ const ServicePricingPage = () => {
       toast.success("Puja service removed successfully!");
     } catch (error) {
       console.error("Failed to delete puja:", error);
-      toast.error("Failed to remove puja service.");
+      toast.error(getErrorMessage(error) || "Failed to remove puja service.");
     }
   };
 

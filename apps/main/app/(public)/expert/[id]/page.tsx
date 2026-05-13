@@ -3,6 +3,7 @@ import ExpertDetailsClient from "@/components/features/experts/ExpertDetailsClie
 import { notFound } from "next/navigation";
 import { Product } from "@/lib/types";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 const normalizeProduct = (raw: any): Product => {
   const images = Array.isArray(raw?.images) ? raw.images : [];
@@ -47,7 +48,7 @@ export default async function Page({
 
     if (astroError) {
       if (astroError.status === 404) return notFound();
-      throw new Error(astroError.message || "Failed to fetch expert details");
+      throw new Error(getErrorMessage(astroError) || "Failed to fetch expert details");
     }
 
     const expertData = data.data || data;

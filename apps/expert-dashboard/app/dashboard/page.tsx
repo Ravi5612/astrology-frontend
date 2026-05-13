@@ -51,7 +51,7 @@ const Page = () => {
         setLoading(false);
         return;
       }
-      
+
       const [
         [stats, statsErr],
         [reviewsData, reviewsErr],
@@ -72,7 +72,7 @@ const Page = () => {
         setReviewsTotal(reviewsData.total || 0);
       }
       if (dStats) setDashboardStats(dStats);
-      
+
       setLoading(false);
     };
 
@@ -151,7 +151,7 @@ const Page = () => {
 
         return (
           <div className="bg-rose-50 border-2 border-rose-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left relative group">
-            <button 
+            <button
               onClick={() => handleDismissBanner(kycStatus)}
               className="absolute top-4 right-4 p-1 rounded-full hover:bg-rose-100 text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
             >
@@ -189,7 +189,7 @@ const Page = () => {
 
         return (
           <div className="bg-emerald-50 border-2 border-emerald-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 animate-in slide-in-from-top-4 duration-500 shadow-sm mb-8 text-center sm:text-left relative group">
-            <button 
+            <button
               onClick={() => handleDismissBanner(kycStatus)}
               className="absolute top-4 right-4 p-1 rounded-full hover:bg-emerald-100 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all"
             >

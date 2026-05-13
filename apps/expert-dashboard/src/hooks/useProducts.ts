@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProductService } from "@/services/products.service";
 import { Product } from "@/types/product";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 export const useProducts = () => {
     const queryClient = useQueryClient();
@@ -21,7 +22,7 @@ export const useProducts = () => {
             toast.success("Product created successfully!");
         },
         onError: (error: Error) => {
-            toast.error(error.message || "Failed to create product");
+            toast.error(getErrorMessage(error) || "Failed to create product");
         },
     });
 
@@ -34,7 +35,7 @@ export const useProducts = () => {
             toast.success("Product updated successfully!");
         },
         onError: (error: Error) => {
-            toast.error(error.message || "Failed to update product");
+            toast.error(getErrorMessage(error) || "Failed to update product");
         },
     });
 
@@ -46,7 +47,7 @@ export const useProducts = () => {
             toast.success("Product deleted successfully!");
         },
         onError: (error: Error) => {
-            toast.error(error.message || "Failed to delete product");
+            toast.error(getErrorMessage(error) || "Failed to delete product");
         },
     });
 

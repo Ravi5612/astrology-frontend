@@ -3,6 +3,7 @@ import { getNotifications, markAsRead, deleteNotification, deleteAllNotification
 import { AppNotification, ApiNotification, NotificationGroup } from "@/types/notification";
 import { isToday as checkIsToday } from "date-fns";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 // Adapter to convert API response to App format
 const mapApiToAppNotification = (n: ApiNotification): AppNotification => ({
@@ -67,7 +68,7 @@ export const useNotifications = () => {
       toast.success("Notifications cleared!");
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
     }
   });
 

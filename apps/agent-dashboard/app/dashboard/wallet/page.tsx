@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getAgentWalletBalance, getAgentWithdrawals, requestAgentWithdrawal, getAgentDashboardStats } from "@/src/services/agent.service";
 import { useAgentAuthStore } from "@/src/store/useAgentAuthStore";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 // Components
 import { WalletSkeleton } from "../../components/Skeleton";
@@ -54,8 +55,8 @@ export default function WalletPage() {
                 setTransactions(formattedTxs);
             }
         } catch (error) {
-            console.error("Failed to fetch wallet data", error);
-            toast.error("Failed to load wallet details");
+            console.error("Failed to fetch wallet data", getErrorMessage(error));
+            toast.error(getErrorMessage(error) || "Failed to load wallet details");
         } finally {
             setLoading(false);
         }
@@ -71,15 +72,14 @@ export default function WalletPage() {
             const [res, err] = await requestAgentWithdrawal(amount, bankAccountId);
 
             if (err) {
-                const errorMsg = (err as any)?.body?.message || (err as any)?.message || "Failed to submit request";
-                toast.error(errorMsg);
+                toast.error(getErrorMessage(err) || "Failed to submit request");
             } else {
 
                 toast.success("Withdrawal request submitted successfully!");
                 fetchData(); // Refresh data
             }
         } catch (error) {
-            toast.error("An error occurred during request");
+            toast.error(getErrorMessage(error) || "An error occurred during request");
         } finally {
             setRequestLoading(false);
         }

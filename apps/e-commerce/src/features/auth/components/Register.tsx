@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 
 import { RegisterSchema, RegisterFormData } from "@/types/auth";
 import { merchantRegisterAction } from "@/actions/auth";
+import { getErrorMessage } from "@repo/lib";
 import { env } from "@/lib/config/env";
 
 // ─── Branding Section (Expert Style) ─────────────────────────────────────────
@@ -108,7 +109,7 @@ const RegisterPage: React.FC = () => {
       }
     } catch (err) {
       console.error("Register error:", err);
-      setServerError("Could not complete registration. Please try again.");
+      setServerError(getErrorMessage(err) || "Could not complete registration. Please try again.");
     } finally {
       setLoading(false);
     }

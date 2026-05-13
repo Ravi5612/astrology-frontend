@@ -10,6 +10,7 @@ import { FaSpinner, FaCheckCircle, FaExclamationCircle, FaEnvelopeOpenText } fro
 import { HiOutlineSparkles } from "react-icons/hi";
 import { verifyEmailAction } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 
 // Disable static generation for this page
 export const dynamic = 'force-dynamic';
@@ -73,8 +74,8 @@ const VerifyEmailContent: React.FC = () => {
                     }, 1000);
                 }
                 setIsLoading(false);
-            } catch {
-                setError(t.resetPassword.errors.unexpected);
+            } catch (err: any) {
+                setError(getErrorMessage(err) || t.resetPassword.errors.unexpected);
                 setIsLoading(false);
             }
         };

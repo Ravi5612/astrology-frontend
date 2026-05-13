@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/safe-fetch": "workspace:*",
+    "@repo/lib": "workspace:*",
     "@repo/styles": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/ui": "workspace:*",

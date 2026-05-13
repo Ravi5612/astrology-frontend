@@ -197,7 +197,7 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
             setNewMessage("");
         } catch (error) {
             console.error("Error sending message:", error);
-            toast.error("Failed to send message");
+            toast.error(getErrorMessage(error) || "Failed to send message");
         } finally {
             setLoading(false);
         }
@@ -233,7 +233,7 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
             toast.success("File uploaded!");
         } catch (error) {
             console.error("Error uploading file:", error);
-            toast.error("Failed to upload file");
+            toast.error(getErrorMessage(error) || "Failed to upload file");
         } finally {
             setUploading(false);
         }
@@ -257,7 +257,7 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
             onClose();
         } catch (error) {
             console.error("❌ [AdminAPI] Error closing dispute:", error);
-            toast.error("Failed to close dispute");
+            toast.error(getErrorMessage(error) || "Failed to close dispute");
         } finally {
             setIsClosing(false);
         }

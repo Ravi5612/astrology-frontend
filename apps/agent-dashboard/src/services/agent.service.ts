@@ -1,6 +1,7 @@
 import { api } from "../lib/api";
 import { ApiError } from "@repo/safe-fetch";
 import { API_ROUTES } from "../lib/api-routes";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 // ── Profile ──────────────────────────────────────────────────────────────────
 export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> => {
@@ -9,8 +10,8 @@ export const getAgentProfile = async (): Promise<[any | null, ApiError | null]> 
 
 export const updateAgentProfile = async (payload: any): Promise<[any | null, ApiError | null]> => {
     const [res, error] = await api.patch(API_ROUTES.AGENTS.PROFILE, payload) as any;
-    if (error && error.body && (error.body as any).message) {
-        error.message = (error.body as any).message;
+    if (error) {
+        error.message = getErrorMessage(error);
     }
     return [res, error];
 };
@@ -107,8 +108,8 @@ export const getAgentCommissions = async (params?: { page?: number; limit?: numb
 
 export const createListing = async (payload: CreateListingPayload): Promise<[any | null, ApiError | null]> => {
     const [res, error] = await api.post(API_ROUTES.AGENTS.LISTINGS, payload as Record<string, any>) as any;
-    if (error && error.body && (error.body as any).message) {
-        error.message = (error.body as any).message;
+    if (error) {
+        error.message = getErrorMessage(error);
     }
     return [res, error];
 };
@@ -144,8 +145,8 @@ export const registerUserByAgent = async (payload: RegisterUserPayload): Promise
     };
     const [res, error] = await api.post<RegisterUserResponse>(API_ROUTES.AGENTS.REGISTER_USER, body as Record<string, any>) as any;
     
-    if (error && error.body && (error.body as any).message) {
-        error.message = (error.body as any).message;
+    if (error) {
+        error.message = getErrorMessage(error);
     }
     
     return [res, error];
@@ -155,6 +156,7 @@ export const registerUserByAgent = async (payload: RegisterUserPayload): Promise
 export const getAgentDashboardStats = async (params?: { range?: string; startDate?: string; endDate?: string }): Promise<[any | null, ApiError | null]> => {
     const [data, error] = await api.get(API_ROUTES.AGENTS.DASHBOARD_STATS, params as Record<string, any>) as any;
     if (error) {
+        error.message = getErrorMessage(error);
         return [null, error];
     }
     return [data, null];
@@ -163,18 +165,26 @@ export const getAgentDashboardStats = async (params?: { range?: string; startDat
 
 // ── Wallet ───────────────────────────────────────────────────────────────────
 export const getAgentWalletBalance = async (): Promise<[any | null, ApiError | null]> => {
-    return api.get(API_ROUTES.AGENTS.WALLET.BALANCE) as any;
+    const [res, error] = await api.get(API_ROUTES.AGENTS.WALLET.BALANCE) as any;
+    if (error) error.message = getErrorMessage(error);
+    return [res, error];
 };
 
 export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | null]> => {
-    return api.get(API_ROUTES.AGENTS.WALLET.WITHDRAWALS) as any;
+    const [res, error] = await api.get(API_ROUTES.AGENTS.WALLET.WITHDRAWALS) as any;
+    if (error) error.message = getErrorMessage(error);
+    return [res, error];
 };
 
 export const requestAgentWithdrawal = async (amount: number, bankAccountId?: string | number): Promise<[any | null, ApiError | null]> => {
-    return api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount, bank_account_id: bankAccountId }) as any;
+    const [res, error] = await api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount, bank_account_id: bankAccountId }) as any;
+    if (error) error.message = getErrorMessage(error);
+    return [res, error];
 };
 
 
 export const settleAgentCommissions = async (): Promise<[any | null, ApiError | null]> => {
-    return api.post(API_ROUTES.AGENTS.WALLET.SETTLE, {}) as any;
+    const [res, error] = await api.post(API_ROUTES.AGENTS.WALLET.SETTLE, {}) as any;
+    if (error) error.message = getErrorMessage(error);
+    return [res, error];
 };

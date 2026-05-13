@@ -8,6 +8,7 @@ import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
 import { SummaryModal } from "@/components/common/SummaryModal";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const { PhoneOff, Mic, MicOff, Video, VideoOff, User, Clock, Volume2 } = LucideIcons as any;
 
@@ -45,7 +46,7 @@ export default function ExpertCallRoom() {
             if (err.name === 'NotAllowedError') {
                 throw new Error("Microphone permission denied. Access is required for calls.");
             }
-            throw new Error(err.message || "Microphone access failed.");
+            throw new Error(getErrorMessage(err) || "Microphone access failed.");
         }
     };
 
@@ -60,7 +61,7 @@ export default function ExpertCallRoom() {
             } catch (hwErr: any) {
                 if (cancelled) return;
                 console.error('[ExpertCallRoom] ❌ Hardware check failed:', hwErr);
-                toast.error(hwErr.message || 'Hardware check failed');
+                toast.error(getErrorMessage(hwErr) || 'Hardware check failed');
                 setTimeout(() => router.push('/dashboard'), 3000);
                 return;
             }
@@ -75,7 +76,7 @@ export default function ExpertCallRoom() {
             if (error) {
                 if (cancelled) return;
                 console.error('[ExpertCallRoom] ❌ Failed to accept call:', error);
-                toast.error(error.message || 'Failed to join call');
+                toast.error(getErrorMessage(error) || 'Failed to join call');
                 setTimeout(() => router.push('/dashboard'), 3000);
                 return;
             }
@@ -141,7 +142,7 @@ export default function ExpertCallRoom() {
 
         device.on('error', (err: any) => {
             console.error('[ExpertTwilio] ❌ Device error:', { code: err.code, message: err.message, twilioError: err.twilioError });
-            toast.error(`Call error: ${err.message}`);
+            toast.error(`Call error: ${getErrorMessage(err)}`);
             handleCallEnded();
         });
 
@@ -158,7 +159,7 @@ export default function ExpertCallRoom() {
         });
         call.on('disconnect', () => { handleCallEnded(); });
         call.on('cancel', () => { handleCallEnded(); });
-        call.on('error', (err: any) => { console.error('[ExpertTwilio] ❌ call:error', err); toast.error(`Call error: ${err.message}`); handleCallEnded(); });
+        call.on('error', (err: any) => { console.error('[ExpertTwilio] ❌ call:error', err); toast.error(`Call error: ${getErrorMessage(err)}`); handleCallEnded(); });
     };
 
     const startTimer = () => {
@@ -197,7 +198,7 @@ export default function ExpertCallRoom() {
             reason: 'Expert clicked end button'
         });
         if (error) {
-            console.error('[ExpertCallRoom] Failed to end call on backend', error);
+            console.error('[ExpertCallRoom] Failed to end call on backend', getErrorMessage(error));
         }
         deviceRef.current?.disconnectAll?.();
         callSocket.emit('end_call', { sessionId: parseInt(sessionId) });

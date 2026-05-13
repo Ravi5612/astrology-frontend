@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
 import * as LucideIcons from "lucide-react";
+import { getErrorMessage } from "@repo/lib/utils/error";
 import { PATHS } from "@repo/routes";
 import { loadRazorpay } from "@/libs/razorpay";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,7 +54,7 @@ export default function UserWalletPage() {
         });
 
         if (orderError) {
-            toast.error(orderError.message || "Failed to initiate payment. Please try again.");
+            toast.error(getErrorMessage(orderError) || "Failed to initiate payment. Please try again.");
             setIsProcessing(false);
             return;
         }
@@ -82,14 +83,14 @@ export default function UserWalletPage() {
                 });
 
                 if (verifyError) {
-                    toast.error(verifyError.message || "Payment verification failed. Please contact support.");
+                    toast.error(getErrorMessage(verifyError) || "Payment verification failed. Please contact support.");
                 } else {
                     const verifyPayload = (verifyRes as any)?.data ?? verifyRes;
                     if (verifyPayload?.success) {
                         toast.success(`Wallet successfully recharged with ₹${rechargeAmount}!`);
                         refreshBalance();
                     } else {
-                        toast.error("Payment could not be verified.");
+                        toast.error(getErrorMessage(verifyRes) || "Payment could not be verified.");
                     }
                 }
                 setIsProcessing(false);

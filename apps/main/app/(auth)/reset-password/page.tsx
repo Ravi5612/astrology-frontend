@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 import { RiLockPasswordFill, RiEyeLine, RiEyeOffLine } from "react-icons/ri";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const ResetPasswordContent: React.FC = () => {
     const { lang } = useLanguageStore();
@@ -57,7 +58,7 @@ const ResetPasswordContent: React.FC = () => {
             });
 
             if (fetchError) {
-                toast.error(fetchError.body?.message || fetchError.message || t.resetPassword.errors.failed);
+                toast.error(getErrorMessage(fetchError) || t.resetPassword.errors.failed);
             } else {
                 toast.success(data?.message || t.resetPassword.successMessage);
                 setIsSuccess(true);

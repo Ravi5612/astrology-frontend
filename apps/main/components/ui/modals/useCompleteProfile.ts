@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 export interface AddressDto {
   line1: string;
@@ -181,7 +182,7 @@ export const useCompleteProfile = (onClose: () => void) => {
           setError("You are not authenticated. Please sign in first.");
           setTimeout(() => { onClose(); router.push("/sign-in"); }, 3000);
         } else {
-          setError(fetchErr.message || `An error occurred (${fetchErr.status})`);
+          setError(getErrorMessage(fetchErr) || `An error occurred (${fetchErr.status})`);
         }
       } else {
         setSuccessMessage(data?.message || "Profile saved successfully!");

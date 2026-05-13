@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { socket } from "@/lib/socket";
 import { toast } from "react-toastify";
 import { getNotifications, deleteAllNotifications } from "@/lib/notifications";
+import { getErrorMessage } from "@repo/lib";
 
 import { Avatar } from "@repo/ui";
 import { NotificationBell } from "@repo/ui";
@@ -200,7 +201,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const handleClearAll = async () => {
     const [_, error] = await deleteAllNotifications();
     if (error) {
-      toast.error("Failed to clear notifications");
+      toast.error(getErrorMessage(error) || "Failed to clear notifications");
       return;
     }
     
@@ -229,15 +230,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
     if (error) {
       console.error("Failed to update status:", error);
-      // Extract backend error message robustly
-      let errorMessage = "Failed to update status";
-      const errBody = (error as any)?.body || (error as any)?.data;
-      if (errBody?.message) {
-        errorMessage = Array.isArray(errBody.message)
-          ? errBody.message.join(", ")
-          : errBody.message;
-      }
-      toast.error(errorMessage);
+      toast.error(getErrorMessage(error) || "Failed to update status");
       setLoading(false);
       return;
     }

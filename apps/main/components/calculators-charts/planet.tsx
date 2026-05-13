@@ -9,6 +9,7 @@ import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import PlanetForm from "./PlanetForm.component";
 import { useLanguageStore } from "@/store/languageStore";
 import { planetTranslations } from "@/lib/translations/calculators/planet";
+import { getErrorMessage } from "@repo/lib";
 
 // Planet Color and Icon Mapping
 const PLANET_META: Record<string, { color: string; icon: any }> = {
@@ -112,7 +113,7 @@ const Planet = () => {
             }
         } catch (err: any) {
             console.error("API Error:", err);
-            setError(err.response?.data?.message || t.results.defaultApiError);
+            setError(getErrorMessage(err) || t.results.defaultApiError);
         } finally {
             setLoading(false);
         }

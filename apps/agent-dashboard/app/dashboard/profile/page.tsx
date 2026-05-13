@@ -7,6 +7,7 @@ import { Phone, Mail, BadgeCheck, User, CreditCard, Landmark, PiggyBank, Hash, U
 import { toast } from "react-toastify";
 import { getAgentProfile, updateAgentProfile } from "@/src/services/agent.service";
 import { BankDetailsCard } from "./components/BankDetailsCard";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export default function ProfilePage() {
     const { agent, setAgent } = useAgentAuthStore() as any;
@@ -25,7 +26,7 @@ export default function ProfilePage() {
         try {
             const [data, error] = await getAgentProfile();
             if (error) {
-                toast.error("Failed to load profile details");
+                toast.error(getErrorMessage(error) || "Failed to load profile details");
                 return;
             }
             if (data) {
@@ -38,7 +39,7 @@ export default function ProfilePage() {
                 });
             }
         } catch (error) {
-            console.error("Failed to fetch profile", error);
+            console.error("Failed to fetch profile", getErrorMessage(error));
         } finally {
             setLoading(false);
         }
@@ -59,14 +60,14 @@ export default function ProfilePage() {
 
             const [res, err] = await updateAgentProfile(dataToSave as any);
             if (err) {
-                toast.error(err.message || "Failed to update bank details");
+                toast.error(getErrorMessage(err) || "Failed to update bank details");
             } else {
                 toast.success("Bank details updated successfully");
                 setIsEditingBank(false);
                 fetchProfile();
             }
         } catch (error) {
-            toast.error("An error occurred while saving");
+            toast.error(getErrorMessage(error) || "An error occurred while saving");
         } finally {
             setSaving(false);
         }

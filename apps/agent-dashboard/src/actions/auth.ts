@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { API_CONFIG } from "../lib/api-config";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 // ─────────────────────────────────────────────────────────
 // LOGIN — Server Action
@@ -21,7 +22,7 @@ export async function agentLoginAction(data: any) {
         if (!response.ok) {
             return {
                 success: false,
-                error: result.message || result.error || "Invalid credentials or server error"
+                error: getErrorMessage(result) || "Invalid credentials or server error"
             };
         }
 
@@ -60,7 +61,7 @@ export async function agentLoginAction(data: any) {
     } catch (error: any) {
         return {
             success: false,
-            error: error.message || "Network error"
+            error: getErrorMessage(error) || "Network error"
         };
     }
 }

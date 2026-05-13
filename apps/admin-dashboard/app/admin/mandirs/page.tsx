@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Building2, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 import { DataTable } from "@/app/components/admin/DataTable";
 import { StatsCards, Button } from "@repo/ui";
@@ -31,7 +32,7 @@ export default function AdminMandirsPage() {
             setTotal(res.total || (Array.isArray(data) ? data.length : 0));
         } catch (err) {
             console.error("Failed to fetch mandirs:", err);
-            toast.error("Failed to fetch mandirs");
+            toast.error(getErrorMessage(err) || "Failed to fetch mandirs");
         } finally {
             setIsLoading(false);
         }
@@ -52,7 +53,7 @@ export default function AdminMandirsPage() {
                 (l.id === id || (l as any)._id === id) ? { ...l, status } : l
             ));
         } catch (err) {
-            toast.error("Failed to update status");
+            toast.error(getErrorMessage(err) || "Failed to update status");
         }
     };
 

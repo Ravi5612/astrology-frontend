@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 export async function expertLoginAction(formData: any) {
     const [data, error] = await api.post<any>('/auth/login', {
@@ -10,7 +11,7 @@ export async function expertLoginAction(formData: any) {
     });
 
     if (error) {
-        return { error: error.body?.message || error.message || "Login failed" };
+        return { error: getErrorMessage(error) || "Login failed" };
     }
 
     // Token existence check
@@ -49,7 +50,7 @@ export async function expertRegisterAction(formData: any) {
     });
 
     if (error) {
-        return { error: error.body?.message || error.message || "Registration failed" };
+        return { error: getErrorMessage(error) || "Registration failed" };
     }
 
     return { success: true, message: "Registration successful. Please verify your email." };
@@ -66,7 +67,7 @@ export async function expertVerifyEmailAction(token: string) {
     const [data, error] = await api.get<any>(`/auth/email/verify?token=${encodeURIComponent(token)}`);
 
     if (error) {
-        return { error: error.body?.message || error.message || "Verification failed" };
+        return { error: getErrorMessage(error) || "Verification failed" };
     }
 
     // Set HttpOnly cookies on the server
@@ -99,7 +100,7 @@ export async function expertForgotPasswordAction(email: string, origin: string) 
     const [data, error] = await api.post<any>(`/auth/forgot/password`, { email, origin });
 
     if (error) {
-        return { error: error.body?.message || error.message || "Failed to send reset link" };
+        return { error: getErrorMessage(error) || "Failed to send reset link" };
     }
 
     return { success: true, message: "Password reset link sent successfully" };
@@ -109,7 +110,7 @@ export async function expertResetPasswordAction(password: string, token: string)
     const [data, error] = await api.post<any>(`/auth/reset/password?token=${token}`, { password });
 
     if (error) {
-        return { error: error.body?.message || error.message || "Failed to reset password" };
+        return { error: getErrorMessage(error) || "Failed to reset password" };
     }
 
     return { success: true, message: "Password reset successful" };

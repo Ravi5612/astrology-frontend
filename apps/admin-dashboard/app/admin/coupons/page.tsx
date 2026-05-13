@@ -38,7 +38,7 @@ export default function CouponsPage() {
 
     if (error) {
       console.error("Failed to fetch coupons:", error);
-      toast.error("Failed to load coupons");
+      toast.error(getErrorMessage(error) || "Failed to load coupons");
       setCoupons([]);
       setLoading(false);
       return;
@@ -111,7 +111,7 @@ export default function CouponsPage() {
     const [_, error] = await deleteCoupon(id);
 
     if (error) {
-      toast.error("Failed to delete coupon");
+      toast.error(getErrorMessage(error) || "Failed to delete coupon");
       return;
     }
 
@@ -132,7 +132,7 @@ export default function CouponsPage() {
     });
 
     if (error) {
-      toast.error("Failed to update status");
+      toast.error(getErrorMessage(error) || "Failed to update status");
       return;
     }
 

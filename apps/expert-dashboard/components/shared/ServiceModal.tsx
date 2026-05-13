@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { X, Save, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { getProfile, updateProfile, updatePricing } from "@/lib/profile";
+import { getErrorMessage } from "@repo/lib/utils/error";
 import { Profile, CustomService } from "@/components/profile-management/types";
 
 // ---------- Types ----------
@@ -87,14 +88,14 @@ export function ServiceModal({
         const updated = [...(profile.custom_services || []), newItem];
         const [res, error] = await updateProfile({ custom_services: updated });
         if (error) {
-          toast.error(error?.message || "Failed to add service.");
+          toast.error(getErrorMessage(error) || "Failed to add service.");
           return;
         }
         onSaved({ ...profile, custom_services: updated });
         toast.success("Service added successfully!");
         onClose();
       } catch (err: any) {
-        toast.error(err?.message || "Failed to add service.");
+        toast.error(getErrorMessage(err) || "Failed to add service.");
       } finally {
         setSaving(false);
       }
@@ -114,7 +115,7 @@ export function ServiceModal({
         );
         const [_, error] = await updateProfile({ custom_services: updated });
         if (error) {
-          toast.error(error?.message || "Failed to save service.");
+          toast.error(getErrorMessage(error) || "Failed to save service.");
           return;
         }
         onSaved({ ...profile, custom_services: updated });
@@ -123,7 +124,7 @@ export function ServiceModal({
         const payload = { [service.key]: Number(price) };
         const [_, error] = await updatePricing(payload);
         if (error) {
-          toast.error(error?.message || "Failed to save pricing.");
+          toast.error(getErrorMessage(error) || "Failed to save pricing.");
           return;
         }
         onSaved({ ...profile, ...payload } as Profile);
@@ -131,7 +132,7 @@ export function ServiceModal({
       toast.success("Service updated successfully!");
       onClose();
     } catch (err: any) {
-      toast.error(err?.body?.message || err?.message || "Failed to save service.");
+      toast.error(getErrorMessage(err) || "Failed to save service.");
     } finally {
       setSaving(false);
     }

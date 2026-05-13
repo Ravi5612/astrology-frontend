@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { safeFetch } from "@repo/safe-fetch";
 import { toast } from "react-toastify";
 import { useClientAuth } from "./ClientAuthContext";
+import { getErrorMessage } from "@repo/lib";
 
 // Define Types
 export interface CartItem {
@@ -126,7 +127,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             });
             await fetchCart();
         } catch (error: any) {
-            toast.error(error?.data?.message || "Failed to add to cart");
+            toast.error(getErrorMessage(error) || "Failed to add to cart");
         } finally {
             setIsLoading(false);
         }
@@ -157,7 +158,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 await cartFetch("/cart/update", "PUT", { productId, quantity });
             } catch (error: any) {
-                toast.error(error?.data?.message || "Failed to update quantity");
+                toast.error(getErrorMessage(error) || "Failed to update quantity");
                 await fetchCart(); // Revert on error
             } finally {
                 delete debouncedUpdate.current[productId];
@@ -172,7 +173,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             toast.success("Item removed");
             await fetchCart();
         } catch (error: any) {
-            toast.error(error?.data?.message || "Failed to remove item");
+            toast.error(getErrorMessage(error) || "Failed to remove item");
         }
     };
 

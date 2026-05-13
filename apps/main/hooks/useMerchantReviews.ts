@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { merchantService } from "@/services/merchant.service";
 import { Review } from "@/lib/types/shop";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Hook to fetch reviews for a specific merchant
@@ -13,8 +14,7 @@ export const useMerchantReviews = (id: string | number | undefined) => {
             if (!id) return [];
             const [data, error] = await merchantService.getMerchantReviews(id);
             if (error) {
-                const message = (error as any).message || "Failed to fetch reviews";
-                throw new Error(message);
+                throw new Error(getErrorMessage(error) || "Failed to fetch reviews");
             }
             return (Array.isArray(data) ? data : []) as Review[];
         },

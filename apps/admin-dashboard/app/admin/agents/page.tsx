@@ -13,6 +13,7 @@ import { getAgentProfileModalProps } from "@/app/components/agent/agentsModalCon
 import type { Agent, AgentStats, AgentListing } from "@/app/components/agent/agent";
 import { getAgents, getAgentStats, getAllListings, createAgent, sendAgentOtp, verifyAgentOtp } from "@/src/services/agent.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const ProfileModal = lazy(() =>
     import("@/app/components/admin/ProfileModal").then((m) => ({ default: m.ProfileModal }))
@@ -134,9 +135,8 @@ function AddAgentModal({ isOpen, onClose, onSuccess }: {
             onSuccess();
             onClose();
         } catch (error: any) {
-            console.error("Agent creation failed", error);
-            const errorMsg = error.body?.message || error.message || "Failed to create agent";
-            toast.error(errorMsg);
+            console.error("Agent creation failed", getErrorMessage(error));
+            toast.error(getErrorMessage(error) || "Failed to create agent");
         } finally {
             setLoading(false);
         }
@@ -521,7 +521,7 @@ export default function AgentsPage() {
         setIsSavingSettings(true);
         const [_, error] = await updateCommissionSettings(settings);
         if (error) {
-            toast.error("Failed to update commission settings");
+            toast.error(getErrorMessage(error) || "Failed to update commission settings");
         } else {
             toast.success("Commission settings updated successfully");
         }

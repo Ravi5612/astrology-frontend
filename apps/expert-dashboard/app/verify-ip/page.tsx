@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
 const Loader2Icon = Loader2 as any;
@@ -31,7 +32,7 @@ const VerifyIpContent = () => {
             if (error) {
                 console.error("IP verification error:", error);
                 setStatus("error");
-                setMessage(error.message || "Verification failed. The link may be expired.");
+                setMessage(getErrorMessage(error) || "Verification failed. The link may be expired.");
                 return;
             }
 

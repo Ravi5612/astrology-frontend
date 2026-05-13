@@ -61,11 +61,11 @@ const SettingsPage: React.FC = () => {
                 setSettings(loadedSettings);
                 setOriginalSettings(loadedSettings);
             } else {
-                toast.error("Cloud synchronization failed");
+                toast.error(getErrorMessage(error) || "Cloud synchronization failed");
             }
         } catch (error) {
             console.error("Failed to load settings:", error);
-            toast.error("Failed to fetch settings");
+            toast.error(getErrorMessage(error) || "Failed to fetch settings");
         } finally {
             setLoading(false);
         }
@@ -90,10 +90,10 @@ const SettingsPage: React.FC = () => {
                 setOriginalSettings(settings);
                 setIsEditing(false);
             } else {
-                toast.error("Cloud synchronization failed");
+                toast.error(getErrorMessage(error) || "Cloud synchronization failed");
             }
         } catch (error) {
-            toast.error("An error occurred");
+            toast.error(getErrorMessage(error) || "An error occurred");
         } finally {
             setSaving(false);
         }

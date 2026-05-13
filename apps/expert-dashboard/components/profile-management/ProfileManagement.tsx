@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import PersonalInfo from "./PersonalInfo";
 import TodoList from "./TodoList";
 import PayoutInfo from "./PayoutInfo";
@@ -77,7 +78,7 @@ const ProfileManagement = () => {
             // Handle pending profile pic upload
             if (section === 'personal' && pendingProfilePicFile) {
                 const [uploadRes, uploadError] = await uploadDocument(pendingProfilePicFile);
-                if (uploadError) throw new Error(uploadError.message);
+                if (uploadError) throw uploadError;
                 finalProfilePic = uploadRes.fileUrl || uploadRes.url || uploadRes.path;
                 setPendingProfilePicFile(null);
             }
@@ -92,7 +93,7 @@ const ProfileManagement = () => {
             
             setEditMode(null);
         } catch (error: any) {
-            toast.error(error.message || "Failed to save profile");
+            toast.error(getErrorMessage(error) || "Failed to save profile");
         } finally {
             setIsSaving(false);
         }
@@ -101,7 +102,10 @@ const ProfileManagement = () => {
     // File Handlers
     const handleUploadDoc = async (file: File, category?: 'aadhar' | 'pan' | 'other', side?: 'front' | 'back') => {
         const [data, error] = await uploadDocument(file);
-        if (error) { toast.error("Upload failed"); return; }
+        if (error) { 
+            toast.error(getErrorMessage(error) || "Upload failed"); 
+            return; 
+        }
         
         const newDoc: DocumentItem = {
             id: Date.now(),
@@ -199,11 +203,13 @@ const ProfileManagement = () => {
                     onUploadIntroVideo={async (f) => {
                         const [d, e] = await uploadDocument(f);
                         if (!e) handleSave("video", { video: d.fileUrl || d.url });
+                        else toast.error(getErrorMessage(e) || "Video upload failed");
                     }}
                     onRemoveIntro={() => handleSave("video", { video: "" })}
                     onAddImage={async (f) => {
                         const [d, e] = await uploadDocument(f);
                         if (!e) handleSave("portfolio", { gallery: [...fetchedProfile.gallery, d.fileUrl || d.url] });
+                        else toast.error(getErrorMessage(e) || "Image upload failed");
                     }}
                     onRemoveImage={(idx) => handleSave("portfolio", { gallery: fetchedProfile.gallery.filter((_, i) => i !== idx) })}
                     onAddVideo={(url) => handleSave("portfolio", { videos: [...fetchedProfile.videos, url] })}
@@ -211,6 +217,7 @@ const ProfileManagement = () => {
                     onUploadVideoFile={async (f) => {
                         const [d, e] = await uploadDocument(f);
                         if (!e) handleSave("portfolio", { videos: [...fetchedProfile.videos, d.fileUrl || d.url] });
+                        else toast.error(getErrorMessage(e) || "Video upload failed");
                     }}
                 />
 
@@ -226,6 +233,7 @@ const ProfileManagement = () => {
                     onUploadCertificate={async (f) => {
                         const [d, e] = await uploadDocument(f);
                         if (!e) handleSave("certificates", { certificates: [...(fetchedProfile.certificates || []), d.fileUrl || d.url] });
+                        else toast.error(getErrorMessage(e) || "Certificate upload failed");
                     }}
                 />
 

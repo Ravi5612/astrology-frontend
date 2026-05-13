@@ -8,6 +8,8 @@ import {
   ArrowLeft, Upload, X, Plus, Tag, IndianRupee, Package, FileText, Save, Image as ImageIcon, Loader2
 } from "lucide-react";
 import { productService } from "@/services/product.service";
+import { getErrorMessage } from "@repo/lib";
+import { toast } from "react-toastify";
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -41,7 +43,7 @@ export default function AddProductPage() {
       const [data, error] = await productService.createProduct(payload);
 
       if (error) {
-        throw new Error(error.message || "Failed to create product");
+        throw new Error(getErrorMessage(error) || "Failed to create product");
       }
       return data;
     },
@@ -50,7 +52,7 @@ export default function AddProductPage() {
       router.push("/products");
     },
     onError: (err: any) => {
-      alert(`Backend Error: ${err.message}`);
+      toast.error(getErrorMessage(err));
     }
   });
 

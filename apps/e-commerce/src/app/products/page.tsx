@@ -20,6 +20,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { getErrorMessage } from "@repo/lib";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
 
@@ -54,7 +55,7 @@ export default function ProductListing() {
       }
       
       const [data, error] = await productService.getProducts(params);
-      if (error) throw new Error(error.message || "Failed to fetch products");
+      if (error) throw new Error(getErrorMessage(error) || "Failed to fetch products");
       return data;
     }
   });
@@ -65,7 +66,7 @@ export default function ProductListing() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const [data, error] = await productService.deleteProduct(id);
-      if (error) throw new Error(error.message || "Failed to delete product");
+      if (error) throw new Error(getErrorMessage(error) || "Failed to delete product");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
@@ -76,7 +77,7 @@ export default function ProductListing() {
   const bulkStatusMutation = useMutation({
     mutationFn: async ({ ids, status }: { ids: string[], status: 'active' | 'out_of_stock' }) => {
       const [data, error] = await productService.bulkUpdateStatus(ids, status);
-      if (error) throw new Error(error.message || "Failed to update status");
+      if (error) throw new Error(getErrorMessage(error) || "Failed to update status");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-products'] });

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { settingsService } from "@/services/settings.service";
 import { productService } from "@/services/product.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Hook to fetch merchant profile settings
@@ -12,11 +13,7 @@ export const useMerchantProfile = (options = {}) => {
     queryFn: async () => {
       const [data, error] = await settingsService.getProfile();
       if (error) {
-        const body = (error as any).body;
-        const message = body?.message 
-          ? (Array.isArray(body.message) ? body.message[0] : body.message)
-          : (error as any).message || "Failed to fetch profile";
-        throw new Error(message);
+        throw new Error(getErrorMessage(error) || "Failed to fetch profile");
       }
       return {
         profile: data?.data,
@@ -38,11 +35,7 @@ export const useUpdateProfile = () => {
     mutationFn: async (formData: FormData) => {
       const [data, error] = await settingsService.updateProfile(formData);
       if (error) {
-        const body = (error as any).body;
-        const message = body?.message 
-          ? (Array.isArray(body.message) ? body.message[0] : body.message)
-          : (error as any).message || "Failed to update profile";
-        throw new Error(message);
+        throw new Error(getErrorMessage(error) || "Failed to update profile");
       }
       return data;
     },
@@ -50,8 +43,8 @@ export const useUpdateProfile = () => {
       toast.success("Profile updated successfully!");
       queryClient.invalidateQueries({ queryKey: ['merchant-profile'] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      toast.error(getErrorMessage(error));
     }
   });
 };
@@ -68,11 +61,7 @@ export const useUpdateOnlineStatus = () => {
       const [data, error] = await settingsService.updateOnlineStatus(isOnline);
       if (error) {
         console.error("❌ Online Toggle API Error:", error);
-        const body = (error as any).body;
-        const message = body?.message 
-          ? (Array.isArray(body.message) ? body.message[0] : body.message)
-          : (error as any).message || "Failed to update online status";
-        throw new Error(message);
+        throw new Error(getErrorMessage(error) || "Failed to update online status");
       }
       console.log("✅ Online Toggle API Success:", data);
       return data;
@@ -83,8 +72,8 @@ export const useUpdateOnlineStatus = () => {
       // Force a refetch to be sure
       queryClient.refetchQueries({ queryKey: ["merchant-profile"] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      toast.error(getErrorMessage(error));
     }
   });
 };
@@ -98,11 +87,7 @@ export const useMerchantProducts = () => {
     queryFn: async () => {
       const [data, error] = await productService.getProducts();
       if (error) {
-        const body = (error as any).body;
-        const message = body?.message 
-          ? (Array.isArray(body.message) ? body.message[0] : body.message)
-          : (error as any).message || "Failed to fetch products";
-        throw new Error(message);
+        throw new Error(getErrorMessage(error) || "Failed to fetch products");
       }
       return data;
     },

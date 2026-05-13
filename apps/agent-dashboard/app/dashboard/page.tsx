@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAgentDashboardStats } from "@/src/services/agent.service";
 import { DashboardSkeleton } from "../components/Skeleton";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 // ── Mock summary ─────────────────────────────────────────────
 const SUMMARY = {
@@ -42,7 +43,7 @@ export default function AgentDashboardHome() {
             const [data, error] = await getAgentDashboardStats();
             
             if (error) {
-                console.error("Failed to fetch agent dashboard stats", error);
+                console.error("Failed to fetch agent dashboard stats", getErrorMessage(error));
             } else {
                 setStatsData(data);
             }

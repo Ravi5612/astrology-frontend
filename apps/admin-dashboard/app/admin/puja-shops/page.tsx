@@ -14,6 +14,7 @@ import {
     Download
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { DataTable } from "@/app/components/admin/DataTable";
@@ -61,7 +62,7 @@ export default function AdminPujaShopsPage() {
             setTotal(res.total || (Array.isArray(data) ? data.length : 0));
         } catch (err) {
             console.error("Failed to fetch puja shops:", err);
-            toast.error("Failed to load puja shops");
+            toast.error(getErrorMessage(err) || "Failed to load puja shops");
         } finally {
             setIsLoading(false);
         }
@@ -91,7 +92,7 @@ export default function AdminPujaShopsPage() {
             setIsModalOpen(false);
             setSelectedMerchant(null);
         } catch (err) {
-            toast.error("Failed to update status");
+            toast.error(getErrorMessage(err) || "Failed to update status");
         } finally {
             setIsSubmitting(false);
         }

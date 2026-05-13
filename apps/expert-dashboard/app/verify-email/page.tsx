@@ -8,6 +8,7 @@ import { Loader2, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { expertVerifyEmailAction } from "@/src/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 
@@ -90,7 +91,7 @@ const VerifyEmailContent = () => {
       } catch (err: any) {
         console.error("Verification error:", err);
         setStatus("error");
-        setMessage(err.message || "Verification link may be expired or invalid.");
+        setMessage(getErrorMessage(err) || "Verification link may be expired or invalid.");
         toast.error("Verification failed.");
       }
     };

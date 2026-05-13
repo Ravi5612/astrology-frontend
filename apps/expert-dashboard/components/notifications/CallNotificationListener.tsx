@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export const CallNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
@@ -45,7 +46,7 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         const onConnectError = (err: any) => {
-            console.error("[CallSocket] ❌ Connection error:", err.message);
+            console.error("[CallSocket] ❌ Connection error:", getErrorMessage(err));
         };
 
         const handleNewCall = (data: any) => {

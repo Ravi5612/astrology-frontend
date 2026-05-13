@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Wallet, TrendingUp, TrendingDown, DollarSign, Calendar, AlertCircle, Loader2 } from "lucide-react";
 import { getWithdrawals, updateWithdrawalStatus, getWithdrawalStats } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export default function AdminPayoutsPage() {
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
@@ -33,7 +34,7 @@ export default function AdminPayoutsPage() {
 
 
             if (payoutsError || statsError) {
-                toast.error("Failed to load payout data");
+                toast.error(getErrorMessage(payoutsError || statsError) || "Failed to load payout data");
                 setLoading(false);
                 return;
             }
@@ -58,7 +59,7 @@ export default function AdminPayoutsPage() {
                 });
             }
         } catch (err) {
-            toast.error("An unexpected error occurred");
+            toast.error(getErrorMessage(err) || "An unexpected error occurred");
         } finally {
             setLoading(false);
         }
@@ -78,9 +79,8 @@ export default function AdminPayoutsPage() {
         const [_, error] = await updateWithdrawalStatus(id, { status, remark });
         
         if (error) {
-            console.error(`Failed to ${status} withdrawal:`, error);
-            const errorMessage = (error as any)?.body?.message || (error as any)?.message || `Failed to ${status} withdrawal`;
-            toast.error(errorMessage);
+            console.error(`Failed to ${status} withdrawal:`, getErrorMessage(error));
+            toast.error(getErrorMessage(error) || `Failed to ${status} withdrawal`);
             setProcessingId(null);
             return;
         }

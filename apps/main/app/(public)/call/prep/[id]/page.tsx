@@ -143,7 +143,7 @@ function CallPrepContent() {
         try {
             await checkHardwareAndNetwork();
         } catch (hardwareError: any) {
-            toast.error(hardwareError.message);
+            toast.error(getErrorMessage(hardwareError));
             setActionLoading(false);
             return;
         }

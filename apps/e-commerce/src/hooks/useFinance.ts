@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { financeService } from "@/services/finance.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Hook to fetch merchant financial stats
@@ -44,11 +45,7 @@ export const useRequestWithdrawal = () => {
     mutationFn: async ({ amount, bankAccountId }: { amount: number, bankAccountId?: string }) => {
       const [data, error] = await financeService.requestWithdrawal(amount, bankAccountId);
       if (error) {
-        const body = (error as any).body;
-        const message = body?.message 
-          ? (Array.isArray(body.message) ? body.message[0] : body.message)
-          : (error as any).message || "Withdrawal request failed";
-        throw new Error(message);
+        throw new Error(getErrorMessage(error) || "Withdrawal request failed");
       }
       return data;
     },
@@ -57,8 +54,8 @@ export const useRequestWithdrawal = () => {
       queryClient.invalidateQueries({ queryKey: ['merchant-finance-stats'] });
       queryClient.invalidateQueries({ queryKey: ['merchant-transactions'] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      toast.error(getErrorMessage(error));
     }
   });
 };

@@ -160,7 +160,7 @@ export const useProfileWalletLogic = (
                         loadTransactions();
                         setWalletView("history");
                     } else {
-                        toast.error("Payment verification failed!");
+                        toast.error(getErrorMessage(verifyRes) || "Payment verification failed!");
                     }
                 }
                 setIsProcessing(false);

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X, Star, User, Loader2 } from "lucide-react";
 import { getReviews, Review } from "@/lib/reviews";
+import { getErrorMessage } from "@repo/lib";
 import Button from "../ui/Button";
 
 interface ReviewsModalProps {
@@ -27,7 +28,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
         setLoading(true);
         try {
             const [data, error] = await getReviews(expertId, page, 10);
-            if (error) throw new Error(error.message);
+            if (error) throw new Error(getErrorMessage(error));
             
             setReviews(data?.reviews || []);
             setTotal(data?.total || 0);

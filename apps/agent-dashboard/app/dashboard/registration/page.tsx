@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { registerUserByAgent, createListing } from "@/src/services/agent.service";
 import { cn } from "@/src/lib/cn";
 import { RegistrationSkeleton } from "../../components/Skeleton";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 // ── Tab types ────────────────────────────────────────────────────────────────
 
@@ -170,7 +171,7 @@ function UserForm({ userType }: { userType: "expert" | "merchant" }) {
         const [res, error] = await registerUserByAgent({ ...form, userType });
         
         if (error) {
-            toast.error(error.message || "Registration failed. Try again.");
+            toast.error(getErrorMessage(error) || "Registration failed. Try again.");
         } else if (res) {
             setRegisteredUser(res.user);
             setForm({ name: "", email: "", phone: "" });
@@ -266,7 +267,7 @@ function MandirForm() {
         });
 
         if (error) {
-            toast.error(error.message || "Failed to submit listing");
+            toast.error(getErrorMessage(error) || "Failed to submit listing");
         } else {
             setSuccess(true);
             setForm({ name: "", location: "", mainDeity: "", contact: "", openingTime: "", closingTime: "" });

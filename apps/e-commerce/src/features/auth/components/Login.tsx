@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { LoginSchema, LoginFormData } from "@/types/auth";
 import { merchantLoginAction } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 import { env } from "@/lib/config/env";
 
 // ─── Branding Section (Expert Style) ─────────────────────────────────────────
@@ -149,9 +150,9 @@ const LoginPage: React.FC = () => {
       } else {
         setServerError(result.error || "Invalid credentials. Please try again.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err);
-      setServerError("An unexpected error occurred.");
+      setServerError(getErrorMessage(err) || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }

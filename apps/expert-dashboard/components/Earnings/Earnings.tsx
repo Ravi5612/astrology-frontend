@@ -16,6 +16,7 @@ import "./earnings.css";
 import { exportElementToPDF } from "@/lib/export-utils";
 import { toast } from "react-toastify";
 import { StatsSkeleton, ChartSkeleton, InsightsSkeleton } from "../dashboard/DashboardSkeletons";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export default function EarningsPage() {
   const [timeRange, setTimeRange] = useState("last_6_months");
@@ -40,6 +41,7 @@ export default function EarningsPage() {
         );
         if (error) {
            console.error("[EarningsPage] Failed to load earnings stats:", error);
+           toast.error(getErrorMessage(error));
            setData(null);
         } else {
            setData(stats);
@@ -65,7 +67,7 @@ export default function EarningsPage() {
       toast.success("PDF Downloaded Successfully!");
     } catch (error) {
       console.error("Export failed:", error);
-      toast.error("Failed to generate PDF. Please try again.");
+      toast.error(getErrorMessage(error) || "Failed to generate PDF. Please try again.");
     } finally {
       setIsExporting(false);
     }

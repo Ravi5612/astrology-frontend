@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { merchantService } from "@/services/merchant.service";
 import { Product } from "@/lib/types";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Hook to fetch products for a specific merchant
@@ -12,7 +13,7 @@ export const useMerchantProducts = (id: string | number | undefined, page = 1, l
         queryFn: async () => {
             if (!id) return [];
             const [data, error] = await merchantService.getMerchantProducts(id, page, limit);
-            if (error) throw new Error((error as any).message || "Failed to fetch products");
+            if (error) throw new Error(getErrorMessage(error) || "Failed to fetch products");
             return (data as Product[]) || [];
         },
         enabled: !!id,

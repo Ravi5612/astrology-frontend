@@ -5,6 +5,7 @@ import { X, Plus, Trash2, Loader2, Info, Upload, Image as ImageIcon } from 'luci
 import { PujaService, SamagriItem } from '../ProfileManagement/types';
 import { upsertPujaApi } from '@/lib/profile';
 import { toast } from 'react-toastify';
+import { getErrorMessage } from '@repo/lib';
 
 interface PujaModalProps {
   mode: 'add' | 'edit';
@@ -106,7 +107,7 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
 
       const [data, error] = await upsertPujaApi(payload, puja?.id);
       if (error) {
-        toast.error(error.message || "Failed to save puja service.");
+        toast.error(getErrorMessage(error) || "Failed to save puja service.");
         return;
       }
       toast.success(`Puja service ${mode === 'add' ? 'added' : 'updated'} successfully!`);
@@ -120,7 +121,7 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
 
     } catch (error: any) {
       console.error('Failed to save puja:', error);
-      toast.error(error?.response?.data?.message || 'Failed to save puja service.');
+      toast.error(getErrorMessage(error) || 'Failed to save puja service.');
     } finally {
       setLoading(false);
     }

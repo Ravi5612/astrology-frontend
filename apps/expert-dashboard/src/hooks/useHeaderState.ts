@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { socket } from "@/lib/socket";
 import { getNotifications, deleteAllNotifications } from "@/lib/notifications";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 
 export const useHeaderState = () => {
   const { user, isAuthenticated } = useAuthStore();
@@ -164,9 +165,7 @@ export const useHeaderState = () => {
     const [_, error] = await api.patch<{ is_available: boolean }>('/expert/status', { is_available: newStatus });
 
     if (error) {
-      const errBody = (error as any)?.body || (error as any)?.data;
-      const message = errBody?.message || "Failed to update status";
-      toast.error(Array.isArray(message) ? message.join(", ") : message);
+      toast.error(getErrorMessage(error) || "Failed to update status");
       setLoading(false);
       return;
     }
@@ -184,7 +183,7 @@ export const useHeaderState = () => {
   const handleClearNotifications = async () => {
     const [_, error] = await deleteAllNotifications();
     if (error) {
-      toast.error("Failed to clear notifications");
+      toast.error(getErrorMessage(error) || "Failed to clear notifications");
       return;
     }
 

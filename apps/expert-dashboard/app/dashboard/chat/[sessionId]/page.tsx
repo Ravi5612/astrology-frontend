@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import * as LucideIcons from "lucide-react";
+import { getErrorMessage } from "@repo/lib";
 
 const {
     ChevronLeft, Paperclip, Send, Clock, User, Phone,
@@ -192,10 +193,10 @@ function ExpertChatRoomContent() {
         if (error) {
             console.error("[ExpertChatDebug] Activation failed:", error);
             // If it's already active, we don't need to show an error
-            if (error.message?.includes("active")) {
+            if (getErrorMessage(error).includes("active")) {
                 setSessionStatus('active');
             } else {
-                toast.error(error.message || "Failed to activate session");
+                toast.error(getErrorMessage(error) || "Failed to activate session");
             }
         }
         setIsActivating(false);
@@ -242,7 +243,7 @@ function ExpertChatRoomContent() {
 
             if (error) {
                 console.error("Upload error:", error);
-                toast.error(error.message || "Upload failed");
+                toast.error(getErrorMessage(error) || "Upload failed");
                 return;
             }
 

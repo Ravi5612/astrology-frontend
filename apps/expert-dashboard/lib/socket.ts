@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { getErrorMessage } from "@repo/lib";
 
 import { BACKEND_URL } from "./config";
 const SOCKET_URL = BACKEND_URL;
@@ -26,21 +27,21 @@ socket.on("connect", () => {
 });
 
 socket.on("connect_error", (err) => {
-    console.error("[Socket] ❌ Dashboard Connection Error:", err.message);
+    console.error("[Socket] ❌ Dashboard Connection Error:", getErrorMessage(err));
 });
 
 chatSocket.on("connect", () => {
 });
 
 chatSocket.on("connect_error", (err) => {
-    console.error("[ChatSocket] ❌ Connection Error:", err.message);
+    console.error("[ChatSocket] ❌ Connection Error:", getErrorMessage(err));
 });
 
 callSocket.on("connect", () => {
 });
 
 callSocket.on("connect_error", (err) => {
-    console.error("[CallSocket] ❌ Connection Error:", err.message);
+    console.error("[CallSocket] ❌ Connection Error:", getErrorMessage(err));
 });
 
 

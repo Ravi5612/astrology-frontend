@@ -15,6 +15,7 @@ import { Appointment } from "./types";
 import Button from "../ui/Button";
 import { api } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const Clock = LucideClock as any;
 const Video = LucideVideo as any;
@@ -77,7 +78,7 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
         });
 
         if (error) {
-            toast.error(error.message || "Failed to update status");
+            toast.error(getErrorMessage(error) || "Failed to update status");
         } else {
             toast.success(`Puja request ${status} successfully`);
             if (onUpdate) onUpdate();
@@ -203,7 +204,7 @@ function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, 
         });
 
         if (error) {
-            toast.error(error.message || "Failed to update status");
+            toast.error(getErrorMessage(error) || "Failed to update status");
         } else {
             toast.success(`Request ${status} successfully`);
             if (onUpdate) onUpdate();

@@ -1,4 +1,5 @@
 import { api } from "../lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 export interface Product {
     id?: string;
@@ -54,7 +55,7 @@ export const ProductService = {
     createProduct: async (fd: FormData): Promise<any> => {
         const [data, error] = await api.post<any>(BASE, normalizeFormData(fd));
         if (error) {
-            throw new Error((error as any)?.message || "Failed to create product");
+            throw new Error(getErrorMessage(error) || "Failed to create product");
         }
         return data;
     },
@@ -63,7 +64,7 @@ export const ProductService = {
     updateProduct: async (id: string, fd: FormData): Promise<any> => {
         const [data, error] = await api.patch<any>(`${BASE}/${id}`, normalizeFormData(fd));
         if (error) {
-            throw new Error((error as any)?.message || "Failed to update product");
+            throw new Error(getErrorMessage(error) || "Failed to update product");
         }
         return data;
     },
@@ -72,7 +73,7 @@ export const ProductService = {
     deleteProduct: async (id: string): Promise<any> => {
         const [data, error] = await api.delete<any>(`${BASE}/${id}`);
         if (error) {
-            throw new Error((error as any)?.message || "Failed to delete product");
+            throw new Error(getErrorMessage(error) || "Failed to delete product");
         }
         return data;
     },

@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 
 import { ForgotPasswordSchema, ForgotPasswordFormData } from "@/types/auth";
 import { merchantForgotPasswordAction } from "@/actions/auth";
+import { getErrorMessage } from "@repo/lib";
 
 // ─── Branding Section (Expert Style) ─────────────────────────────────────────
 
@@ -87,7 +88,7 @@ const ForgotPasswordPage: React.FC = () => {
       }
     } catch (err) {
       console.error("Forgot error:", err);
-      toast.error("Process failed. Please check your email.");
+      toast.error(getErrorMessage(err) || "Process failed. Please check your email.");
     } finally {
       setLoading(false);
     }

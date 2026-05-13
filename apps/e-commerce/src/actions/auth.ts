@@ -2,12 +2,13 @@
 
 import { cookies } from "next/headers";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 export async function merchantLoginAction(formData: any) {
     const [data, error] = await api.post<any>('/auth/merchant/login', formData);
 
     if (error) {
-        return { error: error.body?.error || error.body?.message || error.message || "Login failed" };
+        return { error: getErrorMessage(error) || "Login failed" };
     }
 
     // Token existence check
@@ -70,7 +71,7 @@ export async function merchantRegisterAction(formData: any) {
     const [data, error] = await api.post<any>('/auth/merchant/register', formData);
 
     if (error) {
-        return { error: error.body?.error || error.body?.message || error.message || "Registration failed" };
+        return { error: getErrorMessage(error) || "Registration failed" };
     }
 
     return { success: true, message: data.message || "Registration successful." };
@@ -93,7 +94,7 @@ export async function merchantForgotPasswordAction(email: string) {
     const [data, error] = await api.post<any>(`/auth/merchant/forgot-password`, { email });
 
     if (error) {
-        return { error: error.body?.error || error.body?.message || error.message || "Failed to send reset link" };
+        return { error: getErrorMessage(error) || "Failed to send reset link" };
     }
 
     return { success: true, message: data.message || "Password reset link sent successfully" };

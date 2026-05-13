@@ -24,6 +24,7 @@ import {
     settleAgentCommissions,
     getAgentDashboardStats
 } from "@/src/services/agent.service";
+import { getErrorMessage } from "@repo/lib";
 
 interface PayoutRequest {
     id: number;
@@ -69,8 +70,8 @@ export default function PayoutPage() {
                 getAgentDashboardStats()
             ]);
 
-            if (balErr) toast.error("Failed to load balance");
-            if (wdErr) toast.error("Failed to load payouts");
+            if (balErr) toast.error(getErrorMessage(balErr) || "Failed to load balance");
+            if (wdErr) toast.error(getErrorMessage(wdErr) || "Failed to load payouts");
             
             if (balData) setBalance(Number(balData.balance || 0));
             if (wdData) setWithdrawals(wdData);
@@ -143,13 +144,13 @@ export default function PayoutPage() {
         try {
             const [res, err] = await settleAgentCommissions();
             if (err) {
-                toast.error(err.message || "Settlement failed");
+                toast.error(getErrorMessage(err) || "Settlement failed");
             } else {
                 toast.success(res.message || "Earnings settled into wallet");
                 fetchData();
             }
         } catch (error) {
-            toast.error("An error occurred during settlement");
+            toast.error(getErrorMessage(error) || "An error occurred during settlement");
         } finally {
             setSettling(false);
         }
@@ -178,14 +179,14 @@ export default function PayoutPage() {
         try {
             const [res, err] = await requestAgentWithdrawal(amt);
             if (err) {
-                toast.error(err.message || "Failed to request payout");
+                toast.error(getErrorMessage(err) || "Failed to request payout");
             } else {
                 toast.success("Payout request submitted successfully");
                 setAmount("");
                 fetchData();
             }
         } catch (error) {
-            toast.error("An error occurred");
+            toast.error(getErrorMessage(error) || "An error occurred");
         } finally {
             setSubmitting(false);
         }

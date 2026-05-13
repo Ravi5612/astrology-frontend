@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { merchantService } from "@/services/merchant.service";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Hook to fetch the list of unique cities for active merchants
@@ -10,8 +11,7 @@ export const useMerchantCities = () => {
         queryFn: async () => {
             const [data, error] = await merchantService.getMerchantCities();
             if (error) {
-                const message = (error as any).message || "Failed to fetch cities";
-                throw new Error(message);
+                throw new Error(getErrorMessage(error) || "Failed to fetch cities");
             }
             return data as string[];
         },

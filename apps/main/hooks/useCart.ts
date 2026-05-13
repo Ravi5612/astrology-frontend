@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/store/useCartStore";
 import { CartService } from "../services/cart.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export const useCart = () => {
     const queryClient = useQueryClient();
@@ -61,7 +62,7 @@ export const useCart = () => {
             if (context?.previousState) {
                 useCartStore.setState(context.previousState);
             }
-            toast.error("Failed to add item to cart");
+            toast.error(getErrorMessage(err) || "Failed to add item to cart");
         },
         onSuccess: () => {
             // Success handled optimistically in onMutate

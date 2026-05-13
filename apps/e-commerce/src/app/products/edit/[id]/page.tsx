@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
+import { getErrorMessage } from "@repo/lib";
+import { toast } from "react-toastify";
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -30,7 +32,7 @@ export default function EditProductPage() {
     queryKey: ['merchant-product', productId],
     queryFn: async () => {
       const [data, error] = await productService.getProduct(productId);
-      if (error) throw new Error(error.message || "Failed to fetch product");
+      if (error) throw new Error(getErrorMessage(error) || "Failed to fetch product");
       return data;
     },
     enabled: !!productId
@@ -63,7 +65,7 @@ export default function EditProductPage() {
 
       const [data, error] = await productService.updateProduct(productId, payload);
       if (error) {
-        throw new Error(error.message || "Failed to update product");
+        throw new Error(getErrorMessage(error) || "Failed to update product");
       }
       return data;
     },
@@ -74,7 +76,7 @@ export default function EditProductPage() {
       router.push("/products");
     },
     onError: (err: any) => {
-      alert(`Backend Error: ${err.message}`);
+      toast.error(getErrorMessage(err));
     }
   });
 

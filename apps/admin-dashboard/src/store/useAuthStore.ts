@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from "@/src/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 interface User {
     id: number;
@@ -90,7 +91,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 throw new Error("No user data");
             }
         } catch (err: any) {
-            console.error("Auth refresh failed:", err?.body?.message || err?.message);
+            console.error("Auth refresh failed:", getErrorMessage(err));
             set({ isAuthenticated: false, user: null, loading: false });
         } finally {
             clearTimeout(safetyTimeout);

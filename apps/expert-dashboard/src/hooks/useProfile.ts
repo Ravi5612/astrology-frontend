@@ -18,6 +18,7 @@ import {
 import { Profile, Gender, Todo, DocumentItem } from "@/types/profile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 /**
  * Transforms raw API or Auth user data into the standardized Profile interface.
@@ -178,7 +179,7 @@ export const useProfile = () => {
         queryKey: ["profile", authUser?.id],
         queryFn: async () => {
             const [data, error] = await getProfile();
-            if (error && error.status !== 404) throw new Error(error.message);
+            if (error && error.status !== 404) throw new Error(getErrorMessage(error));
             return mapToProfile(data, authUser);
         },
         enabled: !!authUser?.id,
@@ -189,7 +190,7 @@ export const useProfile = () => {
         queryKey: ["todos"],
         queryFn: async () => {
             const [data, error] = await getTodos();
-            if (error) throw new Error(error.message);
+            if (error) throw new Error(getErrorMessage(error));
             return data || [];
         },
         enabled: !!authUser?.id,
@@ -217,7 +218,7 @@ export const useProfile = () => {
                 }
             }
             const [res, error] = result;
-            if (error) throw new Error(error.message);
+            if (error) throw new Error(getErrorMessage(error));
             return res;
         },
         onSuccess: (_, variables) => {
@@ -225,7 +226,7 @@ export const useProfile = () => {
             toast.success(`${variables.section.charAt(0).toUpperCase() + variables.section.slice(1).replace('_', ' ')} updated!`);
         },
         onError: (error: any) => {
-            toast.error(error.message || "Update failed");
+            toast.error(getErrorMessage(error) || "Update failed");
         }
     });
 
@@ -234,7 +235,7 @@ export const useProfile = () => {
         add: useMutation({
             mutationFn: async (text: string) => {
                 const [res, error] = await createTodo(text);
-                if (error) throw new Error(error.message);
+                if (error) throw new Error(getErrorMessage(error));
                 return res;
             },
             onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
@@ -242,7 +243,7 @@ export const useProfile = () => {
         toggle: useMutation({
             mutationFn: async ({ id, completed }: { id: number; completed: boolean }) => {
                 const [res, error] = await updateTodo(id, { completed });
-                if (error) throw new Error(error.message);
+                if (error) throw new Error(getErrorMessage(error));
                 return res;
             },
             onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
@@ -250,7 +251,7 @@ export const useProfile = () => {
         delete: useMutation({
             mutationFn: async (id: number) => {
                 const [res, error] = await deleteTodoApi(id);
-                if (error) throw new Error(error.message);
+                if (error) throw new Error(getErrorMessage(error));
                 return res;
             },
             onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),

@@ -7,6 +7,7 @@ import { FaComments, FaPhone, FaVideo, FaStar, FaArrowRight, FaCalendarTimes, Fa
 import { HiOutlineSparkles } from "react-icons/hi";
 import { api } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 const SessionHistory = () => {
     const [sessions, setSessions] = useState<any[]>([]);
@@ -25,7 +26,7 @@ const SessionHistory = () => {
                 const [result, error] = await api.get<any>(`/consultations/history?limit=${limit}&offset=${offset}`);
                 
                 if (error) {
-                    toast.error("Failed to load session history");
+                    toast.error(getErrorMessage(error) || "Failed to load session history");
                     return;
                 }
 

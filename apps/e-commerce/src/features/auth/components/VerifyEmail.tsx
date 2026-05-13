@@ -8,6 +8,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { setAuthCookies } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 
 export default function VerifyEmail() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function VerifyEmail() {
         if (error) {
           console.error("[VerifyEmail] Verification error:", error);
           setStatus("error");
-          setMessage(error.body?.error || error.body?.message || error.message || "Email verification failed.");
+          setMessage(getErrorMessage(error) || "Email verification failed.");
           return;
         }
 
@@ -79,7 +80,7 @@ export default function VerifyEmail() {
       } catch (err: any) {
         console.error("[VerifyEmail] Critical catch error:", err);
         setStatus("error");
-        setMessage("Something went wrong during verification. Please try again later.");
+        setMessage(getErrorMessage(err) || "Something went wrong during verification. Please try again later.");
       }
     };
 

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { Order, OrderService } from "../../../src/services/orders.service";
+import { getErrorMessage } from "@repo/lib";
 import { SearchInput } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { getNotificationSocket, connectAdminSocket } from "../../../src/utils/socket";
@@ -91,7 +92,7 @@ export default function OrdersPage() {
         const [_, error] = await OrderService.updateVal(id, newStatus);
         if (error) {
             console.error("Failed to update status", error);
-            toast.error("Failed to update status");
+            toast.error(getErrorMessage(error) || "Failed to update status");
             return;
         }
         toast.success(`Order status updated to ${newStatus}`);
@@ -108,7 +109,7 @@ export default function OrdersPage() {
         const [_, error] = await OrderService.updateVal(cancelOrderId, 'cancelled', cancelReason);
         if (error) {
             console.error("Failed to cancel order", error);
-            toast.error("Failed to cancel order");
+            toast.error(getErrorMessage(error) || "Failed to cancel order");
             return;
         }
         

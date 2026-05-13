@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { api as http } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 const QUICK_TAGS = [
   "Highly Accurate",
@@ -58,13 +59,13 @@ const PlatformReviewModal: React.FC<PlatformReviewModalProps> = ({
       });
 
       if (err) {
-        toast.error("Review submit karne mein problem hui. Dobara try karein.");
+        toast.error(getErrorMessage(err) || "Review submit karne mein problem hui. Dobara try karein.");
         return;
       }
       setSubmitted(true);
       setTimeout(() => handleClose(), 2500);
-    } catch {
-      toast.error("Kuch gadbad ho gayi. Dobara try karein.");
+    } catch (error) {
+      toast.error(getErrorMessage(error) || "Kuch gadbad ho gayi. Dobara try karein.");
     }
   };
 

@@ -18,6 +18,7 @@ import { getDisputes, updateDisputeStatus } from "@/src/services/admin.service";
 
 // Config
 import { filters } from "@/app/components/Refund/refundsConfig";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export default function RefundManagementPage() {
   const [refunds, setRefunds] = useState<any[]>([]);
@@ -31,7 +32,7 @@ export default function RefundManagementPage() {
     try {
       const [data, error] = await getDisputes();
       if (error) {
-        toast.error(error.message || "Failed to fetch refund requests");
+        toast.error(getErrorMessage(error) || "Failed to fetch refund requests");
         return;
       }
       
@@ -88,8 +89,8 @@ export default function RefundManagementPage() {
 
       setRefunds(mappedRefunds);
     } catch (err) {
-      console.error("Error fetching refunds:", err);
-      toast.error("An unexpected error occurred");
+      console.error("Error fetching refunds:", getErrorMessage(err));
+      toast.error(getErrorMessage(err) || "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -161,7 +162,7 @@ export default function RefundManagementPage() {
 
     const [res, error] = await updateDisputeStatus(id, { status: backendStatus });
     if (error) {
-      toast.error(error.message || `Failed to update status to ${status}`);
+      toast.error(getErrorMessage(error) || `Failed to update status to ${status}`);
       return;
     }
     toast.success(`Request marked as ${status}`);

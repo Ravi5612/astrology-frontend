@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { Star, User, Loader2, ChevronDown } from "lucide-react";
 import { Review, getReviews } from "@/lib/reviews";
+import { getErrorMessage } from "@repo/lib";
 
 const PAGE_SIZE = 10;
 
@@ -30,7 +31,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         try {
             const nextPage = page + 1;
             const [res, error] = await getReviews(expertId, nextPage, PAGE_SIZE);
-            if (error) throw new Error(error.message);
+            if (error) throw new Error(getErrorMessage(error));
             
             const newReviews: Review[] = res?.reviews || [];
             setReviews(prev => {

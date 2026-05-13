@@ -2,13 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getWalletBalance, getWalletTransactions, requestWithdrawal } from "@/lib/wallet";
 import { getBankAccounts } from "@/lib/profile";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 // Helper to handle [data, error] pattern and throw for React Query
 const wrapApi = async <T>(apiCall: Promise<[T | null, any | null]>): Promise<T> => {
   const [data, error] = await apiCall;
   if (error) {
-    const message = error.body?.message || error.message || "An error occurred";
-    throw new Error(Array.isArray(message) ? message.join(", ") : message);
+    throw new Error(getErrorMessage(error));
   }
   if (data === null) throw new Error("No data returned");
   return data;
@@ -35,7 +35,7 @@ export const useWallet = () => {
     queryKey: ["bank-accounts"],
     queryFn: async () => {
       const [accounts, error] = await getBankAccounts();
-      if (error) throw new Error("Failed to load bank accounts");
+      if (error) throw new Error(getErrorMessage(error));
       const accountsData = (accounts as any)?.data || accounts;
       return Array.isArray(accountsData) ? accountsData : [];
     },
@@ -51,7 +51,7 @@ export const useWallet = () => {
       toast.success("Withdrawal request submitted successfully!");
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit withdrawal request");
+      toast.error(getErrorMessage(error) || "Failed to submit withdrawal request");
     },
   });
 

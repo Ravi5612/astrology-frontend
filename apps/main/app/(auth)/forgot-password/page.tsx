@@ -10,6 +10,7 @@ import { api } from "@/lib/api";
 import { useLanguageStore } from "@/store/languageStore";
 import { authTranslations } from "@/lib/translations/auth";
 import { RiMailSendFill, RiArrowLeftLine } from "react-icons/ri";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 const ForgotPasswordContent: React.FC = () => {
     const { lang } = useLanguageStore();
@@ -36,13 +37,13 @@ const ForgotPasswordContent: React.FC = () => {
             });
 
             if (fetchError) {
-                toast.error(fetchError.body?.message || fetchError.message || t.forgotPassword.errors.failed);
+                toast.error(getErrorMessage(fetchError) || t.forgotPassword.errors.failed);
             } else {
                 toast.success(data?.message || t.forgotPassword.success);
                 setIsSent(true);
             }
-        } catch {
-            toast.error(t.forgotPassword.errors.unexpected);
+        } catch (err) {
+            toast.error(getErrorMessage(err) || t.forgotPassword.errors.unexpected);
         } finally {
             setIsLoading(false);
         }

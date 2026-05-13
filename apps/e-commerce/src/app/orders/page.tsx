@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils/cn";
+import { getErrorMessage } from "@repo/lib";
 import { StatsCards } from "@repo/ui";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -73,7 +74,7 @@ export default function OrdersPage() {
       setCancellingOrderId(null);
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update status");
+      toast.error(getErrorMessage(error) || "Failed to update status");
     }
   });
 
@@ -92,7 +93,7 @@ export default function OrdersPage() {
       queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Invalid OTP. Please try again.");
+      toast.error(getErrorMessage(error) || "Invalid OTP. Please try again.");
     }
   });
 
@@ -107,7 +108,7 @@ export default function OrdersPage() {
       toast.success("Verification OTP sent to customer");
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to send OTP");
+      toast.error(getErrorMessage(error) || "Failed to send OTP");
     }
   });
 

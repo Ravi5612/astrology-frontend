@@ -99,6 +99,9 @@ importers:
 
   apps/agent-dashboard:
     dependencies:
+      '@repo/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui

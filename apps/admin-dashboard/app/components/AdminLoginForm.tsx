@@ -7,6 +7,7 @@ import { Button } from "@repo/ui";
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { toast } from "react-toastify";
 import { adminLoginAction } from "@/src/actions/auth";
+import { getErrorMessage } from "@repo/lib/utils/error";
 
 export default function AdminLoginForm() {
     const router = useRouter();
@@ -36,7 +37,7 @@ export default function AdminLoginForm() {
                 router.push("/admin/dashboard");
             }
         } catch (err: any) {
-            const msg = "An unexpected error occurred.";
+            const msg = getErrorMessage(err) || "An unexpected error occurred.";
             setError(msg);
             toast.error(msg);
         } finally {
