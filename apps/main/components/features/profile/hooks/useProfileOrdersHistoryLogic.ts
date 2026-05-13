@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import {
     getAllChatSessions,
     getConsultationHistory,
@@ -263,7 +264,7 @@ export const useProfileOrdersHistoryLogic = (
         });
         
         if (error) {
-            toast.error((error as any).message || "Failed to submit review. Please try again.");
+            toast.error(getErrorMessage(error) || "Failed to submit review. Please try again.");
             return;
         }
 

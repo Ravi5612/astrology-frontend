@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-
+import { getErrorMessage } from '@repo/lib';
 
 export interface ExpertProfile {
   id: number;
@@ -74,7 +74,7 @@ export const getExperts = async (
     } as any);
 
     if (fetchError) {
-      throw new Error(`API Error: ${fetchError.message}`);
+      throw new Error(`API Error: ${getErrorMessage(fetchError)}`);
     }
 
 
@@ -89,10 +89,11 @@ export const getExperts = async (
       pagination: finalPagination,
     };
   } catch (error: any) {
-    console.error(`❌ [API Experts] Fetch error:`, error.message);
+    const errMsg = getErrorMessage(error);
+    console.error(`❌ [API Experts] Fetch error:`, errMsg);
     const isNetworkError =
-      error.message.includes("fetch failed") ||
-      error.message.includes("Network Error");
+      errMsg.includes("fetch failed") ||
+      errMsg.includes("Network Error");
     return {
       success: false,
       data: [],

@@ -4,6 +4,7 @@ import { X, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui";
 import { createCoupon } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 interface Props {
   onClose: () => void;
@@ -49,7 +50,7 @@ const CreateCoupon = ({ onClose, onSuccess, initialData }: Props) => {
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      toast.error(error.body?.message || error.message || `Failed to ${isEditing ? 'update' : 'create'} coupon`);
+      toast.error(getErrorMessage(error) || `Failed to ${isEditing ? 'update' : 'create'} coupon`);
     } finally {
       setLoading(false);
     }

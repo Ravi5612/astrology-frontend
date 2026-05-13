@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { createSafeFetchInstance } from "@repo/safe-fetch";
+import { getErrorMessage } from "@repo/lib";
 
 export const api = createSafeFetchInstance({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1",
@@ -16,7 +17,7 @@ export async function adminLoginAction(formData: any) {
     const [data, error] = await api.post<any>(`/auth/email/login`, formData);
 
     if (error) {
-        return { error: error.body?.message || error.message || "Login failed" };
+        return { error: getErrorMessage(error) };
     }
 
     // Admin role check — supports both new JWT (role) and legacy (roles[])

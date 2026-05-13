@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 
 interface ReportIssueModalProps {
     isOpen: boolean;
@@ -123,7 +124,7 @@ export default function ReportIssueModal({
 
         if (error) {
             console.error("Error reporting issue:", error);
-            toast.error(error.message || "Failed to report issue. Please try again.");
+            toast.error(getErrorMessage(error) || "Failed to report issue. Please try again.");
             setLoading(false);
             setSubmittingWithChat(false);
             return;

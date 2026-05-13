@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { getErrorMessage } from "@repo/lib";
 
 // We use a dummy socket for SSR to avoid build-time crashes with socket.io-client
 const createDummySocket = () => ({
@@ -33,12 +34,12 @@ if (isBrowser) {
     socket.on("connect", () => { });
 
     socket.on("connect_error", (err) => {
-        console.error("[Socket] ❌ Main App Connection Error:", err.message);
+        console.error("[Socket] ❌ Main App Connection Error:", getErrorMessage(err));
     });
 
     chatSocket.on("connect", () => { });
 
     chatSocket.on("connect_error", (err) => {
-        console.error("[ChatSocket] ❌ Connection Error:", err.message);
+        console.error("[ChatSocket] ❌ Connection Error:", getErrorMessage(err));
     });
 }

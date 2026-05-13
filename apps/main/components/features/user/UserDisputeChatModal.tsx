@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, Send, Paperclip, Image as ImageIcon, FileText, Download, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { getNotificationSocket, getSupportSocket } from "@packages/ui/src/utils/socket";
 import { useAuthStore } from "@/store/useAuthStore"; // Changed import
 import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, uploadClientDocument, getDisputeById } from "@/libs/api-profile";
@@ -148,7 +149,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
             setNewMessage("");
         } catch (error) {
             console.error("Send error:", error);
-            toast.error("Failed to send message");
+            toast.error(getErrorMessage(error) || "Failed to send message");
         } finally {
             setLoading(false);
         }
@@ -183,7 +184,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
             }
         } catch (error) {
             console.error("Upload error:", error);
-            toast.error("Upload failed");
+            toast.error(getErrorMessage(error) || "Upload failed");
         } finally {
             setUploading(false);
         }

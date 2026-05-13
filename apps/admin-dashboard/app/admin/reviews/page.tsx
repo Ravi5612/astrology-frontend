@@ -8,6 +8,7 @@ import { Button } from "@repo/ui";
 import { ReviewCard } from "@/app/components/reviews/ReviewCard";
 import { getReviews, getReviewStats } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 // Icons
 import { MessageSquare, Loader2, Star, ThumbsUp, ThumbsDown, Meh } from "lucide-react";
@@ -49,7 +50,7 @@ export default function ReviewsPage() {
         review_type: reviewType === "all" ? undefined : reviewType,
       });
 
-      if (error) throw new Error(error.message);
+      if (error) throw new Error(getErrorMessage(error));
 // ... mapping logic remains same ...
 
       const newReviews: Review[] = (data?.reviews || data || []).map((r: any) => ({
@@ -74,7 +75,7 @@ export default function ReviewsPage() {
       }
       setHasMore(newReviews.length === 15);
     } catch (err: any) {
-      toast.error(err.message || "Failed to fetch reviews");
+      toast.error(getErrorMessage(err) || "Failed to fetch reviews");
     } finally {
       setLoading(false);
       setLoadingMore(false);

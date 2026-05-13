@@ -12,6 +12,7 @@ import {
     ClientProfileData,
     AddressDto,
 } from "@/libs/api-profile";
+import { getErrorMessage } from "@repo/lib";
 
 // Types
 export type ProfileData = ClientProfileData;
@@ -144,8 +145,7 @@ export const useProfileBaseLogic = () => {
                 setErrorMessage("Upload succeeded but no URL returned");
             }
         } catch (error: any) {
-            const errorDetail =
-                error.body?.message || error.message || "Unknown error";
+            const errorDetail = getErrorMessage(error);
             setErrorMessage(`Failed to upload profile picture: ${errorDetail}`);
             setTimeout(() => setErrorMessage(""), 8000);
         } finally {
@@ -299,8 +299,7 @@ export const useProfileBaseLogic = () => {
             setEditingSections((prev) => ({ ...prev, [section]: false }));
         } catch (error: any) {
             console.error(`❌ Error updating ${section}:`, error);
-            const errMsg =
-                error.body?.message || error.message || "Unknown error";
+            const errMsg = getErrorMessage(error);
             toast.error(`Failed to update ${section}: ${errMsg}`);
         } finally {
             setSavingSections((prev) => ({ ...prev, [section]: false }));

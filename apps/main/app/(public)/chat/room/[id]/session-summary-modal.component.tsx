@@ -3,6 +3,7 @@
 import React from "react";
 import * as LucideIcons from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { api as http } from "@/lib/api";
 
 const { Star } = LucideIcons as any;
@@ -162,7 +163,7 @@ export default function SessionSummaryModal({
 
                                     if (err) {
                                         setReviewSubmitted(false);
-                                        toast.error(err.message || "Failed to submit review. Please try again.");
+                                        toast.error(getErrorMessage(err) || "Failed to submit review. Please try again.");
                                     } else {
                                         toast.success("Thank you for your feedback!");
                                         setTimeout(() => router.push('/'), 1500);

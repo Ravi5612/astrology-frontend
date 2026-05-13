@@ -7,6 +7,7 @@ import { chatSocket } from "@/libs/socket";
 import { uploadClientDocument } from "@/libs/api-profile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 import * as LucideIcons from "lucide-react";
 import { Button } from "@repo/ui";
@@ -70,7 +71,7 @@ function ChatRoomContent() {
             if (!id || id === 'undefined') return;
             const [res, error] = await http.get<any>(`/chat/user-session/${id}${sessionId ? `?sessionId=${sessionId}` : ''}`);
             if (error) {
-                toast.error(error.message || "Failed to load chat session");
+                toast.error(getErrorMessage(error) || "Failed to load chat session");
                 return;
             }
 
@@ -285,7 +286,7 @@ function ChatRoomContent() {
 
         if (error) {
             console.error("Upload error:", error);
-            toast.error(error.message || "Upload failed");
+            toast.error(getErrorMessage(error) || "Upload failed");
         } else if (uploadRes && uploadRes.url) {
             const attachmentType = file.type.startsWith("image") ? "image" : "document";
             setPendingAttachment({

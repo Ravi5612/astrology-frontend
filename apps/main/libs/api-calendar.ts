@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { getErrorMessage } from '@repo/lib';
 
 export interface CalendarDay {
   date: string;       // ISO format: YYYY-MM-DD
@@ -42,7 +43,7 @@ export const getMonthlyCalendar = async (
 
     const [result, error] = await api.get<any>(`/calendar/monthly?${query.toString()}`, { cache: 'no-store' } as any);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(getErrorMessage(error));
 
     return { success: true, data: result.data || result || [] };
   } catch (error: any) {
@@ -61,7 +62,7 @@ export const getDailyPanchang = async (
     const query = new URLSearchParams({ date, lat, lon, lang });
     const [result, error] = await api.get<any>(`/calendar/panchang/daily?${query.toString()}`, { cache: 'no-store' } as any);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(getErrorMessage(error));
 
     return { success: true, data: result.data || result || null };
   } catch (error: any) {
@@ -78,7 +79,7 @@ export const getYearlyFestivals = async (
     const query = new URLSearchParams({ year: year.toString(), lang });
     const [result, error] = await api.get<any>(`/calendar/festivals?${query.toString()}`, { cache: 'no-store' } as any);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(getErrorMessage(error));
 
     return { success: true, data: result.data || result || [] };
   } catch (error: any) {

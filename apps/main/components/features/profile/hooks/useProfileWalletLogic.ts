@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
+import { getErrorMessage } from "@repo/lib";
 import { getWalletTransactions } from "@/libs/api-profile";
 import { loadRazorpay } from "@/libs/razorpay";
 
@@ -118,7 +119,7 @@ export const useProfileWalletLogic = (
 
         if (orderError) {
             console.error("Order Creation Error:", orderError);
-            toast.error(orderError.message || "Failed to create payment order.");
+            toast.error(getErrorMessage(orderError) || "Failed to create payment order.");
             setIsProcessing(false);
             return;
         }
@@ -150,7 +151,7 @@ export const useProfileWalletLogic = (
 
                 if (verifyError) {
                     console.error("Verification error:", verifyError);
-                    toast.error(verifyError.message || "Payment verification failed!");
+                    toast.error(getErrorMessage(verifyError) || "Payment verification failed!");
                 } else {
                     const verifyPayload: any = (verifyRes as any)?.data ?? verifyRes;
                     if (verifyPayload?.success) {

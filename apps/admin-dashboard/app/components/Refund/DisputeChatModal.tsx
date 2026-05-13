@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, Send, Paperclip, FileText, Download, AlertCircle, RefreshCw, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, updateDisputeStatus } from "@/src/services/admin.service";
 import { getSupportSocket } from "@/src/utils/socket";
 
@@ -107,7 +108,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         try {
             const [, error] = await sendDisputeMessage(dispute.realId, { message: newMessage });
             if (error) {
-                toast.error(error.message || "Failed to send message");
+                toast.error(getErrorMessage(error) || "Failed to send message");
                 return;
             }
             setNewMessage("");

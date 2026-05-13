@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@repo/ui';
 import http from '@/lib/api';
+import { getErrorMessage } from "@repo/lib";
 
 interface PhoneVerifyModalProps {
     isOpen: boolean;
@@ -41,7 +42,7 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         const [res, err] = await http.post<any>('/client/profile/phone/send-otp', { phone });
 
         if (err) {
-            setError(err.message || 'Failed to send OTP.');
+            setError(getErrorMessage(err) || 'Failed to send OTP.');
         } else {
             setSuccessMsg(res?.message || 'OTP sent successfully!');
             setStep(2);
@@ -60,7 +61,7 @@ const PhoneVerifyModal: React.FC<PhoneVerifyModalProps> = ({ isOpen, onClose, ph
         const [res, err] = await http.post<any>('/client/profile/phone/verify-otp', { phone, code: otp });
 
         if (err) {
-            setError(err.message || 'Verification failed. Incorrect OTP.');
+            setError(getErrorMessage(err) || 'Verification failed. Incorrect OTP.');
         } else {
             setSuccessMsg(res?.message || 'Phone verified successfully!');
             setTimeout(() => {

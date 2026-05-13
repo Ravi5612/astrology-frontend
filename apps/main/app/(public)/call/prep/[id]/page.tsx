@@ -7,6 +7,7 @@ import * as LucideIcons from "lucide-react";
 import { api as http } from "@/lib/api";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 
 const Image = NextImage as any;
 import { VerificationPopup } from "@repo/ui";
@@ -123,7 +124,7 @@ function CallPrepContent() {
             if (err.name === 'NotAllowedError') {
                 throw new Error("Microphone permission denied. Please allow mic access in your browser settings.");
             }
-            throw new Error(err.message || "Could not access microphone. Please check your hardware.");
+            throw new Error(getErrorMessage(err) || "Could not access microphone. Please check your hardware.");
         }
     };
 
@@ -154,7 +155,7 @@ function CallPrepContent() {
 
         if (error) {
             console.error("[CallPrep] Initiation error details:", error);
-            toast.error(error.message || "Failed to start call");
+            toast.error(getErrorMessage(error) || "Failed to start call");
         } else if (response && response.session?.id) {
             toast.success("Connecting to expert...");
             // Redirect to call room

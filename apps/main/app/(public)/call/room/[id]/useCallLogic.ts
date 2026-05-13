@@ -6,6 +6,7 @@ import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
 import { CallStatus, CallSession } from "@/lib/types";
+import { getErrorMessage } from "@repo/lib";
 
 export const useCallLogic = (): any => {
   const SOCKET_URL = "http://localhost:6543";
@@ -198,7 +199,7 @@ export const useCallLogic = (): any => {
     const device = new Device(token, { logLevel: 1, codecPreferences: ["opus", "pcmu"] as any });
     deviceRef.current = device;
     device.on("disconnect", handleCallEnded);
-    device.on("error", (err) => { toast.error(`Call error: ${err.message}`); handleCallEnded(); });
+    device.on("error", (err) => { toast.error(`Call error: ${getErrorMessage(err)}`); handleCallEnded(); });
     await device.register();
     const call = await device.connect({ params: { sessionId } });
     callRef.current = call;
@@ -385,7 +386,7 @@ export const useCallLogic = (): any => {
     });
 
     if (error) {
-      toast.error(error.message || "Could not submit review.");
+      toast.error(getErrorMessage(error) || "Could not submit review.");
       setReviewSubmitting(false);
     } else {
       setReviewSubmitted(true);

@@ -17,6 +17,7 @@ const statusBadges = {
 
 import { sendReviewResponse, updateReviewStatus } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import { Send, CheckCircle2, XCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@repo/ui";
 
@@ -27,11 +28,11 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
   const handleStatusUpdate = async (status: string) => {
     try {
       const [_, error] = await updateReviewStatus(review.id, status);
-      if (error) throw new Error(error.message);
+      if (error) throw new Error(getErrorMessage(error));
       toast.success(`Review ${status} successfully`);
       if (onUpdate) onUpdate();
     } catch (err: any) {
-      toast.error(err.message || "Failed to update status");
+      toast.error(getErrorMessage(err) || "Failed to update status");
     }
   };
 
@@ -43,12 +44,12 @@ export function ReviewCard({ review, isLast }: ReviewCardProps) {
     setSending(true);
     try {
       const [_, error] = await sendReviewResponse(review.id, adminMessage);
-      if (error) throw new Error(error.message);
+      if (error) throw new Error(getErrorMessage(error));
       toast.success("Message sent successfully");
       setAdminMessage("");
       if (onUpdate) onUpdate();
     } catch (err: any) {
-      toast.error(err.message || "Failed to send message");
+      toast.error(getErrorMessage(err) || "Failed to send message");
     } finally {
       setSending(false);
     }

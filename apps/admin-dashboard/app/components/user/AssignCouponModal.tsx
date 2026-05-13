@@ -4,6 +4,7 @@ import { X, Gift, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui";
 import { assignCouponToUser, getCoupons } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 import type { User } from "@/app/components/user/user";
 
 interface Props {
@@ -45,7 +46,7 @@ const AssignCouponModal = ({ user, onClose }: Props) => {
             toast.success(`Coupon ${selectedCouponCode} assigned to ${user.name}`);
             onClose();
         } catch (error: any) {
-            toast.error(error.body?.message || error.message || "Failed to assign coupon");
+            toast.error(getErrorMessage(error) || "Failed to assign coupon");
         } finally {
             setLoading(false);
         }

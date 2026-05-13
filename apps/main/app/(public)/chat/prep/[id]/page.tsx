@@ -7,6 +7,7 @@ import { api as http } from "@/lib/api";
 import { getClientProfile } from "@/libs/api-profile";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@repo/lib";
 import { VerificationPopup } from "@repo/ui";
 import { UserX } from "lucide-react";
 
@@ -148,7 +149,7 @@ export default function ConsultationPrep() {
 
     if (error) {
       console.error("Initiation error:", error);
-      toast.error(error.message || "Failed to start consultation");
+      toast.error(getErrorMessage(error) || "Failed to start consultation");
     } else if (response && response.id) {
       toast.success("Connecting to expert...");
       router.push(`/chat/room/${id}?sessionId=${response.id}`);

@@ -4,6 +4,7 @@ import { X, Filter, Users, Gift, Loader2, TrendingUp, Calendar, MapPin, Star, Ch
 import { Button } from "@repo/ui";
 import { assignCouponBulk, getCoupons, getFilteredUsersCount, getFilteredUsers } from "@/src/services/admin.service";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 interface Props {
     onClose: () => void;
@@ -121,10 +122,7 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
                 filters: filters,
             });
 
-            if (error) {
-                toast.error(error.message || "Failed to assign coupon");
-                return;
-            }
+                toast.error(getErrorMessage(error) || "Failed to assign coupon");
 
             toast.success(
                 `Coupon "${selectedCouponCode}" assigned to ${result.assignedCount || matchedUsersCount} users successfully!`
@@ -132,7 +130,7 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
             onSuccess?.();
             onClose();
         } catch (error: any) {
-            toast.error(error.body?.message || error.message || "Failed to assign coupon");
+            toast.error(getErrorMessage(error) || "Failed to assign coupon");
         } finally {
             setLoading(false);
         }

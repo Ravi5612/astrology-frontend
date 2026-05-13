@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@repo/lib";
 
 const PujaDetailPage = () => {
     const { id } = useParams();
@@ -93,7 +94,7 @@ const PujaDetailPage = () => {
         const [res, error] = await http.post(API_ROUTES.PUJA.BOOKING, bookingData) as any;
 
         if (error) {
-            toast.error(error.message || "Failed to send booking request");
+            toast.error(getErrorMessage(error) || "Failed to send booking request");
         } else {
             toast.success("Puja request sent successfully! Wait for expert to confirm.");
             setScheduledDate("");

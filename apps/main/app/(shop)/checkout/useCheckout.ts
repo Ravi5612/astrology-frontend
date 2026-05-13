@@ -9,6 +9,7 @@ import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { Product, AddressDto } from "@/lib/types";
+import { getErrorMessage } from "@repo/lib";
 
 export const useCheckout = () => {
   const router = useRouter();
@@ -106,7 +107,7 @@ export const useCheckout = () => {
 
     if (error) {
       console.error("Coupon Error:", error);
-      toast.error(error.message || "Failed to apply coupon");
+      toast.error(getErrorMessage(error) || "Failed to apply coupon");
       setIsApplying(false);
       return;
     }
@@ -232,7 +233,7 @@ export const useCheckout = () => {
 
       if (error) {
         console.error("Wallet Payment Error:", error);
-        toast.error(error.message || "Wallet payment failed. Please try again.");
+        toast.error(getErrorMessage(error) || "Wallet payment failed. Please try again.");
       } else if (res) {
         toast.success(
           isOrder
@@ -277,7 +278,7 @@ export const useCheckout = () => {
 
         if (createError) {
           console.error("Failed to create order:", createError);
-          toast.error(createError.message || "Failed to create order. Please try again.");
+          toast.error(getErrorMessage(createError) || "Failed to create order. Please try again.");
           setIsProcessing(false);
           return;
         }
@@ -306,7 +307,7 @@ export const useCheckout = () => {
 
       if (orderError) {
         console.error("Order Creation Error:", orderError);
-        toast.error(orderError.message || "Failed to create payment order.");
+        toast.error(getErrorMessage(orderError) || "Failed to create payment order.");
         setIsProcessing(false);
         return;
       }
@@ -341,7 +342,7 @@ export const useCheckout = () => {
 
             if (verifyError) {
               console.error("Verification error:", verifyError);
-              toast.error(verifyError.message || "Payment verification failed!");
+              toast.error(getErrorMessage(verifyError) || "Payment verification failed!");
               setIsProcessing(false);
               return;
             }

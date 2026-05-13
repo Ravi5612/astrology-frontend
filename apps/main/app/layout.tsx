@@ -14,6 +14,7 @@ import { cookies } from "next/headers";
 import { AuthService } from "@/services/auth.service";
 import QueryProvider from "@/providers/QueryProvider";
 import SmoothScroll from "@/components/layout/SmoothScroll";
+import { getErrorMessage } from "@repo/lib";
 
 // Google Fonts setup
 const outfit = Outfit({
@@ -63,7 +64,7 @@ export default async function RootLayout({
         }
       }
     } catch (err: any) {
-      const errorMsg = err.message || String(err);
+      const errorMsg = getErrorMessage(err);
       if (errorMsg !== "Unauthorized" && !errorMsg.includes("Unauthorized")) {
         console.error("[RootLayout] Server-side auth check failed:", errorMsg);
       }

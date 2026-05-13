@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { getErrorMessage } from "@repo/lib";
 
 console.log("🔥 [Socket] merchantSocket script is LOADING!");
 
@@ -32,7 +33,7 @@ merchantSocket.on("connect", () => {
 });
 
 merchantSocket.on("connect_error", (error) => {
-    console.error("🔴 [Socket] Merchant WebSocket connection error:", error.message);
+    console.error("🔴 [Socket] Merchant WebSocket connection error:", getErrorMessage(error));
 });
 
 merchantSocket.on("merchant_status_changed", (data) => {

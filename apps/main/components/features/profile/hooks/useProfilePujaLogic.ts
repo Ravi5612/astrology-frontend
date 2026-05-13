@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { getMyPujaAppointments, updatePujaAppointmentStatus } from "@/libs/api-profile";
+import { getErrorMessage } from "@repo/lib";
 
 export const useProfilePujaLogic = (isClientAuthenticated: boolean, activeTab: string) => {
     const [pujaBookings, setPujaBookings] = useState<any[]>([]);
@@ -29,7 +30,7 @@ export const useProfilePujaLogic = (isClientAuthenticated: boolean, activeTab: s
     const handleUpdatePujaStatus = async (id: number, status: string, extra: any = {}) => {
         const [res, error] = await updatePujaAppointmentStatus(id, { status, ...extra });
         if (error) {
-            toast.error(error.body?.message || error.message || "Failed to update booking");
+            toast.error(getErrorMessage(error) || "Failed to update booking");
             return false;
         }
         toast.success(`Booking ${status} successfully`);

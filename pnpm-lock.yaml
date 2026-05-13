@@ -26,6 +26,9 @@ importers:
 
   apps/admin-dashboard:
     dependencies:
+      '@repo/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -393,6 +396,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       '@repo/routes':
         specifier: workspace:*
         version: link:../../packages/routes
