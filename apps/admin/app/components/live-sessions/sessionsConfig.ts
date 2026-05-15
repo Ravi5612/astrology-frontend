@@ -1,5 +1,5 @@
 // live-sessions/config/sessionsConfig.ts
-import { LiveSession } from '../live-sessions/session';
+import { LiveSession } from "./session";
 
 export const mockLiveSessions: LiveSession[] = [
   // ✅ ACTUAL DATA ADD HERE
@@ -9,14 +9,14 @@ export const mockLiveSessions: LiveSession[] = [
       id: "USER001",
       name: "Rahul Sharma",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
-      rating: 4.8
+      rating: 4.8,
     },
     expert: {
       id: "AST001",
       name: "Pandit Ji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pandit",
       specialty: "Vedic Astrology",
-      experience: 15
+      experience: 15,
     },
     sessionType: "video",
     status: "live",
@@ -25,7 +25,7 @@ export const mockLiveSessions: LiveSession[] = [
     connectionQuality: "excellent",
     chatMessages: 42,
     recording: true,
-    lastActive: new Date()
+    lastActive: new Date(),
   },
   {
     id: "SESS002",
@@ -33,14 +33,14 @@ export const mockLiveSessions: LiveSession[] = [
       id: "USER002",
       name: "Priya Patel",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
-      rating: 4.5
+      rating: 4.5,
     },
     expert: {
       id: "AST002",
       name: "Guruji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Guruji",
       specialty: "Numerology",
-      experience: 8
+      experience: 8,
     },
     sessionType: "audio",
     status: "live",
@@ -49,7 +49,7 @@ export const mockLiveSessions: LiveSession[] = [
     connectionQuality: "good",
     chatMessages: 28,
     recording: false,
-    lastActive: new Date()
+    lastActive: new Date(),
   },
   {
     id: "SESS003",
@@ -57,14 +57,14 @@ export const mockLiveSessions: LiveSession[] = [
       id: "USER003",
       name: "Amit Kumar",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amit",
-      rating: 4.2
+      rating: 4.2,
     },
     expert: {
       id: "AST003",
       name: "Swamiji",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Swamiji",
       specialty: "Palmistry",
-      experience: 12
+      experience: 12,
     },
     sessionType: "chat",
     status: "live",
@@ -73,7 +73,7 @@ export const mockLiveSessions: LiveSession[] = [
     connectionQuality: "fair",
     chatMessages: 15,
     recording: true,
-    lastActive: new Date()
+    lastActive: new Date(),
   },
   {
     id: "SESS004",
@@ -81,14 +81,14 @@ export const mockLiveSessions: LiveSession[] = [
       id: "USER004",
       name: "Neha Gupta",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Neha",
-      rating: 4.9
+      rating: 4.9,
     },
     expert: {
       id: "AST004",
       name: "Acharya",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Acharya",
       specialty: "Tarot Card",
-      experience: 6
+      experience: 6,
     },
     sessionType: "video",
     status: "technical-issue",
@@ -98,8 +98,8 @@ export const mockLiveSessions: LiveSession[] = [
     chatMessages: 10,
     recording: false,
     lastActive: new Date(Date.now() - 5 * 60000),
-    issues: ["Audio lag", "Video frozen"]
-  }
+    issues: ["Audio lag", "Video frozen"],
+  },
 ];
 
 export const filters = [
@@ -107,6 +107,3 @@ export const filters = [
   { key: "expired", label: "Expired Sessions" },
   { key: "admin_terminated", label: "Admin Terminated" },
 ];
-
-
-

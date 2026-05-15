@@ -1,6 +1,15 @@
 // live-sessions/components/LiveSessionCard.tsx
 import React, { useState, useEffect } from "react";
-import { Video, Mic, MessageSquare, Clock, VideoOff, AlertCircle, Eye, PhoneOff } from "lucide-react";
+import {
+  Video,
+  Mic,
+  MessageSquare,
+  Clock,
+  VideoOff,
+  AlertCircle,
+  Eye,
+  PhoneOff,
+} from "lucide-react";
 import { Button } from "@repo/ui";
 
 const VideoComp = Video as any;
@@ -14,7 +23,7 @@ const PhoneOffComp = PhoneOff as any;
 import { ParticipantCard } from "./ParticipantCard";
 
 import { StatusBadge } from "./StatusBadge";
-import type { LiveSession } from "../live-sessions/session";
+import type { LiveSession } from "./session";
 
 interface LiveSessionCardProps {
   session: LiveSession;
@@ -29,14 +38,17 @@ export function LiveSessionCard({
   onEndSession,
   onToggleRecording,
 }: LiveSessionCardProps) {
-
   // SessionTypeIcon component
   const SessionTypeIcon = ({ type }: { type: string }) => {
     switch (type) {
-      case "video": return <VideoComp className="w-5 h-5 text-blue-600" />;
-      case "audio": return <MicComp className="w-5 h-5 text-green-600" />;
-      case "chat": return <MessageSquareComp className="w-5 h-5 text-purple-600" />;
-      default: return null;
+      case "video":
+        return <VideoComp className="w-5 h-5 text-blue-600" />;
+      case "audio":
+        return <MicComp className="w-5 h-5 text-green-600" />;
+      case "chat":
+        return <MessageSquareComp className="w-5 h-5 text-purple-600" />;
+      default:
+        return null;
     }
   };
 
@@ -50,15 +62,17 @@ export function LiveSessionCard({
   };
 
   const [elapsed, setElapsed] = useState<any>(
-    session.status === 'live'
+    session.status === "live"
       ? Math.floor((Date.now() - session.startTime.getTime()) / 60000)
-      : session.duration
+      : session.duration,
   );
 
   useEffect(() => {
-    if (session.status === 'live') {
+    if (session.status === "live") {
       const updateTimer = () => {
-        setElapsed(Math.floor((Date.now() - session.startTime.getTime()) / 60000));
+        setElapsed(
+          Math.floor((Date.now() - session.startTime.getTime()) / 60000),
+        );
       };
 
       updateTimer();
@@ -77,15 +91,19 @@ export function LiveSessionCard({
           <div className="flex items-center gap-3">
             <SessionTypeIcon type={session.sessionType} />
             <div>
-              <h3 className="font-semibold text-gray-900">Session #{session.id}</h3>
+              <h3 className="font-semibold text-gray-900">
+                Session #{session.id}
+              </h3>
               <p className="text-sm text-gray-600 capitalize">
-                {session.sessionType} Session • {session.status === 'live' ? `${elapsed} mins` : formatDuration(elapsed)}
+                {session.sessionType} Session •{" "}
+                {session.status === "live"
+                  ? `${elapsed} mins`
+                  : formatDuration(elapsed)}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <StatusBadge status={session.status} />
-
           </div>
         </div>
       </div>
@@ -105,14 +123,15 @@ export function LiveSessionCard({
 
         {/* Session Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-
           <div className="p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Duration</span>
               <ClockComp className="w-4 h-4 text-gray-500" />
             </div>
             <p className="text-lg font-semibold text-gray-900 mt-1">
-              {session.status === 'live' ? `${elapsed} min` : formatDuration(elapsed)}
+              {session.status === "live"
+                ? `${elapsed} min`
+                : formatDuration(elapsed)}
             </p>
           </div>
 
@@ -129,15 +148,12 @@ export function LiveSessionCard({
 
         {/* Connection & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-
           <div>
             {/* <span className="text-sm text-gray-600">Connection Quality:</span> */}
             {/* <div className="mt-1">
               <QualityIndicator quality={session.connectionQuality} />
             </div> */}
           </div>
-
-
         </div>
 
         {/* Issues Alert */}
@@ -160,7 +176,7 @@ export function LiveSessionCard({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          {session.sessionType === 'chat' ? (
+          {session.sessionType === "chat" ? (
             <Button
               variant="primary"
               size="sm"
@@ -182,7 +198,7 @@ export function LiveSessionCard({
             </Button>
           )}
 
-          {session.status === 'live' && (
+          {session.status === "live" && (
             <Button
               variant="danger"
               size="sm"
@@ -197,6 +213,3 @@ export function LiveSessionCard({
     </div>
   );
 }
-
-
-
