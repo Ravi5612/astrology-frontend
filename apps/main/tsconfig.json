@@ -33,13 +33,13 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "next-env.d.ts",
-    "next.config.js",
+    "src/next-env.d.ts",
+    "next.config.ts",
     ".next/types/**/*.ts",
     "../../packages/ui/src/**/*.ts",
     "../../packages/ui/src/**/*.tsx",
     "../../packages/lib/src/**/*.ts",
-    "env.d.ts"
+    "src/env.d.ts"
   ],
   "exclude": [
     "node_modules",

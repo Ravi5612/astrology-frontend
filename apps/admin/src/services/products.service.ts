@@ -61,7 +61,7 @@ const normalizeProductFormData = (input: FormData) => {
     return output;
 };
 
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 
 export const ProductService = {
     getProducts: async (): Promise<[any | null, any | null]> => {

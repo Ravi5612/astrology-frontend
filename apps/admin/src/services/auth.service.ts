@@ -1,4 +1,4 @@
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 
 export const login = async (email: string, password: string) => {
   const res = await api.post("/auth/email/login", {

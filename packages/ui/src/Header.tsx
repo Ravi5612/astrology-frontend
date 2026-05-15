@@ -4,7 +4,6 @@ import { useRouter, usePathname } from "next/navigation";
 import LinkComponent from "next/link";
 import Image from "next/image";
 import { PATHS } from "@repo/routes";
-import { useClientAuth } from "./context/ClientAuthContext";
 import { useCart } from "./context/CartContext";
 
 const Link = LinkComponent as any;
@@ -16,9 +15,8 @@ import {
 } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
-// i18n
-import { useLanguageStore } from "../../../apps/main/store/languageStore";
-import { headerTranslations } from "../../../apps/main/lib/translations/header";
+// i18n & State
+import { useLanguageStore, useAuthStore, headerTranslations } from "@repo/store";
 
 const Swiper = SwiperComponent as any;
 const SwiperSlide = SwiperSlideComponent as any;
@@ -99,16 +97,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   const [showFullBalance, setShowFullBalance] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
 
-  // Use the authentication context
+  // Use the shared auth store
   const {
-    clientUser: contextUser,
-    isClientAuthenticated: contextIsAuthenticated,
-    clientLoading: loading,
-    clientLogout: contextLogout,
-    clientBalance,
+    user: contextUser,
+    isAuthenticated: contextIsAuthenticated,
+    loading: contextLoading,
+    logout: contextLogout,
+    balance: contextBalance,
     refreshAuth,
     refreshBalance
-  } = useClientAuth();
+  } = useAuthStore();
 
   const { cartCount: contextCartCount } = useCart();
   const cartCount = propCartCount ?? contextCartCount;
@@ -121,8 +119,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   // Prioritize props if available, otherwise use context
   const isAuthenticated = authState ?? contextIsAuthenticated;
-  const clientUser = userData ?? contextUser;
-  const currentBalance = balance ?? clientBalance;
+  const user = userData ?? contextUser;
+  const currentBalance = balance ?? contextBalance;
 
   const legacyUploadsOrigin = process.env.NEXT_PUBLIC_ADMIN_UPLOADS_ORIGIN || "http://localhost:3001";
 
@@ -136,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     return `${legacyUploadsOrigin}/uploads/${value}`;
   };
 
-  const avatarSrc = normalizeImagePath(clientUser?.profile_picture || clientUser?.avatar);
+  const avatarSrc = normalizeImagePath(user?.profile_picture || user?.avatar);
 
   const unwrapResponse = (res: any) => res?.data ?? res;
   const normalizeNotification = (notif: any) => ({
@@ -146,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     createdAt: notif?.createdAt ?? notif?.created_at,
   });
 
-  const clientLogout = async () => {
+  const logout = async () => {
     if (logoutHandler) {
       logoutHandler();
     } else {
@@ -157,7 +155,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   // Initial client mount
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    console.log("🧭 [Header] Authenticated:", isAuthenticated, "User:", userData?.name);
+  }, [isAuthenticated, userData]);
 
   // API functions for notifications
   const fetchNotifications = useCallback(async (isLoadMore = false) => {
@@ -257,9 +256,9 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
   // Notification Socket Connection
   useEffect(() => {
-    if (isClient && isAuthenticated && clientUser?.id) {
-      console.log("🔌 Connecting to notification socket for user:", clientUser.id);
-      connectNotificationSocket(clientUser.id);
+    if (isClient && isAuthenticated && user?.id) {
+      console.log("🔌 Connecting to notification socket for user:", user.id);
+      connectNotificationSocket(user.id);
       const socket = getNotificationSocket();
 
       const handleUpdate = (data: any) => {
@@ -284,16 +283,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
         socket.off("new_notification", handleUpdate);
       };
     }
-  }, [isClient, isAuthenticated, clientUser, fetchUnreadCount, fetchNotifications, showNotificationDropdown]);
+  }, [isClient, isAuthenticated, user, fetchUnreadCount, fetchNotifications, showNotificationDropdown]);
 
   // Handle logout
   const handleLogout = async () => {
-    await clientLogout();
+    await logout();
   };
 
   // Get user initials for avatar fallback
   const getUserInitials = (name?: string) => {
-    const userName = name || clientUser?.name;
+    const userName = name || user?.name;
     if (userName) {
       return userName
         .split(" ")
@@ -654,12 +653,12 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                                 </div>
                                 <div className="overflow-hidden">
                                   <p className="mb-0 font-bold truncate" style={{ fontSize: '16px', letterSpacing: '0.2px' }}>
-                                    {clientUser?.name || 'User Name'}
+                                    {user?.name || 'User Name'}
                                   </p>
                                   <div className="flex items-center gap-1 opacity-90">
                                     <i className="fa-solid fa-envelope" style={{ fontSize: '10px' }} />
                                     <p className="mb-0 truncate" style={{ fontSize: '11px' }}>
-                                      {clientUser?.email || clientUser?.phone || 'Verified Profile'}
+                                      {user?.email || user?.phone || 'Verified Profile'}
                                     </p>
                                   </div>
                                 </div>
@@ -721,19 +720,27 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     </div>
                   ) : (
                     <div className="flex gap-3">
-                      <Link
+                      <a
                         href={PATHS.SIGN_IN}
-                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
+                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(PATHS.SIGN_IN);
+                        }}
                       >
                         {t.signIn}
-                      </Link>
+                      </a>
 
-                      <Link
+                      <a
                         href={PATHS.REGISTER}
-                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95"
+                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(PATHS.REGISTER);
+                        }}
                       >
                         {t.register}
-                      </Link>
+                      </a>
                     </div>
                   )}
                 </div>

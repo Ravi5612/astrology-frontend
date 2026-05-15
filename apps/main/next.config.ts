@@ -96,7 +96,7 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
-    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543").replace(/\/+$/, "").replace(/\/api\/v1\/?$/i, "");
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:6543').replace(/\/+$/, "").replace(/\/api\/v1\/?$/i, "");
     return [
       {
         source: "/api/v1/:path*",

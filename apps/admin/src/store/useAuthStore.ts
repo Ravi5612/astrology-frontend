@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 import { getErrorMessage } from "@repo/lib";
 
 interface User {
@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     logout: async () => {
         try {
-            const { adminLogoutAction } = await import("@/src/actions/auth");
+            const { adminLogoutAction } = await import("@/actions/auth");
             await adminLogoutAction();
             await api.post('/auth/logout');
         } catch (err) {

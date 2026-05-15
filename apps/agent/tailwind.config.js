@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
-        "./app/**/*.{js,ts,jsx,tsx,mdx}",
-        "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./components/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/**/*.{js,ts,jsx,tsx,mdx}",
-        // ── REQUIRED: scan shared UI package so StatsCard hover, animations compile ──
         "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {

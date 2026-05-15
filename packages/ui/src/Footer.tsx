@@ -2,8 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { PATHS, URLS } from "@repo/routes";
-import { useLanguageStore } from "../../../apps/main/store/languageStore";
-import { footerTranslations } from "../../../apps/main/lib/translations/footer";
+import { useLanguageStore, footerTranslations } from "@repo/store";
 
 const Footer: React.FC = () => {
   const { lang } = useLanguageStore();

@@ -1,4 +1,4 @@
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 
 export const getUsers = async (params?: { page?: number; limit?: number; search?: string }): Promise<[any | null, any | null]> => {
   return await api.get("/admin/users", { params });

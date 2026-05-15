@@ -13,7 +13,6 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/safe-fetch": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "^19.2.3",
@@ -25,6 +24,8 @@
   "dependencies": {
     "@repo/lib": "workspace:*",
     "@repo/routes": "workspace:*",
+    "@repo/safe-fetch": "workspace:*",
+    "@repo/store": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.473.0",

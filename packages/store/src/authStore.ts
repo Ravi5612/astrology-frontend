@@ -1,0 +1,150 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { api } from "@repo/lib";
+
+export interface ClientUser {
+    id: number;
+    uid?: string;
+    name?: string;
+    email?: string;
+    role?: string;
+    roles?: string[];
+    avatar?: string;
+    profile_picture?: string;
+    phone?: string;
+}
+
+interface AuthState {
+    user: ClientUser | null;
+    balance: number;
+    loading: boolean;
+    isAuthenticated: boolean;
+
+    // Actions
+    login: (userData?: ClientUser) => void;
+    logout: () => Promise<void>;
+    refreshAuth: () => Promise<void>;
+    refreshBalance: () => Promise<void>;
+    updateUser: (data: Partial<ClientUser>) => void;
+}
+
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set, get) => ({
+            user: null,
+            balance: 0,
+            loading: true,
+            isAuthenticated: false,
+
+            login: (userData?: ClientUser) => {
+                if (userData) {
+                    set({ user: userData, isAuthenticated: true, loading: false });
+                } else {
+                    set({ isAuthenticated: true, loading: false });
+                }
+                get().refreshBalance();
+                if (!userData) {
+                    get().refreshAuth();
+                }
+            },
+
+            logout: async () => {
+                set({
+                    user: null,
+                    isAuthenticated: false,
+                    loading: false,
+                    balance: 0,
+                });
+
+                try {
+                    await api.post('/auth/logout');
+                } catch {
+                    // Silently fail logout cleanup
+                }
+
+                if (typeof window !== "undefined") {
+                    // Use a more standard way for shared package
+                    window.location.href = "/?_logout=1";
+                }
+            },
+
+            refreshBalance: async () => {
+                const [res, error] = await api.get<any>('/wallet/balance');
+                if (error) return;
+
+                const raw = res?.data ?? res;
+                let parsed = 0;
+                if (typeof raw === "number") {
+                    parsed = raw;
+                } else if (typeof raw === "string") {
+                    const n = Number(raw);
+                    parsed = Number.isFinite(n) ? n : 0;
+                } else if (raw && typeof raw === "object") {
+                    const candidate = raw.balance ?? raw.amount ?? raw.walletBalance;
+                    const n = Number(candidate);
+                    parsed = Number.isFinite(n) ? n : 0;
+                }
+                set({ balance: parsed });
+            },
+
+            refreshAuth: async () => {
+                if (!get().isAuthenticated) {
+                    set({ loading: true });
+                }
+
+                const [res, error] = await api.get<any>('/client/profile');
+                if (error) {
+                    set({ isAuthenticated: false, user: null, loading: false });
+                    return;
+                }
+
+                const raw = res?.data ?? res;
+                let user: ClientUser | null = null;
+
+                if (raw?.user?.id) {
+                    user = {
+                        id: raw.user.id,
+                        uid: raw.user.uid || raw.uid,
+                        name: raw.user.name,
+                        email: raw.user.email,
+                        roles: raw.user.roles || [],
+                        profile_picture: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
+                        avatar: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
+                    };
+                } else if (raw?.id) {
+                    user = {
+                        id: raw.id,
+                        uid: raw.uid,
+                        name: raw.full_name || raw.name || "User",
+                        email: raw.email || "",
+                        roles: raw.roles || [],
+                        profile_picture: raw.profile_picture || raw.avatar,
+                        avatar: raw.profile_picture || raw.avatar,
+                    };
+                }
+
+                if (user) {
+                    set({
+                        user: { ...(get().user || {}), ...user } as ClientUser,
+                        isAuthenticated: true,
+                        loading: false
+                    });
+                    get().refreshBalance();
+                } else {
+                    set({ isAuthenticated: false, user: null, loading: false });
+                }
+            },
+
+            updateUser: (data: Partial<ClientUser>) => {
+                const current = get().user;
+                if (current) {
+                    set({ user: { ...current, ...data } });
+                }
+            },
+        }),
+        {
+            name: "astrology-auth-storage",
+            partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+        }
+    )
+);

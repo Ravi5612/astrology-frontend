@@ -14,12 +14,12 @@ export const PATHS = {
   FREE_SERVICES: "/free-services",
   ONLINE_PUJA: "/online-puja",
   CART: "/cart",
-  CHECKOUT: "/checkout",
-  PROFILE: "/profile",
+  CHECKOUT: "/client/checkout",
+  PROFILE: "/client/profile",
   SIGN_IN: "/sign-in",
   REGISTER: "/register",
   HELP: "/help",
-  SESSION_HISTORY: "/session-history",
+  SESSION_HISTORY: "/client/session-history",
   FAMOUS_PLACES: "/famous-places",
   BLOG: "/blog",
 
@@ -28,7 +28,8 @@ export const PATHS = {
   TERMS_AND_CONDITIONS: "/terms-and-conditions",
   COPYRIGHT: "/copyright",
 
-  WALLET: "/wallet",
+  WALLET: "/client/wallet",
+  SETTINGS: "/client/settings",
 
   // FREE CALCULATORS
   PLANET: "/calculator/planet",

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { safeFetch } from "@repo/safe-fetch";
 import { toast } from "react-toastify";
-import { useClientAuth } from "./ClientAuthContext";
+import { useAuthStore } from "@repo/store";
 import { getErrorMessage } from "@repo/lib";
 
 // Define Types
@@ -43,38 +43,10 @@ const CartContext = createContext<CartContextType>({
     refreshCart: async () => { },
 });
 
-// Resolve to relative API paths (proxied via Next.js rewrite)
-function cartUrl(path: string): string {
-    return `/api/v1${path.startsWith("/") ? "" : "/"}${path}`;
-}
-
-async function cartFetch<T>(
-    path: string,
-    method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-    body?: Record<string, unknown>,
-    params?: Record<string, string | number>
-): Promise<T> {
-    let url = cartUrl(path);
-    if (params) {
-        const qs = new URLSearchParams(
-            Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
-        ).toString();
-        url = `${url}?${qs}`;
-    }
-
-    const [data, error] = await safeFetch<T>(url, {
-        method,
-        credentials: "include",
-        headers: body ? { "Content-Type": "application/json" } : undefined,
-        ...(body ? { body: JSON.stringify(body) } : {}),
-    } as any);
-
-    if (error) throw error;
-    return data as T;
-}
+import { api } from "@repo/lib";
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-    const { isClientAuthenticated } = useClientAuth();
+    const { isAuthenticated } = useAuthStore();
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -86,13 +58,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Fetch Cart
     const fetchCart = useCallback(async () => {
-        if (!isClientAuthenticated) {
+        if (!isAuthenticated) {
             setCartItems([]);
             return;
         }
         try {
             setIsLoading(true);
-            const res = await cartFetch<any>("/cart", "GET", undefined, { _t: new Date().getTime() });
+            const [res, error] = await api.get<any>("/cart", { params: { _t: new Date().getTime() } });
+            if (error) throw error;
             const rawItems = res?.items || (Array.isArray(res) ? res : []);
             const items = rawItems.map((item: any) => ({
                 ...item,
@@ -104,7 +77,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [isClientAuthenticated]);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         fetchCart();
@@ -112,13 +85,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Add to Cart
     const addToCart = async (productId: number, quantity: number = 1) => {
-        if (!isClientAuthenticated) {
+        if (!isAuthenticated) {
             toast.error("Please login to add items to cart");
             return;
         }
         try {
             setIsLoading(true);
-            await cartFetch("/cart/add", "POST", { productId, quantity });
+            const [_, error] = await api.post("/cart/add", { productId, quantity });
+            if (error) throw error;
             // @ts-ignore
             toast.success("Added to cart! Click to view", {
                 onClick: () => window.location.href = '/cart',
@@ -156,7 +130,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
         debouncedUpdate.current[productId] = setTimeout(async () => {
             try {
-                await cartFetch("/cart/update", "PUT", { productId, quantity });
+                const [_, error] = await api.put("/cart/update", { productId, quantity });
+                if (error) throw error;
             } catch (error: any) {
                 toast.error(getErrorMessage(error) || "Failed to update quantity");
                 await fetchCart(); // Revert on error
@@ -169,7 +144,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     // Remove Item
     const removeFromCart = async (productId: number) => {
         try {
-            await cartFetch(`/cart/remove/${productId}`, "DELETE");
+            const [_, error] = await api.delete(`/cart/remove/${productId}`);
+            if (error) throw error;
             toast.success("Item removed");
             await fetchCart();
         } catch (error: any) {

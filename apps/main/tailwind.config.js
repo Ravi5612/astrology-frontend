@@ -2,9 +2,9 @@
 module.exports = {
   important: true,
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./libs/**/*.{js,ts,jsx,tsx}",
+    "./src/app/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./src/libs/**/*.{js,ts,jsx,tsx}",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx}" // Point to packages/ui
   ],
   darkMode: "class",

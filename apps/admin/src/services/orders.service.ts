@@ -26,7 +26,7 @@ export interface Order {
     };
 }
 
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 
 export const OrderService = {
     getAllOrders: async (): Promise<[any | null, any | null]> => {

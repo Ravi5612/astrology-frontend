@@ -1,4 +1,4 @@
-import { api } from "@/src/lib/api";
+import { api } from "@/lib/api";
 import type { Agent, AgentListing, Commission, AgentStats } from "@/app/components/agent/agent";
 import {
     MOCK_AGENTS,
