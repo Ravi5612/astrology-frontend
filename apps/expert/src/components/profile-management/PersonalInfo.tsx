@@ -16,6 +16,7 @@ interface PersonalInfoProps {
     ) => void;
     onProfilePicUpdate?: (file: File) => void;
     onLanguageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    isActive?: boolean;
 }
 
 export default function PersonalInfo({
@@ -27,7 +28,8 @@ export default function PersonalInfo({
     onCancel,
     onChange,
     onProfilePicUpdate,
-    onLanguageChange
+    onLanguageChange,
+    isActive
 }: PersonalInfoProps) {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [showAddress, setShowAddress] = React.useState(false);
@@ -61,7 +63,11 @@ export default function PersonalInfo({
         if (e.target) e.target.value = "";
     };
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border-2 border-orange-400">
+        <div className={`bg-white p-4 sm:p-6 rounded-2xl shadow-lg border-2 transition-all duration-500 ${
+            isActive 
+                ? "border-orange-500 ring-4 ring-orange-500/20 shadow-2xl shadow-orange-500/10" 
+                : "border-orange-400"
+        }`}>
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 mb-4 p-2 -m-2 rounded-xl transition-colors">
                 <div
                     className="relative group shrink-0 cursor-default"

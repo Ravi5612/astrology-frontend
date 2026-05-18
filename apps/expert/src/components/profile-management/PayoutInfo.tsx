@@ -22,7 +22,7 @@ interface BankAccount {
     is_primary: boolean;
 }
 
-export default function PayoutInfo() {
+export default function PayoutInfo({ isActive }: { isActive?: boolean }) {
     const [isExpanded, setIsExpanded] = useState(true);
     const [accounts, setAccounts] = useState<BankAccount[]>([]);
     const [loading, setLoading] = useState(true);
@@ -116,21 +116,25 @@ export default function PayoutInfo() {
     };
 
     return (
-        <div className={`overflow-hidden rounded-2xl shadow-xl transition-all duration-300 border-2 ${editingAccountId ? 'border-orange-400 bg-white' : 'border-orange-400 bg-gradient-to-br from-orange-50/50 via-white to-orange-50/30'}`}>
+        <div className={`overflow-hidden rounded-2xl shadow-xl transition-all duration-300 border-2 border-orange-400 bg-white`}>
             <div
-                className={`p-4 flex justify-between items-center cursor-pointer ${editingAccountId ? 'bg-orange-600 outline-none' : 'bg-gradient-to-r from-orange-600 to-orange-500'}`}
+                className={`p-4 flex justify-between items-center cursor-pointer transition-all duration-300 select-none ${
+                    isActive 
+                        ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white' 
+                        : 'hover:bg-gray-50/50 text-gray-800'
+                }`}
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <h2 className="flex items-center text-base sm:text-lg font-bold text-white">
-                    <div className="bg-white/20 p-1.5 rounded-lg mr-2.5 backdrop-blur-sm">
-                        {/* @ts-ignore */}
-                        <CreditCard className="w-5 h-5 text-white" />
-                    </div>
+                <h2 className="flex items-center text-base sm:text-lg font-bold">
+                    <CreditCard className={`w-5 h-5 mr-2.5 ${isActive ? 'text-white' : 'text-orange-600'}`} />
                     Payout & Bank Info
                 </h2>
                 <div className="flex items-center space-x-3">
-                    {/* @ts-ignore */}
-                    {isExpanded ? <ChevronUp className="w-5 h-5 text-white/70" /> : <ChevronDown className="w-5 h-5 text-white/70" />}
+                    {isExpanded ? (
+                        <ChevronUp className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                    ) : (
+                        <ChevronDown className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                    )}
                 </div>
             </div>
 

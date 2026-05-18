@@ -28,6 +28,7 @@ interface VerificationAndDocumentsProps {
     onDeleteDocument: (id: number) => void;
     certificates: string[];
     onUploadCertificate: (file: File) => void;
+    activeSection?: string;
 }
 
 export default function VerificationAndDocuments({
@@ -38,6 +39,7 @@ export default function VerificationAndDocuments({
     onDeleteDocument,
     certificates,
     onUploadCertificate,
+    activeSection,
 }: VerificationAndDocumentsProps) {
     const aadharFrontInputRef = useRef<HTMLInputElement>(null);
     const aadharBackInputRef = useRef<HTMLInputElement>(null);
@@ -96,25 +98,31 @@ export default function VerificationAndDocuments({
     return (
         <div className="space-y-6">
             {/* Merged KYC & Documents Section */}
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-orange-400 overflow-hidden">
+            <div id="kyc-documents" className="bg-white rounded-2xl shadow-lg border-2 border-orange-400 overflow-hidden scroll-mt-24">
                 <div
-                    className="p-4 sm:p-6 flex items-start space-x-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                    className={`flex items-start space-x-3 cursor-pointer transition-all duration-300 select-none ${
+                        activeSection === 'kyc-documents'
+                            ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white p-4 sm:p-6 rounded-t-2xl shadow-md shadow-orange-500/10"
+                            : "hover:bg-gray-50 p-4 sm:p-6 text-gray-900"
+                    }`}
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                        {/* @ts-ignore */}
-                        <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-orange-600" />
+                    <div className={`p-2 rounded-lg transition-all duration-300 ${activeSection === 'kyc-documents' ? "bg-white/20 text-white" : "bg-orange-100 text-orange-600"}`}>
+                        <Shield className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+                            <h2 className="text-lg sm:text-xl font-bold mb-1">
                                 KYC Verification & Documents
                             </h2>
-                            {/* @ts-ignore */}
-                            {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                            {isExpanded ? (
+                                <ChevronUp className={`w-5 h-5 ${activeSection === 'kyc-documents' ? "text-white" : "text-gray-500"}`} />
+                            ) : (
+                                <ChevronDown className={`w-5 h-5 ${activeSection === 'kyc-documents' ? "text-white" : "text-gray-500"}`} />
+                            )}
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-600">
-                            Verify your identity to build trust. <span className="font-semibold text-gray-800">Please upload your Aadhar Card and PAN Card.</span>
+                        <p className={`text-xs sm:text-sm transition-all duration-300 ${activeSection === 'kyc-documents' ? "text-orange-50/90" : "text-gray-600"}`}>
+                            Verify your identity to build trust. <span className={`font-semibold ${activeSection === 'kyc-documents' ? "text-white" : "text-gray-800"}`}>Please upload your Aadhar Card and PAN Card.</span>
                         </p>
                     </div>
                 </div>
@@ -424,18 +432,24 @@ export default function VerificationAndDocuments({
             </div>
 
             {/* Certificates Section */}
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-orange-400 overflow-hidden">
+            <div id="certificates" className="bg-white rounded-2xl shadow-lg border-2 border-orange-400 overflow-hidden scroll-mt-24">
                 <div
-                    className="p-4 sm:p-6 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                    className={`flex items-center justify-between cursor-pointer transition-all duration-300 select-none ${
+                        activeSection === 'certificates'
+                            ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white p-4 sm:p-6 rounded-t-2xl shadow-md shadow-orange-500/10"
+                            : "hover:bg-gray-50 p-4 sm:p-6 text-gray-900"
+                    }`}
                     onClick={() => setIsCertExpanded(!isCertExpanded)}
                 >
-                    <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                        {/* @ts-ignore */}
-                        <Award className="w-5 h-5 mr-2 text-orange-600" /> Certificates
+                    <h3 className="text-lg font-bold flex items-center">
+                        <Award className={`w-5 h-5 mr-2 ${activeSection === 'certificates' ? "text-white" : "text-orange-600"}`} /> Certificates
                     </h3>
                     <div className="flex items-center space-x-2">
-                        {/* @ts-ignore */}
-                        {isCertExpanded ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                        {isCertExpanded ? (
+                            <ChevronUp className={`w-5 h-5 ${activeSection === 'certificates' ? "text-white" : "text-gray-500"}`} />
+                        ) : (
+                            <ChevronDown className={`w-5 h-5 ${activeSection === 'certificates' ? "text-white" : "text-gray-500"}`} />
+                        )}
                     </div>
                 </div>
 

@@ -69,11 +69,12 @@ export const api = {
             const success = await handleRefresh();
             if (success) return await baseApi.get<T>(url, init);
             
-            // If refresh fails, logout
+            // If refresh fails, logout and redirect to login
             const state = useAuthStore.getState();
-            if (state.isAuthenticated) {
-                state.logout();
-                toast.error("Session expired. Please login again.");
+            state.logout();
+            toast.error("Session expired. Please login again.");
+            if (typeof window !== 'undefined') {
+                window.location.href = "/sign-in?expired=1";
             }
         }
         return [res, err];
@@ -85,9 +86,10 @@ export const api = {
             if (success) return await baseApi.post<T>(url, body, init);
 
             const state = useAuthStore.getState();
-            if (state.isAuthenticated) {
-                state.logout();
-                toast.error("Session expired. Please login again.");
+            state.logout();
+            toast.error("Session expired. Please login again.");
+            if (typeof window !== 'undefined') {
+                window.location.href = "/sign-in?expired=1";
             }
         }
         return [res, err];
@@ -99,9 +101,10 @@ export const api = {
             if (success) return await baseApi.put<T>(url, body, init);
 
             const state = useAuthStore.getState();
-            if (state.isAuthenticated) {
-                state.logout();
-                toast.error("Session expired. Please login again.");
+            state.logout();
+            toast.error("Session expired. Please login again.");
+            if (typeof window !== 'undefined') {
+                window.location.href = "/sign-in?expired=1";
             }
         }
         return [res, err];
@@ -113,9 +116,10 @@ export const api = {
             if (success) return await baseApi.patch<T>(url, body, init);
 
             const state = useAuthStore.getState();
-            if (state.isAuthenticated) {
-                state.logout();
-                toast.error("Session expired. Please login again.");
+            state.logout();
+            toast.error("Session expired. Please login again.");
+            if (typeof window !== 'undefined') {
+                window.location.href = "/sign-in?expired=1";
             }
         }
         return [res, err];
@@ -127,9 +131,10 @@ export const api = {
             if (success) return await baseApi.delete<T>(url, init);
 
             const state = useAuthStore.getState();
-            if (state.isAuthenticated) {
-                state.logout();
-                toast.error("Session expired. Please login again.");
+            state.logout();
+            toast.error("Session expired. Please login again.");
+            if (typeof window !== 'undefined') {
+                window.location.href = "/sign-in?expired=1";
             }
         }
         return [res, err];

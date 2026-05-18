@@ -5,7 +5,7 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
-import { loginAction } from "@/actions/auth";
+import { loginAction, setExpiredAccessTokenAction, setExpiredRefreshTokenAction } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import { API_ROUTES as API_CONFIG } from "@/lib/api-routes";
 import { useLanguageStore } from "@repo/store";
@@ -209,6 +209,45 @@ const SignInForm: React.FC = () => {
           ) : t.signIn.submit}
         </button>
       </form>
+
+      {/* 🛠️ Developer Testing Panel (Sushant Sir's Request) */}
+      <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
+        <h4 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+          <span className="text-orange">⚡</span>
+          Sushant Sir's Token Testing Panel
+        </h4>
+        <div className="grid grid-cols-1 gap-3">
+          <button
+            type="button"
+            onClick={async () => {
+              const res = await setExpiredAccessTokenAction();
+              if (res.success) {
+                toast.success("Expired Access Token saved in cookies! (Tests silent refresh on next API call)");
+              }
+            }}
+            className="flex flex-col items-center justify-center p-3 rounded-xl border-2 border-orange/20 bg-orange/5 text-orange hover:bg-orange/10 hover:border-orange/30 transition-all text-xs font-bold text-center cursor-pointer"
+          >
+            <span className="font-extrabold text-[10px] uppercase text-orange/80 tracking-wider mb-1">Scenario A (Silent Refresh)</span>
+            Save Expired Access Token in Cookies
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const res = await setExpiredRefreshTokenAction();
+              if (res.success) {
+                toast.success("Expired Refresh Token saved! Try accessing /client/profile to test redirection.");
+              }
+            }}
+            className="flex flex-col items-center justify-center p-3 rounded-xl border-2 border-red-200 bg-red-50/50 text-red-700 hover:bg-red-50 hover:border-red-300 transition-all text-xs font-bold text-center cursor-pointer"
+          >
+            <span className="font-extrabold text-[10px] uppercase text-red-600/80 tracking-wider mb-1">Scenario B (Logout & Redirect)</span>
+            Save Expired Refresh Token in Cookies
+          </button>
+        </div>
+        <p className="text-[10px] text-gray-400 mt-2.5 text-center leading-relaxed">
+          Scenario A refreshes silently. Scenario B fails refresh and forces a secure logout redirect back here!
+        </p>
+      </div>
     </div>
   );
 };

@@ -22,6 +22,7 @@ interface PortfolioGalleryProps {
     onRemoveVideo: (index: number) => void;
     onRemoveIntro?: () => void;
     onUploadVideoFile?: (file: File) => void;
+    isActive?: boolean;
 }
 
 export default function PortfolioGallery({
@@ -40,7 +41,8 @@ export default function PortfolioGallery({
     onAddVideo,
     onRemoveVideo,
     onRemoveIntro,
-    onUploadVideoFile
+    onUploadVideoFile,
+    isActive
 }: PortfolioGalleryProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
@@ -120,20 +122,27 @@ export default function PortfolioGallery({
     const introEmbedUrl = introVideoId ? `https://www.youtube.com/embed/${introVideoId}` : introVideo;
 
     return (
-        <div className={`bg-white rounded-2xl shadow-lg border-orange/20 border-2 ${isExpanded ? 'p-4 sm:p-6' : 'p-4'}`}>
+        <div className="bg-white rounded-2xl shadow-lg border-orange-400 border-2 overflow-hidden transition-all duration-300">
             <div
-                className="flex items-center justify-between mb-4 cursor-pointer"
+                className={`flex items-center justify-between cursor-pointer transition-all duration-300 select-none ${
+                    isActive 
+                        ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white p-4 sm:p-6 shadow-md shadow-orange-500/10" 
+                        : "hover:bg-gray-50/50 p-4 sm:p-6 text-gray-900"
+                }`}
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <h2 className="text-lg font-bold text-gray-900 flex items-center">
-                    <ImageIcon className="w-5 h-5 mr-2 text-orange" /> Portfolio & Media
+                <h2 className="text-lg font-bold flex items-center">
+                    <ImageIcon className={`w-5 h-5 mr-2 ${isActive ? "text-white" : "text-orange-500"}`} /> Portfolio & Media
                 </h2>
-                {/* @ts-ignore */}
-                {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                {isExpanded ? (
+                    <ChevronUp className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-500"}`} />
+                ) : (
+                    <ChevronDown className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-500"}`} />
+                )}
             </div>
 
             {isExpanded && (
-                <>
+                <div className="p-4 sm:p-6 pt-0">
                     {/* Tabs */}
                     <div className="flex border-b border-gray-200 mb-6 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden">
                         <button
@@ -434,7 +443,7 @@ export default function PortfolioGallery({
                             )}
                         </div>
                     )}
-                </>
+                </div>
             )}
         </div>
     );

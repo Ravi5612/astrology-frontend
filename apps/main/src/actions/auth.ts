@@ -62,6 +62,54 @@ export async function logoutAction(): Promise<AuthActionResponse> {
 }
 
 // ─────────────────────────────────────────────────────────
+// DEV TESTING: Set Expired Access Token Only
+// (Tests standard silent refresh: Access token is expired, 
+//  but valid refresh token obtains a new one automatically)
+// ─────────────────────────────────────────────────────────
+export async function setExpiredAccessTokenAction(): Promise<AuthActionResponse> {
+  const cookieStore = await cookies();
+  
+  // Set access token to an expired value
+  cookieStore.set("accessToken", "expired-access-token-placeholder", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: -3600, // already expired!
+  });
+
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────
+// DEV TESTING: Set Expired/Invalid Access & Refresh Tokens
+// (Tests logout/redirection flow: Refresh token is expired 
+//  and api call fails with 401, triggering redirect to login)
+// ─────────────────────────────────────────────────────────
+export async function setExpiredRefreshTokenAction(): Promise<AuthActionResponse> {
+  const cookieStore = await cookies();
+  
+  // Set both to already expired / invalid placeholders
+  cookieStore.set("accessToken", "expired-access-token-placeholder", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: -3600, // already expired!
+  });
+
+  cookieStore.set("refreshToken", "expired-refresh-token-placeholder", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: -3600, // already expired!
+  });
+
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────
 // REGISTER — Calls backend via api (Server-Side Only)
 // ─────────────────────────────────────────────────────────
 export async function registerAction(registerData: RegisterFormData): Promise<AuthActionResponse> {
