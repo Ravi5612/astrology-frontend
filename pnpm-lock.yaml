@@ -605,6 +605,12 @@ importers:
 
   packages/store:
     dependencies:
+      '@repo/lib':
+        specifier: workspace:*
+        version: link:../lib
+      '@repo/safe-fetch':
+        specifier: workspace:*
+        version: link:../safe-fetch
       zustand:
         specifier: ^5.0.11
         version: 5.0.11(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
@@ -631,6 +637,9 @@ importers:
       '@repo/routes':
         specifier: workspace:*
         version: link:../routes
+      '@repo/safe-fetch':
+        specifier: workspace:*
+        version: link:../safe-fetch
       '@repo/store':
         specifier: workspace:*
         version: link:../store
@@ -668,9 +677,6 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@repo/safe-fetch':
-        specifier: workspace:*
-        version: link:../safe-fetch
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
