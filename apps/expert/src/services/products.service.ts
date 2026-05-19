@@ -15,15 +15,15 @@ export interface Product {
 }
 
 const fromApiProduct = (raw: any): Product => ({
-    id: String(raw?.id ?? raw?._id ?? ""),
+    id: String(raw?.id ?? ""),
     name: raw?.name || "",
-    shortDescription: raw?.short_description || raw?.shortDescription || "",
+    shortDescription: raw?.short_description || "",
     description: raw?.description || "",
     price: Number(raw?.price ?? 0),
-    originalPrice: Number(raw?.original_price ?? raw?.originalPrice ?? 0),
+    originalPrice: Number(raw?.original_price ?? 0),
     stock: Number(raw?.stock ?? 0),
-    imageUrl: raw?.image_url || raw?.imageUrl || raw?.image || "",
-    isActive: raw?.is_active ?? raw?.isActive ?? true,
+    imageUrl: raw?.image_url || "",
+    isActive: raw?.is_active ?? true,
 });
 
 const normalizeFormData = (input: FormData) => {

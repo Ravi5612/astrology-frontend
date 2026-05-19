@@ -109,19 +109,19 @@ const OurExpert = () => {
 
             const mappedData = data.map((item: any) => ({
                 id: item.id,
-                userId: item.user?.id,
+                userId: item.userId || item.user?.id,
                 image: getImageUrl(item.user?.avatar),
-                ratings: Math.round(item.rating) || 5,
+                ratings: item.ratings || 5,
                 name: item.user?.name || "Expert",
                 expertise: item.specialization || "",
                 experience: item.experience_in_years || 0,
-                language: Array.isArray(item.languages) ? item.languages.join(", ") : (item.languages || "Hindi"),
-                price: item.price ?? item.chat_price ?? 0,
+                language: Array.isArray(item.languages) ? item.languages.join(", ") : "Hindi",
+                price: item.price,
                 chat_price: item.chat_price,
                 call_price: item.call_price,
                 video_call_price: item.video_call_price,
                 is_available: item.is_available,
-                video: "https://www.youtube.com/embed/INoPh_oRooU",
+                video: item.video,
                 modalId: `modal-${item.id}`,
             }));
 

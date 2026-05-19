@@ -1,15 +1,15 @@
 import { api } from "@/lib/api";
 
 export const getUsers = async (params?: { page?: number; limit?: number; search?: string }): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/users", { params });
+  return await api.get("/admin/clients", { params });
 };
 
 export const getUserStats = async (): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/users/stats");
+  return await api.get("/admin/clients/stats");
 };
 
 export const getUserById = async (id: number): Promise<[any | null, any | null]> => {
-  return await api.get(`/admin/users/${id}`);
+  return await api.get(`/admin/clients/${id}`);
 };
 
 export const getExperts = async (params?: { page?: number; limit?: number; search?: string; status?: string }): Promise<[any | null, any | null]> => {
@@ -29,7 +29,7 @@ export const updateExpertStatus = async (id: number, data: { status: string; rea
 };
 
 export const toggleUserBlock = async (id: number, isBlocked: boolean): Promise<[any | null, any | null]> => {
-  return await api.patch(`/admin/users/${id}/block`, { isBlocked });
+  return await api.patch(`/admin/clients/${id}/block`, { isBlocked });
 };
 
 export const getDashboardStats = async (): Promise<[any | null, any | null]> => {
@@ -83,11 +83,11 @@ export const assignCouponBulk = async (data: { couponCode: string; filters: any 
 };
 
 export const getFilteredUsersCount = async (filters: any): Promise<[any | null, any | null]> => {
-  return await api.post("/admin/users/filter-count", filters);
+  return await api.post("/admin/clients/filter-count", filters);
 };
 
 export const getFilteredUsers = async (params: any): Promise<[any | null, any | null]> => {
-  return await api.post("/admin/users/filtered-list", params);
+  return await api.post("/admin/clients/filtered-list", params);
 };
 
 // Disputes / Support Tickets Management

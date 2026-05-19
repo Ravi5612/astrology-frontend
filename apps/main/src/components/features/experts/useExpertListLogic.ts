@@ -23,13 +23,13 @@ const getImageUrl = (path?: string) => {
 
 const mapExpert = (item: any): ClientExpertProfile => {
   const id = item.id;
-  const userId = item.user?.id || item.userId || item.user_id;
-  const name = item.user?.name || item.name || "Expert";
-  const avatar = item.user?.avatar || item.avatar || item.image;
-  const specialization = item.specialization || item.expertise || "";
-  const experience = item.experience_in_years !== undefined ? item.experience_in_years : (item.experience || 0);
-  const rating = item.rating !== undefined ? item.rating : (item.ratings || 0);
-  const isAvailable = item.is_available !== undefined ? item.is_available : (item.isAvailable || false);
+  const userId = item.userId || item.user?.id;
+  const name = item.user?.name || "Expert";
+  const avatar = item.user?.avatar;
+  const specialization = item.specialization || "";
+  const experience = item.experience_in_years || 0;
+  const rating = item.ratings || 0;
+  const isAvailable = item.is_available;
 
   return {
     id: id,
@@ -41,17 +41,17 @@ const mapExpert = (item: any): ClientExpertProfile => {
     experience: experience,
     language: Array.isArray(item.languages)
       ? item.languages.join(", ")
-      : item.user?.language || item.language || "Hindi",
+      : "Hindi",
     price: item.price || 0,
-    chat_price: item.chat_price || item.chatPrice,
-    call_price: item.call_price || item.callPrice,
-    video_call_price: item.video_call_price || item.videoCallPrice,
-    report_price: item.report_price || item.reportPrice,
-    horoscope_price: item.horoscope_price || item.horoscopePrice,
+    chat_price: item.chat_price,
+    call_price: item.call_price,
+    video_call_price: item.video_call_price,
+    report_price: item.report_price,
+    horoscope_price: item.horoscope_price,
     video: item.video || "",
     modalId: `home-modal-${id}`,
     is_available: isAvailable,
-    total_likes: item.total_likes || item.totalLikes || 0,
+    total_likes: item.total_likes || 0,
     custom_services: Array.isArray(item.custom_services)
       ? item.custom_services
       : typeof item.custom_services === "string"

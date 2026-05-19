@@ -62,13 +62,13 @@ function CallPrepContent() {
                     image: data.user?.avatar || "/images/dummy-expert.jpg",
                     expertise: data.specialization || "",
                     experience: data.experience_in_years || 0,
-                    price: data.price || 0,
+                    price: data.price,
                     chat_price: data.chat_price,
                     call_price: data.call_price,
                     video_call_price: data.video_call_price,
                     languages: data.languages || [],
-                    rating: data.rating || 5,
-                    is_available: data.isAvailable ?? data.is_available ?? false,
+                    rating: data.rating,
+                    is_available: data.is_available,
                 });
             } else {
                 setExpert(null);

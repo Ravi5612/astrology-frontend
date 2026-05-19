@@ -227,10 +227,9 @@ const ProfileManagement = () => {
                 </div>
             </div>
 
-            {/* Verification Status Alerts */}
             {(() => {
-                const kycStatus = (authUser?.kycStatus || authUser?.status || "").toString().toLowerCase();
-                const reason = authUser?.rejectionReason || authUser?.profile_expert?.rejectionReason;
+                const kycStatus = (fetchedProfile?.kycStatus || authUser?.kyc_status || authUser?.status || "").toString().toLowerCase();
+                const reason = authUser?.rejection_reason || authUser?.rejectionReason || "";
                 const isApproved = kycStatus === 'active' || kycStatus === 'approved';
                 const isRejected = kycStatus === 'rejected' || (kycStatus === 'pending' && !!reason);
 

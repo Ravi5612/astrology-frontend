@@ -125,23 +125,23 @@ const WishlistGrid: React.FC = () => {
                                 >
                                     <ExpertCard
                                         expertData={{
-                                            id: expert?.id || item.expertId,
-                                            userId: (expert as any)?.userId || expert?.id,
+                                            id: expert?.id,
+                                            userId: (expert as any)?.userId,
                                             image: getProductImageUrl({ imageUrl: avatar }),
                                             name: name,
-                                            expertise: (expert as any)?.specialization || (expert as any)?.expertise || "",
-                                            experience: (expert as any)?.experience_in_years || (expert as any)?.experience || 5,
+                                            expertise: (expert as any)?.specialization || "",
+                                            experience: (expert as any)?.experience_in_years || 0,
                                             language: Array.isArray((expert as any)?.languages)
                                                 ? (expert as any).languages.join(", ")
-                                                : ((expert as any)?.language || "Hindi, English"),
-                                            price: (expert as any)?.price || 0,
+                                                : "Hindi",
+                                            price: (expert as any)?.price,
                                             chat_price: (expert as any)?.chat_price,
                                             call_price: (expert as any)?.call_price,
                                             video_call_price: (expert as any)?.video_call_price,
-                                            video: (expert as any)?.video || "",
-                                            ratings: (expert as any)?.rating || (expert as any)?.ratings || 5,
-                                            is_available: (expert as any)?.is_available ?? true,
-                                            total_likes: (expert as any)?.total_likes || 0
+                                            video: (expert as any)?.video,
+                                            ratings: (expert as any)?.ratings,
+                                            is_available: (expert as any)?.is_available,
+                                            total_likes: (expert as any)?.total_likes
                                         }}
                                     />
                                 </div>

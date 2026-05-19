@@ -75,13 +75,13 @@ export const useProfileOrdersHistoryLogic = (
                 // Map backend fields to frontend expected ones for a logic-less UI
                 const mappedSessions = sessions.map((s: any) => ({
                     ...s,
-                    expert_name: s.expert_name ?? s.expert?.user?.name ?? "Astro Expert",
-                    expert_image: s.expert_image ?? s.expert?.user?.avatar ?? s.expert?.user?.profile_picture ?? "/images/dummy-expert.jpg",
-                    expert_category: s.expert_category ?? s.expert?.category ?? s.expert?.specialization ?? "Expert Expert",
-                    rating: s.rating ?? s.metadata?.rating ?? 0,
-                    total_cost: s.amount ?? s.total_cost,
-                    createdAt: s.startTime ?? s.createdAt ?? s.created_at,
-                    durationString: s.durationString ?? (s.duration ? `${Math.floor(s.duration / 60)}m ${s.duration % 60}s` : "0s")
+                    expert_name: s.expert_name || "Astro Expert",
+                    expert_image: s.expert_image || "/images/dummy-expert.jpg",
+                    expert_category: s.expert_category || "Expert Expert",
+                    rating: s.rating || 0,
+                    total_cost: s.total_cost || s.amount || 0,
+                    createdAt: s.startTime || s.createdAt || s.created_at,
+                    durationString: s.durationString || "0s"
                 }));
 
                 if (pageNumber === 1) {

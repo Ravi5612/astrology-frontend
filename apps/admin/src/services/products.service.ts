@@ -13,16 +13,16 @@ export interface Product {
 }
 
 const fromApiProduct = (raw: any): Product => ({
-    id: raw?.id ?? raw?._id,
+    id: raw?.id ? String(raw.id) : "",
     _id: raw?._id,
     name: raw?.name || "",
     description: raw?.description || "",
     price: Number(raw?.price ?? 0),
-    originalPrice: Number(raw?.originalPrice ?? raw?.original_price ?? 0),
-    imageUrl: raw?.imageUrl || raw?.image_url || raw?.image || "",
-    isActive: raw?.isActive ?? raw?.is_active ?? true,
-    expert_id: raw?.expert_id ?? raw?.expertId,
-    merchant_id: raw?.merchant_id ?? raw?.merchantId,
+    originalPrice: Number(raw?.original_price ?? 0),
+    imageUrl: raw?.image_url || raw?.image || "",
+    isActive: raw?.is_active ?? true,
+    expert_id: raw?.expert_id,
+    merchant_id: raw?.merchant_id,
     category: raw?.category,
 });
 

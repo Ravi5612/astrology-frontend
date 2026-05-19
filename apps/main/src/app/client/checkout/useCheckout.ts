@@ -113,13 +113,8 @@ export const useCheckout = () => {
     }
 
     const data = res.data || res;
-    const disc =
-      data.discountAmount ??
-      data.discount_amount ??
-      data.discount ??
-      data.value;
-    const isSuccess =
-      data.success ?? data.is_valid ?? data.isValid ?? disc !== undefined;
+    const disc = data.discountAmount;
+    const isSuccess = data.success;
 
     if (isSuccess && disc !== undefined) {
       setDiscountAmount(Number(disc));

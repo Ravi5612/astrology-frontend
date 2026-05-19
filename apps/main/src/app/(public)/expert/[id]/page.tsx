@@ -6,22 +6,15 @@ import { api } from "@/lib/api";
 import { getErrorMessage } from "@repo/lib";
 
 const normalizeProduct = (raw: any): Product => {
-  const images = Array.isArray(raw?.images) ? raw.images : [];
-  const firstImage = images[0];
-  const firstImageUrl =
-    typeof firstImage === "string"
-      ? firstImage
-      : firstImage?.secure_url || firstImage?.url || firstImage?.image || "";
-
   return {
-    id: raw?.id ?? raw?._id,
+    id: raw?.id || raw?._id,
     _id: raw?._id,
     name: raw?.name || "",
     description: raw?.description || "",
-    price: Number(raw?.price ?? raw?.sale_price ?? 0),
-    originalPrice: Number(raw?.originalPrice ?? raw?.original_price ?? raw?.price ?? 0),
-    imageUrl: raw?.secure_url || raw?.imageUrl || raw?.image_url || raw?.image || firstImageUrl || "",
-    percentageOff: Number(raw?.percentageOff ?? raw?.percentage_off ?? 0),
+    price: Number(raw?.price || 0),
+    originalPrice: Number(raw?.originalPrice || 0),
+    imageUrl: raw?.imageUrl || "",
+    percentageOff: Number(raw?.percentageOff || 0),
   };
 };
 
@@ -56,23 +49,23 @@ export default async function Page({
     // Normalize expert
     const expert = {
       id: expertData.id,
-      userId: expertData.user_id || expertData.userId || expertData.user?.id,
-      name: expertData.user?.name || expertData.name || "Expert",
-      image: expertData.user?.avatar || expertData.avatar || expertData.image || "/images/dummy-expert.jpg",
-      expertise: expertData.specialization || expertData.expertise || "",
-      experience: expertData.experience_in_years !== undefined ? expertData.experience_in_years : (expertData.experience || 0),
+      userId: expertData.userId || expertData.user_id,
+      name: expertData.user?.name || "Expert",
+      image: expertData.user?.avatar || "/images/dummy-expert.jpg",
+      expertise: expertData.specialization || "",
+      experience: expertData.experience_in_years || 0,
       language: Array.isArray(expertData.languages)
         ? expertData.languages.join(", ")
-        : expertData.user?.language || expertData.language || "Hindi, English",
-      price: expertData.price || 0,
-      video: expertData.video || "https://www.youtube.com/embed/INoPh_oRooU",
-      ratings: expertData.rating !== undefined ? Math.round(expertData.rating) : (expertData.ratings ? Math.round(expertData.ratings) : 5),
-      bio: expertData.bio || "",
-      detailed_experience: expertData.detailed_experience || expertData.detailedExperience || [],
-      gallery: expertData.gallery || [],
-      videos: expertData.videos || [],
-      total_likes: expertData.total_likes || expertData.totalLikes || 0,
-      is_available: expertData.isAvailable ?? expertData.is_available ?? false,
+        : "Hindi, English",
+      price: expertData.price,
+      video: expertData.video,
+      ratings: expertData.ratings,
+      bio: expertData.bio,
+      detailed_experience: expertData.detailed_experience,
+      gallery: expertData.gallery,
+      videos: expertData.videos,
+      total_likes: expertData.total_likes,
+      is_available: expertData.is_available,
     };
 
     // Normalize products (empty array if fetch failed)

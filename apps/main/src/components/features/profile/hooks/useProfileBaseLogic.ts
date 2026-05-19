@@ -21,7 +21,7 @@ export const normalizeAddressesForUI = (addresses?: any[]) => {
     if (!Array.isArray(addresses)) return addresses;
     return addresses.map((addr: any) => ({
         ...addr,
-        zip_code: addr?.zip_code ?? addr?.zipCode ?? "",
+        zip_code: addr?.zip_code ?? "",
     }));
 };
 
@@ -257,12 +257,12 @@ export const useProfileBaseLogic = () => {
                         cleanAddr.state = addr.state;
                     if (addr.country !== undefined && addr.country !== "")
                         cleanAddr.country = addr.country;
-                    const zipVal = addr.zip_code ?? addr.zipCode;
+                    const zipVal = addr.zip_code;
                     if (zipVal !== undefined && zipVal !== "")
                         cleanAddr.zip_code = zipVal;
                     if (addr.pincode !== undefined && addr.pincode !== "")
                         cleanAddr.pincode = addr.pincode;
-                    const primaryVal = addr.is_primary ?? addr.isPrimary;
+                    const primaryVal = addr.is_primary;
                     if (primaryVal !== undefined) cleanAddr.is_primary = primaryVal;
                     if (addr.tag !== undefined) cleanAddr.tag = addr.tag;
                     return cleanAddr;

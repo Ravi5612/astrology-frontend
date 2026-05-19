@@ -5,6 +5,7 @@ import { StatsCards } from "@repo/ui";
 import { CouponCard } from "@/app/components/coupons/CouponCard";
 import { Button } from "@repo/ui";
 import { getCoupons, getCouponStats } from "@/services/admin.service";
+import { getErrorMessage } from "@repo/lib/utils/error";
 import { toast } from "react-toastify";
 
 const CreateCoupon = lazy(() => import("@/app/components/coupons/CreateCoupon"));
@@ -46,18 +47,17 @@ export default function CouponsPage() {
 
     const rawCoupons = Array.isArray(data) ? data : ((data as any)?.data || []);
 
-    // Map backend snake_case to frontend camelCase expected by CouponCard
     const mappedCoupons = rawCoupons.map((c: any) => {
       const isActuallyExpired = c.expiry_date && new Date(c.expiry_date) < new Date();
       return {
         ...c,
         status: isActuallyExpired ? 'expired' : (c.status || 'active'),
-        minOrderValue: c.min_order_value ?? c.minOrderValue,
-        maxDiscount: c.max_discount ?? c.maxDiscount,
-        maxUsageLimit: c.max_usage_limit ?? c.maxUsageLimit,
-        redemptionsCount: c.usage_count ?? c.redemptionsCount,
-        expiryDate: c.expiry_date ?? c.expiryDate,
-        isActive: isActuallyExpired ? false : (c.is_active ?? c.isActive)
+        minOrderValue: c.min_order_value || 0,
+        maxDiscount: c.max_discount || 0,
+        maxUsageLimit: c.max_usage_limit || 0,
+        redemptionsCount: c.usage_count || 0,
+        expiryDate: c.expiry_date || null,
+        isActive: isActuallyExpired ? false : (c.is_active ?? true)
       };
     });
 

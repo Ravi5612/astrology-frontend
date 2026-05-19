@@ -8,12 +8,12 @@ export const getWalletBalance = async (): Promise<[WalletStatsData | null, ApiEr
 
     // Normalize snake_case to camelCase
     return [{
-        availableBalance: data.availableBalance ?? data.available_balance ?? 0,
-        totalWithdrawn: data.totalWithdrawn ?? data.total_withdrawn ?? 0,
-        pendingApproval: data.pendingAmount ?? data.pending_amount ?? 0,
-        processing: (Number(data.processingAmount || 0) + Number(data.approvedAmount || 0)) || 0,
-        totalEarnings: data.totalEarnings ?? data.total_earnings ?? 0,
-        balanceTrend: data.balance_trend ?? data.balanceTrend ?? 0
+        availableBalance: data.availableBalance ?? 0,
+        totalWithdrawn: data.totalWithdrawn ?? 0,
+        pendingApproval: data.pendingApproval ?? 0,
+        processing: data.processing ?? 0,
+        totalEarnings: data.totalEarnings ?? 0,
+        balanceTrend: data.balanceTrend ?? 0
     }, null];
 };
 
