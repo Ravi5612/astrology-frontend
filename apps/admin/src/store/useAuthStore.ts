@@ -91,7 +91,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 throw new Error("No user data");
             }
         } catch (err: any) {
-            console.error("Auth refresh failed:", getErrorMessage(err));
+            if (err?.status !== 401) {
+                console.error("Auth refresh failed:", getErrorMessage(err));
+            }
             set({ isAuthenticated: false, user: null, loading: false });
         } finally {
             clearTimeout(safetyTimeout);

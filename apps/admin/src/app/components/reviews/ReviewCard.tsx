@@ -21,7 +21,7 @@ import { getErrorMessage } from "@repo/lib";
 import { Send, CheckCircle2, XCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@repo/ui";
 
-export function ReviewCard({ review, isLast }: ReviewCardProps) {
+export function ReviewCard({ review, isLast, onUpdate }: ReviewCardProps) {
   const [adminMessage, setAdminMessage] = React.useState("");
   const [sending, setSending] = React.useState(false);
 

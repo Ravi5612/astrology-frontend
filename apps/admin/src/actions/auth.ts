@@ -14,7 +14,11 @@ export const api = createSafeFetchInstance({
 });
 
 export async function adminLoginAction(formData: any) {
-    const [data, error] = await api.post<any>(`/auth/email/login`, formData);
+    // requiredRole backend ko bhejna zaroori hai taaki role validate ho sake
+    const [data, error] = await api.post<any>(`/auth/email/login`, {
+        ...formData,
+        requiredRole: 'admin',
+    });
 
     if (error) {
         return { error: getErrorMessage(error) };
@@ -24,7 +28,7 @@ export async function adminLoginAction(formData: any) {
     const isAdmin =
         data?.user?.role === 'admin' ||
         data?.user?.roles?.some(
-            (r: any) => (typeof r === 'string' ? r : r.name).toUpperCase() === "ADMIN"
+            (r: any) => (typeof r === 'string' ? r : r.name).toLowerCase() === "admin"
         );
 
     if (!isAdmin) {
@@ -33,24 +37,25 @@ export async function adminLoginAction(formData: any) {
 
     // Set httpOnly cookies
     const cookieStore = await cookies();
+    const isProduction = process.env.NODE_ENV === 'production';
 
     if (data.accessToken) {
         cookieStore.set("accessToken", data.accessToken, {
             httpOnly: true,
-            secure: true, // Required for SameSite=None
-            sameSite: "none", // Allow cross-domain cookies
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             path: "/",
-            maxAge: 60 * 60 * 24 * 7, // 7 days
+            maxAge: 60 * 15, // 15 minutes
         });
     }
 
     if (data.refreshToken) {
         cookieStore.set("refreshToken", data.refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
+            maxAge: 60 * 60 * 24 * 7, // 7 days
         });
     }
 

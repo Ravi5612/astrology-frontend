@@ -33,15 +33,27 @@ export const getAgentProfileModalProps = (agent: Agent) => ({
     checklist: [
         { label: "Email", isComplete: !!agent.email, value: agent.email },
         { label: "Phone", isComplete: !!agent.phone, value: agent.phone },
-        { label: "Location", isComplete: !!agent.city, value: agent.city ? `${agent.city}, ${agent.state}` : "—" },
-        { label: "Address", isComplete: !!agent.address, value: agent.address || "—" },
+        { 
+            label: "Location", 
+            isComplete: !!(typeof agent.address === "object" && agent.address ? (agent.address as any).city : agent.city), 
+            value: (typeof agent.address === "object" && agent.address)
+                ? `${(agent.address as any).city || ""}, ${(agent.address as any).state || ""}`
+                : (agent.city ? `${agent.city}, ${agent.state}` : "—")
+        },
+        { 
+            label: "Address", 
+            isComplete: !!(typeof agent.address === "object" && agent.address ? (agent.address as any).address : agent.address), 
+            value: (typeof agent.address === "object" && agent.address)
+                ? ((agent.address as any).address || "—")
+                : (agent.address || "—")
+        },
         { label: "Bank Name", isComplete: !!agent.bank_name, value: agent.bank_name || "—" },
         { label: "Account No.", isComplete: !!agent.account_number, value: agent.account_number || "—" },
         { label: "IFSC Code", isComplete: !!agent.ifsc_code, value: agent.ifsc_code || "—" },
         { label: "UPI ID", isComplete: !!agent.upi_id, value: agent.upi_id || "—" },
-        { label: "Commission (Expert)", isComplete: true, value: `${agent.commission_expert}%` },
-        { label: "Commission (Mandir)", isComplete: true, value: `${agent.commission_mandir}%` },
-        { label: "Commission (Puja Shop)", isComplete: true, value: `${agent.commission_puja_shop}%` },
+        { label: "Commission (Expert)", isComplete: true, value: `${agent.commission_expert ?? agent.commission_rate ?? 0}%` },
+        { label: "Commission (Mandir)", isComplete: true, value: `${agent.commission_mandir ?? agent.commission_rate ?? 0}%` },
+        { label: "Commission (Puja Shop)", isComplete: true, value: `${agent.commission_puja_shop ?? agent.commission_rate ?? 0}%` },
         { label: "Total Listings", isComplete: agent.total_listings > 0, value: String(agent.total_listings) },
         { label: "Total Earned", isComplete: agent.total_earned > 0, value: `₹${agent.total_earned.toLocaleString("en-IN")}` },
         { label: "Pending Payout", isComplete: agent.pending_payout > 0, value: `₹${agent.pending_payout.toLocaleString("en-IN")}` },

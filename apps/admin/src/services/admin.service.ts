@@ -90,9 +90,13 @@ export const getFilteredUsers = async (params: any): Promise<[any | null, any | 
   return await api.post("/admin/clients/filtered-list", params);
 };
 
-// Disputes / Support Tickets Management
 export const getDisputes = async (params?: { page?: number; limit?: number; status?: string }): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/support/disputes", { params });
+  const queryParams = {
+    page: params?.page ?? 1,
+    limit: params?.limit ?? 10,
+    status: params?.status === "all" ? undefined : params?.status,
+  };
+  return await api.get("/admin/support/disputes", { params: queryParams });
 };
 
 export const getDisputeById = async (id: number): Promise<[any | null, any | null]> => {
@@ -139,9 +143,14 @@ export const terminateSession = async (id: number, data: { userMessage?: string;
   return await api.post(`/admin/live-sessions/${id}/terminate`, data);
 };
 
-// Payouts / Withdrawals
 export const getWithdrawals = async (params?: { page?: number; limit?: number; status?: string; role?: string }): Promise<[any | null, any | null]> => {
-  return await api.get("/admin/withdrawals", { params });
+  const queryParams = {
+    page: params?.page ?? 1,
+    limit: params?.limit ?? 10,
+    status: params?.status === "all" ? undefined : params?.status,
+    role: params?.role,
+  };
+  return await api.get("/admin/withdrawals", { params: queryParams });
 };
 
 
@@ -172,7 +181,7 @@ export const deleteReviewResource = async (id: number): Promise<[any | null, any
 };
 
 export const sendReviewResponse = async (id: number, message: string): Promise<[any | null, any | null]> => {
-  return await api.post(`/reviews/admin/${id}/response`, { message });
+  return await api.post(`/admin/reviews/${id}/response`, { message });
 };
 
 // Commission Settings

@@ -8,9 +8,37 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 /**
- * When the real API is ready, replace the mock return with the api.* call.
- * Keeping both here so switching is a one-liner.
+ * Normalizes agent data from the backend format to the frontend Agent interface.
  */
+const normalizeAgent = (raw: any): Agent => {
+    if (!raw) return raw;
+    
+    let addressVal = "";
+    let cityVal = "";
+    let stateVal = "";
+
+    if (raw.address) {
+        if (typeof raw.address === "object") {
+            addressVal = raw.address.address || "";
+            cityVal = raw.address.city || "";
+            stateVal = raw.address.state || "";
+        } else {
+            addressVal = String(raw.address);
+        }
+    }
+
+    return {
+        ...raw,
+        address: addressVal || undefined,
+        city: cityVal || raw.city || undefined,
+        state: stateVal || raw.state || undefined,
+        aadhaar_no: raw.kyc?.aadhaar_no || raw.aadhaar_no,
+        pan_no: raw.kyc?.pan_no || raw.pan_no,
+        aadhaar_doc: raw.kyc?.aadhaar_doc || raw.aadhaar_doc,
+        pan_doc: raw.kyc?.pan_doc || raw.pan_doc,
+        created_at: raw.created_at || raw.createdAt || new Date().toISOString(),
+    };
+};
 
 // ─── Agents ───────────────────────────────────────────────────────────────────
 export const getAgents = async (params?: {
@@ -28,7 +56,11 @@ export const getAgents = async (params?: {
         }
     });
     if (error) throw error;
-    return data as { data: Agent[]; total: number };
+    
+    return {
+        data: (data?.data || []).map(normalizeAgent),
+        total: data?.total || 0
+    } as { data: Agent[]; total: number };
 };
 
 export const getAgentStats = async () => {
@@ -40,7 +72,7 @@ export const getAgentStats = async () => {
 export const getAgentById = async (id: string | number) => {
     const [data, error] = await api.get<Agent>(`/admin/agents/${id}`);
     if (error) throw error;
-    return data as Agent;
+    return normalizeAgent(data);
 };
 
 export const createAgent = async (formData: FormData) => {
