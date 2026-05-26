@@ -110,7 +110,7 @@ export async function setExpiredRefreshTokenAction(): Promise<AuthActionResponse
 }
 
 // ─────────────────────────────────────────────────────────
-// REGISTER — Calls backend via api (Server-Side Only)
+// REGISTER (OLD) — Calls backend via api (Server-Side Only)
 // ─────────────────────────────────────────────────────────
 export async function registerAction(registerData: RegisterFormData): Promise<AuthActionResponse> {
   const [data, error] = await api.post<AuthResponse>(
@@ -132,6 +132,64 @@ export async function registerAction(registerData: RegisterFormData): Promise<Au
 }
 
 // ─────────────────────────────────────────────────────────
+// INITIATE REGISTRATION
+// ─────────────────────────────────────────────────────────
+export async function initiateRegistrationAction(email: string): Promise<AuthActionResponse> {
+  const [data, error] = await api.post<any>(
+    '/auth/email/register/initiate',
+    { email },
+  ) as any;
+
+  if (error) {
+    return { error: getErrorMessage(error) };
+  }
+
+  return {
+    success: true,
+    message: data?.message || "Verification email sent.",
+  };
+}
+
+// ─────────────────────────────────────────────────────────
+// COMPLETE REGISTRATION
+// ─────────────────────────────────────────────────────────
+export async function completeRegistrationAction(payload: any): Promise<AuthActionResponse> {
+  const [data, error] = await api.post<AuthResponse>(
+    '/auth/email/register/complete',
+    payload,
+  ) as any;
+
+  if (error) {
+    return { error: getErrorMessage(error) };
+  }
+
+  const cookieStore = await cookies();
+
+  if (data?.accessToken) {
+    cookieStore.set("accessToken", data.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
+
+  if (data?.refreshToken) {
+    cookieStore.set("refreshToken", data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+
+  return { success: true, user: data?.user };
+}
+
+
+// ─────────────────────────────────────────────────────────
 // VERIFY EMAIL — Calls backend, sets cookies on success
 // ─────────────────────────────────────────────────────────
 export async function verifyEmailAction(token: string): Promise<AuthActionResponse> {
@@ -145,27 +203,30 @@ export async function verifyEmailAction(token: string): Promise<AuthActionRespon
     };
   }
 
-  // Set HttpOnly cookies on the server
+  // Set HttpOnly cookies on the server, but only if they are fully registered
   const cookieStore = await cookies();
+  const isFullyRegistered = !!data?.user?.name;
 
-  if (data?.accessToken) {
-    cookieStore.set("accessToken", data.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-  }
+  if (isFullyRegistered) {
+    if (data?.accessToken) {
+      cookieStore.set("accessToken", data.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+    }
 
-  if (data?.refreshToken) {
-    cookieStore.set("refreshToken", data.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-    });
+    if (data?.refreshToken) {
+      cookieStore.set("refreshToken", data.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+      });
+    }
   }
 
   return { success: true, user: data?.user, message: data?.message };

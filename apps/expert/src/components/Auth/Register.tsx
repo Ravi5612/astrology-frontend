@@ -1,18 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback, FormEvent } from "react";
 import Head from "next/head";
 import { Lock, User, Mail, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 
 import { Button, VerificationPopup } from "@repo/ui";
-import { RegisterSchema, RegisterFormData } from "@/types/auth";
-import { expertRegisterAction } from "@/actions/auth";
+import { expertInitiateRegistrationAction, expertCompleteRegistrationAction } from "@/actions/auth";
 import { CLIENT_API_URL } from "@/lib/config";
 
 const API_URL = CLIENT_API_URL;
@@ -51,52 +48,132 @@ const BrandingSection = () => (
 );
 
 const RegisterPage: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [serverError, setServerError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showVerification, setShowVerification] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const urlToken = searchParams.get("token") || searchParams.get("verification_token");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
-  });
-
-  const onSubmit = async (data: RegisterFormData) => {
-    setLoading(true);
-    setServerError("");
-
+  const extractEmailFromToken = (token: string | null) => {
+    if (!token) return "";
     try {
-      const result = await expertRegisterAction({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-
-      if (result.success) {
-        setRegisteredEmail(data.email);
-        setShowVerification(true);
-        toast.success("Registration successful! Please verify your email.");
-      } else {
-        setServerError(result.error || "Registration failed. Please try again.");
-      }
-    } catch (err) {
-      console.error("Registration error:", err);
-      setServerError("An unexpected error occurred. Please try again later.");
-    } finally {
-      setLoading(false);
+        const parts = token.split('.');
+        if (parts.length < 2) return "";
+        const base64Url = parts[1];
+        if (!base64Url) return "";
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload)?.email || "";
+    } catch {
+        return "";
     }
   };
+
+  const [step, setStep] = useState<1 | 2 | 3>(urlToken ? 3 : 1);
+  
+  // Step 1
+  const [email, setEmail] = useState(extractEmailFromToken(urlToken));
+  
+  // Step 2
+  const [showVerification, setShowVerification] = useState(false);
+  const [verifiedToken, setVerifiedToken] = useState(urlToken || "");
+  
+  // Step 3
+  const [formData, setFormData] = useState({
+      password: "",
+      confirmPassword: "",
+      name: "",
+      phone: "",
+      gender: "other",
+      specialization: "",
+      experience_in_years: "",
+      languages: "",
+      aboutMe: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+          const { name, value } = e.target;
+          setFormData((prev) => ({
+              ...prev,
+              [name]: value,
+          }));
+      },
+      []
+  );
 
   const handleGoogleLogin = () => {
     const baseUrl = API_URL.replace(/\/api\/v1\/?$/, "");
     const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
     window.location.href = `${baseUrl}/api/v1/auth/google/login?role=expert&redirect_uri=${redirectUri}`;
+  };
+
+  const handleStep1Submit = async (e: FormEvent) => {
+      e.preventDefault();
+      if (!email) {
+          toast.error("Please enter your email");
+          return;
+      }
+
+      setIsLoading(true);
+      try {
+          const result = await expertInitiateRegistrationAction(email);
+          if (result.error) {
+              toast.error(result.error);
+          } else if (result.success) {
+              setShowVerification(true);
+          }
+      } catch {
+          toast.error("An unexpected error occurred");
+      } finally {
+          setIsLoading(false);
+      }
+  };
+
+  const handleStep3Submit = async (e: FormEvent) => {
+      e.preventDefault();
+      
+      if (formData.password.length < 6) {
+          toast.error("Password must be at least 6 characters");
+          return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+          toast.error("Passwords do not match");
+          return;
+      }
+
+      setIsLoading(true);
+
+      const payload: any = {
+          email,
+          token: verifiedToken || "temp-token",
+          password: formData.password,
+          name: formData.name,
+          phone: formData.phone,
+          gender: formData.gender,
+          specialization: formData.specialization,
+          experience_in_years: parseInt(formData.experience_in_years) || 0,
+          languages: formData.languages,
+          aboutMe: formData.aboutMe,
+      };
+
+      try {
+          const result = await expertCompleteRegistrationAction(payload);
+          if (result.error) {
+              toast.error(result.error);
+          } else if (result.success) {
+              toast.success("Expert Profile completed successfully!");
+              router.push("/dashboard");
+          }
+      } catch {
+          toast.error("An unexpected error occurred");
+      } finally {
+          setIsLoading(false);
+      }
   };
 
   return (
@@ -108,177 +185,177 @@ const RegisterPage: React.FC = () => {
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-[32px] overflow-hidden shadow-premium bg-white border border-gray-100">
         <BrandingSection />
 
-        <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
+        <div className={`p-8 sm:p-12 lg:p-16 flex flex-col ${step === 1 ? 'justify-center' : 'justify-start'} bg-white h-full overflow-y-auto max-h-[90vh] custom-scrollbar`}>
           <div className="mb-10">
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Create Account</h2>
-            <p className="mt-2 text-gray-500 font-medium">Step into your professional journey</p>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+              {step === 1 ? "Create Account" : "Complete Profile"}
+            </h2>
+            <p className="mt-2 text-gray-500 font-medium">
+              {step === 1 ? "Step into your professional journey" : "Please fill in your expert details."}
+            </p>
           </div>
 
-          {serverError && (
-            <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-              <Mail className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-bold text-red-900">Registration Failed</p>
-                <p className="text-xs text-red-700 font-medium">{serverError}</p>
+          {step === 1 && (
+              <>
+              <form onSubmit={handleStep1Submit} className="space-y-6">
+                  <div>
+                    <label htmlFor="email" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Mail className={`h-5 w-5 transition-colors text-gray-400 group-focus-within:text-orange-600`} />
+                      </div>
+                      <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                        className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 group-focus-within:border-orange-500 rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
+                        placeholder="expert@example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    loading={isLoading}
+                    fullWidth
+                    variant="primary"
+                    className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest"
+                  >
+                    {isLoading ? "Sending OTP..." : "Verify Email"}
+                  </Button>
+
+                  <div className="relative flex items-center justify-center py-2">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-100"></div>
+                    </div>
+                    <span className="relative bg-white px-4 text-xs font-black text-gray-400 uppercase tracking-tighter">Or Connect With</span>
+                  </div>
+
+                  <Button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    variant="outline"
+                    fullWidth
+                    className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 py-4 rounded-2xl transform active:scale-95 transition-all shadow-sm font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3"
+                  >
+                    <div className="relative w-5 h-5">
+                      <Image src="/images/google-color-svgrepo-com.svg" alt="Google" fill />
+                    </div>
+                    Sign up with Google
+                  </Button>
+              </form>
+              <div className="text-center mt-8">
+                <p className="text-sm text-gray-500 font-medium">
+                  Already have an account?{" "}
+                  <Link href="/" className="text-orange-600 hover:text-orange-700 font-black border-b-2 border-orange-600/20 hover:border-orange-600 transition-all ml-1">
+                    Sign In
+                  </Link>
+                </p>
               </div>
-            </div>
+              </>
           )}
 
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Full Name */}
-            <div>
-              <label htmlFor="name" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
-                Full Name
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className={`h-5 w-5 transition-colors ${errors.name ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
-                </div>
-                <input
-                  {...register("name")}
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.name ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
-                  placeholder="Enter your name"
-                />
-              </div>
-              {errors.name && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase tracking-tight">{errors.name.message}</p>}
-            </div>
+          {step === 3 && (
+              <form onSubmit={handleStep3Submit} className="space-y-6">
+                  {/* Account Info */}
+                  <div>
+                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Account Setup</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Password</label>
+                              <div className="relative">
+                                  <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowPassword(!showPassword)}>
+                                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </button>
+                              </div>
+                          </div>
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Confirm Password</label>
+                              <div className="relative">
+                                  <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
 
-            {/* Email Address */}
-            <div>
-              <label htmlFor="email" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
-                Email Address
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
-                </div>
-                <input
-                  {...register("email")}
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  className={`block w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border ${errors.email ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
-                  placeholder="expert@example.com"
-                />
-              </div>
-              {errors.email && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase tracking-tight">{errors.email.message}</p>}
-            </div>
+                  {/* Personal Details */}
+                  <div>
+                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Personal Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Full Name</label>
+                              <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                          </div>
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Phone Number</label>
+                              <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required maxLength={15} className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                          </div>
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Gender</label>
+                              <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium">
+                                  <option value="male">Male</option>
+                                  <option value="female">Female</option>
+                                  <option value="other">Other</option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
-                Password
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
-                </div>
-                <input
-                  {...register("password")}
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
-                  placeholder="Min. 6 chars (A-Z, 0-9)"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-              {errors.password && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase tracking-tight">{errors.password.message}</p>}
-            </div>
+                  {/* Professional Details */}
+                  <div>
+                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Professional Details</h3>
+                      <div className="grid grid-cols-1 gap-4">
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Specialization (e.g., Vedic, Tarot)</label>
+                              <input type="text" name="specialization" value={formData.specialization} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                  <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Experience (Years)</label>
+                                  <input type="number" min="0" name="experience_in_years" value={formData.experience_in_years} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                              </div>
+                              <div>
+                                  <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Languages Known</label>
+                                  <input type="text" name="languages" value={formData.languages} onChange={handleInputChange} placeholder="English, Hindi" className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                              </div>
+                          </div>
+                          <div className="mt-2">
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Brief Bio</label>
+                              <textarea name="aboutMe" value={formData.aboutMe} onChange={handleInputChange} rows={3} className="w-full px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium"></textarea>
+                          </div>
+                      </div>
+                  </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">
-                Confirm Password
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 transition-colors ${errors.confirmPassword ? 'text-red-400' : 'text-gray-400 group-focus-within:text-orange-600'}`} />
-                </div>
-                <input
-                  {...register("confirmPassword")}
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  className={`block w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-red-300' : 'border-gray-200 group-focus-within:border-orange-500'} rounded-2xl text-gray-900 text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`}
-                  placeholder="Confirm your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="mt-2 text-[10px] font-bold text-red-500 ml-1 uppercase tracking-tight">{errors.confirmPassword.message}</p>}
-            </div>
-
-            <div className="pt-4 space-y-4">
-              <Button
-                type="submit"
-                loading={loading}
-                fullWidth
-                variant="primary"
-                className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest"
-              >
-                Create Account
-              </Button>
-
-              <div className="relative flex items-center justify-center py-2">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-100"></div>
-                </div>
-                <span className="relative bg-white px-4 text-xs font-black text-gray-400 uppercase tracking-tighter">Or Connect With</span>
-              </div>
-
-              <Button
-                type="button"
-                onClick={handleGoogleLogin}
-                variant="outline"
-                fullWidth
-                className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 py-4 rounded-2xl transform active:scale-95 transition-all shadow-sm font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3"
-              >
-                <div className="relative w-5 h-5">
-                  <Image src="/images/google-color-svgrepo-com.svg" alt="Google" fill />
-                </div>
-                Sign up with Google
-              </Button>
-            </div>
-
-            <div className="text-center mt-8">
-              <p className="text-sm text-gray-500 font-medium">
-                Already have an account?{" "}
-                <Link href="/" className="text-orange-600 hover:text-orange-700 font-black border-b-2 border-orange-600/20 hover:border-orange-600 transition-all ml-1">
-                  Sign In
-                </Link>
-              </p>
-            </div>
-          </form>
+                  <Button
+                      type="submit"
+                      loading={isLoading}
+                      fullWidth
+                      variant="primary"
+                      className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest mt-6"
+                  >
+                      {isLoading ? "Saving Profile..." : "Complete Registration"}
+                  </Button>
+              </form>
+          )}
         </div>
       </div>
 
       <VerificationPopup
-        isOpen={showVerification}
-        email={registeredEmail}
-        onClose={() => {
-          setShowVerification(false);
-          router.push("/");
-        }}
+          isOpen={showVerification}
+          email={email}
+          onClose={() => setShowVerification(false)}
       />
     </div>
   );
 };
 
 export default RegisterPage;
-
-

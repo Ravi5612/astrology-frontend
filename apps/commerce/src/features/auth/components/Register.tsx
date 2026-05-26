@@ -1,21 +1,65 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Lock, Mail, User, Phone, Store, UserPlus, ShieldCheck, ShoppingBag, Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Lock, Mail, Phone, Store, UserPlus, ShieldCheck, ShoppingBag, Eye, EyeOff, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 
-import { RegisterSchema, RegisterFormData } from "@/types/auth";
-import { merchantRegisterAction } from "@/actions/auth";
-import { getErrorMessage } from "@repo/lib";
+import { merchantInitiateRegistrationAction, merchantCompleteRegistrationAction } from "@/actions/auth";
+import { useAuthStore } from "@/store/useAuthStore";
 import { env } from "@/lib/config/env";
+import { Button } from "@repo/ui";
 
-// ─── Branding Section (Expert Style) ─────────────────────────────────────────
+// ─── Verification Popup Component ───────────────────────────────────────────
+const VerificationPopup = ({ isOpen, email, onClose }: { isOpen: boolean; email: string; onClose: () => void }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        className="bg-white rounded-[32px] p-8 sm:p-10 max-w-md w-full shadow-2xl relative overflow-hidden"
+      >
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="flex flex-col items-center text-center">
+          <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-6 ring-8 ring-orange-50/50">
+            <Mail className="w-10 h-10 text-[#fd6410]" />
+          </div>
+          <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-3">Check Your Inbox!</h3>
+          <p className="text-gray-500 font-medium leading-relaxed mb-8">
+            We've sent a magic link to <br/>
+            <span className="font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg mt-2 inline-block border border-gray-100">
+              {email}
+            </span>
+          </p>
+
+          <Button
+            onClick={() => window.open(`https://${email.split('@')[1]}`, '_blank')}
+            variant="primary"
+            fullWidth
+            className="bg-[#fd6410] hover:bg-orange-600 py-4 rounded-2xl shadow-lg shadow-orange-500/20 font-black text-sm uppercase tracking-widest"
+          >
+            Open Mail App
+          </Button>
+
+          <p className="mt-6 text-xs font-bold text-gray-400 tracking-wider">
+            Didn't receive it? <button className="text-[#fd6410] hover:underline" onClick={onClose}>Try again</button>
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// ─── Branding Section ─────────────────────────────────────────
 
 const BrandingSection = () => (
   <div className="relative hidden lg:block h-full min-h-[600px] overflow-hidden">
@@ -77,42 +121,81 @@ const BrandingSection = () => (
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const { login } = useAuthStore();
+  
+  const token = searchParams.get("token");
+  
+  const [step, setStep] = useState(token ? 3 : 1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [serverError, setServerError] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
+  const [formData, setFormData] = useState({
+      shopName: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
-    setLoading(true);
-    setServerError("");
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    try {
-      const result = await merchantRegisterAction({
-        shopName: data.shopName,
-        email: data.email,
-        phone: data.phone,
-        password: data.password
-      });
-      
-      if (result.success) {
-        toast.success(result.message || "Account created! Welcome to Merchant Hub.");
-        router.push("/login?registered=true");
-      } else {
-        setServerError(result.error || "Registration failed. Please try again.");
+  const handleStep1Submit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email) return toast.error("Please enter your email");
+
+      setIsLoading(true);
+      try {
+          const result = await merchantInitiateRegistrationAction(email);
+          if (result.error) {
+              toast.error(result.error);
+          } else {
+              setStep(2);
+              setShowVerification(true);
+          }
+      } catch {
+          toast.error("An unexpected error occurred");
+      } finally {
+          setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Register error:", err);
-      setServerError(getErrorMessage(err) || "Could not complete registration. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  };
+
+  const handleStep3Submit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      
+      if (formData.password !== formData.confirmPassword) {
+          return toast.error("Passwords do not match!");
+      }
+
+      setIsLoading(true);
+      try {
+          const payload = {
+              token,
+              shopName: formData.shopName,
+              phone: formData.phone,
+              password: formData.password,
+          };
+
+          const result = await merchantCompleteRegistrationAction(payload);
+          
+          if (result.error) {
+              toast.error(result.error);
+          } else if (result.success) {
+              toast.success("Merchant Profile completed successfully!");
+              if (result.user) {
+                  await login("token_handled_by_cookies", result.user);
+              }
+              router.push("/dashboard");
+          }
+      } catch {
+          toast.error("An unexpected error occurred");
+      } finally {
+          setIsLoading(false);
+      }
   };
 
   const handleGoogleLogin = () => {
@@ -123,104 +206,57 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="h-screen bg-[#FFF9F4] flex items-center justify-center p-4 sm:p-6 lg:p-10 font-outfit overflow-hidden">
-      <div className="w-full max-w-6xl h-full max-h-[850px] grid grid-cols-1 lg:grid-cols-2 rounded-[40px] shadow-2xl bg-white border border-gray-100 overflow-hidden">
+      <div className="w-full max-w-5xl h-full max-h-[850px] grid grid-cols-1 lg:grid-cols-2 rounded-[32px] overflow-hidden shadow-premium bg-white border border-gray-100">
         
         {/* Branding Section */}
         <BrandingSection />
 
         {/* Form Section */}
-        <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white overflow-y-auto no-scrollbar">
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8 text-center lg:text-left"
-          >
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight">Merchant Sign Up</h2>
-            <p className="mt-2 text-gray-500 font-medium italic">Create your digital storefront today.</p>
-          </motion.div>
+        <div className={`p-8 sm:p-12 lg:p-16 flex flex-col ${step === 1 ? 'justify-center' : 'justify-start'} bg-white overflow-y-auto custom-scrollbar no-scrollbar`}>
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-4xl font-black text-gray-900 tracking-tight">
+              {step === 1 ? "Merchant Sign Up" : "Complete Profile"}
+            </h2>
+            <p className="mt-2 text-gray-500 font-medium italic underline decoration-[#fd6410]/20 underline-offset-4">
+              {step === 1 ? "Create your digital storefront today." : "Let's setup your shop details."}
+            </p>
+          </div>
 
-          <AnimatePresence>
-            {serverError && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3">
-                <ShieldCheck className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-rose-700 font-bold tracking-tight">{serverError}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
-            
-            {/* Shop Name */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Shop Name</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Store className={`h-4 w-4 transition-colors ${errors.shopName ? 'text-rose-400' : 'text-gray-300 group-focus-within:text-[#fd6410]'}`} />
-                </div>
-                <input {...register("shopName")} className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border ${errors.shopName ? 'border-rose-300' : 'border-gray-200 group-focus-within:border-[#fd6410]'} rounded-2xl text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`} placeholder="My Awesome Shop" />
-              </div>
-              {errors.shopName && <p className="text-[10px] font-bold text-rose-500 ml-1 uppercase">{errors.shopName.message}</p>}
-            </div>
-
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Work Email</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className={`h-4 w-4 transition-colors ${errors.email ? 'text-rose-400' : 'text-gray-300 group-focus-within:text-[#fd6410]'}`} />
-                </div>
-                <input {...register("email")} type="email" className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border ${errors.email ? 'border-rose-300' : 'border-gray-200 group-focus-within:border-[#fd6410]'} rounded-2xl text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`} placeholder="merchant@business.com" />
-              </div>
-              {errors.email && <p className="text-[10px] font-bold text-rose-500 ml-1 uppercase">{errors.email.message}</p>}
-            </div>
-
-            {/* Phone */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Mobile Number</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Phone className={`h-4 w-4 transition-colors ${errors.phone ? 'text-rose-400' : 'text-gray-300 group-focus-within:text-[#fd6410]'}`} />
-                </div>
-                <input {...register("phone")} className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border ${errors.phone ? 'border-rose-300' : 'border-gray-200 group-focus-within:border-[#fd6410]'} rounded-2xl text-sm focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium`} placeholder="9876543210" />
-              </div>
-              {errors.phone && <p className="text-[10px] font-bold text-rose-500 ml-1 uppercase">{errors.phone.message}</p>}
-            </div>
-
-            {/* Password */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Password</label>
+          {step === 1 && (
+              <>
+              <form onSubmit={handleStep1Submit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">
+                    Merchant Email
+                  </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className={`h-4 w-4 transition-colors ${errors.password ? 'text-rose-400' : 'text-gray-300 group-focus-within:text-[#fd6410]'}`} />
+                      <Mail className="h-5 w-5 text-gray-300 group-focus-within:text-[#fd6410] transition-colors duration-300" />
                     </div>
-                    <input {...register("password")} type={showPassword ? "text" : "password"} className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border ${errors.password ? 'border-rose-300' : 'border-gray-200 group-focus-within:border-[#fd6410]'} rounded-2xl text-sm outline-none transition-all font-medium`} placeholder="••••••" />
+                    <input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      id="email"
+                      type="email"
+                      required
+                      className="block w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-200 group-focus-within:border-[#fd6410] group-focus-within:ring-4 group-focus-within:ring-orange-500/10 rounded-2xl text-gray-900 text-sm outline-none font-medium transition-all duration-300"
+                      placeholder="shop@example.com"
+                    />
                   </div>
-               </div>
-               <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Confirm</label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <ShieldCheck className={`h-4 w-4 transition-colors ${errors.confirmPassword ? 'text-rose-400' : 'text-gray-300 group-focus-within:text-[#fd6410]'}`} />
-                    </div>
-                    <input {...register("confirmPassword")} type={showPassword ? "text" : "password"} className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border ${errors.confirmPassword ? 'border-rose-300' : 'border-gray-200 group-focus-within:border-[#fd6410]'} rounded-2xl text-sm outline-none transition-all font-medium`} placeholder="••••••" />
-                  </div>
-               </div>
-            </div>
-            {errors.confirmPassword && <p className="text-[10px] font-bold text-rose-500 ml-1 uppercase">{errors.confirmPassword.message}</p>}
+                </div>
 
-            <div className="pt-6 space-y-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#fd6410] hover:bg-orange-600 active:scale-95 disabled:opacity-70 text-white py-4.5 rounded-2xl shadow-xl shadow-orange-500/20 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group transition-all duration-300"
-              >
-                {loading ? "Creating Account..." : "Create Merchant Account"}
-                {!loading && <UserPlus className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-              </button>
+                <Button
+                  type="submit"
+                  loading={isLoading}
+                  fullWidth
+                  variant="primary"
+                  className="bg-[#fd6410] hover:bg-orange-600 py-4.5 rounded-2xl shadow-xl shadow-orange-500/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest mt-6"
+                >
+                  {isLoading ? "Sending Link..." : "Continue with Email"}
+                </Button>
+              </form>
 
-              <div className="relative flex items-center justify-center py-2">
+              <div className="relative flex items-center justify-center py-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-100"></div>
                 </div>
@@ -242,19 +278,112 @@ const RegisterPage: React.FC = () => {
                 </div>
                 Google Account
               </button>
-            </div>
 
-            <div className="text-center mt-8">
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-tight">
-                Already have a shop?{" "}
-                <Link href="/login" className="text-[#fd6410] hover:text-orange-700 transition-all underline decoration-[#fd6410]/30 underline-offset-4 decoration-2">
-                  Sign In
-                </Link>
-              </p>
-            </div>
-          </form>
+              <div className="text-center mt-10">
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-tight">
+                  Already have a shop?{" "}
+                  <Link href="/login" className="text-[#fd6410] hover:text-orange-700 transition-all underline decoration-[#fd6410]/30 underline-offset-4 decoration-2">
+                    Sign In
+                  </Link>
+                </p>
+              </div>
+              </>
+          )}
+
+          {step === 2 && (
+              <div className="text-center py-10">
+                  <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Mail className="w-10 h-10 text-orange-500" />
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900 mb-2">Check Your Email</h3>
+                  <p className="text-gray-500">We sent a verification link to<br/><strong className="text-gray-900">{email}</strong></p>
+                  <Button
+                      onClick={() => setStep(1)}
+                      variant="outline"
+                      className="mt-8 uppercase tracking-widest text-xs font-bold"
+                  >
+                      Wrong Email?
+                  </Button>
+              </div>
+          )}
+
+          {step === 3 && (
+              <form onSubmit={handleStep3Submit} className="space-y-6">
+                  {/* Account Info */}
+                  <div>
+                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Account Setup</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Password</label>
+                              <div className="relative group">
+                                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Lock className="h-4 w-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                                  </div>
+                                  <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleInputChange} required className="w-full pl-11 pr-12 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowPassword(!showPassword)}>
+                                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </button>
+                              </div>
+                          </div>
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Confirm Password</label>
+                              <div className="relative group">
+                                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <ShieldCheck className="h-4 w-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                                  </div>
+                                  <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required className="w-full pl-11 pr-12 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Shop Details */}
+                  <div>
+                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Shop Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Shop Name</label>
+                              <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                  <Store className="h-4 w-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                                </div>
+                                <input type="text" name="shopName" value={formData.shopName} onChange={handleInputChange} required className="w-full pl-11 pr-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                              </div>
+                          </div>
+                          <div>
+                              <label className="block text-[11px] font-black text-gray-400 mb-1.5 uppercase tracking-wider">Phone Number</label>
+                              <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                  <Phone className="h-4 w-4 text-gray-300 group-focus-within:text-[#fd6410] transition-colors" />
+                                </div>
+                                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required maxLength={15} className="w-full pl-11 pr-4 py-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:border-orange-500 outline-none text-sm font-medium" />
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <Button
+                      type="submit"
+                      loading={isLoading}
+                      fullWidth
+                      variant="primary"
+                      className="bg-[#fd6410] hover:bg-orange-600 py-4.5 rounded-2xl shadow-xl shadow-orange-500/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest mt-6"
+                  >
+                      {isLoading ? "Saving Profile..." : "Complete Registration"}
+                  </Button>
+              </form>
+          )}
         </div>
       </div>
+
+      <VerificationPopup
+          isOpen={showVerification}
+          email={email}
+          onClose={() => setShowVerification(false)}
+      />
     </div>
   );
 };

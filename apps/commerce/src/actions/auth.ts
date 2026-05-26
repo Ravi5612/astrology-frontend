@@ -67,14 +67,51 @@ export async function setAuthCookies(accessToken: string, refreshToken?: string)
     return { success: true };
 }
 
-export async function merchantRegisterAction(formData: any) {
-    const [data, error] = await api.post<any>('/auth/merchant/register', formData);
+export async function merchantInitiateRegistrationAction(email: string) {
+    const [data, error] = await api.post<any>('/auth/email/register/initiate', {
+        email,
+        role: "merchant",
+    });
 
     if (error) {
         return { error: getErrorMessage(error) || "Registration failed" };
     }
 
-    return { success: true, message: data.message || "Registration successful." };
+    return { success: true, message: data?.message || "Verification email sent successfully." };
+}
+
+export async function merchantCompleteRegistrationAction(payload: any) {
+    const [data, error] = await api.post<any>('/auth/email/register/complete', payload);
+
+    if (error) {
+        return { error: getErrorMessage(error) || "Profile completion failed" };
+    }
+
+    const accessToken = data?.accessToken || data?.token;
+    const refreshToken = data?.refreshToken;
+
+    if (accessToken) {
+        const cookieStore = await cookies();
+        cookieStore.set("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        if (refreshToken) {
+            cookieStore.set("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 30,
+            });
+        }
+    }
+
+    return { success: true, user: data?.user, message: data?.message };
 }
 
 export async function merchantLogoutAction() {

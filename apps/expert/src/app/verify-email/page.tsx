@@ -42,14 +42,18 @@ const VerifyEmailContent = () => {
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [message, setMessage] = useState("Verifying your stellar alignment...");
   const [countdown, setCountdown] = useState(3);
+  const isVerifying = React.useRef(false);
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setMessage("Missing verification token. Please check your email link.");
+    if (!token || isVerifying.current) {
+      if (!token) {
+        setStatus("error");
+        setMessage("Missing verification token. Please check your email link.");
+      }
       return;
     }
 
+    isVerifying.current = true;
     const verifyEmail = async () => {
       try {
         const result = await expertVerifyEmailAction(token);
@@ -59,34 +63,30 @@ const VerifyEmailContent = () => {
         }
 
         if (result.success) {
-          if (result.user) {
-            await login("", result.user);
-          }
-          setStatus("success");
-          setMessage("Your email has been successfully verified! Prepare for takeoff.");
-          toast.success("Verification successful!");
+          const isFullyRegistered = !!result.user?.name;
 
-          const timer = setInterval(() => {
-            setCountdown((prev) => {
-              if (prev <= 1) {
-                clearInterval(timer);
-                const roles = result.user?.roles || [];
-                const isExpert = roles.some((r: any) => {
-                   const roleName = String(typeof r === 'object' ? r.name : r).toLowerCase();
-                   return roleName === "expert";
-                });
-
-                if (isExpert) {
-                  router.push("/dashboard");
-                } else {
-                  const mainUrl = process.env.NEXT_PUBLIC_MAIN_APP_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin.replace('expert.', 'www.'));
-                  window.location.href = `${mainUrl}/profile`;
-                }
-                return 0;
+          if (isFullyRegistered) {
+              if (result.user) {
+                await login("", result.user);
               }
-              return prev - 1;
-            });
-          }, 1000);
+              setStatus("success");
+              setMessage("Your email has been successfully verified! Prepare for takeoff.");
+              toast.success("Verification successful!");
+
+              const timer = setInterval(() => {
+                setCountdown((prev) => {
+                  if (prev <= 1) {
+                    clearInterval(timer);
+                    router.push("/dashboard");
+                    return 0;
+                  }
+                  return prev - 1;
+                });
+              }, 1000);
+          } else {
+              // Redirect to Complete Profile
+              router.push(`/register?token=${token}`);
+          }
         }
       } catch (err: any) {
         console.error("Verification error:", err);

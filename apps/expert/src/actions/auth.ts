@@ -43,17 +43,50 @@ export async function expertLoginAction(formData: any) {
     return { success: true, user: data.user };
 }
 
-export async function expertRegisterAction(formData: any) {
-    const [data, error] = await api.post<any>('/auth/email/register', {
-        ...formData,
-        roles: ["expert"],
+export async function expertInitiateRegistrationAction(email: string) {
+    const [data, error] = await api.post<any>('/auth/email/register/initiate', {
+        email,
+        role: "expert",
     });
 
     if (error) {
         return { error: getErrorMessage(error) || "Registration failed" };
     }
 
-    return { success: true, message: "Registration successful. Please verify your email." };
+    return { success: true, message: "Verification email sent successfully." };
+}
+
+export async function expertCompleteRegistrationAction(formData: any) {
+    const [data, error] = await api.post<any>('/auth/email/register/complete', formData);
+
+    if (error) {
+        return { error: getErrorMessage(error) || "Profile completion failed" };
+    }
+
+    // Set HttpOnly cookies on the server since they are now fully registered
+    const cookieStore = await cookies();
+
+    if (data?.tokens?.accessToken) {
+        cookieStore.set("accessToken", data.tokens.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+        });
+    }
+
+    if (data?.tokens?.refreshToken) {
+        cookieStore.set("refreshToken", data.tokens.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+        });
+    }
+
+    return { success: true, user: data?.user, message: "Profile completed successfully" };
 }
 
 export async function expertLogoutAction() {
@@ -73,24 +106,28 @@ export async function expertVerifyEmailAction(token: string) {
     // Set HttpOnly cookies on the server
     const cookieStore = await cookies();
 
-    if (data?.accessToken) {
-        cookieStore.set("accessToken", data.accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-        });
-    }
+    const isFullyRegistered = !!data?.user?.name;
 
-    if (data?.refreshToken) {
-        cookieStore.set("refreshToken", data.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-        });
+    if (isFullyRegistered) {
+        if (data?.accessToken) {
+            cookieStore.set("accessToken", data.accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 7, // 7 days
+            });
+        }
+
+        if (data?.refreshToken) {
+            cookieStore.set("refreshToken", data.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
+        }
     }
 
     return { success: true, user: data?.user, message: data?.message };

@@ -53,26 +53,33 @@ export default function VerifyEmail() {
         const user = res.user;
 
         if (accessToken) {
-          // Set browser cookies for future SSR requests
-          await setAuthCookies(accessToken, refreshToken);
+          const isFullyRegistered = !!user?.name;
 
-          // Update the local auth store
-          login(accessToken, user);
+          if (isFullyRegistered) {
+            // Set browser cookies for future SSR requests
+            await setAuthCookies(accessToken, refreshToken);
 
-          setStatus("success");
-          setMessage("Email verified successfully! Redirecting you to your dashboard...");
+            // Update the local auth store
+            login(accessToken, user);
 
-          // Start redirect countdown
-          const timer = setInterval(() => {
-            setCountdown((prev) => {
-              if (prev <= 1) {
-                clearInterval(timer);
-                router.replace("/dashboard");
-                return 0;
-              }
-              return prev - 1;
-            });
-          }, 1000);
+            setStatus("success");
+            setMessage("Email verified successfully! Redirecting you to your dashboard...");
+
+            // Start redirect countdown
+            const timer = setInterval(() => {
+              setCountdown((prev) => {
+                if (prev <= 1) {
+                  clearInterval(timer);
+                  router.replace("/dashboard");
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
+          } else {
+            // Redirect to Complete Profile
+            router.replace(`/register?token=${token}`);
+          }
         } else {
           setStatus("success");
           setMessage("Email verified successfully! You can now log in.");
