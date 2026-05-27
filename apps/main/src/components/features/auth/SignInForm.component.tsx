@@ -63,7 +63,7 @@ const SignInForm: React.FC = () => {
 
     try {
       // Use Server Action
-      const result = await loginAction(formData);
+      const result = await loginAction({ ...formData, requiredRole: "client" } as any);
 
       if (result.error) {
         toast.error(result.error);
