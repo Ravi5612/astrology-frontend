@@ -88,11 +88,11 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
   const embedUrl = video ? getYoutubeEmbedUrl(video) : video;
 
   // For wishlist, we use userId (user table ID)
-  const wishlistTargetId = userId ? Number(userId) : Number(id);
+  const wishlistTargetId = userId || id;
   const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId) : false;
 
   // For chat/consultation, we use id (expert profile ID) - safe fallback check
-  const expertProfileId = Number(id || (expertData as any).expert_id || expertData.userId);
+  const expertProfileId = id || (expertData as any).expert_id || expertData.userId;
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -119,7 +119,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    if (!expertProfileId || isNaN(expertProfileId)) {
+    if (!expertProfileId) {
         console.error("[ExpertCard] Invalid ID:", expertData);
         toast.error("Expert details not found. Please try again.");
         return;

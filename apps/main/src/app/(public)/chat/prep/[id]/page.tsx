@@ -143,7 +143,7 @@ export default function ConsultationPrep() {
     setActionLoading(true);
 
     const [response, error] = await http.post<any>("/chat/initiate", {
-      expertId: parseInt(id),
+      expertId: id,
       metadata: !askSomeoneElse ? someoneElseData : null,
     });
 
