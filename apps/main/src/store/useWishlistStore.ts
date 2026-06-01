@@ -153,9 +153,9 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isInWishlist: (productId: number) => {
+    isInWishlist: (productId: number | string) => {
         const { wishlistItems } = get();
-        return wishlistItems.some(item => (Number(item.productId) === Number(productId) || Number(item.product?.id) === Number(productId)));
+        return wishlistItems.some(item => (String(item.productId) === String(productId) || String(item.product?.id) === String(productId)));
     },
 
     addExpertToWishlist: async (expertId: number, isAuthenticated: boolean) => {
@@ -188,13 +188,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isExpertInWishlist: (expertId: number) => {
+    isExpertInWishlist: (expertId: number | string) => {
         const { expertWishlistItems } = get();
         return expertWishlistItems.some(item =>
             item != null && (
-                Number(item.expertId) === Number(expertId) ||
-                Number(item.expert?.id) === Number(expertId) ||
-                (item.expert?.user && Number((item.expert.user as any).id) === Number(expertId))
+                String(item.expertId) === String(expertId) ||
+                String(item.expert?.id) === String(expertId) ||
+                (item.expert?.user && String((item.expert.user as any).id) === String(expertId))
             )
         );
     },
@@ -208,9 +208,9 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isPujaInWishlist: (pujaId: number) => {
+    isPujaInWishlist: (pujaId: number | string) => {
         const { pujaWishlistItems } = get();
-        return pujaWishlistItems.some(item => (Number((item as any).pujaId) === Number(pujaId) || Number((item as any).puja?.id) === Number(pujaId)));
+        return pujaWishlistItems.some(item => (String((item as any).pujaId) === String(pujaId) || String((item as any).puja?.id) === String(pujaId)));
     },
 
     togglePujaWishlist: async (pujaId: number, isAuthenticated: boolean) => {
@@ -239,13 +239,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isMerchantInWishlist: (merchantId: number) => {
+    isMerchantInWishlist: (merchantId: number | string) => {
         const { merchantWishlistItems } = get();
         return merchantWishlistItems.some(item =>
             item != null && (
-                Number(item.merchantId) === Number(merchantId) ||
-                Number(item.merchant?.id) === Number(merchantId) ||
-                Number(item.id) === Number(merchantId) // Backend might return direct merchant objects
+                String(item.merchantId) === String(merchantId) ||
+                String(item.merchant?.id) === String(merchantId) ||
+                String(item.id) === String(merchantId) // Backend might return direct merchant objects
             )
         );
     },

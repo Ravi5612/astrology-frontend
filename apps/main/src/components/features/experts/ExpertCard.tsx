@@ -83,12 +83,12 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
     };
   }, [id, userId, name]);
 
-  // For wishlist, we use userId (user table ID)
-  const wishlistTargetId = userId || id;
-  const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId as any) : false;
-
   // For chat/consultation, we use id (expert profile ID) - safe fallback check
   const expertProfileId = id || (expertData as any).expert_id || expertData.userId;
+
+  // For wishlist, we use the expert profile ID (it matches what backend returns in getExpertWishlist)
+  const wishlistTargetId = expertProfileId;
+  const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId as any) : false;
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();

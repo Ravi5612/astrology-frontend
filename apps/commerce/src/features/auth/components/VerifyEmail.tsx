@@ -53,7 +53,9 @@ export default function VerifyEmail() {
         const user = res.user;
 
         if (accessToken) {
-          const isFullyRegistered = !!user?.name;
+          // For merchants, fully registered means they have set a password and shop name
+          // user.name alone is not reliable as it may be auto-populated from email
+          const isFullyRegistered = !!(user?.name && user?.is_password_set !== false && user?.merchant);
 
           if (isFullyRegistered) {
             // Set browser cookies for future SSR requests
@@ -77,12 +79,13 @@ export default function VerifyEmail() {
               });
             }, 1000);
           } else {
-            // Redirect to Complete Profile
+            // New merchant — redirect to Complete Profile (Step 3)
             router.replace(`/register?token=${token}`);
           }
         } else {
-          setStatus("success");
-          setMessage("Email verified successfully! You can now log in.");
+          // No accessToken — this is a new merchant who needs to complete their profile
+          // Redirect to register page Step 3 with the verification token
+          router.replace(`/register?token=${token}`);
         }
       } catch (err: any) {
         console.error("[VerifyEmail] Critical catch error:", err);

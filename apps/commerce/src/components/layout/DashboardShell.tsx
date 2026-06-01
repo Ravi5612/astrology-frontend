@@ -19,7 +19,7 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuthStore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
-    const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+    const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"];
     const isAuthPage = pathname === "/" || authRoutes.some(route => pathname?.startsWith(route));
 
     // Fetch real profile data - only if NOT on an auth page

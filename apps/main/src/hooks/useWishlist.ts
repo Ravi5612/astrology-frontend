@@ -60,7 +60,7 @@ export const useWishlist = () => {
                 if (isLiked) {
                     useWishlistStore.setState((state) => ({
                         expertWishlistItems: state.expertWishlistItems.filter(
-                            (item) => Number(item.expertId || item.expert?.id) !== Number(id)
+                            (item) => String(item.expertId || item.expert?.id) !== String(id)
                         ),
                     }));
                 } else {
@@ -72,7 +72,7 @@ export const useWishlist = () => {
                 if (isLiked) {
                     useWishlistStore.setState((state) => ({
                         pujaWishlistItems: state.pujaWishlistItems.filter(
-                            (item) => Number((item as any).pujaId || item.puja?.id) !== Number(id)
+                            (item) => String((item as any).pujaId || item.puja?.id) !== String(id)
                         ),
                     }));
                 } else {
@@ -84,7 +84,7 @@ export const useWishlist = () => {
                 if (isLiked) {
                     useWishlistStore.setState((state) => ({
                         merchantWishlistItems: state.merchantWishlistItems.filter(
-                            (item) => Number(item.merchantId || item.id) !== Number(id)
+                            (item) => String(item.merchantId || item.id) !== String(id)
                         ),
                     }));
                 } else {
@@ -96,7 +96,7 @@ export const useWishlist = () => {
                 if (isLiked) {
                     useWishlistStore.setState((state) => ({
                         wishlistItems: state.wishlistItems.filter(
-                            (item) => Number(item.productId || item.product?.id) !== Number(id)
+                            (item) => String(item.productId || item.product?.id) !== String(id)
                         ),
                     }));
                 } else {

@@ -125,10 +125,28 @@ const RegisterPage: React.FC = () => {
   const { login } = useAuthStore();
   
   const token = searchParams.get("token");
+
+  // Extract email from JWT token (same as main/expert app)
+  const extractEmailFromToken = (tkn: string | null): string => {
+    if (!tkn) return "";
+    try {
+      const parts = tkn.split('.');
+      if (parts.length < 2) return "";
+      const base64Url = parts[1];
+      if (!base64Url) return "";
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+      );
+      return JSON.parse(jsonPayload)?.email || "";
+    } catch {
+      return "";
+    }
+  };
   
   const [step, setStep] = useState(token ? 3 : 1);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => extractEmailFromToken(token));
   const [showVerification, setShowVerification] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -175,6 +193,8 @@ const RegisterPage: React.FC = () => {
       try {
           const payload = {
               token,
+              email,                           // ✅ backend requires @IsNotEmpty() email
+              name: formData.shopName,          // ✅ backend requires @IsNotEmpty() name
               shopName: formData.shopName,
               phone: formData.phone,
               password: formData.password,
