@@ -6,7 +6,6 @@ import React, { useState, useRef } from "react";
 import { Button } from "@repo/ui";
 import { useRouter } from "next/navigation";
 import { useWishlistStore } from "@/store/useWishlistStore";
-import { getYoutubeId, getYoutubeEmbedUrl } from "@/utils/video-utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -84,12 +83,9 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
     };
   }, [id, userId, name]);
 
-  const videoId = video ? getYoutubeId(video) : null;
-  const embedUrl = video ? getYoutubeEmbedUrl(video) : video;
-
   // For wishlist, we use userId (user table ID)
   const wishlistTargetId = userId || id;
-  const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId) : false;
+  const isLiked = wishlistTargetId ? isExpertInWishlist(wishlistTargetId as any) : false;
 
   // For chat/consultation, we use id (expert profile ID) - safe fallback check
   const expertProfileId = id || (expertData as any).expert_id || expertData.userId;
@@ -112,7 +108,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
     setCurrentLikes((prev) => (newIsLiked ? prev + 1 : Math.max(0, prev - 1)));
 
     // TanStack Query handles the rest (optimistic UI for heart icon and data sync)
-    toggleLike({ id: wishlistTargetId, type: "expert", isLiked });
+    toggleLike({ id: wishlistTargetId as any, type: "expert", isLiked });
   };
 
   const handleChatClick = (e: React.MouseEvent) => {
@@ -361,10 +357,13 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
       </div>
 
       {/* VIDEO MODAL — custom Tailwind */}
-      {show && (
+      {show && typeof document !== 'undefined' && require("react-dom").createPortal(
         <div
-          className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-          onClick={() => setShow(false)}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShow(false);
+          }}
           aria-hidden="true"
         >
           <div
@@ -377,45 +376,45 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
                 {t.expertCard.videoModalTitle.replace('{name}', name)}
               </h5>
               <button
-                onClick={() => setShow(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShow(false);
+                }}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition text-gray-600 text-lg font-bold"
               >
                 ✕
               </button>
             </div>
             {/* Body */}
+            {/* Body */}
             <div className="p-4">
               {video ? (
-                videoId ? (
-                  <iframe
-                    width="100%"
-                    height="500"
-                    src={embedUrl}
-                    title={`Expert ${name} Video`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video
-                    src={video}
-                    width="100%"
-                    height="500"
-                    controls
-                    className="bg-black"
-                  />
-                )
+                <video
+                  src={video}
+                  width="100%"
+                  height="500"
+                  controls
+                  autoPlay
+                  className="bg-black rounded-xl w-full max-h-[60vh] shadow-inner"
+                />
               ) : (
-                <div className="h-[500px] flex items-center justify-center bg-gray-100 rounded">
-                  <div className="text-center">
-                    <i className="fa-solid fa-video-slash text-5xl text-gray-400 mb-3" />
-                    <p className="text-gray-500">{t.expertCard.noVideo}</p>
+                <div className="h-[350px] flex flex-col items-center justify-center bg-gradient-to-b from-orange-50/50 to-orange-100/30 rounded-2xl border-2 border-dashed border-orange-200 m-2">
+                  <div className="w-20 h-20 bg-white shadow-sm rounded-full flex items-center justify-center mb-5 relative group">
+                    <div className="absolute inset-0 bg-orange-200 rounded-full animate-ping opacity-20"></div>
+                    <i className="fa-solid fa-video-slash text-3xl text-orange-400" />
                   </div>
+                  <h4 className="text-xl md:text-2xl font-black text-gray-800 mb-2">
+                    Intro Video Unavailable
+                  </h4>
+                  <p className="text-gray-500 font-medium text-center max-w-sm px-6 leading-relaxed">
+                    Looks like <span className="font-bold text-orange-600">{name}</span> hasn't uploaded an introductory video yet. Don't worry, you can still connect instantly via chat or call!
+                  </p>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
