@@ -63,7 +63,7 @@ export default function FreeEndPromptModal({
                     ) : (
                         <button
                             onClick={() => {
-                                chatSocket.emit('confirm_paid_continuation', { sessionId: parseInt(sessionId || '0') });
+                                chatSocket.emit('confirm_paid_continuation', { sessionId: sessionId });
                             }}
                             className="w-full py-4 bg-[#fd6410] text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all"
                         >

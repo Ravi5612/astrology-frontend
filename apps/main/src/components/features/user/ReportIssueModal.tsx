@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
 import { getErrorMessage } from "@repo/lib";
@@ -28,6 +29,11 @@ export default function ReportIssueModal({
     const [loading, setLoading] = useState(false);
     const [submittingWithChat, setSubmittingWithChat] = useState(false);
     const { user: currentUser } = useAuthStore();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const orderCategories = [
         "Product Damaged/Defective",
@@ -168,10 +174,10 @@ export default function ReportIssueModal({
         setSubmittingWithChat(false);
     };
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
-    return (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="sticky top-0 bg-linear-to-r from-orange-500 to-red-500 text-white p-6 rounded-t-3xl">
@@ -353,7 +359,8 @@ export default function ReportIssueModal({
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 

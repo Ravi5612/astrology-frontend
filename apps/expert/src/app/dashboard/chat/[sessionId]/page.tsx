@@ -86,7 +86,7 @@ function ExpertChatRoomContent() {
 
         // 2. Socket Connection
         chatSocket.connect();
-        chatSocket.emit('join_room', { sessionId: parseInt(sessionId) });
+        chatSocket.emit('join_room', { sessionId: sessionId });
 
         // Registration for general notifications
         const registrationId = user.profileId || user.id;
@@ -206,7 +206,7 @@ function ExpertChatRoomContent() {
         if ((!inputValue.trim() && !pendingAttachment) || !sessionId || !user) return;
 
         const payload: any = {
-            sessionId: parseInt(sessionId),
+            sessionId: sessionId,
             senderId: user.id,
             senderType: 'expert',
             content: inputValue.trim() || (pendingAttachment?.type === "image" ? "Sent an image" : "Sent an attachment"),
@@ -268,7 +268,7 @@ function ExpertChatRoomContent() {
         // Send a system message before ending the chat for history
         if (user && sessionId) {
             chatSocket.emit('send_message', {
-                sessionId: parseInt(sessionId),
+                sessionId: sessionId,
                 senderId: user.id, // Using user ID but marked as system/admin message logically if desired, or just show as expert ended it. 
                 // However, user asked for "admin ne session end kiya to ya user ne session end kiya". 
                 // Usually 'admin' senderType is for system messages. 
@@ -279,7 +279,7 @@ function ExpertChatRoomContent() {
 
         // Use socket emit to align with User side logic ("New Backend Logic")
 
-        chatSocket.emit('end_chat', { sessionId: parseInt(sessionId) });
+        chatSocket.emit('end_chat', { sessionId: sessionId });
     };
 
     const formatTime = (seconds: number) => {

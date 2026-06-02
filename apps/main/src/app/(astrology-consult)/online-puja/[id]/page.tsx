@@ -82,7 +82,7 @@ const PujaDetailPage = () => {
 
         setIsBooking(true);
         const bookingData = {
-            puja_id: Number(id),
+            puja_id: id as string,
             scheduled_date: askExpertForDate ? null : scheduledDate,
             scheduled_time: askExpertForDate ? null : scheduledTime,
             ask_expert_for_date: askExpertForDate,

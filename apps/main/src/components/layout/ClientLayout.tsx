@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { Header, Footer } from "@repo/ui";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -53,7 +53,11 @@ export default function ClientLayout({
           cartCount={cartCount}
         />
       )}
-      <main suppressHydrationWarning className="flex-1">{children}</main>
+      <main suppressHydrationWarning className="flex-1">
+        <Suspense fallback={null}>
+          {children}
+        </Suspense>
+      </main>
       {mounted && !isAdminRoute && !isChatRoom && <FloatingChatButton />}
       {mounted && showReviewModal && (
         <PlatformReviewModal

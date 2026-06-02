@@ -112,13 +112,25 @@ function ChatRoomContent() {
         };
 
         fetchData();
+
+        // Fallback polling if socket event is missed
+        const pollInterval = setInterval(() => {
+            setSessionStatus(current => {
+                if (current === 'pending') {
+                    fetchData();
+                }
+                return current;
+            });
+        }, 3000);
+
+        return () => clearInterval(pollInterval);
     }, [id, sessionId, isAuthenticated, mounted]);
 
     useEffect(() => {
         if (!sessionId) return;
 
         chatSocket.connect();
-        chatSocket.emit('join_room', { sessionId: parseInt(sessionId) });
+        chatSocket.emit('join_room', { sessionId: sessionId });
 
         chatSocket.on('new_message', (message: ChatMessage) => {
             setMessages(prev => [...prev, message]);
@@ -238,7 +250,7 @@ function ChatRoomContent() {
         if (!sessionId || !user) return;
 
         const payload: any = {
-            sessionId: parseInt(sessionId),
+            sessionId: sessionId,
             senderId: user.id,
             senderType: 'user',
             content: inputValue.trim(),
@@ -262,14 +274,14 @@ function ChatRoomContent() {
 
         if (user && sessionId) {
             chatSocket.emit('send_message', {
-                sessionId: parseInt(sessionId),
+                sessionId: sessionId,
                 senderId: user.id,
                 senderType: 'admin',
                 content: "User has ended the consultation.",
             });
         }
 
-        chatSocket.emit('end_chat', { sessionId: parseInt(sessionId) });
+        chatSocket.emit('end_chat', { sessionId: sessionId });
     };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

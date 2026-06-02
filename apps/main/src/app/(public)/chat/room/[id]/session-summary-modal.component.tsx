@@ -138,8 +138,7 @@ export default function SessionSummaryModal({
                                     if (reviewSubmitted) return;
 
                                     // Validation
-                                    const sid = parseInt(sessionId || '0');
-                                    if (!sid) {
+                                    if (!sessionId) {
                                         toast.error("Invalid Session ID. Cannot submit review.");
                                         return;
                                     }
@@ -150,8 +149,8 @@ export default function SessionSummaryModal({
                                     }
 
                                     const payload = {
-                                        sessionId: sid,
-                                        expertId: expertData?.id || expertData?.userId,
+                                        sessionId: sessionId,
+                                        expertId: expertData?.id,
                                         rating: reviewRating,
                                         comment: reviewComment.trim()
                                     };
