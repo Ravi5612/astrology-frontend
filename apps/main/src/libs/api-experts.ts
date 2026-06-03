@@ -2,9 +2,9 @@ import { api } from '@/lib/api';
 import { getErrorMessage } from '@repo/lib';
 
 export interface ExpertProfile {
-  id: number;
+  id: string;
   user: {
-    id: number;
+    id: string;
     name: string;
     avatar?: string;
     language?: string;
@@ -103,12 +103,12 @@ export const getExperts = async (
 };
 
 export interface Review {
-  id: number;
+  id: string;
   rating: number;
   comment: string;
   createdAt: string;
   user: {
-    id: number;
+    id: string;
     name: string;
     avatar?: string;
   };
@@ -122,7 +122,7 @@ export interface FetchReviewsResponse {
 }
 
 export const getExpertReviews = async (
-  expertId: string | number,
+  expertId: string,
   page: number = 1,
   limit: number = 10
 ): Promise<FetchReviewsResponse> => {

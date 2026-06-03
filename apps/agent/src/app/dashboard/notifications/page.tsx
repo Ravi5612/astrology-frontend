@@ -26,7 +26,7 @@ export default function NotificationsPage() {
         }
     }, []);
 
-    const markAsRead = async (id: number) => {
+    const markAsRead = async (id: string) => {
         try {
             await api.patch(`/notifications/${id}/read`);
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));

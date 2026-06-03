@@ -9,7 +9,7 @@
 export type ChatSessionStatus = "pending" | "active" | "completed";
 
 export interface ChatSession {
-  id: number;
+  id: string;
   status: ChatSessionStatus;
   startedAt?: string;   // ISO UTC string
   expiresAt?: string;   // ISO UTC string
@@ -17,7 +17,7 @@ export interface ChatSession {
   elapsedSeconds?: number;
   isFree?: boolean;
   user?: {
-    id?: number;
+    id?: string;
     name?: string;
     profile_picture?: string;
     avatar?: string;
@@ -30,8 +30,8 @@ export type MessageSenderType = "user" | "expert" | "admin";
 export type AttachmentType = "image" | "document";
 
 export interface ChatMessage {
-  id: number;
-  senderId: number;
+  id: string;
+  senderId: string;
   senderType: MessageSenderType;
   content: string;
   type?: string;
@@ -66,8 +66,8 @@ export interface PendingAttachment {
 // ─── Socket Payloads ─────────────────────────────────────────────────────────
 
 export interface SendMessagePayload {
-  sessionId: number;
-  senderId: number;
+  sessionId: string;
+  senderId: string;
   senderType: MessageSenderType;
   content: string;
   attachmentUrl?: string;
@@ -75,7 +75,7 @@ export interface SendMessagePayload {
 }
 
 export interface SessionEndedPayload {
-  sessionId: number;
+  sessionId: string;
   terminatedBy?: "user" | "expert" | "admin";
   interventionMessage?: string;
 }

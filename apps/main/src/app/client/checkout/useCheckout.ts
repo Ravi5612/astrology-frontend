@@ -27,7 +27,7 @@ export const useCheckout = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
 
   const [buyNowInfo, setBuyNowInfo] = useState<{
-    productId: string | number;
+    productId: string;
     quantity: number;
   } | null>(null);
 
@@ -206,7 +206,7 @@ export const useCheckout = () => {
       if (isOrder) {
         payload = {
           shipping_address: address,
-          product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
+          product_id: buyNowInfo ? String(buyNowInfo.productId) : undefined,
           quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
           coupon_code: appliedCoupon?.code || undefined,
           payment_method: "wallet",
@@ -260,7 +260,7 @@ export const useCheckout = () => {
       if (isOrder) {
         const orderPayload = {
           shipping_address: address,
-          product_id: buyNowInfo ? Number(buyNowInfo.productId) : undefined,
+          product_id: buyNowInfo ? String(buyNowInfo.productId) : undefined,
           quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
           coupon_code: appliedCoupon?.code || undefined,
         };

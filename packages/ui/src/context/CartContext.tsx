@@ -8,11 +8,11 @@ import { getErrorMessage } from "@repo/lib";
 
 // Define Types
 export interface CartItem {
-    id: number;
-    productId: number;
+    id: string;
+    productId: string;
     quantity: number;
     product?: {
-        id: number;
+        id: string;
         name: string;
         price: number;
         sale_price?: number;
@@ -26,9 +26,9 @@ interface CartContextType {
     cartCount: number;
     cartTotal: number;
     isLoading: boolean;
-    addToCart: (productId: number, quantity?: number) => Promise<void>;
-    updateQuantity: (productId: number, quantity: number) => Promise<void>;
-    removeFromCart: (productId: number) => Promise<void>;
+    addToCart: (productId: string, quantity?: number) => Promise<void>;
+    updateQuantity: (productId: string, quantity: number) => Promise<void>;
+    removeFromCart: (productId: string) => Promise<void>;
     refreshCart: () => Promise<void>;
 }
 
@@ -84,7 +84,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }, [fetchCart]);
 
     // Add to Cart
-    const addToCart = async (productId: number, quantity: number = 1) => {
+    const addToCart = async (productId: string, quantity: number = 1) => {
         if (!isAuthenticated) {
             toast.error("Please login to add items to cart");
             return;
@@ -108,10 +108,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     // Debounce ref for quantity updates
-    const debouncedUpdate = React.useRef<{ [key: number]: NodeJS.Timeout }>({});
+    const debouncedUpdate = React.useRef<{ [key: string]: NodeJS.Timeout }>({});
 
     // Update Quantity with Debounce & Optimistic UI
-    const updateQuantity = async (productId: number, quantity: number) => {
+    const updateQuantity = async (productId: string, quantity: number) => {
         if (quantity <= 0) {
             await removeFromCart(productId);
             return;
@@ -142,7 +142,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     // Remove Item
-    const removeFromCart = async (productId: number) => {
+    const removeFromCart = async (productId: string) => {
         try {
             const [_, error] = await api.delete(`/cart/remove/${productId}`);
             if (error) throw error;

@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { TableSkeleton } from "./DashboardSkeletons";
 
 interface RecentAppointment {
-  id: number | string;
+  id: string | string;
   name: string;
   email: string;
   date: string;

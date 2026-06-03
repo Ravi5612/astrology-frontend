@@ -1,7 +1,7 @@
 import homepageData from "../../../../public/data/homepage.json";
 
 export interface ServiceData {
-    id: number;
+    id: string;
     image: string;
     title: string;
     description: string;
@@ -16,7 +16,7 @@ export interface ServiceData {
 export const AstrologyServicesData: ServiceData[] = homepageData.astrologyServices as any;
 
 export interface ConsultationData {
-    id: number;
+    id: string;
     image: string;
     title: string;
     price?: number;

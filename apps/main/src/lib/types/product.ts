@@ -1,6 +1,6 @@
 export interface Product {
-    id?: string | number;
-    _id?: string | number;
+    id?: string;
+    _id?: string;
     imageUrl?: string;
     image?: string;
     productImage?: string; // Added to match e-commerce app

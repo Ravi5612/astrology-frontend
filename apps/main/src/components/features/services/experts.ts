@@ -1,6 +1,6 @@
 // List Experts Data
 interface ExpertData {
-    id: number;
+    id: string;
     image: string;
     ratings: number;
     name: string;

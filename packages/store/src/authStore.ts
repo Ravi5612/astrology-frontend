@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { api } from "@repo/lib";
 
 export interface ClientUser {
-    id: number;
+    id: string;
     uid?: string;
     name?: string;
     email?: string;
@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthState>()(
                     parsed = Number.isFinite(n) ? n : 0;
                 } else if (raw && typeof raw === "object") {
                     const candidate = raw.balance ?? raw.amount ?? raw.walletBalance;
-                    const n = Number(candidate);
+                    const n = String(candidate);
                     parsed = Number.isFinite(n) ? n : 0;
                 }
                 set({ balance: parsed });

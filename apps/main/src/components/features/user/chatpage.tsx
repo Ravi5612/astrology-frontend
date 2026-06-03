@@ -6,7 +6,7 @@ import { ChatMessage } from "@/lib/types";
 
 // Adapt local Message to ChatMessage
 type Message = {
-    id: number;
+    id: string;
     text: string;
     sender: "user" | "expert" | "expert";
     time: string;

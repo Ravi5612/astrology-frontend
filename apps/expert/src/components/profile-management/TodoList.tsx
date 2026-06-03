@@ -6,8 +6,8 @@ import Button from "../ui/Button";
 interface TodoListProps {
     todos: Todo[];
     onAdd: (text: string) => void;
-    onToggle: (id: number) => void;
-    onDelete: (id: number) => void;
+    onToggle: (id: string) => void;
+    onDelete: (id: string) => void;
     isActive?: boolean;
 }
 

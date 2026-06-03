@@ -15,7 +15,7 @@ interface LocationAutocompleteProps {
 }
 
 interface NominatimResult {
-  place_id: number;
+  place_id: string;
   lat: string;
   lon: string;
   display_name: string;

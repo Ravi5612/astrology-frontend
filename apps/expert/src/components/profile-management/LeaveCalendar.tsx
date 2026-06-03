@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 interface LeaveCalendarProps {
     leaveDates: LeaveDate[];
     onAdd: (date: string, reason: string) => void;
-    onDelete: (id: number) => void;
+    onDelete: (id: string) => void;
 }
 
 export default function LeaveCalendar({

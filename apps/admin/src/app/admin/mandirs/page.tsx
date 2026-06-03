@@ -43,7 +43,7 @@ export default function AdminMandirsPage() {
         return () => clearTimeout(t);
     }, [fetchListings]);
 
-    const handleStatusUpdate = async (id: string | number, status: "approved" | "rejected") => {
+    const handleStatusUpdate = async (id: string, status: "approved" | "rejected") => {
         try {
             await updateListingStatus(id, status);
             toast.success(`Listing ${status === 'approved' ? 'Approved' : 'Rejected'}`);

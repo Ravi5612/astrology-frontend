@@ -84,7 +84,7 @@ export default function ReportIssueModal({
 
         const payload: any = {
             type,
-            itemId: Number(itemDetails.id),
+            itemId: String(itemDetails.id),
             category,
             description: issue.trim(),
             itemDetails: {
@@ -119,11 +119,11 @@ export default function ReportIssueModal({
         };
 
         if (type === "order") {
-            payload.orderId = Number(itemDetails.id);
+            payload.orderId = String(itemDetails.id);
         } else if (type === "consultation") {
-            payload.consultationId = Number(itemDetails.id);
+            payload.consultationId = String(itemDetails.id);
         } else if (type === "puja") {
-            payload.pujaId = Number(itemDetails.id);
+            payload.pujaId = String(itemDetails.id);
         }
 
         const [res, error] = await http.post<any>("/support/disputes", payload);

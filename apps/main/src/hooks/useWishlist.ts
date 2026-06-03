@@ -14,7 +14,7 @@ export const useWishlist = () => {
             type,
             isLiked,
         }: {
-            id: number;
+            id: string;
             type: WishlistType;
             isLiked: boolean;
         }) => {

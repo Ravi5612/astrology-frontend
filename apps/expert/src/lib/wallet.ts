@@ -43,7 +43,7 @@ export const getWalletTransactions = async (page: number = 1, limit: number = 10
 export const requestWithdrawal = async (amount: number, bankAccountId: string): Promise<[any | null, ApiError | null]> => {
     return api.post('/expert/wallet/withdraw', {
         amount: Number(amount),
-        bank_account_id: Number(bankAccountId), // Backend expects number and snake_case
+        bank_account_id: String(bankAccountId), // Backend expects number and snake_case
     });
 };
 

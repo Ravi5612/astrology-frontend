@@ -11,7 +11,7 @@ interface ExpertUser {
 }
 
 interface TopExpert {
-    id: number;
+    id: string;
     user: ExpertUser;
     is_online: boolean;
     rating: number;

@@ -3,8 +3,8 @@ import { Expert, ExpertProfile } from "./expert";
 export type CallStatus = 'ringing' | 'connecting' | 'connected' | 'ended';
 
 export interface CallSession {
-    id: number;
-    expertId: number;
+    id: string;
+    expertId: string;
     type: 'audio' | 'video';
     status: string;
     token?: string;
@@ -15,8 +15,8 @@ export interface CallSession {
 }
 
 export interface CallReview {
-    sessionId: number;
-    expertId: number;
+    sessionId: string;
+    expertId: string;
     rating: number;
     comment: string;
 }

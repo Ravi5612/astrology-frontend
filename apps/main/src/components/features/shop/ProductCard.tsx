@@ -41,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
   const [isBuyLoading, setIsBuyLoading] = React.useState(false);
   const router = useRouter();
 
-  const productId = Number(product.id || product._id);
+  const productId = String(product.id || product._id);
   const isLiked = productId ? isInWishlist(productId) : false;
 
   const handleLike = (e: React.MouseEvent) => {
@@ -73,7 +73,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
       return;
     }
 
-    addToCartOpt({ productId: Number(product.id || product._id), quantity: 1 });
+    addToCartOpt({ productId: String(product.id || product._id), quantity: 1 });
   };
 
   return (

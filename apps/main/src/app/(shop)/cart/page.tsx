@@ -71,14 +71,14 @@ const CartPage: React.FC = () => {
     );
   }
 
-  const handleQuantityChange = async (id: number, delta: number) => {
+  const handleQuantityChange = async (id: string, delta: number) => {
     const item = cartItems.find((i: any) => i.productId === id);
     if (item) {
       await updateQuantity(id, item.quantity + delta);
     }
   };
 
-  const handleRemoveItem = async (id: number) => {
+  const handleRemoveItem = async (id: string) => {
     await removeFromCart(id);
   };
 

@@ -3,8 +3,8 @@ import { Expert } from "./expert";
 export type ChatStatus = 'pending' | 'active' | 'completed' | 'terminated' | 'expired';
 
 export interface ChatMessage {
-    id: number;
-    senderId: number;
+    id: string;
+    senderId: string;
     senderType: "user" | "expert" | "admin";
     content: string;
     type?: string;
@@ -18,8 +18,8 @@ export interface ChatMessage {
 }
 
 export interface ChatSession {
-    id: number;
-    expertId: number;
+    id: string;
+    expertId: string;
     status: ChatStatus;
     isFree?: boolean;
     freeMinutes?: number;

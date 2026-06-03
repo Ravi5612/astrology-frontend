@@ -1,5 +1,5 @@
 export interface AddressDto {
-    id?: number;
+    id?: string;
     line1: string;
     line2?: string;
     city: string;
@@ -11,8 +11,8 @@ export interface AddressDto {
 }
 
 export interface ClientProfileData {
-    id?: number;
-    userId?: number;
+    id?: string;
+    userId?: string;
     full_name?: string;
     username?: string;
     date_of_birth?: string;
@@ -28,7 +28,7 @@ export interface ClientProfileData {
     about_me?: string;
     addresses?: AddressDto[];
     user?: {
-        id: number;
+        id: string;
         name: string;
         email: string;
     };

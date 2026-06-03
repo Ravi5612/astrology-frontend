@@ -198,7 +198,7 @@ const ServicePricingPage = () => {
     }
   };
 
-  const handleDeletePuja = async (id: number) => {
+  const handleDeletePuja = async (id: string) => {
     if (!profile) return;
     if (!window.confirm("Are you sure you want to remove this Puja service?")) return;
     try {

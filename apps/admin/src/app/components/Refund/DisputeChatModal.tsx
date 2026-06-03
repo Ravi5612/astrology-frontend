@@ -8,8 +8,8 @@ import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, update
 import { getSupportSocket } from "@/utils/socket";
 
 interface Message {
-    id: number;
-    dispute_id?: number;
+    id: string;
+    dispute_id?: string;
     sender_type?: "user" | "admin";
     sender_name?: string;
     message?: string;
@@ -42,7 +42,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         const socket = getSupportSocket();
         
         const onConnect = () => {
-            socket.emit("join_dispute_room", { disputeId: Number(dispute.realId) });
+            socket.emit("join_dispute_room", { disputeId: String(dispute.realId) });
             socket.emit("register_admin");
         };
 
@@ -54,7 +54,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         }
 
         const handleNewMessage = (message: any) => {
-            if (Number(message.dispute_id || message.disputeId) === Number(dispute.realId)) {
+            if (String(message.dispute_id || message.disputeId) === String(dispute.realId)) {
                 setMessages((prev) => {
                     const exists = prev.some(m => m.id === message.id);
                     if (exists) return prev;

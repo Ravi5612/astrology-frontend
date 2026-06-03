@@ -1,8 +1,8 @@
 export interface DisputeMessage {
-    id: number;
-    disputeId: number;
+    id: string;
+    disputeId: string;
     senderType: "user" | "admin";
-    senderId: number;
+    senderId: string;
     senderName: string;
     message?: string;
     attachmentUrl?: string;
@@ -14,11 +14,11 @@ export interface DisputeMessage {
 }
 
 export interface Dispute {
-    id: number;
+    id: string;
     type: "order" | "consultation";
-    itemId: number;
-    orderId?: number | null;
-    consultationId?: number | null;
+    itemId: string;
+    orderId?: string | null;
+    consultationId?: string | null;
     category: string;
     description: string;
     status: string;
@@ -33,9 +33,9 @@ export interface SupportSettings {
 
 export interface CreateDisputeDto {
     type: 'order' | 'consultation';
-    itemId: number;
-    orderId?: string | number;
-    consultationId?: number;
+    itemId: string;
+    orderId?: string;
+    consultationId?: string;
     category: string;
     description: string;
     itemDetails: any;

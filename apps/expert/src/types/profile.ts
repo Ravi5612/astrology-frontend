@@ -1,5 +1,5 @@
 export interface Todo {
-    id: number;
+    id: string;
     text: string;
     completed: boolean;
     created_at?: Date | string;
@@ -7,7 +7,7 @@ export interface Todo {
 }
 
 export interface LeaveDate {
-    id: number;
+    id: string;
     date: string;
     reason: string;
 }
@@ -31,7 +31,7 @@ export interface Address {
 }
 
 export interface ExperienceItem {
-    id: number;
+    id: string;
     title?: string;
     organization?: string;
     role: string;
@@ -49,7 +49,7 @@ export interface SamagriItem {
 }
 
 export interface PujaService {
-    id?: number;
+    id?: string;
     is_online: boolean;
     is_home_visit: boolean;
     name: string;
@@ -73,7 +73,7 @@ export interface CustomService {
 }
 
 export interface DocumentItem {
-    id: number;
+    id: string;
     name: string;
     type: string;
     size?: string;

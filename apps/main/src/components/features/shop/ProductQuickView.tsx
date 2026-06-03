@@ -82,7 +82,7 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ isOpen, onClose, pr
 
     if (!isOpen || !product) return null;
 
-    const productId = Number(product.id || (product as any)._id);
+    const productId = String(product.id || (product as any)._id);
     const isLiked = isInWishlist(productId);
 
     const handleLike = (e: React.MouseEvent) => {

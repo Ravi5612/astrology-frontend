@@ -1,5 +1,5 @@
 export interface Expert {
-  id: number;
+  id: string;
   name: string;
   email: string;
 
@@ -47,7 +47,7 @@ export interface Expert {
 
   // Addresses
   addresses?: {
-    id?: number;
+    id?: string;
     house_no?: string;
     line1?: string;
     city?: string;
@@ -60,7 +60,7 @@ export interface Expert {
 
   // Nested profile (backward compatibility with old API shape)
   profile_expert?: {
-    id?: number;
+    id?: string;
     specialization?: string;
     experience_in_years?: number;
     rating?: number;

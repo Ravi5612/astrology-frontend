@@ -7,15 +7,15 @@
 // ─── Auth / User ─────────────────────────────────────────────────────────────
 
 export interface ExpertUser {
-  id: number;
+  id: string;
   name?: string;
   email?: string;
   roles?: Array<string | { name: string }>;
   is_available?: boolean;
   isAvailable?: boolean;
   // Profile specifics (merged from expert profile)
-  profileId?: number;
-  userId?: number;
+  profileId?: string;
+  userId?: string;
   kycStatus?: string;
   rejectionReason?: string;
   experienceInYears?: number;
@@ -55,7 +55,7 @@ export interface DashboardStats {
 // ─── Review ───────────────────────────────────────────────────────────────────
 
 export interface Review {
-  id: number;
+  id: string;
   rating: number;
   comment?: string;
   createdAt?: string;
@@ -76,7 +76,7 @@ export interface ReviewStats {
 export type SessionStatus = "pending" | "active" | "completed" | "expired" | "cancelled";
 
 export interface RecentAppointment {
-  id: number | string;
+  id: string | string;
   name: string;
   email: string;
   date: string;

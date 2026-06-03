@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             console.error("Failed to force initial offline status:", err);
           });
           // We also emit offline just to be absolutely sure the Main App hears it
-          socket.emit("expert_offline", { userId: Number(user.userId || user.id) });
+          socket.emit("expert_offline", { userId: String(user.userId || user.id) });
         }
         
         sessionStorage.setItem("expert_session_initialized", "true");
@@ -106,11 +106,11 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       // CRITICAL: Only emit online if session logic is READY and isOnline is TRUE
       if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
         if (socket.connected) {
-          socket.emit("expert_online", { userId: Number(actualUserId) });
+          socket.emit("expert_online", { userId: String(actualUserId) });
         } else {
           socket.once("connect", () => {
             if (isOnline) { // Re-check if still online when connected
-              socket.emit("expert_online", { userId: Number(actualUserId) });
+              socket.emit("expert_online", { userId: String(actualUserId) });
             }
           });
           socket.connect();
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const handleUnload = () => {
       const actualUserId = user?.userId || user?.id;
       if (isAuthenticated && actualUserId && isOnline) {
-        socket.emit("expert_offline", { userId: Number(actualUserId) });
+        socket.emit("expert_offline", { userId: String(actualUserId) });
       }
     };
 
@@ -241,9 +241,9 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const actualUserId = user?.userId || user?.id;
     if (actualUserId) {
       if (newStatus) {
-        socket.emit("expert_online", { userId: Number(actualUserId) });
+        socket.emit("expert_online", { userId: String(actualUserId) });
       } else {
-        socket.emit("expert_offline", { userId: Number(actualUserId) });
+        socket.emit("expert_offline", { userId: String(actualUserId) });
       }
     }
 

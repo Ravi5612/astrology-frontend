@@ -164,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(
         const actualUserId = user?.userId || user?.id;
         if (actualUserId) {
           const { socket } = await import("@/lib/socket");
-          socket.emit("expert_offline", { userId: Number(actualUserId) });
+          socket.emit("expert_offline", { userId: String(actualUserId) });
           // Small delay to ensure the packet is sent before session is destroyed
           await new Promise(resolve => setTimeout(resolve, 500));
         }

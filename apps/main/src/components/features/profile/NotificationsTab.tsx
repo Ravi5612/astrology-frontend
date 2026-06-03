@@ -6,7 +6,7 @@ import Skeleton from "@/components/ui/Skeleton";
 interface NotificationsTabProps {
     loadingNotifications: boolean;
     notifications: any[];
-    onMarkAsRead: (id: string | number) => void;
+    onMarkAsRead: (id: string) => void;
     onClearAll: () => void;
     hasMore?: boolean;
     loadingMore?: boolean;

@@ -14,9 +14,9 @@ export interface TeamMember {
 }
 
 export interface ExpertProfile {
-    id: number;
+    id: string;
     user: {
-        id: number;
+        id: string;
         name: string;
         avatar?: string;
         language?: string;
@@ -48,8 +48,8 @@ export interface ExpertProfile {
 }
 
 export interface Expert {
-    id?: number | string;
-    userId?: number | string;
+    id?: string | string;
+    userId?: string | string;
     image: string;
     name: string;
     expertise: string;

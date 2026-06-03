@@ -8,13 +8,13 @@ import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, update
 import { getSupportSocket } from "@/utils/socket";
 
 interface Message {
-    id: number;
-    disputeId?: number;
-    dispute_id?: number;
+    id: string;
+    disputeId?: string;
+    dispute_id?: string;
     senderType?: "user" | "admin";
     sender_type?: "user" | "admin";
-    senderId?: number;
-    sender_id?: number;
+    senderId?: string;
+    sender_id?: string;
     senderName?: string;
     sender_name?: string;
     message?: string;
@@ -72,7 +72,7 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
 
         const joinRoom = () => {
             console.log("🏠 [AdminSocket] Emitting join_dispute_room for ID:", dispute.id);
-            socket.emit("join_dispute_room", { disputeId: Number(dispute.id) });
+            socket.emit("join_dispute_room", { disputeId: String(dispute.id) });
         };
 
         const onConnect = () => {
@@ -107,7 +107,7 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
 
         const handleNewMessage = (message: Message) => {
             console.log("📩 [AdminSocket] New message received:", message);
-            if (Number(message.dispute_id || message.disputeId) === Number(dispute.id)) {
+            if (String(message.dispute_id || message.disputeId) === String(dispute.id)) {
                 setMessages((prev) => {
                     const exists = prev.some(m => m.id === message.id);
                     if (exists) return prev;
@@ -119,8 +119,8 @@ export function DisputeChatModal({ dispute, onClose, isAdmin = true }: DisputeCh
         const handleEndChatRequest = (data: any) => {
             console.log("🚨 [AdminSocket] END CHAT REQUEST RECEIVED!", data);
             // Check if the IDs match
-            const incomingId = Number(data.dispute_id || data.disputeId);
-            const currentId = Number(dispute.id);
+            const incomingId = String(data.dispute_id || data.disputeId);
+            const currentId = String(dispute.id);
 
             console.log("📊 [AdminSocket] ID Compare:", { incomingId, currentId, match: incomingId === currentId });
 

@@ -1,6 +1,6 @@
 // Hero Section 4 Feature Cards Data
 export interface CardData {
-    id: number;
+    id: string;
     image: string;
     altText: string;
     title: string;

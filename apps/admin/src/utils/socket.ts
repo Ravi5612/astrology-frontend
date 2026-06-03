@@ -15,7 +15,7 @@ export const getNotificationSocket = (): Socket => {
     return notificationSocket;
 };
 
-export const connectNotificationSocket = (userId: number) => {
+export const connectNotificationSocket = (userId: string) => {
     const socket = getNotificationSocket();
     if (!socket.connected) {
         socket.connect();

@@ -16,7 +16,7 @@ interface OrdersTabProps {
     orders: any[];
     loadingOrders: boolean;
     expandedOrders: Record<number, boolean>;
-    toggleOrder: (id: number) => void;
+    toggleOrder: (id: string) => void;
     orderDisputes: Record<number, any>;
     onViewChat: (dispute: any) => void;
     onReportIssue: (order: any) => void;

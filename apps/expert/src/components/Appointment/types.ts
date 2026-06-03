@@ -1,5 +1,5 @@
 export interface Appointment {
-    id: number;
+    id: string;
     name: string;
     avatar?: string;
     service: string;
@@ -9,8 +9,8 @@ export interface Appointment {
     type: "new" | "follow-up";
     reminder: boolean;
     meetingLink: string;
-    sessionId?: number;
-    clientId?: number;
+    sessionId?: string;
+    clientId?: string;
     expiresAt?: string;
     isFree?: boolean;
     freeMinutes?: number;
@@ -19,7 +19,7 @@ export interface Appointment {
         rating: number;
         comment: string;
     };
-    pujaId?: number;
+    pujaId?: string;
     askExpertForDate?: boolean;
     userMessage?: string;
     expertMessage?: string;

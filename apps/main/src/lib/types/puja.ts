@@ -6,8 +6,8 @@ export interface PujaSamagriItem {
 }
 
 export interface ExpertPuja {
-    id: number;
-    expert_id: number;
+    id: string;
+    expert_id: string;
     is_online: boolean;
     is_home_visit: boolean;
     name: string;

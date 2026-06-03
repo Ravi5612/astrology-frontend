@@ -55,7 +55,7 @@ export default function ClientsPage() {
   // Accordion State
   const [expandedSessions, setExpandedSessions] = useState<Record<string | number, boolean>>({});
 
-  const toggleSession = (id: string | number) => {
+  const toggleSession = (id: string) => {
     setExpandedSessions((prev) => ({
       ...prev,
       [id]: !prev[id]

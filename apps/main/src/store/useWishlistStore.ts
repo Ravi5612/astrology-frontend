@@ -3,11 +3,11 @@ import { toast } from "react-toastify";
 import { WishlistService } from "../services/wishlist.service";
 
 export interface WishlistItem {
-    id: number;
-    productId?: number;
-    expertId?: number;
+    id: string;
+    productId?: string;
+    expertId?: string;
     product?: {
-        id: number;
+        id: string;
         name: string;
         price: number;
         imageUrl?: string;
@@ -18,9 +18,9 @@ export interface WishlistItem {
         original_price?: number;
     };
     expert?: {
-        id: number;
+        id: string;
         user: {
-            id: number;
+            id: string;
             name: string;
             avatar?: string;
         };
@@ -37,13 +37,13 @@ export interface WishlistItem {
         total_likes?: number;
     };
     puja?: {
-        id: number;
+        id: string;
         name: string;
         total_likes: number;
     };
-    merchantId?: number;
+    merchantId?: string;
     merchant?: {
-        id: number;
+        id: string;
         name: string;
         image?: string;
         city?: string;
@@ -59,25 +59,25 @@ interface WishlistState {
 
     // Actions
     fetchWishlist: (isAuthenticated: boolean) => Promise<void>;
-    addToWishlist: (productId: number, isAuthenticated: boolean) => Promise<void>;
-    removeFromWishlist: (productId: number) => Promise<void>;
-    isInWishlist: (productId: number) => boolean;
+    addToWishlist: (productId: string, isAuthenticated: boolean) => Promise<void>;
+    removeFromWishlist: (productId: string) => Promise<void>;
+    isInWishlist: (productId: string) => boolean;
 
     // Expert Actions
-    addExpertToWishlist: (expertId: number, isAuthenticated: boolean) => Promise<void>;
-    removeExpertFromWishlist: (expertId: number) => Promise<void>;
-    isExpertInWishlist: (expertId: number) => boolean;
-    toggleExpertWishlist: (expertId: number, isAuthenticated: boolean) => Promise<void>;
+    addExpertToWishlist: (expertId: string, isAuthenticated: boolean) => Promise<void>;
+    removeExpertFromWishlist: (expertId: string) => Promise<void>;
+    isExpertInWishlist: (expertId: string) => boolean;
+    toggleExpertWishlist: (expertId: string, isAuthenticated: boolean) => Promise<void>;
 
     // Puja Actions
-    isPujaInWishlist: (pujaId: number) => boolean;
-    togglePujaWishlist: (pujaId: number, isAuthenticated: boolean) => Promise<void>;
+    isPujaInWishlist: (pujaId: string) => boolean;
+    togglePujaWishlist: (pujaId: string, isAuthenticated: boolean) => Promise<void>;
 
     // Merchant Actions
-    isMerchantInWishlist: (merchantId: number) => boolean;
-    addMerchantToWishlist: (merchantId: number, isAuthenticated: boolean) => Promise<void>;
-    removeMerchantFromWishlist: (merchantId: number) => Promise<void>;
-    toggleMerchantWishlist: (merchantId: number, isAuthenticated: boolean) => Promise<void>;
+    isMerchantInWishlist: (merchantId: string) => boolean;
+    addMerchantToWishlist: (merchantId: string, isAuthenticated: boolean) => Promise<void>;
+    removeMerchantFromWishlist: (merchantId: string) => Promise<void>;
+    toggleMerchantWishlist: (merchantId: string, isAuthenticated: boolean) => Promise<void>;
 
     // Reset
     resetWishlist: () => void;
@@ -123,7 +123,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    addToWishlist: async (productId: number, isAuthenticated: boolean) => {
+    addToWishlist: async (productId: string, isAuthenticated: boolean) => {
         if (!isAuthenticated) {
             toast.error("Please login to use wishlist");
             return;
@@ -143,7 +143,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    removeFromWishlist: async (productId: number) => {
+    removeFromWishlist: async (productId: string) => {
         try {
             await WishlistService.removeFromWishlist(productId);
             toast.success("Removed from wishlist");
@@ -153,12 +153,12 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isInWishlist: (productId: number | string) => {
+    isInWishlist: (productId: string | string) => {
         const { wishlistItems } = get();
         return wishlistItems.some(item => (String(item.productId) === String(productId) || String(item.product?.id) === String(productId)));
     },
 
-    addExpertToWishlist: async (expertId: number, isAuthenticated: boolean) => {
+    addExpertToWishlist: async (expertId: string, isAuthenticated: boolean) => {
         if (!isAuthenticated) {
             toast.error("Please login to use wishlist");
             return;
@@ -178,7 +178,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    removeExpertFromWishlist: async (expertId: number) => {
+    removeExpertFromWishlist: async (expertId: string) => {
         try {
             await WishlistService.removeExpertFromWishlist(expertId);
             toast.success("Removed from liked list");
@@ -188,7 +188,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isExpertInWishlist: (expertId: number | string) => {
+    isExpertInWishlist: (expertId: string | string) => {
         const { expertWishlistItems } = get();
         return expertWishlistItems.some(item =>
             item != null && (
@@ -199,7 +199,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         );
     },
 
-    toggleExpertWishlist: async (expertId: number, isAuthenticated: boolean) => {
+    toggleExpertWishlist: async (expertId: string, isAuthenticated: boolean) => {
         const { isExpertInWishlist, removeExpertFromWishlist, addExpertToWishlist } = get();
         if (isExpertInWishlist(expertId)) {
             await removeExpertFromWishlist(expertId);
@@ -208,12 +208,12 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isPujaInWishlist: (pujaId: number | string) => {
+    isPujaInWishlist: (pujaId: string | string) => {
         const { pujaWishlistItems } = get();
         return pujaWishlistItems.some(item => (String((item as any).pujaId) === String(pujaId) || String((item as any).puja?.id) === String(pujaId)));
     },
 
-    togglePujaWishlist: async (pujaId: number, isAuthenticated: boolean) => {
+    togglePujaWishlist: async (pujaId: string, isAuthenticated: boolean) => {
         const { isPujaInWishlist, fetchWishlist } = get();
         if (!isAuthenticated) {
             toast.error("Please login to like puja");
@@ -239,7 +239,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    isMerchantInWishlist: (merchantId: number | string) => {
+    isMerchantInWishlist: (merchantId: string | string) => {
         const { merchantWishlistItems } = get();
         return merchantWishlistItems.some(item =>
             item != null && (
@@ -250,7 +250,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         );
     },
 
-    addMerchantToWishlist: async (merchantId: number, isAuthenticated: boolean) => {
+    addMerchantToWishlist: async (merchantId: string, isAuthenticated: boolean) => {
         if (!isAuthenticated) {
             toast.error("Please login to like this store");
             return;
@@ -270,7 +270,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    removeMerchantFromWishlist: async (merchantId: number) => {
+    removeMerchantFromWishlist: async (merchantId: string) => {
         try {
             await WishlistService.removeMerchantFromWishlist(merchantId);
             toast.success("Store removed from favorites");
@@ -280,7 +280,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         }
     },
 
-    toggleMerchantWishlist: async (merchantId: number, isAuthenticated: boolean) => {
+    toggleMerchantWishlist: async (merchantId: string, isAuthenticated: boolean) => {
         const { isMerchantInWishlist, removeMerchantFromWishlist, addMerchantToWishlist } = get();
         if (isMerchantInWishlist(merchantId)) {
             await removeMerchantFromWishlist(merchantId);

@@ -135,7 +135,7 @@ export const constructProfilePayload = (profile: Profile) => {
         price: Number(profile.price),
         chat_price: Number(profile.chat_price),
         call_price: Number(profile.call_price),
-        video_call_price: Number(profile.video_call_price),
+        video_call_price: String(profile.video_call_price),
         report_price: Number(profile.report_price),
         horoscope_price: Number(profile.horoscope_price),
         bank_details: profile.bank_details,
@@ -241,7 +241,7 @@ export const useProfile = () => {
             onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
         }),
         toggle: useMutation({
-            mutationFn: async ({ id, completed }: { id: number; completed: boolean }) => {
+            mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
                 const [res, error] = await updateTodo(id, { completed });
                 if (error) throw new Error(getErrorMessage(error));
                 return res;
@@ -249,7 +249,7 @@ export const useProfile = () => {
             onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
         }),
         delete: useMutation({
-            mutationFn: async (id: number) => {
+            mutationFn: async (id: string) => {
                 const [res, error] = await deleteTodoApi(id);
                 if (error) throw new Error(getErrorMessage(error));
                 return res;

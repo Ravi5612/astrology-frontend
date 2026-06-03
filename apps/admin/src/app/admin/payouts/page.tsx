@@ -9,7 +9,7 @@ export default function AdminPayoutsPage() {
     const [payoutRequests, setPayoutRequests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState<string>('expert');
-    const [processingId, setProcessingId] = useState<number | null>(null);
+    const [processingId, setProcessingId] = useState<string | null>(null);
 
     const [selectedStatus, setSelectedStatus] = useState<string>('pending');
     const [stats, setStats] = useState({
@@ -72,9 +72,9 @@ export default function AdminPayoutsPage() {
 
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState("");
-    const [currentRejectId, setCurrentRejectId] = useState<number | null>(null);
+    const [currentRejectId, setCurrentRejectId] = useState<string | null>(null);
 
-    const handleAction = async (id: number, status: 'approved' | 'rejected', remark?: string) => {
+    const handleAction = async (id: string, status: 'approved' | 'rejected', remark?: string) => {
         setProcessingId(id);
         const [_, error] = await updateWithdrawalStatus(id, { status, remark });
         
@@ -94,7 +94,7 @@ export default function AdminPayoutsPage() {
         setProcessingId(null);
     };
 
-    const openRejectModal = (id: number) => {
+    const openRejectModal = (id: string) => {
         setCurrentRejectId(id);
         setShowRejectModal(true);
     };

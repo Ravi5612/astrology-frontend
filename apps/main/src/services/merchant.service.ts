@@ -35,7 +35,7 @@ export const merchantService = {
     /**
      * Fetch a single merchant by ID
      */
-    getMerchantById: async (id: string | number) => {
+    getMerchantById: async (id: string) => {
         const [data, error] = await api.get<any>(`/merchants/${id}`) as any;
         // If the backend wraps the response in a 'data' field, use it. Otherwise use the object itself.
         const merchantData = data?.data || data;
@@ -45,7 +45,7 @@ export const merchantService = {
     /**
      * Fetch products for a specific merchant
      */
-    getMerchantProducts: async (id: string | number, page = 1, limit = 20) => {
+    getMerchantProducts: async (id: string, page = 1, limit = 20) => {
         const [data, error] = await api.get<any>(`/products?merchantId=${id}&page=${page}&limit=${limit}`) as any;
         // console.log('Raw Store products API Response:', data);
         // Extract array from various possible keys
@@ -56,7 +56,7 @@ export const merchantService = {
     /**
      * Fetch reviews for a specific merchant
      */
-    getMerchantReviews: async (id: string | number) => {
+    getMerchantReviews: async (id: string) => {
         const [data, error] = await api.get<any>(`/reviews/merchant/${id}`) as any;
         return [data?.data || data || [], error];
     },
@@ -64,11 +64,11 @@ export const merchantService = {
     /**
      * Submit a review for a merchant
      */
-    submitMerchantReview: async (payload: { merchantId: number | string, orderId: number | string, rating: number, comment: string }) => {
+    submitMerchantReview: async (payload: { merchantId: string | string, orderId: string | string, rating: number, comment: string }) => {
         // Based on backend plan: POST /api/v1/reviews
         const body = {
-            merchantId: Number(payload.merchantId),
-            orderId: Number(payload.orderId),
+            merchantId: String(payload.merchantId),
+            orderId: String(payload.orderId),
             rating: Number(payload.rating),
             comment: payload.comment
         };

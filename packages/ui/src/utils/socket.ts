@@ -23,7 +23,7 @@ export const getSupportSocket = (): Socket => {
     return supportSocket;
 };
 
-export const connectNotificationSocket = (userId: number | string) => {
+export const connectNotificationSocket = (userId: string | string) => {
     const socket = getNotificationSocket();
     if (!socket.connected) {
         socket.connect();

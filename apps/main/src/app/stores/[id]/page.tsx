@@ -87,10 +87,10 @@ const StoreDetailsPage = () => {
 
   useEffect(() => {
     const handleStatusChange = (data: {
-      merchant_id: number;
+      merchant_id: string;
       is_online: boolean;
     }) => {
-      if (Number(data.merchant_id) === Number(id)) {
+      if (String(data.merchant_id) === String(id)) {
         setIsOnline(data.is_online);
       }
     };

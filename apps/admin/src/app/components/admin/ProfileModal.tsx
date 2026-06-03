@@ -38,7 +38,7 @@ interface DocumentItem {
 }
 
 interface ProfileModalProps {
-  expertId?: number;
+  expertId?: string;
   isOpen: boolean;
   onClose: () => void;
   onStatusUpdate?: () => void;
@@ -61,7 +61,7 @@ interface ProfileModalProps {
   }[];
   action2Label?: string;
   purchases?: {
-    id: number;
+    id: string;
     amount: number;
     status: string;
     createdAt: string;

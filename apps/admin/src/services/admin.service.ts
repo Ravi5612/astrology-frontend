@@ -8,7 +8,7 @@ export const getUserStats = async (): Promise<[any | null, any | null]> => {
   return await api.get("/admin/clients/stats");
 };
 
-export const getUserById = async (id: number): Promise<[any | null, any | null]> => {
+export const getUserById = async (id: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/clients/${id}`);
 };
 
@@ -20,15 +20,15 @@ export const getExpertStats = async (): Promise<[any | null, any | null]> => {
   return await api.get("/admin/experts/stats");
 };
 
-export const getExpertById = async (id: number): Promise<[any | null, any | null]> => {
+export const getExpertById = async (id: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/experts/${id}`);
 };
 
-export const updateExpertStatus = async (id: number, data: { status: string; reason?: string }): Promise<[any | null, any | null]> => {
+export const updateExpertStatus = async (id: string, data: { status: string; reason?: string }): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/experts/${id}/status`, data);
 };
 
-export const toggleUserBlock = async (id: number, isBlocked: boolean): Promise<[any | null, any | null]> => {
+export const toggleUserBlock = async (id: string, isBlocked: boolean): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/clients/${id}/block`, { isBlocked });
 };
 
@@ -57,7 +57,7 @@ export const createCoupon = async (data: any): Promise<[any | null, any | null]>
   return await api.post("/admin/coupons", data);
 };
 
-export const assignCouponToUser = async (userId: number, couponCode: string): Promise<[any | null, any | null]> => {
+export const assignCouponToUser = async (userId: string, couponCode: string): Promise<[any | null, any | null]> => {
   return await api.post(`/admin/coupons/assign/${userId}`, { code: couponCode });
 };
 
@@ -73,7 +73,7 @@ export const updateCoupon = async (id: string, data: any): Promise<[any | null, 
   return await api.patch(`/admin/coupons/${id}`, data);
 };
 
-export const deleteCoupon = async (id: number): Promise<[any | null, any | null]> => {
+export const deleteCoupon = async (id: string): Promise<[any | null, any | null]> => {
   return await api.delete(`/admin/coupons/${id}`);
 };
 
@@ -99,11 +99,11 @@ export const getDisputes = async (params?: { page?: number; limit?: number; stat
   return await api.get("/admin/support/disputes", { params: queryParams });
 };
 
-export const getDisputeById = async (id: number): Promise<[any | null, any | null]> => {
+export const getDisputeById = async (id: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/support/disputes/${id}`);
 };
 
-export const updateDisputeStatus = async (id: number, data: { status: string; notes?: string }): Promise<[any | null, any | null]> => {
+export const updateDisputeStatus = async (id: string, data: { status: string; notes?: string }): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/support/disputes/${id}/status`, data);
 };
 
@@ -113,15 +113,15 @@ export const getDisputeStats = async (): Promise<[any | null, any | null]> => {
 
 
 // Chat APIs
-export const getDisputeMessages = async (disputeId: number): Promise<[any | null, any | null]> => {
+export const getDisputeMessages = async (disputeId: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/support/disputes/${disputeId}/messages`);
 };
 
-export const sendDisputeMessage = async (disputeId: number, data: { message?: string, attachmentUrl?: string, attachmentType?: string }): Promise<[any | null, any | null]> => {
+export const sendDisputeMessage = async (disputeId: string, data: { message?: string, attachmentUrl?: string, attachmentType?: string }): Promise<[any | null, any | null]> => {
   return await api.post(`/admin/support/disputes/${disputeId}/messages`, data);
 };
 
-export const markDisputeMessagesRead = async (disputeId: number): Promise<[any | null, any | null]> => {
+export const markDisputeMessagesRead = async (disputeId: string): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/support/disputes/${disputeId}/messages/read`);
 };
 
@@ -135,11 +135,11 @@ export const getLiveSessionStats = async (): Promise<[any | null, any | null]> =
   return await api.get("/admin/live-sessions/stats");
 };
 
-export const getChatHistory = async (id: number): Promise<[any | null, any | null]> => {
+export const getChatHistory = async (id: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/live-sessions/${id}/history`);
 };
 
-export const terminateSession = async (id: number, data: { userMessage?: string; expertMessage?: string }): Promise<[any | null, any | null]> => {
+export const terminateSession = async (id: string, data: { userMessage?: string; expertMessage?: string }): Promise<[any | null, any | null]> => {
   return await api.post(`/admin/live-sessions/${id}/terminate`, data);
 };
 
@@ -154,7 +154,7 @@ export const getWithdrawals = async (params?: { page?: number; limit?: number; s
 };
 
 
-export const updateWithdrawalStatus = async (id: number, data: { status: string; remark?: string }): Promise<[any | null, any | null]> => {
+export const updateWithdrawalStatus = async (id: string, data: { status: string; remark?: string }): Promise<[any | null, any | null]> => {
   return await api.patch(`/admin/withdrawals/${id}/status`, data);
 };
 
@@ -172,15 +172,15 @@ export const getReviewStats = async (): Promise<[any | null, any | null]> => {
   return await api.get("/reviews/admin/stats");
 };
 
-export const updateReviewStatus = async (id: number, status: string): Promise<[any | null, any | null]> => {
+export const updateReviewStatus = async (id: string, status: string): Promise<[any | null, any | null]> => {
   return await api.patch(`/reviews/admin/${id}/status`, { status });
 };
 
-export const deleteReviewResource = async (id: number): Promise<[any | null, any | null]> => {
+export const deleteReviewResource = async (id: string): Promise<[any | null, any | null]> => {
   return await api.delete(`/reviews/admin/${id}`);
 };
 
-export const sendReviewResponse = async (id: number, message: string): Promise<[any | null, any | null]> => {
+export const sendReviewResponse = async (id: string, message: string): Promise<[any | null, any | null]> => {
   return await api.post(`/admin/reviews/${id}/response`, { message });
 };
 
@@ -198,7 +198,7 @@ export const getMerchantSalesOverview = async (): Promise<[any | null, any | nul
   return await api.get("/admin/merchant-sales");
 };
 
-export const getMerchantSalesDetails = async (id: number): Promise<[any | null, any | null]> => {
+export const getMerchantSalesDetails = async (id: string): Promise<[any | null, any | null]> => {
   return await api.get(`/admin/merchant-sales/${id}`);
 };
 

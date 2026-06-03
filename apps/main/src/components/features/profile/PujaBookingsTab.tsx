@@ -9,7 +9,7 @@ import Skeleton from "@/components/ui/Skeleton";
 interface PujaBookingsTabProps {
   loading: boolean;
   bookings: any[];
-  onUpdateStatus: (id: number, status: string, extra?: any) => Promise<boolean>;
+  onUpdateStatus: (id: string, status: string, extra?: any) => Promise<boolean>;
   onReportIssue?: (booking: any) => void;
   pujaDisputes?: Record<number, any>;
   onViewDispute?: (dispute: any) => void;
@@ -55,7 +55,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [rescheduleMessage, setRescheduleMessage] = useState("");
 
-  const handleAction = async (id: number, status: string, extra: any = {}) => {
+  const handleAction = async (id: string, status: string, extra: any = {}) => {
     setIsProcessing(id);
     await onUpdateStatus(id, status, extra);
     setIsProcessing(null);

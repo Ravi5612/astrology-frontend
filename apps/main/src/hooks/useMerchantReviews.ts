@@ -7,7 +7,7 @@ import { getErrorMessage } from "@repo/lib";
  * Hook to fetch reviews for a specific merchant
  * @param id Merchant ID
  */
-export const useMerchantReviews = (id: string | number | undefined) => {
+export const useMerchantReviews = (id: string | undefined) => {
     return useQuery<Review[], Error>({
         queryKey: ['merchant-reviews', id],
         queryFn: async () => {

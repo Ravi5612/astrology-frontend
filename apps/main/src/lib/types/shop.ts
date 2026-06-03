@@ -4,7 +4,7 @@ export interface ReviewStat {
 }
 
 export interface Review {
-  id: string | number;
+  id: string;
   name: string;
   img: string;
   rating: number;
@@ -24,7 +24,7 @@ export interface ReviewsProps {
 }
 
 export interface Store {
-    id: string | number;
+    id: string;
     name: string;
     address: string;
     city: string;

@@ -41,7 +41,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
   const { isMerchantInWishlist } = useWishlistStore();
   const { toggleLike } = useWishlist();
 
-  const isLiked = isMerchantInWishlist(Number(store.id));
+  const isLiked = isMerchantInWishlist(String(store.id));
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,16 +56,16 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
       return;
     }
 
-    toggleLike({ id: Number(store.id), type: "merchant", isLiked });
+    toggleLike({ id: String(store.id), type: "merchant", isLiked });
   };
 
   // ─── Real-time Online status via WebSockets ───
   useEffect(() => {
     console.log(`🏠 [Card ${store.id}] Initializing socket listener...`);
 
-    const handleStatusChange = (data: { merchant_id: number; is_online: boolean }) => {
+    const handleStatusChange = (data: { merchant_id: string; is_online: boolean }) => {
       console.log(`🏠 [Card ${store.id}] Socket event received:`, data);
-      if (Number(data.merchant_id) === Number(store.id)) {
+      if (String(data.merchant_id) === String(store.id)) {
         console.log(`✅ [Card ${store.id}] Status MATCH: updating to ${data.is_online}`);
         setIsOnline(data.is_online);
       }

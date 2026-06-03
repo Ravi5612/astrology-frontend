@@ -13,7 +13,7 @@ import { getDisputeMessages, sendDisputeMessage, markDisputeMessagesRead, upload
 import { DisputeMessage as Message } from "@/lib/types";
 
 interface UserDisputeChatModalProps {
-    disputeId: number; // Just ID needed
+    disputeId: string; // Just ID needed
     category?: string; // Optional context
     onClose: () => void;
 }
@@ -72,7 +72,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
 
         const handleNewMessage = (message: any) => {
             const mId = message.disputeId || message.dispute_id;
-            if (Number(mId) === Number(disputeId)) {
+            if (String(mId) === String(disputeId)) {
                 setMessages((prev) => {
                     if (prev.some(m => m.id === message.id)) return prev;
                     return [...prev, message];
@@ -82,7 +82,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
         };
 
         const handleEndChatBroadcast = (data: any) => {
-            if (Number(data.disputeId) === Number(disputeId)) {
+            if (String(data.disputeId) === String(disputeId)) {
                 setUserEndRequestedAt(new Date().toISOString());
                 // No longer injecting manually - backend will send a 'new_message' 
                 // for the system note or it will appear on next refresh

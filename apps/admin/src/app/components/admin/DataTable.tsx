@@ -36,7 +36,7 @@ interface DataTableProps<T> {
   tableMinWidth?: string;
 }
 
-const TableRow = memo(function TableRow<T extends { id: number | string }>({
+const TableRow = memo(function TableRow<T extends { id: string | string }>({
   item,
   columns,
   onViewDetails,
@@ -111,7 +111,7 @@ const PaginationButton = memo(function PaginationButton({
 });
 
 // Main DataTable Component
-export function DataTable<T extends { id: number | string }>({
+export function DataTable<T extends { id: string | string }>({
   data,
   columns,
   searchKeys,

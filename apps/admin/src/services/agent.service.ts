@@ -69,7 +69,7 @@ export const getAgentStats = async () => {
     return data as AgentStats;
 };
 
-export const getAgentById = async (id: string | number) => {
+export const getAgentById = async (id: string) => {
     const [data, error] = await api.get<Agent>(`/admin/agents/${id}`);
     if (error) throw error;
     return normalizeAgent(data);
@@ -82,7 +82,7 @@ export const createAgent = async (formData: FormData) => {
 };
 
 export const updateAgentStatus = async (
-    id: string | number,
+    id: string,
     status: Agent["status"]
 ) => {
     const [data, error] = await api.patch<any>(`/admin/agents/${id}`, { status });
@@ -129,7 +129,7 @@ export const getAllListings = async (params?: {
 };
 
 export const updateListingStatus = async (
-    id: string | number,
+    id: string,
     status: "approved" | "rejected" | "pending",
     reason?: string
 ) => {
@@ -148,7 +148,7 @@ export const getCommissions = async (params?: {
     return data as { data: Commission[] };
 };
 
-export const markCommissionPaid = async (id: number) => {
+export const markCommissionPaid = async (id: string) => {
     const [data, error] = await api.patch<any>(`/admin/commissions/${id}/pay`);
     if (error) throw error;
     return data;
@@ -178,7 +178,7 @@ export const getAdminMerchantProfiles = async (params?: {
 };
 
 export const updateMerchantProfileStatus = async (
-    id: string | number,
+    id: string,
     status: string
 ) => {
     const [data, error] = await api.patch<any>(`/admin/merchants/${id}/status`, { status });

@@ -88,7 +88,7 @@ export const useProfileOtherLogic = (
         loadNotifications();
     }, [loadNotifications]);
 
-    const handleMarkAsRead = async (id: number) => {
+    const handleMarkAsRead = async (id: string) => {
         try {
             const [, error] = await markNotificationAsRead(id) as any;
             if (error) {

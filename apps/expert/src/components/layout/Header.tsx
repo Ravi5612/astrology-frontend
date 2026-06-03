@@ -33,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       const actualUserId = user?.userId || user?.id;
       if (user && actualUserId && isOnline) {
         const { socket } = require("@/lib/socket");
-        socket.emit("expert_offline", { userId: Number(actualUserId) });
+        socket.emit("expert_offline", { userId: String(actualUserId) });
       }
     };
 

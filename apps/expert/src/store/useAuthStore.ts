@@ -3,7 +3,7 @@ import { api } from '@/lib/api';
 import { expertLogoutAction } from '@/actions/auth';
 
 interface User {
-    id: number;
+    id: string;
     name?: string;
     email?: string;
     roles?: string[];

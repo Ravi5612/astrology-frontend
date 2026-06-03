@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const { X, AlertTriangle, ShieldAlert, MessageSquare } = LucideIcons as any;
 
 interface Message {
-    id: number;
+    id: string;
     senderType?: 'user' | 'expert' | 'admin';
     sender_type?: 'user' | 'expert' | 'admin';
     content: string;

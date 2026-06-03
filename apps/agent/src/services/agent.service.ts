@@ -58,7 +58,7 @@ export const getAgentListings = async (params?: ListingParams): Promise<[Listing
 };
 
 export interface ReferredUser {
-    id: number | string;
+    id: string | string;
     name: string;
     email: string | null;
     phone: string | null;
@@ -126,7 +126,7 @@ export interface RegisterUserResponse {
     success: boolean;
     message: string;
     user: {
-        id: number;
+        id: string;
         name: string;
         email: string;
         role: string;
@@ -176,7 +176,7 @@ export const getAgentWithdrawals = async (): Promise<[any | null, ApiError | nul
     return [res, error];
 };
 
-export const requestAgentWithdrawal = async (amount: number, bankAccountId?: string | number): Promise<[any | null, ApiError | null]> => {
+export const requestAgentWithdrawal = async (amount: number, bankAccountId?: string): Promise<[any | null, ApiError | null]> => {
     const [res, error] = await api.post(API_ROUTES.AGENTS.WALLET.WITHDRAW, { amount, bank_account_id: bankAccountId }) as any;
     if (error) error.message = getErrorMessage(error);
     return [res, error];

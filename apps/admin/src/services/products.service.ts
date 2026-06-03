@@ -7,8 +7,8 @@ export interface Product {
     originalPrice: number;
     imageUrl: string;
     isActive?: boolean;
-    expert_id?: number;
-    merchant_id?: number;
+    expert_id?: string;
+    merchant_id?: string;
     category?: string;
 }
 

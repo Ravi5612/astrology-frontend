@@ -25,7 +25,7 @@ interface VerificationAndDocumentsProps {
     onStartKYC: () => void;
     documents: DocumentItem[];
     onUploadDocument: (file: File, category?: 'aadhar' | 'pan' | 'other', side?: 'front' | 'back') => void;
-    onDeleteDocument: (id: number) => void;
+    onDeleteDocument: (id: string) => void;
     certificates: string[];
     onUploadCertificate: (file: File) => void;
     activeSection?: string;

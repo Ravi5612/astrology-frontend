@@ -6,7 +6,7 @@ import { homeTranslations } from "../../../lib/translations/home";
 
 interface ConsultationCardProps {
   item: {
-    id: number;
+    id: string;
     image: string;
     title: string;
   };

@@ -2,7 +2,7 @@ import React from "react";
 import { Copy, Clock, Eye, EyeOff, Edit2, Trash2 } from "lucide-react";
 
 interface CouponCardProps {
-  id: number;
+  id: string;
   code: string;
   description: string;
   discountType: "percentage" | "fixed";
@@ -15,9 +15,9 @@ interface CouponCardProps {
   validUntil: string;
   status: "active" | "inactive" | "expired";
   onCopy: (code: string) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onToggleStatus: (id: number) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
 }
 
 export function CouponCard(props: any) {

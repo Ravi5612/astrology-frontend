@@ -9,11 +9,11 @@ const getFormattedError = (error: any, fallback: string) => getErrorMessage(erro
 
 // Define Types
 export interface CartItem {
-    id: number;
-    productId: number;
+    id: string;
+    productId: string;
     quantity: number;
     product?: {
-        id: number;
+        id: string;
         name: string;
         price: number;
         sale_price?: number;
@@ -30,9 +30,9 @@ export interface CartState {
 
     // Actions
     fetchCart: (isAuthenticated: boolean) => Promise<void>;
-    addToCart: (productId: number, quantity: number, isAuthenticated: boolean) => Promise<void>;
-    updateQuantity: (productId: number, quantity: number) => Promise<void>;
-    removeFromCart: (productId: number) => Promise<void>;
+    addToCart: (productId: string, quantity: number, isAuthenticated: boolean) => Promise<void>;
+    updateQuantity: (productId: string, quantity: number) => Promise<void>;
+    removeFromCart: (productId: string) => Promise<void>;
     refreshCart: (isAuthenticated: boolean) => Promise<void>;
     resetCart: () => void;
 }
@@ -87,7 +87,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         }
     },
 
-    addToCart: async (productId: number, quantity: number = 1, isAuthenticated: boolean) => {
+    addToCart: async (productId: string, quantity: number = 1, isAuthenticated: boolean) => {
         if (!isAuthenticated) {
             toast.error("Please login to add items to cart");
             return;
@@ -113,7 +113,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         }
     },
 
-    updateQuantity: async (productId: number, quantity: number) => {
+    updateQuantity: async (productId: string, quantity: number) => {
         const { removeFromCart, fetchCart } = get();
 
         if (quantity <= 0) {
@@ -153,7 +153,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         }, 500);
     },
 
-    removeFromCart: async (productId: number) => {
+    removeFromCart: async (productId: string) => {
         try {
             const [_, error] = await CartService.removeFromCart(productId) as any;
             if (error) throw error;

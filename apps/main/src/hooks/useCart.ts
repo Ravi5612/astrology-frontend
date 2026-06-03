@@ -9,7 +9,7 @@ export const useCart = () => {
     const fetchCart = useCartStore((state) => state.fetchCart);
 
     const addToCartMutation = useMutation({
-        mutationFn: async ({ productId, quantity }: { productId: number; quantity: number }) => {
+        mutationFn: async ({ productId, quantity }: { productId: string; quantity: number }) => {
             const [data, error] = await CartService.addToCart(productId, quantity) as any;
             if (error) throw error;
             return data;

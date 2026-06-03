@@ -10,9 +10,9 @@ import { useLanguageStore } from "@repo/store";
 import { homeTranslations } from "../../../lib/translations/home";
 
 interface ExpertProfile {
-    id: number;
+    id: string;
     user: {
-        id: number;
+        id: string;
         name: string;
         avatar?: string;
     };

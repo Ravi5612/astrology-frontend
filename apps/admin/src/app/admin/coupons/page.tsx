@@ -104,7 +104,7 @@ export default function CouponsPage() {
   };
 
   // Delete Dialog/Logic
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this coupon?")) return;
 
     const { deleteCoupon } = await import("@/services/admin.service");
@@ -119,7 +119,7 @@ export default function CouponsPage() {
     fetchCoupons();
   };
 
-  const handleToggleStatus = async (id: number, coupon: any) => {
+  const handleToggleStatus = async (id: string, coupon: any) => {
     // Use isActive as source of truth if available, otherwise check status
     const currentlyActive = typeof coupon.isActive === 'boolean' ? coupon.isActive : (coupon.status?.toLowerCase() === 'active' || !coupon.status);
     const nextActive = !currentlyActive;

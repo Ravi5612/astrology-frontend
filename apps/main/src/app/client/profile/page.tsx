@@ -259,7 +259,7 @@ const ProfileContent: React.FC = () => {
                   hasMore={notificationsHasMore}
                   loadingMore={loadingMoreNotifications}
                   onLoadMore={loadMoreNotifications}
-                  onMarkAsRead={(id) => handleMarkAsRead(Number(id))}
+                  onMarkAsRead={(id) => handleMarkAsRead(String(id))}
                   onClearAll={handleClearAllNotifs}
                 />
               )}

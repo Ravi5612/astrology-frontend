@@ -12,7 +12,7 @@ export const ChatNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
-    const handleReject = async (sessionId: number) => {
+    const handleReject = async (sessionId: string) => {
         toast.dismiss();
         const [_, error] = await api.post(`/consultations/reject/${sessionId}`);
         if (error) {

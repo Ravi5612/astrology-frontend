@@ -73,7 +73,7 @@ export default function AdminPujaShopsPage() {
         return () => clearTimeout(t);
     }, [fetchListings]);
 
-    const handleStatusUpdate = async (id: string | number, status: "approved" | "rejected" | "active") => {
+    const handleStatusUpdate = async (id: string, status: "approved" | "rejected" | "active") => {
         try {
             setIsSubmitting(true);
             if (viewMode === 'agent') {

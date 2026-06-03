@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   email_verified_at?: string | Date | null;
@@ -9,12 +9,12 @@ export interface User {
   is_blocked: boolean;
 
   profile_client?: {
-    id: number;
+    id: string;
     phone_number?: string;
     gender?: string;
     date_of_birth?: string | Date | null;
     addresses?: {
-      id: number;
+      id: string;
       house_no?: string;
       line1?: string;
       city?: string;

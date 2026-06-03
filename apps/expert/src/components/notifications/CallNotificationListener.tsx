@@ -13,7 +13,7 @@ export const CallNotificationListener: React.FC = () => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
-    const handleReject = async (sessionId: number) => {
+    const handleReject = async (sessionId: string) => {
         toast.dismiss();
         const [_, error] = await api.post(`/consultations/reject/${sessionId}`);
         if (error) {
@@ -23,7 +23,7 @@ export const CallNotificationListener: React.FC = () => {
 
     const registerExpert = useCallback(() => {
         if (!user) return;
-        const expertId = Number(user.profileId || user.id);
+        const expertId = String(user.profileId || user.id);
         if (!expertId) return;
         callSocket.emit('register_expert', { expertId });
     }, [user]);

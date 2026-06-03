@@ -8,7 +8,7 @@ export type CommissionStatus = "pending" | "paid" | "cancelled";
 
 // ── Core Agent ───────────────────────────────────────────────
 export interface Agent {
-    id: number;
+    id: string;
     agent_id: string;           // e.g. AGT-0001
     name: string;
     email: string;
@@ -45,7 +45,7 @@ export interface Agent {
 
 // ── Listing linked to an Agent ───────────────────────────────
 export interface AgentListing {
-    id: number;
+    id: string;
     agent_id: string;
     listing_type: ListingType;
     listing_name: string;
@@ -84,7 +84,7 @@ export interface AgentListing {
 
 // ── Commission Record ────────────────────────────────────────
 export interface Commission {
-    id: number;
+    id: string;
     agent_id: string;
     agent_name: string;
     listing_type: ListingType;

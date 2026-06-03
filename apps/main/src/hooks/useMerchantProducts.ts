@@ -7,7 +7,7 @@ import { getErrorMessage } from "@repo/lib";
  * Hook to fetch products for a specific merchant
  * @param id Merchant ID
  */
-export const useMerchantProducts = (id: string | number | undefined, page = 1, limit = 20) => {
+export const useMerchantProducts = (id: string | undefined, page = 1, limit = 20) => {
     return useQuery<Product[]>({
         queryKey: ['merchant-products', id, page, limit],
         queryFn: async () => {

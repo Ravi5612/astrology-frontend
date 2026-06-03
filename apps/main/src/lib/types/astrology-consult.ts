@@ -32,7 +32,7 @@ export interface MatchFormProps {
 }
 
 export interface AstrologySign {
-  id: number;
+  id: string;
   title: string;
   image: string;
   date: string;

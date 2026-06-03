@@ -1,6 +1,6 @@
 //  Clients Testimoinial Data
 interface TestimoinialData {
-    id: number;
+    id: string;
     name: string;
     review: string;
     image: string;

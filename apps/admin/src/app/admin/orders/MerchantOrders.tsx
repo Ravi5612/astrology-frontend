@@ -23,8 +23,8 @@ import {
 } from "lucide-react";
 
 interface MerchantCard {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   shopName: string;
   managerName: string;
   phone: string;
@@ -39,10 +39,10 @@ interface MerchantCard {
 }
 
 interface SaleDetail {
-  id: number;
-  orderId: number;
+  id: string;
+  orderId: string;
   product: {
-    id: number;
+    id: string;
     name: string;
     sku: string;
     price: number;
@@ -50,7 +50,7 @@ interface SaleDetail {
   quantity: number;
   totalPrice: number;
   customer: {
-    id: number;
+    id: string;
     name: string;
     phone: string;
     email: string;
@@ -66,7 +66,7 @@ const MerchantOrders = () => {
   const [merchantDetails, setMerchantDetails] = useState<any>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
+  const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchMerchants();
@@ -79,7 +79,7 @@ const MerchantOrders = () => {
     setLoading(false);
   };
 
-  const handleMerchantClick = async (id: number) => {
+  const handleMerchantClick = async (id: string) => {
     setSelectedMerchant(id);
     setDetailsLoading(true);
     const [data, error] = await getMerchantSalesDetails(id);
@@ -87,7 +87,7 @@ const MerchantOrders = () => {
     setDetailsLoading(false);
   };
 
-  const toggleOrderExpand = (orderId: number) => {
+  const toggleOrderExpand = (orderId: string) => {
     setExpandedOrders(prev => ({
       ...prev,
       [orderId]: !prev[orderId]

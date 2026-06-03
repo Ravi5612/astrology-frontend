@@ -344,11 +344,11 @@ const ProfileManagement = () => {
                     <TodoList
                         todos={todos}
                         onAdd={(t: string) => { todoActions.add(t); }}
-                        onToggle={(id: number) => { 
+                        onToggle={(id: string) => { 
                             const todo = todos.find(t => t.id === id);
                             if (todo) todoActions.toggle({ id, completed: !todo.completed }); 
                         }}
-                        onDelete={(id: number) => { todoActions.remove(id); }}
+                        onDelete={(id: string) => { todoActions.remove(id); }}
                         isActive={activeTab === "todo-list"}
                     />
                 </div>

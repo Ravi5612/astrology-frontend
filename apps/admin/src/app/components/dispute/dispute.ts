@@ -1,5 +1,5 @@
 export interface Dispute {
-  id: number;
+  id: string;
   dispute_id?: string; // Some versions might use snake_case
   disputeId?: string;  // Maintain backward compatibility for now
   user: string | any;

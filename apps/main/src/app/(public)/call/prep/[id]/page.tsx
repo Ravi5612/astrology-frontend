@@ -17,7 +17,7 @@ const { ChevronLeft, Phone, Video, User, Calendar, MapPin, ShieldCheck } = Lucid
 import { Expert } from "@/lib/types";
 
 interface ExpertData {
-    id: string | number;
+    id: string;
     name: string;
     image: string;
     expertise: string;

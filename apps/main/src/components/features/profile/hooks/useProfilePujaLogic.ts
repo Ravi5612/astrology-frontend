@@ -27,7 +27,7 @@ export const useProfilePujaLogic = (isAuthenticated: boolean, activeTab: string)
         loadPujaBookings();
     }, [loadPujaBookings]);
 
-    const handleUpdatePujaStatus = async (id: number, status: string, extra: any = {}) => {
+    const handleUpdatePujaStatus = async (id: string, status: string, extra: any = {}) => {
         const [res, error] = await updatePujaAppointmentStatus(id, { status, ...extra });
         if (error) {
             toast.error(getErrorMessage(error) || "Failed to update booking");

@@ -3,7 +3,7 @@ import { API_ROUTES } from "../lib/api-routes";
 import { ApiError } from "@repo/safe-fetch";
 
 export interface ClientUser {
-    id: number;
+    id: string;
     uid?: string;
     name?: string;
     email?: string;

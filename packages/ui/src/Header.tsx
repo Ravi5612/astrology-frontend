@@ -218,7 +218,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
     }
   }, []);
 
-  const markAsRead = async (id: number) => {
+  const markAsRead = async (id: string) => {
     try {
       const [_, error] = await api.patch(`/notifications/${id}/read`);
       if (error) throw error;

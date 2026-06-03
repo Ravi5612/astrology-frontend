@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { api } from "@/lib/api";
 
 interface Quote {
-  id: number;
+  id: string;
   text: string;
   author: string;
   source: string;

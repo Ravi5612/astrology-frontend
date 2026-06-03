@@ -24,7 +24,7 @@ export const useProfileOrdersHistoryLogic = (
     const [selectedSession, setSelectedSession] = useState<any>(null);
     const [chatMessages, setChatMessages] = useState<any[]>([]);
     const [showChatModal, setShowChatModal] = useState(false);
-    const [expandedSessions, setExpandedSessions] = useState<Record<number, boolean>>({});
+    const [expandedSessions, setExpandedSessions] = useState<Record<string, boolean>>({});
 
     // Orders
     const [orders, setOrders] = useState<any[]>([]);
@@ -32,7 +32,7 @@ export const useProfileOrdersHistoryLogic = (
     const [ordersPage, setOrdersPage] = useState(1);
     const [ordersHasMore, setOrdersHasMore] = useState(true);
     const [loadingMoreOrders, setLoadingMoreOrders] = useState(false);
-    const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
+    const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
     const [orderDisputes, setOrderDisputes] = useState<Record<number, any>>({});
     const [consultationDisputes, setConsultationDisputes] = useState<Record<number, any>>({});
     const [pujaDisputes, setPujaDisputes] = useState<Record<number, any>>({});
@@ -238,11 +238,11 @@ export const useProfileOrdersHistoryLogic = (
         }
     };
 
-    const toggleOrder = (orderId: number) => {
+    const toggleOrder = (orderId: string) => {
         setExpandedOrders((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
     };
 
-    const toggleSession = (sessionId: number) => {
+    const toggleSession = (sessionId: string) => {
         setExpandedSessions((prev) => ({ ...prev, [sessionId]: !prev[sessionId] }));
     };
 

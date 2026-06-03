@@ -34,7 +34,7 @@ export const useHeaderState = () => {
             console.error("Failed to force initial offline status:", err);
           });
           // Also emit offline immediately as a best-effort
-          socket.emit("expert_offline", { userId: Number(user.userId || user.id) });
+          socket.emit("expert_offline", { userId: String(user.userId || user.id) });
         }
         
         sessionStorage.setItem("expert_session_initialized", "true");
@@ -129,11 +129,11 @@ export const useHeaderState = () => {
       // CRITICAL: Only emit online if session logic is READY and isOnline state is TRUE
       if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
         if (socket.connected) {
-          socket.emit("expert_online", { userId: Number(actualUserId) });
+          socket.emit("expert_online", { userId: String(actualUserId) });
         } else {
           socket.once("connect", () => {
             if (isOnline) {
-              socket.emit("expert_online", { userId: Number(actualUserId) });
+              socket.emit("expert_online", { userId: String(actualUserId) });
             }
           });
           socket.connect();

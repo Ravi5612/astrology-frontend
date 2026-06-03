@@ -27,7 +27,7 @@ import {
 import { getErrorMessage } from "@repo/lib";
 
 interface PayoutRequest {
-    id: number;
+    id: string;
     amount: number;
     status: "pending" | "completed" | "rejected" | "failed" | "cancelled";
     created_at: string;

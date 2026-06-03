@@ -9,7 +9,7 @@ import Button from "../ui/Button";
 interface ReviewsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    expertId: number;
+    expertId: string;
 }
 
 export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, expertId }) => {

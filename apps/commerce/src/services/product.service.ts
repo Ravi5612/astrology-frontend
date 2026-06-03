@@ -16,7 +16,7 @@ export const productService = {
   /**
    * Fetch a single product by ID
    */
-  getProduct: async (id: string | number) => {
+  getProduct: async (id: string) => {
     const [response, error] = await api.get<any>(`/merchant/products/${id}`);
     return [response?.data || null, error];
   },
@@ -32,7 +32,7 @@ export const productService = {
   /**
    * Update an existing product
    */
-  updateProduct: async (id: string | number, productData: any) => {
+  updateProduct: async (id: string, productData: any) => {
     const [response, error] = await api.put<any>(`/merchant/products/${id}`, productData);
     return [response?.data || null, error];
   },
@@ -40,7 +40,7 @@ export const productService = {
   /**
    * Delete a product
    */
-  deleteProduct: async (id: string | number) => {
+  deleteProduct: async (id: string) => {
     const [data, error] = await api.delete<any>(`/merchant/products/${id}`);
     return [data, error];
   },

@@ -7,7 +7,7 @@ import { homeTranslations } from "../../../lib/translations/home";
 
 interface ServiceCardProps {
   item: {
-    id: number;
+    id: string;
     image: string;
     title: string;
     description?: string;

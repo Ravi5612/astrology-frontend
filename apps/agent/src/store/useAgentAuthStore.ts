@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface AgentUser {
-    id: number;
+    id: string;
     uid: string;   // e.g. AIB-AGT-A8K2XP
     name: string;
     email: string;

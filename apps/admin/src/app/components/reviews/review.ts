@@ -1,5 +1,5 @@
 export interface Review {
-  id: number;
+  id: string;
   user: string;
   expert: string;
   rating: number;
@@ -7,7 +7,7 @@ export interface Review {
   date: string;
   status: "approved" | "pending" | "flagged";
   avatar: string;
-  sessionId?: string | number;
+  sessionId?: string;
 }
 
 

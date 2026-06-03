@@ -8,7 +8,7 @@ import { getErrorMessage } from "@repo/lib";
 const PAGE_SIZE = 10;
 
 interface ReviewsListProps {
-    expertId: number;
+    expertId: string;
     initialReviews?: Review[];
     initialTotal?: number;
 }

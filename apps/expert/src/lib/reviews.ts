@@ -12,7 +12,7 @@ export interface Review {
     reply?: string;
 }
 
-export const getReviews = async (expertId: string | number, page: number = 1, limit: number = 10): Promise<[{ reviews: Review[], total: number } | null, ApiError | null]> => {
+export const getReviews = async (expertId: string, page: number = 1, limit: number = 10): Promise<[{ reviews: Review[], total: number } | null, ApiError | null]> => {
     const [res, error] = await api.get(`/reviews/expert/${expertId}?page=${page}&limit=${limit}`);
     if (error) return [null, error];
     const rawData = (res as any)?.data?.data || (res as any)?.data || res;
@@ -36,7 +36,7 @@ export const getReviews = async (expertId: string | number, page: number = 1, li
  * Compatibility wrapper for getReviews used by some components
  * that expect data directly instead of a tuple.
  */
-export const getExpertReviews = async (expertId: string | number, page: number = 1, limit: number = 10) => {
+export const getExpertReviews = async (expertId: string, page: number = 1, limit: number = 10) => {
     const [res, error] = await getReviews(expertId, page, limit);
     if (error) {
         console.error("Error fetching reviews:", error);
@@ -48,7 +48,7 @@ export const getExpertReviews = async (expertId: string | number, page: number =
     };
 };
 
-export const getReviewStats = async (expertId: string | number): Promise<[any | null, ApiError | null]> => {
+export const getReviewStats = async (expertId: string): Promise<[any | null, ApiError | null]> => {
 
     const [res, error] = await api.get(`/reviews/expert/${expertId}/stats`);
     if (error) return [null, error];

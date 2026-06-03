@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 interface DetailedExperienceProps {
     experiences: ExperienceItem[];
     onAdd: (exp: ExperienceItem) => void;
-    onRemove: (id: number) => void;
+    onRemove: (id: string) => void;
 }
 
 export default function DetailedExperience({ experiences, onAdd, onRemove }: DetailedExperienceProps) {

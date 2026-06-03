@@ -24,7 +24,7 @@ interface FilterCriteria {
 }
 
 interface FilteredUser {
-    id: number;
+    id: string;
     name: string;
     email: string;
     totalSpending?: number;

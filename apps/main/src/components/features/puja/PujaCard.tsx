@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useLanguageStore } from "@repo/store";
 import { pujaTranslations, pujaContent } from "@/lib/translations/puja";
 
-const LikeButton = ({ pujaId, initialLikes, t, fontStyle }: { pujaId: number; initialLikes: number; t: any; fontStyle: any }) => {
+const LikeButton = ({ pujaId, initialLikes, t, fontStyle }: { pujaId: string; initialLikes: number; t: any; fontStyle: any }) => {
     const { isAuthenticated } = useAuthStore();
     const { isPujaInWishlist } = useWishlistStore();
     const { toggleLike } = useWishlist();

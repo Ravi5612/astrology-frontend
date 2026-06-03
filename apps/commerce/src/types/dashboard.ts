@@ -12,20 +12,20 @@ export interface MerchantStats {
 }
 
 export interface OrderItem {
-  id: number;
-  product_id: number;
+  id: string;
+  product_id: string;
   quantity: number;
   price: string;
   product?: {
-    id: number;
+    id: string;
     name: string;
     image_url: string;
   };
 }
 
 export interface DashboardOrder {
-  id: string | number;
-  user_id?: number;
+  id: string;
+  user_id?: string;
   customerName?: string;
   total_amount?: string;
   amount?: number | string;
@@ -36,7 +36,7 @@ export interface DashboardOrder {
 }
 
 export interface MerchantActivity {
-  id: number;
+  id: string;
   type: string;
   title: string;
   description: string;

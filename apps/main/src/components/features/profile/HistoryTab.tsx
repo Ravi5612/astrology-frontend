@@ -8,7 +8,7 @@ interface HistoryTabProps {
     loadingHistory: boolean;
     consultationHistory: any[];
     expandedSessions: Record<number, boolean>;
-    toggleSession: (id: number) => void;
+    toggleSession: (id: string) => void;
     onViewDetails: (session: any) => void;
     onReportIssue: (session: any) => void;
     consultationDisputes?: Record<number, any>;

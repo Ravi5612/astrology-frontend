@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 import { getErrorMessage } from "@repo/lib";
 
 interface User {
-    id: number;
+    id: string;
     name?: string;
     email?: string;
     role?: string;       // Single role from JWT (new format)

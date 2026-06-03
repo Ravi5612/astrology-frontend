@@ -42,7 +42,7 @@ export const NotificationCenter = () => {
         }
     }, []);
 
-    const markAsRead = async (id: number) => {
+    const markAsRead = async (id: string) => {
         try {
             await api.patch(`/notifications/${id}/read`);
             fetchUnreadCount();

@@ -104,19 +104,19 @@ export const createTodo = async (text: string): Promise<[Todo | null, ApiError |
     return [data, null];
 };
 
-export const updateTodo = async (id: number, updates: Partial<Todo>): Promise<[Todo | null, ApiError | null]> => {
+export const updateTodo = async (id: string, updates: Partial<Todo>): Promise<[Todo | null, ApiError | null]> => {
     const [res, error] = await api.patch<any>(`/expert/todos/${id}`, updates);
     if (error) return [null, error];
     const data = ((res as any)?.data ?? res) as Todo;
     return [data, null];
 };
 
-export const deleteTodoApi = async (id: number): Promise<[any | null, ApiError | null]> => {
+export const deleteTodoApi = async (id: string): Promise<[any | null, ApiError | null]> => {
     return api.delete<any>(`/expert/todos/${id}`);
 };
 
 // Puja APIs
-export const upsertPujaApi = async (data: any, id?: number): Promise<[any | null, ApiError | null]> => {
+export const upsertPujaApi = async (data: any, id?: string): Promise<[any | null, ApiError | null]> => {
     const url = id ? `/expert/puja?id=${id}` : '/expert/puja';
     const [res, error] = await api.post(url, data);
     if (error) return [null, error];
@@ -124,6 +124,6 @@ export const upsertPujaApi = async (data: any, id?: number): Promise<[any | null
     return [respData, null];
 };
 
-export const deletePujaApi = async (id: number): Promise<[any | null, ApiError | null]> => {
+export const deletePujaApi = async (id: string): Promise<[any | null, ApiError | null]> => {
     return api.delete<any>(`/expert/puja/${id}`);
 };

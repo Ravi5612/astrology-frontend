@@ -6,7 +6,7 @@ import { Store } from "@/lib/types/shop";
  * Hook to fetch detailed information for a single merchant
  * @param id Merchant ID
  */
-export const useMerchant = (id: string | number | undefined) => {
+export const useMerchant = (id: string | undefined) => {
     return useQuery<Store | null, Error>({
         queryKey: ['merchant', id],
         queryFn: async () => {

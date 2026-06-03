@@ -4,7 +4,7 @@ import { merchantLogoutAction } from '@/actions/auth';
 
 interface User {
     merchantId?: string;
-    id?: string | number;
+    id?: string;
     shopName?: string;
     email?: string;
     role?: string;

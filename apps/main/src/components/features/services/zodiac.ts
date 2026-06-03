@@ -1,7 +1,7 @@
 import zodiacData from "../../../../public/data/zodiac.json";
 
 export interface ZodiacData {
-  id: number;
+  id: string;
   image: string;
   title: string;
   date: string;

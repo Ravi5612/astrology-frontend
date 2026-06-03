@@ -1,5 +1,5 @@
 export interface DarshanSite {
-    id: number;
+    id: string;
     name: string;
     location: string;
     image: string;

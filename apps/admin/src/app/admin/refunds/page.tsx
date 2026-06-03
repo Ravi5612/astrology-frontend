@@ -153,7 +153,7 @@ export default function RefundManagementPage() {
   }, [refunds, activeFilter]);
 
   // Handlers
-  const handleUpdateStatus = async (id: number, status: string) => {
+  const handleUpdateStatus = async (id: string, status: string) => {
     // Map UI status back to backend status
     let backendStatus = "pending";
     if (status === "refunded") backendStatus = "resolved";

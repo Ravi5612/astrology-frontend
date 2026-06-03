@@ -4,7 +4,7 @@ interface Column<T> {
   render?: (item: T) => React.ReactNode;
 }
 
-export function TableRow<T extends { id: number | string }>({
+export function TableRow<T extends { id: string | string }>({
   item,
   columns,
   onViewDetails,

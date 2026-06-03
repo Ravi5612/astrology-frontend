@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 interface ServiceCardProps {
-  id: number;
+  id: string;
   name: string;
   category: string;
   description: string;
@@ -21,9 +21,9 @@ interface ServiceCardProps {
   bookings: number;
   rating: number;
   popularity: "high" | "medium" | "low";
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onToggleStatus: (id: number) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
 }
 
 export function ServiceCard({
