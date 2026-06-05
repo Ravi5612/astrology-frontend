@@ -149,7 +149,7 @@ function CallPrepContent() {
         }
 
         const [response, error] = await http.post<any>("/call/initiate", {
-            expertId: id,
+            expert_id: id,
             type: type
         });
 

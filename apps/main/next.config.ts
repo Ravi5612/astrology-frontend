@@ -31,8 +31,8 @@ const securityHeaders = [
       // Default: only same origin
       "default-src 'self'",
 
-      // Scripts: self + Razorpay + Google APIs + Frameworks (inline eval for Next.js)
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://translate.googleapis.com https://www.youtube.com https://s.ytimg.com",
+      // Scripts: self + Razorpay + Google APIs + Frameworks (inline eval for Next.js) + Sentry (Razorpay dependency)
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://translate.googleapis.com https://www.youtube.com https://s.ytimg.com https://*.sentry-cdn.com",
 
       // Styles: self + inline (Tailwind) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
@@ -44,8 +44,8 @@ const securityHeaders = [
       "img-src 'self' data: blob: *",
 
       // API & WebSocket connections
-      // Whitelist both production (OnRender) and local development (Localhost)
-      `connect-src 'self' https://checkout.razorpay.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543 ${process.env.NEXT_PUBLIC_API_URL || ""} ${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/i, "").replace(/^http/, 'ws') || ""}`,
+      // Whitelist both production (OnRender) and local development (Localhost), plus Razorpay Sentry telemetry
+      `connect-src 'self' https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.sentry.io https://*.sentry-cdn.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543 ${process.env.NEXT_PUBLIC_API_URL || ""} ${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/i, "").replace(/^http/, 'ws') || ""}`,
 
       // Frames: Razorpay checkout iframe and YouTube embeds
       "frame-src https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://www.youtube-nocookie.com",

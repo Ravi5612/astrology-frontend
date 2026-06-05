@@ -30,7 +30,7 @@ function ChatRoomContent() {
 
     const { user, isAuthenticated, refreshBalance } = useAuthStore();
     const [isDarkMode, setIsDarkMode] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -187,35 +187,19 @@ function ChatRoomContent() {
         if (sessionStatus !== 'active') return;
 
         const timer = setInterval(() => {
-            const now = Date.now();
-            
-            if (startedAt) {
-                const s = new Date(startedAt).getTime();
-                if (!isNaN(s)) {
-                    const elapsed = Math.floor((now - s) / 1000);
-                    setElapsedTime(elapsed > 0 ? elapsed : 0);
-                }
-            } else {
-                setElapsedTime(prev => prev + 1);
-            }
-
-            if (expiresAt) {
-                const e = new Date(expiresAt).getTime();
-                if (!isNaN(e)) {
-                    const left = Math.floor((e - now) / 1000);
-                    setTimeLeft(left > 0 ? left : 0);
-                }
-            } else {
-                setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
-            }
+            setElapsedTime(prev => prev + 1);
+            setTimeLeft(prev => (prev !== null && prev > 0 ? prev - 1 : prev === null ? null : 0));
         }, 1000);
 
         return () => clearInterval(timer);
     }, [sessionStatus, startedAt, expiresAt]);
 
     useEffect(() => {
+        console.log(`[ChatRoom] Auto-terminate check: status=${sessionStatus}, timeLeft=${timeLeft}, expiresAt=${expiresAt}, isFree=${isFree}`);
         if (sessionStatus === 'active' && timeLeft === 0 && expiresAt && !isFree) {
-            console.log("[ChatRoom] 💸 Balance exhausted, auto-terminating chat.");
+            console.log("[ChatRoom] ❌ Balance exhausted, auto-terminating chat.", {
+                sessionStatus, timeLeft, expiresAt, isFree
+            });
             handleEndChat(true);
         }
     }, [timeLeft, sessionStatus, expiresAt, isFree]);
@@ -355,7 +339,7 @@ function ChatRoomContent() {
                 sessionStatus={sessionStatus}
                 formatTime={formatTime}
                 elapsedTime={elapsedTime}
-                timeLeft={timeLeft}
+                timeLeft={timeLeft || 0}
                 handleEndChat={handleEndChat}
                 isDarkMode={isDarkMode}
                 setIsDarkMode={setIsDarkMode}

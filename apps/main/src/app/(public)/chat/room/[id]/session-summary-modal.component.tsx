@@ -150,7 +150,7 @@ export default function SessionSummaryModal({
 
                                     const payload = {
                                         sessionId: sessionId,
-                                        expertId: expertData?.id,
+                                        expert_id: expertData?.id,
                                         rating: reviewRating,
                                         comment: reviewComment.trim()
                                     };
@@ -161,8 +161,14 @@ export default function SessionSummaryModal({
                                     const [res, err] = await http.post('/reviews', payload) as any;
 
                                     if (err) {
-                                        setReviewSubmitted(false);
-                                        toast.error(getErrorMessage(err) || "Failed to submit review. Please try again.");
+                                        const errMsg = getErrorMessage(err);
+                                        if (errMsg.toLowerCase().includes('already reviewed')) {
+                                            toast.success("Thank you for your feedback!");
+                                            setTimeout(() => router.push('/'), 1500);
+                                        } else {
+                                            setReviewSubmitted(false);
+                                            toast.error(errMsg || "Failed to submit review. Please try again.");
+                                        }
                                     } else {
                                         toast.success("Thank you for your feedback!");
                                         setTimeout(() => router.push('/'), 1500);

@@ -23,7 +23,7 @@ export const ChatNotificationListener: React.FC = () => {
     const registerExpert = useCallback(() => {
         if (!user) return;
         const registrationId = user.profileId || user.id;
-        chatSocket.emit('register_expert', { expertId: registrationId });
+        chatSocket.emit('register_expert', { expert_id: registrationId });
     }, [user]);
 
     useEffect(() => {

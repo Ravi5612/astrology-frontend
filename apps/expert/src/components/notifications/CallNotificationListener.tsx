@@ -25,7 +25,7 @@ export const CallNotificationListener: React.FC = () => {
         if (!user) return;
         const expertId = String(user.profileId || user.id);
         if (!expertId) return;
-        callSocket.emit('register_expert', { expertId });
+        callSocket.emit('register_expert', { expert_id: expertId });
     }, [user]);
 
     useEffect(() => {

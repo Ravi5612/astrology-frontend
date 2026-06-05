@@ -214,12 +214,12 @@ export default function AppointmentsPage() {
         if (!chatSocket.connected) {
           chatSocket.connect();
         }
-        chatSocket.emit('register_expert', { expertId: registrationId });
+        chatSocket.emit('register_expert', { expert_id: registrationId });
 
         if (!callSocket.connected) {
           callSocket.connect();
         }
-        callSocket.emit('register_expert', { expertId: registrationId });
+        callSocket.emit('register_expert', { expert_id: registrationId });
       };
 
       // Connect if not connected

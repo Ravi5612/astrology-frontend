@@ -380,14 +380,21 @@ export const useCallLogic = (): any => {
     
     const [res, error] = await http.post<any>("/reviews", { 
       sessionId: parseInt(sessionId), 
-      expertId: expertIdVal, 
+      expert_id: expertIdVal, 
       rating: reviewRating, 
       comment: reviewComment.trim() 
     });
 
     if (error) {
-      toast.error(getErrorMessage(error) || "Could not submit review.");
-      setReviewSubmitting(false);
+      const errMsg = getErrorMessage(error);
+      if (errMsg.toLowerCase().includes('already reviewed')) {
+        setReviewSubmitted(true);
+        toast.success("Thank you! 💖");
+        setTimeout(() => router.push("/"), 1500);
+      } else {
+        toast.error(errMsg || "Could not submit review.");
+        setReviewSubmitting(false);
+      }
     } else {
       setReviewSubmitted(true);
       toast.success("Thank you! ⭐");

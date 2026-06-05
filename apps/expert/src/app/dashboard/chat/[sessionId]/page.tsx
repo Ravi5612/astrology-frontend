@@ -16,6 +16,7 @@ const {
 
 import { SummaryModal } from "@/components/common/SummaryModal";
 import { ChatMessage, ChatSessionStatus, PendingAttachment } from "@/types/chat";
+import { Avatar } from "@repo/ui";
 
 function ExpertChatRoomContent() {
     const params = useParams();
@@ -90,7 +91,7 @@ function ExpertChatRoomContent() {
 
         // Registration for general notifications
         const registrationId = user.profileId || user.id;
-        chatSocket.emit('register_expert', { expertId: registrationId });
+        chatSocket.emit('register_expert', { expert_id: registrationId });
 
         chatSocket.on('new_message', (msg: ChatMessage) => {
 
@@ -298,16 +299,13 @@ function ExpertChatRoomContent() {
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-black overflow-hidden border border-white/30 shadow-sm">
-                            {clientAvatar ? (
-                                <img
-                                    src={clientAvatar || "/images/dummy-expert.jpg"}
-                                    alt={clientName}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => { (e.target as HTMLImageElement).src = "/images/dummy-expert.jpg"; }}
-                                />
-                            ) : (
-                                clientName.charAt(0).toUpperCase()
-                            )}
+                            <Avatar
+                                src={clientAvatar}
+                                alt={clientName || "Client"}
+                                size="md"
+                                fallback="/images/default-avatar.svg"
+                                className="border-0 bg-transparent text-white"
+                            />
                         </div>
                         <div>
                             <h2 className="font-bold text-white leading-tight">Consultation with {clientName}</h2>
@@ -401,27 +399,23 @@ function ExpertChatRoomContent() {
                         <div key={msg.id} className={`flex items-start gap-3 ${isExpert ? "flex-row-reverse" : "flex-row"} ${isAdmin ? "justify-center w-full" : ""}`}>
                             {/* Avatar */}
                             {!isAdmin && (
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden border border-gray-100 shadow-sm bg-yellow-100 flex items-center justify-center text-[10px] font-bold text-yellow-700">
+                                <div className="flex-shrink-0 flex items-center justify-center">
                                     {isExpert ? (
-                                        user?.avatar ? (
-                                            <img src={user.avatar} className="w-full h-full object-cover" />
-                                        ) : (
-                                            user?.name
-                                                ? user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-                                                : 'E'
-                                        )
+                                        <Avatar
+                                            src={user?.profilePic || user?.avatar}
+                                            alt={user?.name || "Expert"}
+                                            size="sm"
+                                            fallback="/images/dummy-expert.jpg"
+                                            className="border-gray-200"
+                                        />
                                     ) : (
-                                        clientAvatar ? (
-                                            <img
-                                                src={clientAvatar}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => { (e.target as HTMLImageElement).src = "/images/placeholder-user.jpg"; }}
-                                            />
-                                        ) : (
-                                            clientName
-                                                ? clientName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-                                                : 'U'
-                                        )
+                                        <Avatar
+                                            src={clientAvatar}
+                                            alt={clientName || "Client"}
+                                            size="sm"
+                                            fallback="/images/default-avatar.svg"
+                                            className="border-gray-200"
+                                        />
                                     )}
                                 </div>
                             )}

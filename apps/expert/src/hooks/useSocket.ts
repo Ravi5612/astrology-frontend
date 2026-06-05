@@ -19,11 +19,11 @@ export function useExpertSocket() {
     const expertId = user.profileId || user.id;
 
     const registerOnChat = () => {
-      chatSocket.emit("register_expert", { expertId });
+      chatSocket.emit("register_expert", { expert_id: expertId });
     };
 
     const registerOnCall = () => {
-      callSocket.emit("register_expert", { expertId });
+      callSocket.emit("register_expert", { expert_id: expertId });
     };
 
     // Connect if not already

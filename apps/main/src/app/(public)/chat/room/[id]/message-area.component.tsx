@@ -4,6 +4,7 @@ import React from "react";
 import NextImage from "next/image";
 import * as LucideIcons from "lucide-react";
 import { ChatMessage } from "@/lib/types";
+import { Avatar } from "@repo/ui";
 
 const Image = NextImage as any;
 const { Paperclip, FileText, MapPin } = LucideIcons as any;
@@ -50,40 +51,48 @@ export default function MessageArea({
                 {messages.map((msg: ChatMessage) => {
                     const mSenderType = msg.senderType || (msg as any).sender_type;
                     const isUser = mSenderType === "user";
+                    const isAdmin = mSenderType === "admin";
 
                     return (
-                        <div key={msg.id} className={`flex gap-3 md:gap-4 ${isUser ? "flex-row-reverse" : "flex-row"} items-start`}>
-                            <div className="flex-shrink-0 mt-1">
-                                <div className={`w-8 h-8 rounded-full border-2 ${isUser ? 'border-[#fd6410]/30' : 'border-black/5'} overflow-hidden shadow-sm flex items-center justify-center bg-gray-100`}>
-                                    {isUser ? (
-                                        (user?.avatar || user?.profile_picture) ? (
-                                            <Image
-                                                src={user.avatar || user.profile_picture}
-                                                alt={user.name || "User"}
-                                                width={32}
-                                                height={32}
-                                                className="object-cover w-full h-full"
+                        <div key={msg.id} className={`flex gap-3 md:gap-4 ${isUser ? "flex-row-reverse" : "flex-row"} items-start ${isAdmin ? "justify-center w-full" : ""}`}>
+                            {!isAdmin && (
+                                <div className="flex-shrink-0 mt-1">
+                                    <div className={`w-8 h-8 rounded-full border-2 ${isUser ? 'border-[#fd6410]/30' : 'border-black/5'} overflow-hidden shadow-sm flex items-center justify-center bg-gray-100`}>
+                                        {isUser ? (
+                                            <Avatar
+                                                src={user?.avatar || user?.profile_picture}
+                                                alt={user?.name || "User"}
+                                                size="sm"
+                                                fallback="/images/default-avatar.svg"
+                                                className="border-gray-200"
                                             />
                                         ) : (
-                                            <div className="text-[10px] font-black text-[#fd6410]">
-                                                {user?.name
-                                                    ? user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-                                                    : 'U'}
-                                            </div>
-                                        )
-                                    ) : (
-                                        <Image
-                                            src={expertData.image}
-                                            alt={expertData.name || "Expert"}
-                                            width={32}
-                                            height={32}
-                                            className="object-cover w-full h-full"
-                                        />
-                                    )}
+                                            <Avatar
+                                                src={expertData?.image}
+                                                alt={expertData?.name || "Expert"}
+                                                size="sm"
+                                                fallback="/images/dummy-expert.jpg"
+                                                className="border-gray-200"
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={`flex flex-col gap-1.5 max-w-[85%] md:max-w-[70%]`}>
-                                <div className={`px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${isUser ? 'bg-[#fd6410] text-white rounded-tr-none' : isDarkMode ? 'bg-white/10 text-white rounded-tl-none' : 'bg-white text-gray-800 border border-black/5 rounded-tl-none font-medium'}`}>
+                            )}
+                            <div className={`flex flex-col gap-1.5 max-w-[85%] md:max-w-[70%] ${isAdmin ? "items-center w-full" : ""}`}>
+                                <div className={`px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                                    isAdmin 
+                                        ? "bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-center w-full shadow-red-100" 
+                                        : isUser 
+                                            ? 'bg-[#fd6410] text-white rounded-tr-none' 
+                                            : isDarkMode 
+                                                ? 'bg-white/10 text-white rounded-tl-none' 
+                                                : 'bg-white text-gray-800 border border-black/5 rounded-tl-none font-medium'
+                                }`}>
+                                    {isAdmin && (
+                                        <div className="flex items-center justify-center gap-2 mb-1 text-[10px] font-black uppercase tracking-tighter">
+                                            <LucideIcons.AlertCircle className="w-3 h-3" /> System Intervention
+                                        </div>
+                                    )}
                                     {msg.content.startsWith('[INTRO_CARD]') ? (
                                         <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-0.5 rounded-2xl shadow-lg border border-white/50 w-full min-w-[240px]">
                                             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -111,20 +120,20 @@ export default function MessageArea({
                                                                     </div>
                                                                     <div className="space-y-0.5">
                                                                         <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">DOB</span>
-                                                                        <p className="text-xs font-black text-black">{data.dob || "N/A"}</p>
+                                                                        <p className="text-xs font-black text-black">{data.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString() : "N/A"}</p>
                                                                     </div>
                                                                     <div className="space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">TOB</span>
-                                                                        <p className="text-xs font-black text-black">{data.tob || "N/A"}</p>
+                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Time</span>
+                                                                        <p className="text-xs font-black text-black">{data.timeOfBirth || "N/A"}</p>
                                                                     </div>
-                                                                    <div className="col-span-2 space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">POB</span>
-                                                                        <p className="text-xs font-black text-black">{data.pob || "N/A"}</p>
+                                                                    <div className="space-y-0.5 col-span-2">
+                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Place</span>
+                                                                        <p className="text-xs font-black text-black truncate">{data.placeOfBirth || "N/A"}</p>
                                                                     </div>
                                                                 </>
                                                             );
                                                         } catch (e) {
-                                                            return <p className="text-red-500">Invalid Card Data</p>;
+                                                            return <p className="text-xs text-black/50">Error parsing details</p>;
                                                         }
                                                     })()}
                                                 </div>
@@ -132,11 +141,10 @@ export default function MessageArea({
                                         </div>
                                     ) : (
                                         <>
-                                            {msg.content}
                                             {msg.attachmentUrl && (
-                                                <div className="mt-2 pt-2 border-t border-black/5">
+                                                <div className="mb-2 max-w-sm rounded-xl overflow-hidden border border-black/5 shadow-sm">
                                                     {msg.attachmentType === 'image' ? (
-                                                        <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block rounded-lg overflow-hidden border border-black/10">
+                                                        <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
                                                             <Image src={msg.attachmentUrl} alt="attachment" width={200} height={200} className="w-full object-cover" />
                                                         </a>
                                                     ) : (
@@ -149,10 +157,11 @@ export default function MessageArea({
                                                     )}
                                                 </div>
                                             )}
+                                            <p className={`text-sm leading-relaxed ${isAdmin ? "font-black" : ""}`}>{msg.content}</p>
                                         </>
                                     )}
                                 </div>
-                                <span className={`text-[9px] font-bold uppercase tracking-tighter opacity-40 px-1 ${isUser ? 'text-right' : 'text-left'}`}>
+                                <span className={`text-[9px] font-bold uppercase tracking-tighter opacity-40 px-1 ${isUser ? 'text-right' : isAdmin ? 'text-center' : 'text-left'} ${isAdmin ? 'text-red-400' : ''}`}>
                                     {mounted ? new Date(msg.createdAt || (msg as any).created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : '--:--'}
                                 </span>
                             </div>
