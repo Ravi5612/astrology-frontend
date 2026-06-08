@@ -30,8 +30,20 @@ export const useProducts = () => {
     const updateMutation = useMutation({
         mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
             ProductService.updateProduct(id, formData),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["products"] });
+        onSuccess: (_, variables) => {
+            queryClient.setQueryData(["products"], (oldData: Product[]) => {
+                if (!oldData) return [];
+                return oldData.map((product) => {
+                    if (product.id === variables.id) {
+                        const updatedFields: any = {};
+                        variables.formData.forEach((value, key) => {
+                            if (key !== "images" && key !== "image") updatedFields[key] = value;
+                        });
+                        return { ...product, ...updatedFields };
+                    }
+                    return product;
+                });
+            });
             toast.success("Product updated successfully!");
         },
         onError: (error: Error) => {
@@ -42,8 +54,11 @@ export const useProducts = () => {
     // 4. Delete Product Mutation
     const deleteMutation = useMutation({
         mutationFn: (id: string) => ProductService.deleteProduct(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["products"] });
+        onSuccess: (_, id) => {
+            queryClient.setQueryData(["products"], (oldData: Product[]) => {
+                if (!oldData) return [];
+                return oldData.filter((product) => product.id !== id);
+            });
             toast.success("Product deleted successfully!");
         },
         onError: (error: Error) => {

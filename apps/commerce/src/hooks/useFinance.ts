@@ -49,10 +49,36 @@ export const useRequestWithdrawal = () => {
       }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, { amount }) => {
       toast.success("Withdrawal request submitted successfully!");
-      queryClient.invalidateQueries({ queryKey: ['merchant-finance-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['merchant-transactions'] });
+      queryClient.setQueriesData({ queryKey: ['merchant-finance-stats'] }, (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          availableBalance: Math.max(0, old.availableBalance - amount),
+          pendingPayout: old.pendingPayout + amount
+        };
+      });
+      queryClient.setQueriesData({ queryKey: ['merchant-transactions'] }, (old: any) => {
+        if (!old || !old.transactions) return old;
+        const newTx = {
+            id: "REQ" + Date.now().toString().slice(-6),
+            amount: amount,
+            amountLabel: `₹${amount.toLocaleString('en-IN')}`,
+            status: "pending",
+            date: new Date().toISOString(),
+            type: "withdrawal",
+            typeLabel: "Withdrawal Request",
+            color: "text-orange-500",
+            icon: "clock",
+            info: "Withdrawal Request",
+            remark: ""
+        };
+        return {
+            ...old,
+            transactions: [newTx, ...old.transactions]
+        };
+      });
     },
     onError: (error: any) => {
       toast.error(getErrorMessage(error));

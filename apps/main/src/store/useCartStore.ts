@@ -158,7 +158,13 @@ export const useCartStore = create<CartState>((set, get) => ({
             const [_, error] = await CartService.removeFromCart(productId) as any;
             if (error) throw error;
             toast.success("Item removed");
-            await get().fetchCart(true);
+            
+            // Manually update state instead of fetching from backend
+            set(state => {
+                const newItems = state.cartItems.filter(item => item.productId !== productId && item.product?.id !== productId);
+                const { count, total } = calculateTotals(newItems);
+                return { cartItems: newItems, cartCount: count, cartTotal: total };
+            });
         } catch (error: any) {
             console.error("Remove item error:", error);
             toast.error(getFormattedError(error, "Failed to remove item"));

@@ -147,7 +147,7 @@ export default function PayoutPage() {
                 toast.error(getErrorMessage(err) || "Settlement failed");
             } else {
                 toast.success(res.message || "Earnings settled into wallet");
-                fetchData();
+                setBalance(prev => prev + unclaimedAmount);
             }
         } catch (error) {
             toast.error(getErrorMessage(error) || "An error occurred during settlement");
@@ -182,8 +182,17 @@ export default function PayoutPage() {
                 toast.error(getErrorMessage(err) || "Failed to request payout");
             } else {
                 toast.success("Payout request submitted successfully");
+                setBalance(prev => prev - amt);
+                const newWithdrawal: PayoutRequest = {
+                    id: Date.now().toString(),
+                    amount: amt,
+                    status: "pending",
+                    created_at: new Date().toISOString(),
+                    merchant_bank_name: profile?.bank_name,
+                    merchant_account_number: profile?.account_number
+                };
+                setWithdrawals(prev => [newWithdrawal, ...prev]);
                 setAmount("");
-                fetchData();
             }
         } catch (error) {
             toast.error(getErrorMessage(error) || "An error occurred");

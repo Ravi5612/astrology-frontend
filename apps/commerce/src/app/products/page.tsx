@@ -68,8 +68,15 @@ export default function ProductListing() {
       const [data, error] = await productService.deleteProduct(id);
       if (error) throw new Error(getErrorMessage(error) || "Failed to delete product");
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData({ queryKey: ['merchant-products'] }, (old: any) => {
+        if (!old) return old;
+        return {
+           ...old,
+           products: old.products.filter((p: Product) => p.id !== id),
+           total: Math.max(0, (old.total || 0) - 1)
+        };
+      });
       setSelectedIds([]);
     }
   });
@@ -79,8 +86,14 @@ export default function ProductListing() {
       const [data, error] = await productService.bulkUpdateStatus(ids, status);
       if (error) throw new Error(getErrorMessage(error) || "Failed to update status");
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['merchant-products'] });
+    onSuccess: (_, { ids, status }) => {
+      queryClient.setQueriesData({ queryKey: ['merchant-products'] }, (old: any) => {
+        if (!old) return old;
+        return {
+           ...old,
+           products: old.products.map((p: Product) => ids.includes(p.id) ? { ...p, status } : p)
+        };
+      });
       setSelectedIds([]);
     }
   });

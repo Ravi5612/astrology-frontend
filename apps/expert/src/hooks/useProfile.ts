@@ -222,7 +222,10 @@ export const useProfile = () => {
             return res;
         },
         onSuccess: (_, variables) => {
-            queryClient.invalidateQueries({ queryKey: ["profile"] });
+            queryClient.setQueryData(["profile", authUser?.id], (oldData: any) => {
+                if (!oldData) return oldData;
+                return { ...oldData, ...variables.data };
+            });
             toast.success(`${variables.section.charAt(0).toUpperCase() + variables.section.slice(1).replace('_', ' ')} updated!`);
         },
         onError: (error: any) => {
@@ -246,7 +249,12 @@ export const useProfile = () => {
                 if (error) throw new Error(getErrorMessage(error));
                 return res;
             },
-            onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+            onSuccess: (_, variables) => {
+                queryClient.setQueryData(["todos"], (oldData: any) => {
+                    if (!oldData) return [];
+                    return oldData.map((todo: any) => todo.id === variables.id ? { ...todo, completed: variables.completed } : todo);
+                });
+            },
         }),
         delete: useMutation({
             mutationFn: async (id: string) => {
@@ -254,7 +262,12 @@ export const useProfile = () => {
                 if (error) throw new Error(getErrorMessage(error));
                 return res;
             },
-            onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+            onSuccess: (_, id) => {
+                queryClient.setQueryData(["todos"], (oldData: any) => {
+                    if (!oldData) return [];
+                    return oldData.filter((todo: any) => String(todo.id) !== String(id));
+                });
+            },
         }),
     };
 

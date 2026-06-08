@@ -288,13 +288,13 @@ export const useProfileBaseLogic = () => {
                 `${section.charAt(0).toUpperCase() + section.slice(1)} updated successfully!`,
             );
 
-            if (savedData) {
-                setProfileData((prev) => ({
-                    ...prev,
-                    ...savedData,
-                    addresses: normalizeAddressesForUI((savedData as any).addresses),
-                }));
-            }
+            // Manually update the local state with the payload we just sent
+            setProfileData((prev) => ({
+                ...prev,
+                ...payload,
+                addresses: payload.addresses ? normalizeAddressesForUI(payload.addresses) : prev.addresses,
+            }));
+            
             await refreshAuth();
             setEditingSections((prev) => ({ ...prev, [section]: false }));
         } catch (error: any) {

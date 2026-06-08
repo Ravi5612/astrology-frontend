@@ -216,9 +216,13 @@ export default function ReviewsPage() {
                     key={`${review.id}-${index}`}
                     review={review}
                     isLast={index === reviews.length - 1}
-                    onUpdate={() => {
+                    onUpdate={(updatedData) => {
                       fetchStats();
-                      fetchReviews(1, true);
+                      if (updatedData && updatedData.status) {
+                        setReviews(prev => prev.map(r => r.id === review.id ? { ...r, status: updatedData.status } : r));
+                      } else {
+                        // If we don't have updated data, fallback to refetch or assume no change needed in UI
+                      }
                     }}
                   />
                 ))}

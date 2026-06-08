@@ -160,13 +160,19 @@ export default function RefundManagementPage() {
     else if (status === "rejected") backendStatus = "closed";
     else if (status === "pending") backendStatus = "pending";
 
+    // Map backend status to UI status
+    const uiStatus = status === "refunded" ? "approved" : status === "rejected" ? "rejected" : "pending";
+
     const [res, error] = await updateDisputeStatus(id, { status: backendStatus });
     if (error) {
       toast.error(getErrorMessage(error) || `Failed to update status to ${status}`);
       return;
     }
     toast.success(`Request marked as ${status}`);
-    fetchRefunds();
+    // Manually update local state — backend no longer returns updated data
+    setRefunds(prev => prev.map(r =>
+      r.id === id ? { ...r, status: uiStatus } : r
+    ));
   };
 
   const handleViewDetails = (refund: any) => {

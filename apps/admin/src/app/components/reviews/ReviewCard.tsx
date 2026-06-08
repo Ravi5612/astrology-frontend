@@ -6,7 +6,7 @@ import type { Review } from "@/app/components/reviews/review";
 interface ReviewCardProps {
   review: Review;
   isLast: boolean;
-  onUpdate?: () => void;
+  onUpdate?: (updatedData?: any) => void;
 }
 
 const statusBadges = {
@@ -30,7 +30,7 @@ export function ReviewCard({ review, isLast, onUpdate }: ReviewCardProps) {
       const [_, error] = await updateReviewStatus(review.id, status);
       if (error) throw new Error(getErrorMessage(error));
       toast.success(`Review ${status} successfully`);
-      if (onUpdate) onUpdate();
+      if (onUpdate) onUpdate({ status }); // Pass updated status
     } catch (err: any) {
       toast.error(getErrorMessage(err) || "Failed to update status");
     }

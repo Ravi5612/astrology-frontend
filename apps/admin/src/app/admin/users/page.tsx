@@ -146,8 +146,13 @@ export default function UsersPage() {
       return;
     }
 
-    // Refresh data
-    await Promise.all([fetchUsers(), fetchStats()]);
+    // Update data locally without refetching from backend
+    setUsers(prev => prev.map(u => 
+      u.id === confirmModal.user!.id 
+        ? { ...u, is_blocked: !confirmModal.user!.is_blocked } 
+        : u
+    ));
+    await fetchStats(); // Refetch stats only, not the large list
     setConfirmModal({ isOpen: false, user: null, isLoading: false });
   };
 

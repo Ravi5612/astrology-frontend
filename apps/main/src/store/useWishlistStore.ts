@@ -147,7 +147,9 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         try {
             await WishlistService.removeFromWishlist(productId);
             toast.success("Removed from wishlist");
-            await get().fetchWishlist(true);
+            set(state => ({
+                wishlistItems: state.wishlistItems.filter(item => String(item.productId) !== String(productId) && String(item.product?.id) !== String(productId))
+            }));
         } catch {
             toast.error("Failed to remove from wishlist");
         }
@@ -182,7 +184,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         try {
             await WishlistService.removeExpertFromWishlist(expertId);
             toast.success("Removed from liked list");
-            await get().fetchWishlist(true);
+            set(state => ({
+                expertWishlistItems: state.expertWishlistItems.filter(item => 
+                    String(item.expertId) !== String(expertId) && 
+                    String(item.expert?.id) !== String(expertId) && 
+                    String((item.expert?.user as any)?.id) !== String(expertId)
+                )
+            }));
         } catch {
             toast.error("Failed to remove from liked list");
         }
@@ -224,11 +232,16 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             if (isPujaInWishlist(pujaId)) {
                 await WishlistService.removePujaFromWishlist(pujaId);
                 toast.success("Removed from liked pujas");
+                set(state => ({
+                    pujaWishlistItems: state.pujaWishlistItems.filter((item: any) => 
+                        String(item.pujaId) !== String(pujaId) && String(item.puja?.id) !== String(pujaId)
+                    )
+                }));
             } else {
                 await WishlistService.addPujaToWishlist(pujaId);
                 toast.success("Added to liked pujas");
+                await fetchWishlist(true);
             }
-            await fetchWishlist(true);
         } catch (error: any) {
             if (error.status === 409) {
                 toast.info("Already liked");
@@ -274,7 +287,13 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         try {
             await WishlistService.removeMerchantFromWishlist(merchantId);
             toast.success("Store removed from favorites");
-            await get().fetchWishlist(true);
+            set(state => ({
+                merchantWishlistItems: state.merchantWishlistItems.filter(item => 
+                    String(item.merchantId) !== String(merchantId) && 
+                    String(item.merchant?.id) !== String(merchantId) &&
+                    String(item.id) !== String(merchantId)
+                )
+            }));
         } catch {
             toast.error("Failed to unlike store");
         }

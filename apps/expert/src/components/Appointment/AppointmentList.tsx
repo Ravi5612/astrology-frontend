@@ -27,7 +27,7 @@ const Star = LucideStar as any;
 interface AppointmentListProps {
     appointments: Appointment[];
     onReschedule: (appt: Appointment) => void;
-    onUpdate?: () => void;
+    onUpdate?: (id?: string, status?: string) => void;
 }
 
 // Countdown Timer Component
@@ -81,7 +81,7 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
             toast.error(getErrorMessage(error) || "Failed to update status");
         } else {
             toast.success(`Puja request ${status} successfully`);
-            if (onUpdate) onUpdate();
+            if (onUpdate) onUpdate(appt.id, status);
         }
         setIsUpdating(false);
         setShowDateForm(false);
@@ -207,7 +207,7 @@ function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, 
             toast.error(getErrorMessage(error) || "Failed to update status");
         } else {
             toast.success(`Request ${status} successfully`);
-            if (onUpdate) onUpdate();
+            if (onUpdate) onUpdate(appt.id, status);
         }
         setIsUpdating(false);
     };

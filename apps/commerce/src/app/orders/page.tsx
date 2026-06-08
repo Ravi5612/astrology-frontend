@@ -66,8 +66,14 @@ export default function OrdersPage() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
+    onSuccess: (_, { id, status }) => {
+      queryClient.setQueriesData({ queryKey: ['merchant-orders'] }, (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o: Order) => o.id === id || o.orderId === id ? { ...o, status } : o)
+        };
+      });
       toast.success("Status updated successfully");
       setCancelModalOpen(false);
       setCancellationReason("");
@@ -85,12 +91,18 @@ export default function OrdersPage() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       toast.success("Delivery verified and payment released!");
       setOtpModalOpen(false);
       setOtpValue("");
       setVerifyingOrderId(null);
-      queryClient.invalidateQueries({ queryKey: ['merchant-orders'] });
+      queryClient.setQueriesData({ queryKey: ['merchant-orders'] }, (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o: Order) => o.id === id || o.orderId === id ? { ...o, status: "delivered" } : o)
+        };
+      });
     },
     onError: (error: any) => {
       toast.error(getErrorMessage(error) || "Invalid OTP. Please try again.");

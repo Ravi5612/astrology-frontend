@@ -95,8 +95,11 @@ export default function OrdersPage() {
             toast.error(getErrorMessage(error) || "Failed to update status");
             return;
         }
+        // Manually update local state — backend no longer returns updated data
+        setOrders(prev => prev.map(order =>
+            String(order.id) === String(id) ? { ...order, status: newStatus } : order
+        ));
         toast.success(`Order status updated to ${newStatus}`);
-        fetchOrders(); // Refresh list
     };
 
 
@@ -114,10 +117,15 @@ export default function OrdersPage() {
         }
         
         toast.success("Order cancelled successfully");
+        // Manually update local state — backend no longer returns updated data
+        setOrders(prev => prev.map(order =>
+            String(order.id) === String(cancelOrderId)
+                ? { ...order, status: 'cancelled', cancellationReason: cancelReason }
+                : order
+        ));
         setShowCancelModal(false);
         setCancelOrderId(null);
         setCancelReason("");
-        fetchOrders();
     };
 
 

@@ -116,7 +116,8 @@ export default function CouponsPage() {
     }
 
     toast.success("Coupon deleted successfully");
-    fetchCoupons();
+    // Manually remove from local state — backend no longer returns data
+    setCoupons(prev => prev.filter(c => c.id !== id));
   };
 
   const handleToggleStatus = async (id: string, coupon: any) => {
@@ -137,7 +138,10 @@ export default function CouponsPage() {
     }
 
     toast.success(`Coupon ${nextActive ? 'activated' : 'deactivated'} successfully`);
-    fetchCoupons();
+    // Manually update local state — backend no longer returns updated data
+    setCoupons(prev => prev.map(c =>
+      c.id === id ? { ...c, status: nextStatus, isActive: nextActive } : c
+    ));
   };
 
 

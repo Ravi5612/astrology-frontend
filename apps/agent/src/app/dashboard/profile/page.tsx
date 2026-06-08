@@ -64,7 +64,9 @@ export default function ProfilePage() {
             } else {
                 toast.success("Bank details updated successfully");
                 setIsEditingBank(false);
-                fetchProfile();
+                if (setAgent && agent) {
+                    setAgent({ ...agent, ...dataToSave });
+                }
             }
         } catch (error) {
             toast.error(getErrorMessage(error) || "An error occurred while saving");

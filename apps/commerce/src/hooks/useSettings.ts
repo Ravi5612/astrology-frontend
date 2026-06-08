@@ -39,9 +39,24 @@ export const useUpdateProfile = () => {
       }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast.success("Profile updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ['merchant-profile'] });
+      const dataToSave = Object.fromEntries(variables.entries());
+      queryClient.setQueryData(['merchant-profile'], (old: any) => {
+          if (!old || !old.profile) return old;
+          let parsedBankAccounts = old.profile.bank_accounts;
+          if (dataToSave.bank_accounts) {
+             try { parsedBankAccounts = JSON.parse(dataToSave.bank_accounts as string); } catch(e) {}
+          }
+          return {
+              ...old,
+              profile: {
+                  ...old.profile,
+                  ...dataToSave,
+                  bank_accounts: parsedBankAccounts
+              }
+          };
+      });
     },
     onError: (error: any) => {
       toast.error(getErrorMessage(error));
@@ -68,9 +83,16 @@ export const useUpdateOnlineStatus = () => {
     },
     onSuccess: (_, isOnline) => {
       toast.success(`You are now ${isOnline ? 'Online' : 'Offline'}`);
-      queryClient.invalidateQueries({ queryKey: ["merchant-profile"] });
-      // Force a refetch to be sure
-      queryClient.refetchQueries({ queryKey: ["merchant-profile"] });
+      queryClient.setQueryData(['merchant-profile'], (old: any) => {
+          if (!old || !old.profile) return old;
+          return {
+              ...old,
+              profile: {
+                  ...old.profile,
+                  isOnline
+              }
+          };
+      });
     },
     onError: (error: any) => {
       toast.error(getErrorMessage(error));

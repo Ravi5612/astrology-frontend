@@ -90,7 +90,10 @@ export default function AdminPayoutsPage() {
         setShowRejectModal(false);
         setRejectReason("");
         setCurrentRejectId(null);
-        await fetchPayouts(); // Refresh list
+        // Manually update local state — backend no longer returns updated data
+        setPayoutRequests(prev => prev.map(r =>
+            r.id === id ? { ...r, status: status === 'approved' ? 'processing' : 'rejected' } : r
+        ));
         setProcessingId(null);
     };
 

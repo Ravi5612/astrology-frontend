@@ -100,8 +100,8 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
 
     setStatus("Saved Successfully!");
     setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+      setStatus("");
+    }, 2000);
   };
 
   return (
