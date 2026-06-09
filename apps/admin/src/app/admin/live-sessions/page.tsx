@@ -231,7 +231,7 @@ export default function LiveSessionsPage() {
 
     try {
       setViewingSession(session);
-      const [history, error] = await getChatHistory(parseInt(session.id));
+      const [history, error] = await getChatHistory(session.id);
       
       if (error) {
         throw error;

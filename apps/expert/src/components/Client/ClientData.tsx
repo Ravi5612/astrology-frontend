@@ -302,9 +302,9 @@ export default function ClientsPage() {
                             <div className="flex items-center gap-5">
                               <div className="relative group">
                                 <div className="w-20 h-20 rounded-full border-4 border-orange-50 overflow-hidden shadow-md transition-transform group-hover:scale-105 duration-300 bg-white flex items-center justify-center">
-                                  {(session?.user_image || session?.user?.profile_picture || session?.user?.avatar || client.avatar) ? (
+                                  {((session?.user_image && session.user_image !== '/images/dummy-user.jpg') || session?.user?.profile_picture || session?.user?.avatar || (client.avatar && client.avatar !== '/images/dummy-user.jpg')) ? (
                                     <img
-                                      src={session?.user_image || session?.user?.profile_picture || session?.user?.avatar || client.avatar}
+                                      src={(session?.user_image && session.user_image !== '/images/dummy-user.jpg') ? session.user_image : (session?.user?.profile_picture || session?.user?.avatar || client.avatar)}
                                       alt={client.name}
                                       className="w-full h-full object-cover"
                                       onError={(e) => { 
@@ -553,13 +553,21 @@ export default function ClientsPage() {
                 <MessageSquare size={120} />
               </div>
               <div className="flex items-center gap-4 relative z-10">
-                <div className="w-14 h-14 rounded-full border-4 border-white/20 overflow-hidden bg-white shadow-lg">
-                  <img
-                    src={selectedSession.user_image || "/images/dummy-expert.jpg"}
-                    alt="User"
-                    className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).src = "/images/dummy-expert.jpg"; }}
-                  />
+                <div className="w-14 h-14 rounded-full border-4 border-white/20 overflow-hidden bg-white shadow-lg flex items-center justify-center text-[#fd6410]">
+                  {((selectedSession.user_image && selectedSession.user_image !== '/images/dummy-user.jpg') || selectedSession?.user?.profile_picture || selectedSession?.user?.avatar) ? (
+                    <img
+                      src={(selectedSession.user_image && selectedSession.user_image !== '/images/dummy-user.jpg') ? selectedSession.user_image : (selectedSession?.user?.profile_picture || selectedSession?.user?.avatar)}
+                      alt="User"
+                      className="w-full h-full object-cover"
+                      onError={(e) => { 
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement!.innerHTML = `<span class="text-2xl font-black">${(selectedSession.user_name || 'U').charAt(0).toUpperCase()}</span>`;
+                      }}
+                    />
+                  ) : (
+                    <span className="text-2xl font-black">{selectedSession.user_name ? selectedSession.user_name.charAt(0).toUpperCase() : 'U'}</span>
+                  )}
                 </div>
                 <div>
                   <h3 className="text-xl font-black tracking-tight">{selectedSession.user_name || "Client Consultation"}</h3>
@@ -577,10 +585,10 @@ export default function ClientsPage() {
               </div>
               <button
                 onClick={() => setShowChatModal(false)}
-                className="bg-white/10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 relative z-10"
+                className="group bg-white/10 hover:bg-white/20 hover:shadow-lg text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90 relative z-10"
                 aria-label="Close modal"
               >
-                <LucideIcons.X size={24} />
+                <LucideIcons.X size={24} className="transition-transform duration-200 ease-in-out group-hover:rotate-90 group-active:rotate-[360deg]" />
               </button>
             </div>
 
@@ -609,21 +617,33 @@ export default function ClientsPage() {
                       const isUserSide = !isExpert;
 
                       return (
-                        <div key={idx} className={`flex w-full mb-2 ${isUserSide ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`flex gap-3 max-w-[85%] ${isUserSide ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`w-8 h-8 rounded-full border overflow-hidden shadow-sm flex-shrink-0 bg-white ${isExpert ? 'border-gray-200' : 'border-[#fd6410]/20'}`}>
-                              <img
-                                src={isUserSide ? (selectedSession.user_image || "https://astrologerinbharat.com/images/dummy-expert.jpg") : (selectedSession.expert_image || "https://astrologerinbharat.com/images/dummy-expert.jpg")}
-                                alt="Avatar"
-                                className="w-full h-full object-cover"
-                              />
+                        <div key={idx} className={`flex w-full mb-2 ${isExpert ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`flex gap-3 max-w-[85%] ${isExpert ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-8 h-8 rounded-full border overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center text-xs font-bold ${isExpert ? 'border-[#fd6410]/20 bg-orange-100 text-[#fd6410]' : 'border-gray-200 bg-gray-100 text-gray-500'}`}>
+                              {((isExpert && selectedSession.expert_image && selectedSession.expert_image !== '/images/dummy-astrologer.jpg' && selectedSession.expert_image !== '/images/dummy-expert.jpg') || 
+                                (isExpert && (selectedSession?.expert?.profile_image || selectedSession?.expert?.avatar)) || 
+                                (!isExpert && selectedSession.user_image && selectedSession.user_image !== '/images/dummy-user.jpg') ||
+                                (!isExpert && (selectedSession?.user?.profile_picture || selectedSession?.user?.avatar))) ? (
+                                <img
+                                  src={isExpert ? (selectedSession.expert_image === '/images/dummy-astrologer.jpg' || selectedSession.expert_image === '/images/dummy-expert.jpg' ? null : selectedSession.expert_image || selectedSession?.expert?.profile_image) : (selectedSession.user_image === '/images/dummy-user.jpg' ? null : selectedSession.user_image || selectedSession?.user?.profile_picture || selectedSession?.user?.avatar)}
+                                  alt="Avatar"
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => { 
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.parentElement!.innerHTML = `<span>${isExpert ? (selectedSession.expert_name?.charAt(0) || 'E') : (selectedSession.user_name?.charAt(0) || 'U')}</span>`;
+                                  }}
+                                />
+                              ) : (
+                                <span>{isExpert ? (selectedSession.expert_name?.charAt(0) || 'E') : (selectedSession.user_name?.charAt(0) || 'U')}</span>
+                              )}
                             </div>
-                            <div className={`flex flex-col ${isUserSide ? 'items-end' : 'items-start'}`}>
-                              <div className={`p-4 shadow-sm relative ${isUserSide
-                                ? (content.startsWith('[INTRO_CARD]') ? 'p-0 bg-transparent border-none' : 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none')
-                                : sType === 'admin' 
+                            <div className={`flex flex-col ${isExpert ? 'items-end' : 'items-start'}`}>
+                              <div className={`p-4 shadow-sm relative ${isExpert
+                                ? 'bg-[#fd6410] text-white rounded-[1.2rem] rounded-tr-none'
+                                : (content.startsWith('[INTRO_CARD]') ? 'p-0 bg-transparent border-none' : sType === 'admin' 
                                   ? 'bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-center w-full shadow-red-100'
-                                  : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none'
+                                  : 'bg-white text-dark border border-gray-100 rounded-[1.2rem] rounded-tl-none')
                                 }`}>
                                 {content.startsWith('[INTRO_CARD]') ? (
                                   <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-1 rounded-2xl shadow-xl border-2 border-white/50 w-full min-w-[280px]">

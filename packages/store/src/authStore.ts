@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthState>()(
                     parsed = Number.isFinite(n) ? n : 0;
                 } else if (raw && typeof raw === "object") {
                     const candidate = raw.balance ?? raw.amount ?? raw.walletBalance;
-                    const n = String(candidate);
+                    const n = Number(candidate);
                     parsed = Number.isFinite(n) ? n : 0;
                 }
                 set({ balance: parsed });
