@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils/cn";
 import { getErrorMessage } from "@repo/lib";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { productService } from "@/services/product.service";
+import { QuickViewModal } from "@/components/QuickViewModal";
 
 interface Product {
   id: string;
@@ -33,12 +34,17 @@ interface Product {
   status: "active" | "draft" | "out_of_stock";
   imageUrl?: string;
   sku?: string;
+  gallery?: string[];
+  description?: string;
+  original_price?: number;
+  created_at?: string;
 }
 
 export default function ProductListing() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   
   const queryClient = useQueryClient();
 
@@ -358,11 +364,13 @@ export default function ProductListing() {
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end space-x-1 transition-all duration-300">
-                      <Link href={`/products/view/${p.id}`}>
-                        <button className="p-2.5 text-gray-400 hover:text-orange-500 hover:bg-orange-100/50 rounded-xl transition-all" title="View">
-                          <Eye className="w-5 h-5" />
-                        </button>
-                      </Link>
+                      <button 
+                        onClick={() => setQuickViewProduct(p)}
+                        className="p-2.5 text-gray-400 hover:text-orange-500 hover:bg-orange-100/50 rounded-xl transition-all" 
+                        title="Quick View"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
                       <Link href={`/products/edit/${p.id}`}>
                         <button className="p-2.5 text-gray-400 hover:text-[#fd6410] hover:bg-orange-100/50 rounded-xl transition-all" title="Edit">
                           <Edit2 className="w-5 h-5" />
@@ -406,6 +414,13 @@ export default function ProductListing() {
               Clear all filters <ChevronRight className="w-3 h-3" />
             </button>
         </div>
+      )}
+
+      {quickViewProduct && (
+        <QuickViewModal 
+          product={quickViewProduct} 
+          onClose={() => setQuickViewProduct(null)} 
+        />
       )}
     </div>
   );

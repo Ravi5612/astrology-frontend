@@ -22,7 +22,11 @@ export default function AddProductPage() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
-  const [images, setImages] = useState<string[]>([]);
+  const [frontImage, setFrontImage] = useState<string>("");
+  const [backImage, setBackImage] = useState<string>("");
+  const [leftImage, setLeftImage] = useState<string>("");
+  const [rightImage, setRightImage] = useState<string>("");
+  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
 
   // Mutation to create product
@@ -35,8 +39,9 @@ export default function AddProductPage() {
         description,
         price: Number(price),
         stock: Number(stock),
-        // Send the first image as imageUrl for now, if any.
-        imageUrl: images.length > 0 ? images[0] : "",
+        // Combine images
+        gallery: [frontImage, backImage, leftImage, rightImage, ...additionalImages].filter(Boolean),
+        imageUrl: frontImage || backImage || leftImage || rightImage || additionalImages[0] || "",
         status
       };
 
@@ -56,22 +61,51 @@ export default function AddProductPage() {
     }
   });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSingleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setter(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAdditionalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach(file => {
         const reader = new FileReader();
-        reader.onloadend = () => {
-          setImages(prev => [...prev, reader.result as string]);
-        };
+        reader.onloadend = () => setAdditionalImages(prev => [...prev, reader.result as string]);
         reader.readAsDataURL(file);
       });
     }
   };
 
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+  const removeAdditionalImage = (index: number) => {
+    setAdditionalImages(prev => prev.filter((_, i) => i !== index));
   };
+
+  const renderImageBox = (label: string, image: string, setter: (val: string) => void) => (
+    <div className="relative group h-24 rounded-2xl overflow-hidden border-2 border-dashed border-gray-100 bg-gray-50/50 hover:border-[#fd6410]/30 transition-all flex flex-col items-center justify-center">
+      {image ? (
+        <>
+          <img src={image} alt={label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <button 
+             onClick={(e) => { e.preventDefault(); setter(""); }}
+             className="absolute top-1.5 right-1.5 p-1.5 bg-black/50 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 z-10"
+          >
+             <X className="w-3 h-3" />
+          </button>
+        </>
+      ) : (
+        <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+           <Plus className="w-6 h-6 text-gray-300 group-hover:text-[#fd6410] transition-colors" />
+           <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1 text-center leading-tight">{label}</span>
+           <input type="file" className="hidden" onChange={(e) => handleSingleImageUpload(e, setter)} accept="image/*" />
+        </label>
+      )}
+    </div>
+  );
 
   const handlePublish = () => {
     if (!name || !price || !category) {
@@ -229,28 +263,32 @@ export default function AddProductPage() {
 
               <div className="space-y-4">
                  <div className="grid grid-cols-2 gap-3">
-                    {images.map((img, idx) => (
-                      <div key={idx} className="relative group h-24 rounded-2xl overflow-hidden border border-gray-100 shadow-sm animate-in zoom-in-50 duration-300">
-                         <img src={img} alt="Product" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                         <button 
-                            onClick={() => removeImage(idx)}
-                            className="absolute top-1.5 right-1.5 p-1.5 bg-black/50 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500"
-                         >
-                            <X className="w-3 h-3" />
-                         </button>
-                      </div>
-                    ))}
-                    <label className="h-24 rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/50 flex flex-col items-center justify-center cursor-pointer hover:border-[#fd6410]/30 transition-all group">
-                       <Plus className="w-6 h-6 text-gray-300 group-hover:text-[#fd6410] transition-colors" />
-                       <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Add Image</span>
-                       <input type="file" className="hidden" multiple onChange={handleImageUpload} accept="image/*" />
-                    </label>
+                    {renderImageBox("Front", frontImage, setFrontImage)}
+                    {renderImageBox("Back", backImage, setBackImage)}
+                    {renderImageBox("Left Side", leftImage, setLeftImage)}
+                    {renderImageBox("Right Side", rightImage, setRightImage)}
                  </div>
                  
-                 <div className="p-6 bg-orange-50 rounded-[2rem] border border-orange-100 border-dashed text-center">
-                    <Upload className="w-10 h-10 text-orange-200 mx-auto mb-3" />
-                    <p className="text-[11px] text-orange-700 font-bold uppercase tracking-widest">Main Product Image</p>
-                    <p className="text-[10px] text-orange-800/60 mt-1 italic italic leading-tight">Drag and drop or click to upload full product shots.</p>
+                 <div className="pt-4 border-t border-gray-100">
+                    <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Additional Images</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {additionalImages.map((img, idx) => (
+                        <div key={idx} className="relative group h-24 rounded-2xl overflow-hidden border border-gray-100 shadow-sm animate-in zoom-in-50 duration-300">
+                           <img src={img} alt="Additional" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                           <button 
+                              onClick={() => removeAdditionalImage(idx)}
+                              className="absolute top-1.5 right-1.5 p-1.5 bg-black/50 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500"
+                           >
+                              <X className="w-3 h-3" />
+                           </button>
+                        </div>
+                      ))}
+                      <label className="h-24 rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/50 flex flex-col items-center justify-center cursor-pointer hover:border-[#fd6410]/30 transition-all group">
+                         <Plus className="w-6 h-6 text-gray-300 group-hover:text-[#fd6410] transition-colors" />
+                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Add More</span>
+                         <input type="file" className="hidden" multiple onChange={handleAdditionalImageUpload} accept="image/*" />
+                      </label>
+                    </div>
                  </div>
               </div>
            </div>

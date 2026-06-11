@@ -219,7 +219,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
                 modules={[Autoplay]}
                 spaceBetween={8}
                 slidesPerView={3}
-                loop={true}
+                loop={displayProducts.length >= 3}
                 autoplay={{
                     delay: 2000,
                     disableOnInteraction: false,

@@ -22,7 +22,7 @@ const Page = () => {
   const { addToCart, isAdding } = useCart();
 
   const product = {
-    id: 102,
+    id: "102",
     title: "Crystal Healing Bracelet",
     tagline: "Unleash your inner calm and prosperity",
     price: 349,
@@ -107,7 +107,7 @@ const Page = () => {
       });
       return;
     }
-    addToCart({ productId: product.id, quantity });
+    addToCart({ productId: String(product.id), quantity });
   };
 
   useEffect(() => {

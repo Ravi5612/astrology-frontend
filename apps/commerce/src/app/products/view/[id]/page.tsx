@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -41,6 +41,8 @@ export default function ProductViewPage() {
   const params = useParams();
   const id = params.id;
 
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: ['merchant-product', id],
     queryFn: async () => {
@@ -49,6 +51,13 @@ export default function ProductViewPage() {
       return data;
     }
   });
+
+  // Effect to set the initial selected image when product loads
+  React.useEffect(() => {
+    if (product && product.imageUrl && !selectedImage) {
+      setSelectedImage(product.imageUrl);
+    }
+  }, [product, selectedImage]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -117,6 +126,8 @@ export default function ProductViewPage() {
     );
   }
 
+  const displayImage = selectedImage || product.imageUrl;
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 pb-20">
       {/* Top Navigation */}
@@ -146,9 +157,9 @@ export default function ProductViewPage() {
         {/* Left Column: Image & Quick Stats */}
         <div className="lg:col-span-5 space-y-8">
            <div className="aspect-square bg-white rounded-[3rem] border border-gray-100 shadow-xl overflow-hidden group relative">
-             {product.imageUrl ? (
+             {displayImage ? (
                <img 
-                 src={product.imageUrl} 
+                 src={displayImage} 
                  alt={product.name} 
                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                />
@@ -168,6 +179,23 @@ export default function ProductViewPage() {
                 </span>
              </div>
            </div>
+           
+           {(product as any).gallery && (product as any).gallery.length > 1 && (
+             <div className="grid grid-cols-4 gap-3">
+               {(product as any).gallery.map((img: string, idx: number) => (
+                 <div 
+                   key={idx} 
+                   onClick={() => setSelectedImage(img)}
+                   className={cn(
+                     "aspect-square bg-white rounded-2xl border-2 shadow-sm overflow-hidden group cursor-pointer transition-all duration-300",
+                     displayImage === img ? "border-[#fd6410] opacity-100" : "border-transparent hover:border-orange-200 opacity-70 hover:opacity-100"
+                   )}
+                 >
+                   <img src={img} alt="Gallery image" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                 </div>
+               ))}
+             </div>
+           )}
 
            <div className="grid grid-cols-2 gap-4">
               <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-1">

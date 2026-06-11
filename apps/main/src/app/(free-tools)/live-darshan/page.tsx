@@ -59,7 +59,7 @@ const LiveDarshanPage = () => {
                 ];
 
                 const localizedSites: DarshanSite[] = t.sites.map((site, index) => ({
-                    id: site.id,
+                    id: String(site.id),
                     name: site.name as string,
                     location: site.location as string,
                     description: site.description as string,
