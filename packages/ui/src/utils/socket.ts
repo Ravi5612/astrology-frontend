@@ -23,13 +23,13 @@ export const getSupportSocket = (): Socket => {
     return supportSocket;
 };
 
-export const connectNotificationSocket = (userId: string | string) => {
+export const connectNotificationSocket = (profileId: string) => {
     const socket = getNotificationSocket();
     if (!socket.connected) {
         socket.connect();
     }
-    // Register user to receive notifications
-    socket.emit('register_user', { userId });
+    // Register user to receive notifications using profileId
+    socket.emit('register_user', { profileId });
 };
 
 export const disconnectNotificationSocket = () => {

@@ -12,6 +12,7 @@ export interface ClientUser {
     avatar?: string;
     profile_picture?: string;
     phone?: string;
+    profile?: string;
 }
 
 interface AuthState {
@@ -110,6 +111,7 @@ export const useAuthStore = create<AuthState>()(
                         roles: raw.user.roles || [],
                         profile_picture: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
                         avatar: raw.user.profile_picture || raw.profile_picture || raw.user.avatar || raw.avatar,
+                        profile: raw.profile || raw.user.profile || raw.id,
                     };
                 } else if (raw?.id) {
                     user = {
@@ -120,6 +122,7 @@ export const useAuthStore = create<AuthState>()(
                         roles: raw.roles || [],
                         profile_picture: raw.profile_picture || raw.avatar,
                         avatar: raw.profile_picture || raw.avatar,
+                        profile: raw.profile || raw.id,
                     };
                 }
 

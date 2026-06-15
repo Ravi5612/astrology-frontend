@@ -227,7 +227,7 @@ const ExpertPreview = ({
               <button
                 onClick={handleStartConsultation}
                 disabled={actionLoading}
-                className={`relative w-full py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2.5rem] font-black lg:text-xl text-l flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-orange/80 overflow-hidden ${
+                className={`relative w-full py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2.5rem] font-black lg:text-xl text-l flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-orange/80 overflow-hidden cursor-pointer ${
                   actionLoading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >

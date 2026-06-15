@@ -57,11 +57,14 @@ export async function fetchPlaces(
       return [];
     }
 
-    const places = rawPlaces.map((p: any) => ({
-      ...p,
-      slug: generateSlug(p.title), // Slug generation remains on frontend for client-side routing
-      thumbnailUrl: p.thumbnailUrl && p.thumbnailUrl.includes("via.placeholder.com") ? null : p.thumbnailUrl,
-    }));
+    const places = rawPlaces.map((p: any) => {
+      const thumb = p.thumbnail_url || p.thumbnailUrl;
+      return {
+        ...p,
+        slug: generateSlug(p.title), // Slug generation remains on frontend for client-side routing
+        thumbnailUrl: thumb && thumb.includes("via.placeholder.com") ? null : thumb,
+      };
+    });
 
     return places;
   } catch (error) {
@@ -100,7 +103,7 @@ export async function fetchPlaceImages(placeTitle: string): Promise<string[]> {
     }
 
     return rawPlaces
-      .map((p: any) => p.thumbnailUrl)
+      .map((p: any) => p.thumbnail_url || p.thumbnailUrl)
       .filter(Boolean)
       .filter((url: string) => !url.includes("via.placeholder.com"));
   } catch (err) {

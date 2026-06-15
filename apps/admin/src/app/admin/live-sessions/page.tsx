@@ -82,10 +82,10 @@ export default function LiveSessionsPage() {
       const mappedSessions: LiveSession[] = items.map((s: any) => ({
         id: (s.id || "").toString(),
         user: {
-          id: (s.user?.id || s.user_id || "0").toString(),
-          name: s.user?.name || s.user?.full_name || s.userName || s.user_name || "Unknown User",
-          avatar: s.user?.profile_client?.profile_picture || s.user?.avatar || s.userAvatar || s.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.user?.id || s.user_id || s.id}`,
-          rating: s.user?.rating || 4.5
+          id: (s.client?.user?.id || s.user?.id || s.user_id || "0").toString(),
+          name: s.client?.user?.name || s.user?.name || s.user?.full_name || s.userName || s.user_name || "Unknown User",
+          avatar: s.client?.profile_picture || s.client?.user?.avatar || s.user?.profile_client?.profile_picture || s.user?.avatar || s.userAvatar || s.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.client?.user?.id || s.user?.id || s.user_id || s.id}`,
+          rating: s.client?.user?.rating || s.user?.rating || 4.5
         },
         expert: {
           id: (s.expert?.id || s.expert_id || "0").toString(),

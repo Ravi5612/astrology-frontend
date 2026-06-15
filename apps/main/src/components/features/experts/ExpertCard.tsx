@@ -316,7 +316,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
             {/* Chat Button */}
             <button
               onClick={handleChatClick}
-              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-regular fa-comment-dots text-sm" />
@@ -330,7 +330,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
             {/* Call Button */}
             <button
               onClick={handleCallClick}
-              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
             >
               <div className="flex items-center gap-1.5 mb-0.5">
                 <i className="fa-solid fa-phone-volume text-sm" />
@@ -345,7 +345,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
           {/* Video Call Button */}
           <button
             onClick={handleVideoCallClick}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
           >
             <i className="fa-solid fa-video text-sm shrink-0" />
             <span className="text-[14px] font-bold shrink-0">{t.expertCard.videoCall}</span>

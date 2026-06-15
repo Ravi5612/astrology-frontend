@@ -165,7 +165,7 @@ export const useProfileOtherLogic = (
     useEffect(() => {
         if (!isAuthenticated || !user?.id) return;
 
-        connectNotificationSocket(user.id);
+        connectNotificationSocket(user.profile || user.id);
         const socket = getNotificationSocket();
 
         const handleOrderUpdate = (data: any) => {

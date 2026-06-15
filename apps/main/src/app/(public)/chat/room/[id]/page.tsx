@@ -235,7 +235,7 @@ function ChatRoomContent() {
 
         const payload: any = {
             sessionId: sessionId,
-            senderId: user.id,
+            senderId: user.profile || user.id,
             senderType: 'user',
             content: inputValue.trim(),
         };
@@ -259,7 +259,7 @@ function ChatRoomContent() {
         if (user && sessionId) {
             chatSocket.emit('send_message', {
                 sessionId: sessionId,
-                senderId: user.id,
+                senderId: user.profile || user.id,
                 senderType: 'admin',
                 content: "User has ended the consultation.",
             });

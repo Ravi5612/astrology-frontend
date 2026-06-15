@@ -193,7 +193,7 @@ export default function UserDisputeChatModal({ disputeId, category, onClose }: U
     const handleRequestEndChat = () => {
         if (window.confirm("Are you sure you want to request to end this chat?")) {
             const socket = getSupportSocket();
-            socket.emit('request_end_chat', { disputeId, userId: user?.id });
+            socket.emit('request_end_chat', { disputeId, userId: user?.profile || user?.id });
             toast.info("End chat request sent to admin");
         }
     };

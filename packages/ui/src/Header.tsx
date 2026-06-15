@@ -258,7 +258,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   useEffect(() => {
     if (isClient && isAuthenticated && user?.id) {
       console.log("🔌 Connecting to notification socket for user:", user.id);
-      connectNotificationSocket(user.id);
+      // Use profile from token as per new architecture
+      connectNotificationSocket(user.profile || user.id);
       const socket = getNotificationSocket();
 
       const handleUpdate = (data: any) => {
