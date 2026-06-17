@@ -58,28 +58,28 @@ export default function RefundManagementPage() {
           realId: d.id,
           user: {
             id: d.user_id || d.userId || "N/A",
-            name: d.user?.name || d.itemDetails?.userName || "Unknown User",
-            avatar: d.user?.profile_picture || d.user?.avatar || d.itemDetails?.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.userId}`,
+            name: d.user?.name || itemDetails.userName || "Unknown User",
+            avatar: d.user?.profile_picture || d.user?.avatar || itemDetails.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.userId}`,
             email: d.user?.email || "N/A"
           },
           expert: {
             id: d.consultation?.expert?.id || d.puja?.expert?.id || d.expertId || "N/A",
-            name: d.consultation?.expert?.user?.name || d.puja?.expert?.user?.name || d.itemDetails?.expertName || "System",
-            avatar: d.consultation?.expert?.user?.profile_picture || d.consultation?.expert?.user?.avatar || d.puja?.expert?.user?.profile_picture || d.puja?.expert?.user?.avatar || d.itemDetails?.expertAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${d.itemDetails?.expertName || "E"}`,
+            name: d.consultation?.expert?.user?.name || d.puja?.expert?.user?.name || itemDetails.expertName || itemDetails.expert_name || "System",
+            avatar: d.consultation?.expert?.user?.profile_picture || d.consultation?.expert?.user?.avatar || d.puja?.expert?.user?.profile_picture || d.puja?.expert?.user?.avatar || itemDetails.expertAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.expertName || itemDetails.expert_name || "E"}`,
             specialty: d.consultation?.expert?.specialty || d.puja?.expert?.specialty || "Expert"
           },
           consultation: {
             id: d.consultationId || d.itemId || d.orderId || d.pujaId || d.id || "N/A",
             type: typeLabel,
             realType: type,
-            duration: d.itemDetails?.duration || itemDetails.duration || 0,
-            amount: itemDetails.amount || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.price || itemDetails.totalCost || 0,
-            date: new Date(itemDetails.date || d.item_details?.date || d.createdAt || Date.now())
+            duration: itemDetails.duration || 0,
+            amount: itemDetails.amount || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.price || itemDetails.totalCost || itemDetails.total_cost || 0,
+            date: new Date(itemDetails.date || d.createdAt || Date.now())
           },
           reason: d.description || d.category || "No reason provided",
           category: d.category,
-          amount: d.itemDetails?.amount || 0,
-          requestedAmount: d.itemDetails?.amount || 0,
+          amount: itemDetails.amount || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.price || itemDetails.totalCost || itemDetails.total_cost || 0,
+          requestedAmount: itemDetails.amount || itemDetails.totalAmount || itemDetails.total_amount || itemDetails.price || itemDetails.totalCost || itemDetails.total_cost || 0,
           status: status,
           priority: d.priority || "medium",
           requestedAt: new Date(d.createdAt || Date.now()),
@@ -171,8 +171,9 @@ export default function RefundManagementPage() {
     toast.success(`Request marked as ${status}`);
     // Manually update local state — backend no longer returns updated data
     setRefunds(prev => prev.map(r =>
-      r.id === id ? { ...r, status: uiStatus } : r
+      r.realId === id ? { ...r, status: uiStatus } : r
     ));
+    setSelectedRefund((prev: any) => prev && prev.realId === id ? { ...prev, status: uiStatus } : prev);
   };
 
   const handleViewDetails = (refund: any) => {

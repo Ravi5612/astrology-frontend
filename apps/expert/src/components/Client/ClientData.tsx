@@ -287,7 +287,7 @@ export default function ClientsPage() {
                               e.stopPropagation();
                               toggleSession(client.id);
                             }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors focus:outline-none"
+                            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer hover:cursor-pointer"
                           >
                             <LucideIcons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
                           </button>
@@ -466,7 +466,7 @@ export default function ClientsPage() {
                             <div className="flex gap-3">
                               <button
                                 onClick={() => handleViewChat(client)}
-                                className="rounded-full px-6 py-2 text-sm font-bold border-2 border-[#fd6410] text-[#fd6410] bg-white hover:bg-[#fd6410]/5 flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                                className="rounded-full px-6 py-2 text-sm font-bold border-2 border-[#fd6410] text-[#fd6410] bg-white hover:bg-[#fd6410]/5 flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer hover:cursor-pointer"
                                 disabled={session?.status?.trim()?.toLowerCase() !== 'completed' && session?.status?.trim()?.toLowerCase() !== 'active'}
                               >
                                 {((session?.type || session?.session_type || "").toLowerCase().includes("chat")) ? (

@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin, Calendar, DollarSign, Clock } from "lucide-react";
 import type { User } from "@/app/components/user/user";
 
 export const getUserProfileModalProps = (user: User) => ({
-  avatar: user.avatar,
+  avatar: user.avatar || user.profile_client?.profile_picture || user.profile_client?.avatar || user.profile_expert?.avatar,
   name: user.name,
   badges: [
     {

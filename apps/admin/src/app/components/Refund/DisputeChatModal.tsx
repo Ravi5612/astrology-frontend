@@ -63,11 +63,29 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
             }
         };
 
+        const handleEndChatBroadcast = (data: any) => {
+            if (String(data.disputeId) === String(dispute.realId)) {
+                toast.warning(`User has requested to end this chat.`);
+                setMessages((prev) => [
+                    ...prev, 
+                    {
+                        id: `sys-${Date.now()}`,
+                        message: "User has requested to end this chat.",
+                        sender_type: "user",
+                        is_system_note: true,
+                        created_at: new Date().toISOString()
+                    } as Message
+                ]);
+            }
+        };
+
         socket.on("new_message", handleNewMessage);
+        socket.on("dispute_close_requested", handleEndChatBroadcast);
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("new_message", handleNewMessage);
+            socket.off("dispute_close_requested", handleEndChatBroadcast);
         };
     }, [isOpen, dispute.realId]);
 
@@ -133,8 +151,14 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
         setIsProcessing(true);
         try {
             await onStatusUpdate(status);
-            // After successful update via parent, we close or stay open? 
-            // User requested "marked it refunded, pending, Rejected", so we stay open to confirm or just show toast.
+            
+            // Notify user in chat about the status change
+            let statusText = status === "refunded" ? "approved and marked as refunded" : status === "rejected" ? "rejected" : "marked as pending";
+            await sendDisputeMessage(dispute.realId, { 
+                message: `SYSTEM NOTE: Admin has ${statusText} this request.`,
+            });
+            
+            toast.success(`User notified about status change to ${status}`);
         } finally {
             setIsProcessing(false);
         }
@@ -184,7 +208,7 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
                         <h3 className="font-bold text-gray-900 mb-4 uppercase text-xs tracking-wider">Update Status</h3>
                         <div className="space-y-3">
                             <button 
-                                disabled={isProcessing || dispute.status === "refunded"}
+                                disabled={isProcessing || dispute.status === "refunded" || dispute.status === "approved"}
                                 onClick={() => handleUpdateStatus("refunded")}
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all disabled:opacity-50"
                             >
@@ -224,6 +248,17 @@ export function DisputeChatModal({ isOpen, onClose, dispute, onStatusUpdate }: D
                                 </div>
                             ) : (
                                 messages.map((msg, idx) => {
+                                    if (msg.is_system_note || (msg as any).isSystemNote || msg.message?.startsWith("SYSTEM NOTE:")) {
+                                        return (
+                                            <div key={idx} className="flex justify-center my-2">
+                                                <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm flex items-center gap-2 max-w-[80%] text-center">
+                                                    <AlertCircle className="w-4 h-4 shrink-0" />
+                                                    {msg.message}
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+
                                     const isSenderAdmin = msg.sender_type === 'admin' || (msg as any).senderType === 'admin';
                                     return (
                                         <div key={idx} className={`flex ${isSenderAdmin ? 'justify-end' : 'justify-start'}`}>

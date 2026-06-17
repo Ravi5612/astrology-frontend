@@ -147,7 +147,7 @@ export default function PortfolioGallery({
                     <div className="flex border-b border-gray-200 mb-6 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden">
                         <button
                             onClick={() => setActiveTab('images')}
-                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'images'
+                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer hover:cursor-pointer ${activeTab === 'images'
                                 ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
@@ -156,7 +156,7 @@ export default function PortfolioGallery({
                         </button>
                         <button
                             onClick={() => setActiveTab('videos')}
-                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'videos'
+                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer hover:cursor-pointer ${activeTab === 'videos'
                                 ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
@@ -165,7 +165,7 @@ export default function PortfolioGallery({
                         </button>
                         <button
                             onClick={() => setActiveTab('intro-video')}
-                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'intro-video'
+                            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer hover:cursor-pointer ${activeTab === 'intro-video'
                                 ? 'border-orange text-orange'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}

@@ -13,7 +13,7 @@ export async function agentLoginAction(data: any) {
         const response = await fetch(API_CONFIG.AUTH.LOGIN.url, {
             method: API_CONFIG.AUTH.LOGIN.method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ ...data, requiredRole: 'agent' }),
             cache: 'no-store'
         });
 

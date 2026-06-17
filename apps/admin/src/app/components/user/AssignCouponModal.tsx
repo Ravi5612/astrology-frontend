@@ -90,7 +90,7 @@ const AssignCouponModal = ({ user, onClose }: Props) => {
                                     value={selectedCouponCode}
                                     onChange={(e) => setSelectedCouponCode(e.target.value)}
                                 >
-                                    {availableCoupons.map((c) => (
+                                    {availableCoupons.filter(c => c && c.code).map((c) => (
                                         <option key={c.id} value={c.code}>
                                             {c.code} ({c.type === 'percentage' ? `${c.value}%` : `₹${c.value}`} OFF)
                                         </option>

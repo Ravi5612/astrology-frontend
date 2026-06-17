@@ -47,7 +47,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
             variant="primary"
             size="md"
             onClick={() => setEditing(true)}
-            className="shadow-gold px-6"
+            className="shadow-gold px-6 cursor-pointer hover:cursor-pointer"
             style={{
               fontFamily:
                 lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
@@ -63,7 +63,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               variant="secondary"
               size="md"
               onClick={() => setEditing(false)}
-              className="px-6"
+              className="px-6 cursor-pointer hover:cursor-pointer"
               style={{
                 fontFamily:
                   lang === "hi"
@@ -78,7 +78,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               size="md"
               loading={saving}
               onClick={handleSave}
-              className="px-6 shadow-md"
+              className="px-6 shadow-md cursor-pointer hover:cursor-pointer"
               style={{
                 fontFamily:
                   lang === "hi"

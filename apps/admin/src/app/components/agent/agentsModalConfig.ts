@@ -14,11 +14,11 @@ export const getAgentProfileModalProps = (agent: Agent) => ({
     // ── Status badge ───────────────────────────────────────────
     badges: [
         {
-            label: agent.status.charAt(0).toUpperCase() + agent.status.slice(1),
+            label: agent.status ? agent.status.charAt(0).toUpperCase() + agent.status.slice(1) : "Unknown",
             color:
                 agent.status === "active"
                     ? "bg-green-100 text-green-700"
-                    : agent.status === "suspended"
+                    : agent.status === "suspended" || agent.status === "blocked"
                         ? "bg-red-100 text-red-700"
                         : "bg-gray-100 text-gray-600",
         },
@@ -57,6 +57,6 @@ export const getAgentProfileModalProps = (agent: Agent) => ({
         { label: "Total Listings", isComplete: agent.total_listings > 0, value: String(agent.total_listings) },
         { label: "Total Earned", isComplete: agent.total_earned > 0, value: `₹${agent.total_earned.toLocaleString("en-IN")}` },
         { label: "Pending Payout", isComplete: agent.pending_payout > 0, value: `₹${agent.pending_payout.toLocaleString("en-IN")}` },
-        { label: "Joined On", isComplete: true, value: new Date(agent.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) },
+        { label: "Joined On", isComplete: true, value: (agent.created_at || (agent as any).createdAt) ? new Date(agent.created_at || (agent as any).createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "N/A" },
     ],
 });

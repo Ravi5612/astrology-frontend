@@ -28,7 +28,7 @@ const ExpertConsultant = () => {
                   href={`/our-experts?specializations=${encodeURIComponent(service.title)}`}
                   className="block no-underline hover:text-inherit"
                 >
-                  <ConsultationCard item={service} />
+                  <ConsultationCard item={{ ...service, id: String(service.id) }} />
                 </Link>
               </div>
             ))}

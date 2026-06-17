@@ -85,7 +85,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
   
   const { data: fetchedProducts } = useMerchantProducts(
 // ...
-    shouldFetch ? store.id : undefined,
+    shouldFetch ? String(store.id) : undefined,
     1,
     6
   );

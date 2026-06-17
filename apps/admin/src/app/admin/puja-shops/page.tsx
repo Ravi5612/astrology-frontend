@@ -147,20 +147,34 @@ export default function AdminPujaShopsPage() {
             label: "Actions",
             render: (l: any) => {
                 const isMerchant = viewMode === 'self';
+                const isActive = l.status === 'active' || l.status === 'approved';
                 
                 return (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                         {isMerchant ? (
-                            <Button
-                                size="sm"
-                                onClick={() => {
-                                    setSelectedMerchant(l);
-                                    setIsModalOpen(true);
-                                }}
-                                className="bg-[#301118] hover:bg-[#4a1a25] text-white border-none px-3 h-8 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
-                            >
-                                <FileText className="w-3.5 h-3.5" /> DOCUMENTS
-                            </Button>
+                            <>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleStatusUpdate(l.id || l._id, isActive ? "rejected" : "approved")}
+                                    className={`px-3 h-8 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
+                                        isActive
+                                        ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                        : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                    }`}
+                                >
+                                    {isActive ? "Block" : "Unblock"}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    onClick={() => {
+                                        setSelectedMerchant(l);
+                                        setIsModalOpen(true);
+                                    }}
+                                    className="bg-[#301118] hover:bg-[#4a1a25] text-white border-none px-3 h-8 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                                >
+                                    <FileText className="w-3.5 h-3.5" /> DOCUMENTS
+                                </Button>
+                            </>
                         ) : (
                             <div className="flex items-center gap-1">
                                 {(l.status === "pending" || l.status === "pending_verification") ? (
@@ -184,11 +198,15 @@ export default function AdminPujaShopsPage() {
                                 ) : (
                                     <Button
                                         size="sm"
-                                        variant={l.status === 'active' || l.status === 'approved' ? "danger" : "primary"}
-                                        onClick={() => handleStatusUpdate(l.id || l._id, (l.status === 'active' || l.status === 'approved') ? "rejected" : "approved")}
-                                        className={`px-1.5 h-7 text-[10px] font-black ${(l.status === 'active' || l.status === 'approved') ? '' : 'bg-purple-600 hover:bg-purple-700 border-none text-white'}`}
+                                        variant={isActive ? "danger" : "primary"}
+                                        onClick={() => handleStatusUpdate(l.id || l._id, isActive ? "rejected" : "approved")}
+                                        className={`px-2 h-7 text-[10px] font-black tracking-widest rounded-lg transition-all ${
+                                            isActive 
+                                            ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200" 
+                                            : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                        }`}
                                     >
-                                        {(l.status === 'active' || l.status === 'approved') ? "REJECT" : "APPROVE"}
+                                        {isActive ? "BLOCK" : "UNBLOCK"}
                                     </Button>
                                 )}
                             </div>
@@ -331,22 +349,26 @@ export default function AdminPujaShopsPage() {
 
                             {/* Modal Footer - Actions */}
                             <div className="p-8 bg-gray-50/50 border-t border-gray-100 flex items-center justify-end gap-4 shrink-0">
-                                <Button
-                                    onClick={() => handleStatusUpdate(selectedMerchant.id || selectedMerchant._id, "rejected")}
-                                    variant="danger"
-                                    disabled={isSubmitting}
-                                    className="px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all"
-                                >
-                                    <XCircle className="w-4 h-4 mr-2" /> Reject Profile
-                                </Button>
-                                <Button
-                                    onClick={() => handleStatusUpdate(selectedMerchant.id || selectedMerchant._id, "approved")}
-                                    disabled={isSubmitting}
-                                    loading={isSubmitting}
-                                    className="px-12 py-4 rounded-2xl bg-purple-600 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-purple-600/20 hover:bg-purple-700 transition-all hover:-translate-y-1"
-                                >
-                                    <CheckCircle className="w-4 h-4 mr-2" /> Approve Shop
-                                </Button>
+                                {selectedMerchant.status !== 'rejected' && selectedMerchant.status !== 'suspended' && (
+                                    <Button
+                                        onClick={() => handleStatusUpdate(selectedMerchant.id || selectedMerchant._id, "rejected")}
+                                        variant="danger"
+                                        disabled={isSubmitting}
+                                        className="px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all"
+                                    >
+                                        <XCircle className="w-4 h-4 mr-2" /> {selectedMerchant.status === 'active' || selectedMerchant.status === 'approved' ? 'Suspend Profile' : 'Reject Profile'}
+                                    </Button>
+                                )}
+                                {selectedMerchant.status !== 'active' && selectedMerchant.status !== 'approved' && (
+                                    <Button
+                                        onClick={() => handleStatusUpdate(selectedMerchant.id || selectedMerchant._id, "approved")}
+                                        disabled={isSubmitting}
+                                        loading={isSubmitting}
+                                        className="px-12 py-4 rounded-2xl bg-purple-600 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-purple-600/20 hover:bg-purple-700 transition-all hover:-translate-y-1"
+                                    >
+                                        <CheckCircle className="w-4 h-4 mr-2" /> Approve Shop
+                                    </Button>
+                                )}
                             </div>
                         </motion.div>
                     </div>

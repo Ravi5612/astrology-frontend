@@ -1,6 +1,6 @@
 // Products Card Data
 interface ProductsData {
-    id: string;
+    id: string | number;
     title: string;
     image: string;
     price: number;
@@ -68,7 +68,7 @@ export const products: ProductsData[] = [
 
 // Shop By Purpose Data
 interface PurposeData {
-    id: string;
+    id: string | number;
     title: string;
     image: string;
 }

@@ -82,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               <button
                 onClick={handleToggleAvailability}
                 disabled={loading}
-                className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer hover:cursor-pointer ${
                   isOnline ? "bg-green-500 focus:ring-green-500" : "bg-red-500 focus:ring-red-500"
                 } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                 aria-label={isOnline ? "Go Offline" : "Go Online"}
@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               >
                 <NotificationBell
                   count={notifications.length}
-                  className="bg-transparent hover:bg-gray-100"
+                  className="bg-transparent hover:bg-gray-100 cursor-pointer hover:cursor-pointer"
                 />
 
                 {isNotificationOpen && (
@@ -169,7 +169,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </div>
 
           <button
-            className="p-0 rounded-full focus:outline-none ring-2 ring-transparent focus:ring-purple-200 transition-all duration-200"
+            className="p-0 rounded-full focus:outline-none ring-2 ring-transparent focus:ring-purple-200 transition-all duration-200 cursor-pointer hover:cursor-pointer"
             aria-label="User Menu"
           >
             <Link href="/dashboard/profilemanagement">

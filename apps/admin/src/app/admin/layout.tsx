@@ -380,8 +380,17 @@ export default function AdminLayout({
                     <Menu className="w-6 h-6" />
                   </button>
                   <h1 className="text-2xl font-semibold text-gray-800">
-                    {menuItems.find((item) => item.href === pathname)?.label ||
-                      "Dashboard"}
+                    {(() => {
+                      const found = menuItems.find((item) => item.href === pathname);
+                      if (found) return found.label;
+                      for (const item of menuItems) {
+                        if (item.submenu) {
+                          const subFound = item.submenu.find((sub) => sub.href === pathname);
+                          if (subFound) return subFound.label;
+                        }
+                      }
+                      return "Dashboard";
+                    })()}
                   </h1>
                 </div>
 

@@ -121,7 +121,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                 <button
                     type="button"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full bg-brown text-white p-4 rounded-2xl flex items-center justify-between shadow-premium border-0"
+                    className="w-full bg-brown text-white p-4 rounded-2xl flex items-center justify-between shadow-premium border-0 cursor-pointer hover:cursor-pointer"
                 >
                     <div className="flex items-center gap-3">
                         <i className={`${activeMenuItem?.icon || ''} text-xl text-orange`}></i>
@@ -158,7 +158,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                             <button
                                 key={index}
                                 type="button"
-                                className={`w-full text-left border-0 rounded-xl flex items-center px-4 py-3 transition-all duration-200 group ${
+                                className={`w-full text-left border-0 rounded-xl flex items-center px-4 py-3 transition-all duration-200 group cursor-pointer hover:cursor-pointer ${
                                     isActive
                                         ? 'bg-orange text-white shadow-gold font-bold'
                                         : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white'

@@ -55,14 +55,14 @@ export default function ReviewsPage() {
 
       const newReviews: Review[] = (data?.reviews || data || []).map((r: any) => ({
         id: r.id,
-        user: r.user?.name || "Unknown",
-        expert: r.expert?.user?.name || r.expert?.name || "Unknown",
+        user: r.user?.name || r.client?.name || r.reviewer_name || r.reviewerName || r.client?.user?.name || r.userName || "Unknown",
+        expert: r.expert?.user?.name || r.expert?.name || r.expertName || "Unknown",
         rating: r.rating,
         comment: r.comment || "",
         date: r.created_at || r.createdAt || r.date,
         status: r.status || "pending",
-        avatar: (r.user?.name || "U").charAt(0).toUpperCase(),
-        avatarUrl: r.user?.avatar || null,
+        avatar: (r.user?.name || r.client?.name || r.reviewer_name || r.reviewerName || r.client?.user?.name || r.userName || "U").charAt(0).toUpperCase(),
+        avatarUrl: r.user?.avatar || r.client?.avatar || r.client?.profile_picture || null,
         sessionId: r.session_id || r.sessionId || r.orderId,
         tags: r.tags || [],
         review_type: r.review_type || "expert",

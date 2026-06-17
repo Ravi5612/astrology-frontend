@@ -55,28 +55,28 @@ export default function AgentDashboardHome() {
     const stats: StatConfig[] = useMemo(() => [
         {
             title: "Experts Listed",
-            value: loading ? "..." : (statsData?.expertsCount || 0),
+            value: loading ? "..." : (statsData?.experts_count || 0),
             icon: Star,
             iconColor: "text-yellow-600",
             iconBgColor: "bg-yellow-100",
         },
         {
             title: "Mandirs Listed",
-            value: loading ? "..." : (statsData?.mandirsCount || 0),
+            value: loading ? "..." : (statsData?.mandirs_count || 0),
             icon: Building2,
             iconColor: "text-orange-600",
             iconBgColor: "bg-orange-100",
         },
         {
             title: "Puja Shops Listed",
-            value: loading ? "..." : (statsData?.pujaShopsCount || 0),
+            value: loading ? "..." : (statsData?.puja_shops_count || 0),
             icon: ShoppingBag,
             iconColor: "text-purple-600",
             iconBgColor: "bg-purple-100",
         },
         {
             title: "Pending Payout",
-            value: loading ? "..." : `₹${(statsData?.pendingPayout || 0).toLocaleString("en-IN")}`,
+            value: loading ? "..." : `₹${(statsData?.pending_payout || 0).toLocaleString("en-IN")}`,
             icon: BadgeIndianRupee,
             iconColor: "text-green-600",
             iconBgColor: "bg-green-100",
@@ -100,17 +100,17 @@ export default function AgentDashboardHome() {
                     <div className="mt-6 flex flex-wrap items-center gap-6">
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Total Earned</p>
-                            <p className="text-2xl font-black">₹{(statsData?.totalListingsEarnings || 0).toLocaleString("en-IN")}</p>
+                            <p className="text-2xl font-black">₹{(statsData?.total_listings_earnings || 0).toLocaleString("en-IN")}</p>
                         </div>
                         <div className="w-px h-10 bg-white/20 hidden sm:block" />
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Wallet Balance</p>
-                            <p className="text-2xl font-black">₹{(statsData?.totalEarned || 0).toLocaleString("en-IN")}</p>
+                            <p className="text-2xl font-black">₹{(statsData?.total_earned || 0).toLocaleString("en-IN")}</p>
                         </div>
                         <div className="w-px h-10 bg-white/20 hidden sm:block" />
                         <div>
                             <p className="text-orange-200 text-xs font-bold uppercase tracking-widest">Total Listings</p>
-                            <p className="text-2xl font-black">{statsData?.totalListings || 0}</p>
+                            <p className="text-2xl font-black">{statsData?.total_listings || 0}</p>
                         </div>
                     </div>
                 </div>
@@ -130,8 +130,8 @@ export default function AgentDashboardHome() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 flex-1 max-w-2xl">
                         {[
-                            { label: "Expert", value: statsData?.commissionRates?.expert || 3, icon: Star, color: "text-yellow-600", bg: "bg-yellow-50" },
-                            { label: "Puja Shop", value: statsData?.commissionRates?.shop || 13, icon: ShoppingBag, color: "text-purple-600", bg: "bg-purple-50" },
+                            { label: "Expert", value: statsData?.commission_rates?.expert || 3, icon: Star, color: "text-yellow-600", bg: "bg-yellow-50" },
+                            { label: "Puja Shop", value: statsData?.commission_rates?.shop || 13, icon: ShoppingBag, color: "text-purple-600", bg: "bg-purple-50" },
                         ].map((rate) => (
                             <div key={rate.label} className="bg-gray-50/50 rounded-2xl p-4 border border-gray-100 hover:border-primary/20 hover:-translate-y-2 hover:scale-[1.05] transition-all duration-500 group/rate relative overflow-hidden">
                                 <div className="flex items-center gap-2 mb-2">
@@ -179,8 +179,8 @@ export default function AgentDashboardHome() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-5">Recent Activity</h3>
                     <div className="space-y-4">
-                        {(statsData?.recentActivity || []).length > 0 ? (
-                            statsData.recentActivity.map((item: any) => (
+                        {(statsData?.recent_activity || []).length > 0 ? (
+                            statsData.recent_activity.map((item: any) => (
                                 <div key={item.id} className="flex items-start gap-3">
                                     <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${(item.status === "paid" || item.action === "Listing") ? "bg-green-100 text-green-600" :
                                         item.status === "approved" ? "bg-blue-100 text-blue-600" :

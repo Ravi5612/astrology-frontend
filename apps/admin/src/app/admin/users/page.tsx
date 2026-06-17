@@ -6,6 +6,7 @@ import { DataTable } from "@/app/components/admin/DataTable";
 import { StatsCards } from "@repo/ui";
 import { Loading } from "@repo/ui";
 import { ConfirmationModal } from "@/app/components/admin/ConfirmationModal";
+import { BlockConfirmModal } from "@/app/components/admin/BlockConfirmModal";
 
 // Data config and types
 import { getStatsConfig, getColumns, type UserStats } from "@/app/components/user/usersConfig";
@@ -231,16 +232,16 @@ export default function UsersPage() {
       )}
 
       {/* Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={confirmModal.isOpen}
-        isLoading={confirmModal.isLoading}
-        title={confirmModal.user?.is_blocked ? "Unblock User" : "Block User"}
-        message={`Are you sure you want to ${confirmModal.user?.is_blocked ? 'unblock' : 'block'} ${confirmModal.user?.name}?`}
-        confirmLabel={confirmModal.user?.is_blocked ? "Yes, Unblock" : "Yes, Block"}
-        type={confirmModal.user?.is_blocked ? "info" : "warning"}
-        onConfirm={handleConfirmAction}
-        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
-      />
+      {confirmModal.user && (
+        <BlockConfirmModal
+          isOpen={confirmModal.isOpen}
+          onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+          onConfirm={handleConfirmAction}
+          userName={confirmModal.user.name || confirmModal.user.email}
+          isBlocking={!confirmModal.user.is_blocked}
+          isLoading={confirmModal.isLoading}
+        />
+      )}
 
       {/* Assign Coupon Modal (Single User) */}
       {couponUser && (

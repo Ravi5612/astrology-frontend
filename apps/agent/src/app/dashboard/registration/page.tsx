@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@repo/ui";
 import {
     UserPlus, CheckCircle, X,
@@ -65,9 +66,9 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 // ── Modals ───────────────────────────────────────────────────────────────────
 
 function SuccessModal({ registeredUser, onClose }: { registeredUser: any; onClose: () => void }) {
-    const roleString = registeredUser.roles?.[0]?.name || registeredUser.role || "user";
+    const roleString = registeredUser.roles?.[0]?.name || registeredUser.role || registeredUser.userType || "user";
 
-    return (
+    const content = (
         <div className="fixed inset-0 bg-[#301118]/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
             <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-8 relative animate-in zoom-in-95 duration-300 border border-white/20">
                 <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
@@ -118,10 +119,11 @@ function SuccessModal({ registeredUser, onClose }: { registeredUser: any; onClos
             </div>
         </div>
     );
+    return typeof document !== "undefined" ? createPortal(content, document.body) : null;
 }
 
 function ListingSuccessModal({ name, type, onClose }: { name: string; type: string; onClose: () => void }) {
-    return (
+    const content = (
         <div className="fixed inset-0 bg-[#301118]/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
             <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-8 relative animate-in zoom-in-95 duration-300 border border-white/20 text-center">
                 <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
@@ -152,6 +154,7 @@ function ListingSuccessModal({ name, type, onClose }: { name: string; type: stri
             </div>
         </div>
     );
+    return typeof document !== "undefined" ? createPortal(content, document.body) : null;
 }
 
 // ── Expert / Merchant Form ───────────────────────────────────────────────────
@@ -173,7 +176,7 @@ function UserForm({ userType }: { userType: "expert" | "merchant" }) {
         if (error) {
             toast.error(getErrorMessage(error) || "Registration failed. Try again.");
         } else if (res) {
-            setRegisteredUser(res.user);
+            setRegisteredUser({ ...res.user, userType });
             setForm({ name: "", email: "", phone: "" });
         }
         setSubmitting(false);

@@ -5,6 +5,7 @@ import React, { useState, useMemo, lazy, Suspense, useEffect } from "react";
 import { DataTable } from "@/app/components/admin/DataTable";
 import { StatsCards } from "@repo/ui";
 import { Loading } from "@repo/ui";
+import { BlockConfirmModal } from "@/app/components/admin/BlockConfirmModal";
 
 // Data config and types
 import { getStatsConfig, getColumns, type ExpertStats } from "@/app/components/expert/expertsConfig";
@@ -46,6 +47,11 @@ export default function ExpertsPage() {
 
   // Selected expert state (for modal)
   const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
+
+  // Block confirmation state
+  const [blockConfirmModalOpen, setBlockConfirmModalOpen] = useState(false);
+  const [expertToBlock, setExpertToBlock] = useState<Expert | null>(null);
+  const [isBlockingStatus, setIsBlockingStatus] = useState(false);
 
   // Fetch stats (Function)
   const fetchStats = async () => {
@@ -98,7 +104,7 @@ export default function ExpertsPage() {
     fetchStats();
   }, []);
 
-  // Fetch experts (Paginated)
+  // Fetch experts when search/page/status changes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchExperts();
@@ -169,8 +175,34 @@ export default function ExpertsPage() {
   // Get stats config (memoized)
   const statsConfig = useMemo(() => getStatsConfig(stats), [stats]);
 
+  const handleToggleBlockClick = (expert: Expert) => {
+    setExpertToBlock(expert);
+    setBlockConfirmModalOpen(true);
+  };
+
+  const handleConfirmBlock = async () => {
+    if (!expertToBlock) return;
+    setIsBlockingStatus(true);
+    console.log(`[Admin Frontend] Attempting to ${!expertToBlock.is_blocked ? 'block' : 'unblock'} expert:`, expertToBlock.id);
+    try {
+      const { toggleUserBlock } = await import("@/services/admin.service");
+      const [response, error] = await toggleUserBlock(expertToBlock.id, !expertToBlock.is_blocked);
+      
+      if (!error) {
+        console.log(`[Admin Frontend] Successfully ${!expertToBlock.is_blocked ? 'blocked' : 'unblocked'} expert.`);
+        fetchExperts();
+        fetchStats();
+      }
+    } catch (err) {
+      console.error("Failed to toggle block status", err);
+    }
+    setIsBlockingStatus(false);
+    setBlockConfirmModalOpen(false);
+    setExpertToBlock(null);
+  };
+
   // Get table columns (memoized)
-  const columns = useMemo(() => getColumns(), []);
+  const columns = useMemo(() => getColumns(handleToggleBlockClick), [experts]);
 
   // Get modal props for selected expert
   const modalProps = selectedExpert ? getProfileModalProps(selectedExpert) : null;
@@ -224,6 +256,21 @@ export default function ExpertsPage() {
             }}
           />
         </Suspense>
+      )}
+
+      {/* Block Confirm Modal */}
+      {expertToBlock && (
+        <BlockConfirmModal
+          isOpen={blockConfirmModalOpen}
+          onClose={() => {
+            setBlockConfirmModalOpen(false);
+            setExpertToBlock(null);
+          }}
+          onConfirm={handleConfirmBlock}
+          userName={expertToBlock.name || expertToBlock.email}
+          isBlocking={!expertToBlock.is_blocked}
+          isLoading={isBlockingStatus}
+        />
       )}
     </>
   );

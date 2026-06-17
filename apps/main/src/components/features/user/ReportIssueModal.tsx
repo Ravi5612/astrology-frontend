@@ -35,6 +35,17 @@ export default function ReportIssueModal({
         setMounted(true);
     }, []);
 
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isOpen]);
+
     const orderCategories = [
         "Product Damaged/Defective",
         "Wrong Item Received",
@@ -100,8 +111,8 @@ export default function ReportIssueModal({
                 }),
                 ...(type === "consultation" && {
                     sessionId: itemDetails.id,
-                    expertName: itemDetails.expert?.user?.name || itemDetails.astrologer_name || "Expert",
-                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.astrologer_name || 'E'}`,
+                    expertName: itemDetails.expert?.user?.name || itemDetails.expertName || itemDetails.expert_name || itemDetails.astrologer_name || "Expert",
+                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || itemDetails.expert_image || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.expertName || itemDetails.expert_name || itemDetails.astrologer_name || 'E'}`,
                     amount: itemDetails.totalCost || itemDetails.total_cost || itemDetails.price || itemDetails.amount || 0,
                     status: itemDetails.status,
                     date: itemDetails.createdAt || itemDetails.created_at,
@@ -109,8 +120,8 @@ export default function ReportIssueModal({
                 ...(type === "puja" && {
                     pujaId: itemDetails.id,
                     pujaName: itemDetails.puja?.name || "Puja Ritual",
-                    expertName: itemDetails.expert?.user?.name || itemDetails.expertName || "Expert",
-                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.expertName || 'P'}`,
+                    expertName: itemDetails.expert?.user?.name || itemDetails.expertName || itemDetails.expert_name || "Expert",
+                    expertAvatar: itemDetails.expert?.user?.profile_picture || itemDetails.expert?.user?.avatar || itemDetails.expert_image || `https://api.dicebear.com/7.x/initials/svg?seed=${itemDetails.expertName || itemDetails.expert_name || 'P'}`,
                     amount: itemDetails.price || itemDetails.total_amount || itemDetails.amount || 0,
                     status: itemDetails.status,
                     date: itemDetails.scheduled_date || itemDetails.created_at,
@@ -244,7 +255,7 @@ export default function ReportIssueModal({
                                     <div>
                                         <span className="text-gray-600">Expert:</span>
                                         <p className="font-bold text-gray-800">
-                                            {itemDetails.expert?.user?.name || itemDetails.expertName || "N/A"}
+                                            {itemDetails.expert?.user?.name || itemDetails.expertName || itemDetails.expert_name || itemDetails.astrologer_name || "N/A"}
                                         </p>
                                     </div>
                                     <div>
@@ -277,7 +288,7 @@ export default function ReportIssueModal({
                                     <div>
                                         <span className="text-gray-600">Expert:</span>
                                         <p className="font-bold text-gray-800">
-                                            {itemDetails.expert?.user?.name || itemDetails.expertName || "N/A"}
+                                            {itemDetails.expert?.user?.name || itemDetails.expertName || itemDetails.expert_name || "N/A"}
                                         </p>
                                     </div>
                                     <div>

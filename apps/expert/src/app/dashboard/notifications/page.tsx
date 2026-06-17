@@ -50,7 +50,7 @@ const NotificationPage = () => {
                         {notifications.length > 0 && (
                             <button
                                 onClick={onClearAll}
-                                className="px-5 py-2.5 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-2xl transition-all flex items-center gap-2 border-0 shadow-sm"
+                                className="px-5 py-2.5 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-2xl transition-all flex items-center gap-2 border-0 shadow-sm cursor-pointer hover:cursor-pointer"
                             >
                                 <Trash2 className="w-4 h-4" />
                                 Clear All

@@ -16,7 +16,7 @@ const ChatPage = () => {
     const expertName = "Expert";
 
     const [messages, setMessages] = useState<Message[]>([
-        { id: 1, text: `Hello! I am ${expertName}. How can I help you today?`, sender: "expert", time: "10:00 AM" }
+        { id: "1", text: `Hello! I am ${expertName}. How can I help you today?`, sender: "expert", time: "10:00 AM" }
     ]);
     const [inputText, setInputText] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ const ChatPage = () => {
         if (!inputText.trim()) return;
 
         const newMessage: Message = {
-            id: Date.now(),
+            id: String(Date.now()),
             text: inputText,
             sender: "user",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -44,7 +44,7 @@ const ChatPage = () => {
 
         setTimeout(() => {
             const responseMessage: Message = {
-                id: Date.now() + 1,
+                id: String(Date.now() + 1),
                 text: "Let me check your charts. Please give me a moment.",
                 sender: "expert",
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })

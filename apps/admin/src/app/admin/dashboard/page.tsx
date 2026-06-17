@@ -55,7 +55,7 @@ export default function DashboardPage() {
     if (number >= 10000000) return parseFloat((number / 10000000).toFixed(2)) + "Cr";
     if (number >= 100000) return parseFloat((number / 100000).toFixed(2)) + "Lakh";
     if (number >= 1000) return parseFloat((number / 1000).toFixed(2)) + "k";
-    return number.toString();
+    return parseFloat(number.toFixed(2)).toString();
   };
 
   // Stats data (memoized for performance)
@@ -64,7 +64,7 @@ export default function DashboardPage() {
       {
         title: "Admin Earnings (Commission)",
         value: loading ? "..." : `₹${formatCompactNumber(dashboardData?.adminEarnings || 0)}`,
-        tooltipValue: `₹${dashboardData?.adminEarnings || "0"}`,
+        tooltipValue: `₹${dashboardData?.adminEarnings ? parseFloat(Number(dashboardData.adminEarnings).toFixed(2)) : "0"}`,
         icon: Wallet,
         iconColor: "text-indigo-600",
         iconBgColor: "bg-indigo-100",
@@ -89,7 +89,7 @@ export default function DashboardPage() {
       {
         title: "Earnings This Month",
         value: loading ? "..." : `₹${formatCompactNumber(dashboardData?.totalEarnings || 0)}`,
-        tooltipValue: `₹${dashboardData?.totalEarnings || "0"}`,
+        tooltipValue: `₹${dashboardData?.totalEarnings ? parseFloat(Number(dashboardData.totalEarnings).toFixed(2)) : "0"}`,
         icon: Wallet,
         iconColor: "text-blue-600",
         iconBgColor: "bg-blue-100",

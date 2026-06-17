@@ -111,7 +111,7 @@ const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: 
     <div className="flex gap-2 mt-auto">
       <button
         onClick={() => onEdit(service)}
-        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95"
+        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm shadow-sm transition-all active:scale-95 cursor-pointer hover:cursor-pointer"
       >
         <Edit3 className="w-4 h-4" />
         Edit Pricing
@@ -120,7 +120,7 @@ const ServiceCard = ({ service, onEdit, onDelete }: { service: any, onEdit: (s: 
       {service.isCustom && (
         <button
           onClick={() => onDelete(service.id)}
-          className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors"
+          className="flex items-center justify-center px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl transition-colors cursor-pointer hover:cursor-pointer"
           aria-label="Delete service"
         >
           <Trash2 className="w-4 h-4" />
@@ -248,7 +248,7 @@ const ServicePricingPage = () => {
         </p>
         <button
           onClick={openAdd}
-          className="mt-6 flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg transition-all active:scale-95"
+          className="mt-6 flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-lg transition-all active:scale-95 cursor-pointer hover:cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Add Custom Service
@@ -285,7 +285,7 @@ const ServicePricingPage = () => {
           <div className="flex items-center gap-3">
             <div className="relative group/dropdown">
               <button
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-orange-200 text-orange-600 font-bold rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-orange-200 text-orange-600 font-bold rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95 cursor-pointer hover:cursor-pointer"
               >
                 Choose Suggested
                 <ChevronDown className="w-4 h-4" />
@@ -300,7 +300,7 @@ const ServicePricingPage = () => {
                   <button
                     key={p}
                     onClick={() => openPujaAdd(p)}
-                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer hover:cursor-pointer"
                   >
                     {p}
                   </button>
@@ -310,7 +310,7 @@ const ServicePricingPage = () => {
 
             <button
               onClick={() => openPujaAdd()}
-              className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px]"
+              className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px] cursor-pointer hover:cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Add Custom Puja
@@ -387,14 +387,14 @@ const ServicePricingPage = () => {
                 <div className="p-6 pt-0 mt-auto flex gap-2">
                   <button
                     onClick={() => openPujaEdit(puja)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-gray-800 transition-all active:scale-95"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-2xl hover:bg-gray-800 transition-all active:scale-95 cursor-pointer hover:cursor-pointer"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                     Manage
                   </button>
                   <button
                     onClick={() => handleDeletePuja(puja.id!)}
-                    className="p-2.5 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors"
+                    className="p-2.5 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors cursor-pointer hover:cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

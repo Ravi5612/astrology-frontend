@@ -135,6 +135,7 @@ const HomePage: React.FC = () => {
                 key={item.id}
                 expertData={{
                   ...item,
+                  id: String(item.id),
                   is_available: true,
                   video: item.video || "",
                 }}
@@ -406,6 +407,7 @@ const HomePage: React.FC = () => {
                   key={item.id}
                   expertData={{
                     ...item,
+                    id: String(item.id),
                     is_available: true,
                     video: item.video || "",
                   }}

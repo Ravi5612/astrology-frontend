@@ -23,6 +23,7 @@ type Props = {
   discountAmount: number;
   total: number;
   handleQuantityChange?: (qty: number) => void;
+  availableCoupons?: any[];
 };
 
 const OrderSummary = ({
@@ -46,6 +47,7 @@ const OrderSummary = ({
   discountAmount,
   total,
   handleQuantityChange,
+  availableCoupons = [],
 }: Props) => {
   return (
     <div className="w-full lg:w-[400px] shrink-0 space-y-6">
@@ -255,6 +257,29 @@ const OrderSummary = ({
                 </div>
               )}
             </div>
+
+            {availableCoupons && availableCoupons.length > 0 && !appliedCoupon && (
+              <div className="mt-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Available Rewards</p>
+                <div className="flex flex-wrap gap-2">
+                  {availableCoupons.map((c: any, index: number) => {
+                    const coupon = c.coupon || c;
+                    if (!coupon || !coupon.code) return null;
+                    return (
+                      <button
+                        key={coupon.id || index}
+                        onClick={() => setCouponCode(coupon.code)}
+                        className="px-3 py-1.5 bg-orange/10 text-orange border border-orange/20 hover:bg-orange hover:text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                        type="button"
+                        title={coupon.type === 'percentage' ? `${coupon.value}% OFF` : `₹${coupon.value} OFF`}
+                      >
+                        {coupon.code} <span className="opacity-75 lowercase italic text-[9px]">({coupon.type === 'percentage' ? `${coupon.value}%` : `₹${coupon.value}`})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-3 pt-6">
               {discountAmount > 0 && (

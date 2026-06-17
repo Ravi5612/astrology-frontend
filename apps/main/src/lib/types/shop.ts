@@ -24,7 +24,7 @@ export interface ReviewsProps {
 }
 
 export interface Store {
-    id: string;
+    id: string | number;
     name: string;
     address: string;
     city: string;

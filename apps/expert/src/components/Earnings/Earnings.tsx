@@ -115,7 +115,7 @@ export default function EarningsPage() {
           <div className="relative group">
             <Button
               variant="outline"
-              className="bg-white border-gray-200 hover:border-orange-400 text-gray-700 shadow-sm rounded-xl gap-2 font-semibold"
+              className="bg-white border-gray-200 hover:border-orange-400 text-gray-700 shadow-sm rounded-xl gap-2 font-semibold cursor-pointer hover:cursor-pointer"
             >
               <CalendarIcon className="w-4 h-4 text-orange-500" />
               {timeRangeLabels[timeRange]}
@@ -134,7 +134,7 @@ export default function EarningsPage() {
                     }
                   }}
                   variant="ghost"
-                  className={`w-full justify-start px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors rounded-lg ${timeRange === key ? 'text-orange-600 bg-orange-50' : 'text-gray-600'}`}
+                  className={`w-full justify-start px-4 py-2 text-sm font-medium hover:bg-orange-50 transition-colors rounded-lg cursor-pointer hover:cursor-pointer ${timeRange === key ? 'text-orange-600 bg-orange-50' : 'text-gray-600'}`}
                 >
                   {label}
                 </Button>
@@ -147,7 +147,7 @@ export default function EarningsPage() {
             disabled={isExporting}
             loading={isExporting}
             variant="primary"
-            className="shadow-md rounded-xl"
+            className="shadow-md rounded-xl cursor-pointer hover:cursor-pointer"
           >
             <Download className={`w-4 h-4 ${isExporting ? 'animate-bounce' : ''}`} />
             {isExporting ? 'Exporting...' : 'Export PDF'}
@@ -206,7 +206,7 @@ export default function EarningsPage() {
               </div>
               <button 
                 onClick={() => setShowDatePicker(false)}
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all cursor-pointer hover:cursor-pointer"
               >
                 <X size={24} />
               </button>
@@ -224,14 +224,14 @@ export default function EarningsPage() {
 
               <div className="mt-8 flex gap-3">
                 <Button 
-                  className="flex-1 rounded-2xl py-3 font-black text-sm transition-all border-2 border-gray-100 hover:bg-gray-50 text-gray-500"
+                  className="flex-1 rounded-2xl py-3 font-black text-sm transition-all border-2 border-gray-100 hover:bg-gray-50 text-gray-500 cursor-pointer hover:cursor-pointer"
                   onClick={() => setShowDatePicker(false)}
                 >
                   Cancel
                 </Button>
                 <Button 
                   variant="primary" 
-                  className="flex-1 rounded-2xl py-3 font-black text-sm shadow-lg shadow-orange-200"
+                  className="flex-1 rounded-2xl py-3 font-black text-sm shadow-lg shadow-orange-200 cursor-pointer hover:cursor-pointer"
                   disabled={!tempRange[0] || !tempRange[1]}
                   onClick={handleApplyCustomRange}
                 >

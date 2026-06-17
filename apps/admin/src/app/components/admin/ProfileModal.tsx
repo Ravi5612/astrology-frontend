@@ -57,7 +57,7 @@ interface ProfileModalProps {
   actions?: {
     label: string;
     onClick: () => void;
-    variant: "primary" | "danger";
+    variant: "primary" | "danger" | "secondary";
   }[];
   action2Label?: string;
   purchases?: {
@@ -141,7 +141,13 @@ export function ProfileModal({
           <div className="p-10 pb-0 flex flex-col lg:flex-row items-center lg:items-end gap-8 mb-10">
             <div className="relative group">
               <div className="absolute -inset-2 bg-gradient-to-tr from-amber-500 to-orange-300 rounded-full blur opacity-20 group-hover:opacity-40 transition animate-pulse" />
-              <img src={avatar || "https://avatar.iran.liara.run/public/boy"} className="relative w-40 h-40 rounded-full object-cover border-[8px] border-white shadow-2xl" alt={name} />
+              {avatar ? (
+                <img src={avatar} className="relative w-40 h-40 rounded-full object-cover border-[8px] border-white shadow-2xl" alt={name} />
+              ) : (
+                <div className="relative w-40 h-40 rounded-full border-[8px] border-white shadow-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 font-bold text-5xl">
+                  {name ? name.charAt(0).toUpperCase() : "U"}
+                </div>
+              )}
               <div className="absolute bottom-2 right-2 w-10 h-10 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center text-white">
                 <CheckCircle2Comp className="w-5 h-5" />
               </div>
@@ -312,24 +318,47 @@ export function ProfileModal({
               </div>
             )}
 
-            {/* Footer Actions - Now explicitly at the bottom of content grid area */}
+            {/* Footer Actions */}
             <div className="flex gap-4 pt-10 border-t border-gray-100">
-              <Button
-                onClick={() => handleStatusUpdate('approved')}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-                className="flex-1 py-5 rounded-[2rem] bg-gray-900 text-white font-black uppercase text-xs tracking-widest shadow-2xl shadow-gray-900/40 hover:bg-orange-500 transition-all hover:translate-y-[-4px]"
-              >
-                Approve Expert Profile
-              </Button>
-              <Button
-                onClick={() => setIsRejecting(true)}
-                disabled={isSubmitting}
-                variant="danger"
-                className="px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all"
-              >
-                {action2Label || "Reject"}
-              </Button>
+              {actions ? (
+                actions.map((action, idx) => (
+                  <Button
+                    key={idx}
+                    onClick={action.onClick}
+                    variant={action.variant}
+                    className="flex-1 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all"
+                  >
+                    {action.label}
+                  </Button>
+                ))
+              ) : expertId ? (
+                <>
+                  <Button
+                    onClick={() => handleStatusUpdate('approved')}
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                    className="flex-1 py-5 rounded-[2rem] bg-gray-900 text-white font-black uppercase text-xs tracking-widest shadow-2xl shadow-gray-900/40 hover:bg-orange-500 transition-all hover:translate-y-[-4px]"
+                  >
+                    Approve Expert Profile
+                  </Button>
+                  <Button
+                    onClick={() => setIsRejecting(true)}
+                    disabled={isSubmitting}
+                    variant="danger"
+                    className="px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all"
+                  >
+                    {action2Label || "Reject"}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={onClose}
+                  variant="secondary"
+                  className="w-full py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all hover:bg-gray-100 border border-gray-200"
+                >
+                  Close
+                </Button>
+              )}
             </div>
           </div>
         </div>

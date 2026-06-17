@@ -76,7 +76,8 @@ export default function OrdersPage() {
 
         const handleNewOrder = (data: any) => {
             console.log("🔔 New Order Alert:", data);
-            toast.info(`🎉 New Order Received! Order #${data.orderId}`);
+            const orderId = data.order_id || data.orderId || data.id || 'Unknown';
+            toast.info(`🎉 New Order Received! Order #${orderId}`);
             // Refresh order list to show new order at top
             fetchOrders();
         };
@@ -89,6 +90,13 @@ export default function OrdersPage() {
     }, []);
 
     const handleStatusUpdate = async (id: string, newStatus: string) => {
+        if (newStatus === 'delivered') {
+            const isConfirmed = window.confirm(
+                "Are you sure you want to bypass OTP and mark this as delivered? Please ensure you have verified with the customer."
+            );
+            if (!isConfirmed) return;
+        }
+
         const [_, error] = await OrderService.updateVal(id, newStatus);
         if (error) {
             console.error("Failed to update status", error);

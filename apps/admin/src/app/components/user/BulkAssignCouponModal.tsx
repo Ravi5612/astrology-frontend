@@ -121,9 +121,11 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
                 couponCode: selectedCouponCode,
                 filters: filters,
             });
-
+            if (error) {
                 toast.error(getErrorMessage(error) || "Failed to assign coupon");
-
+                return;
+            }
+            
             toast.success(
                 `Coupon "${selectedCouponCode}" assigned to ${result.assignedCount || matchedUsersCount} users successfully!`
             );
@@ -219,7 +221,7 @@ const BulkAssignCouponModal = ({ onClose, onSuccess }: Props) => {
                                 value={selectedCouponCode}
                                 onChange={(e) => setSelectedCouponCode(e.target.value)}
                             >
-                                {availableCoupons.map((c) => (
+                                {availableCoupons.filter(c => c && c.code).map((c) => (
                                     <option key={c.id} value={c.code}>
                                         {c.code} - {c.type === "percentage" ? `${c.value}% OFF` : `₹${c.value} OFF`}
                                         {c.min_order_value ? ` (Min: ₹${c.min_order_value})` : ""}

@@ -88,7 +88,9 @@ export const getStatsConfig = (data: Expert[] | ExpertStats) => {
   return baseStats;
 };
 
-export const getColumns = () => [
+export const getColumns = (
+  onToggleBlock?: (expert: Expert) => void
+) => [
   {
     key: "expert",
     label: "Expert",
@@ -176,6 +178,24 @@ export const getColumns = () => [
           }`}
       >
         {expert.email_verified_at || (expert as any).emailVerified ? "Verified" : "Pending"}
+      </span>
+    ),
+  },
+  {
+    key: "is_blocked",
+    label: "Admin Actions",
+    render: (expert: Expert) => (
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleBlock?.(expert);
+        }}
+        className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors hover:opacity-80 ${expert.is_blocked
+            ? "bg-red-100 text-red-700"
+            : "bg-gray-800 text-white"
+          }`}
+      >
+        {expert.is_blocked ? "Unblock" : "Block"}
       </span>
     ),
   },

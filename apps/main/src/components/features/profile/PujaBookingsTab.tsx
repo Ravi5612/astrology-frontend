@@ -49,8 +49,8 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
   const t = profileTranslations[lang as keyof typeof profileTranslations] || profileTranslations.en;
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
   
-  const [isProcessing, setIsProcessing] = useState<number | null>(null);
-  const [showRescheduleForm, setShowRescheduleForm] = useState<number | null>(null);
+  const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [showRescheduleForm, setShowRescheduleForm] = useState<string | null>(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [rescheduleMessage, setRescheduleMessage] = useState("");

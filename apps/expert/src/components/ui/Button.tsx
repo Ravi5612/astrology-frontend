@@ -13,7 +13,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className = "", variant = "primary", size = "md", isLoading, fullWidth, leftIcon, rightIcon, children, disabled, ...props }, ref) => {
 
         // Base styles
-        const baseStyles = "inline-flex items-center justify-center font-bold transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:pointer-events-none rounded-xl";
+        const baseStyles = "inline-flex items-center justify-center font-bold transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:pointer-events-none rounded-xl cursor-pointer hover:cursor-pointer";
 
         // Width styles
         const widthStyles = fullWidth ? "w-full" : "";

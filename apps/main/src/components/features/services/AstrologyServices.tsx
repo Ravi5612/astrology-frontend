@@ -30,7 +30,7 @@ const AstrologyServices = () => {
                       href={`/services/${service.slug}`}
                       className="block h-full no-underline hover:text-inherit"
                     >
-                      <ServiceCard item={service} />
+                      <ServiceCard item={{ ...service, id: String(service.id) }} />
                     </Link>
                   </div>
                 ))}

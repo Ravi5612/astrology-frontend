@@ -96,6 +96,7 @@ export const useHeaderState = () => {
   // Socket Listeners
   useEffect(() => {
     const handleStatusSync = (data: any) => {
+      console.log("[Frontend] Socket received expert_status_changed event:", data);
       const expertId = data.expert_id || data.userId || data.id;
       const isAvailable = data.is_available !== undefined
         ? data.is_available
@@ -128,12 +129,19 @@ export const useHeaderState = () => {
     const registerExpertOnline = () => {
       // CRITICAL: Only emit online if session logic is READY and isOnline state is TRUE
       if (isAuthenticated && actualUserId && isSessionReady && isOnline) {
+        const handleResponse = (res: any) => {
+          if (res?.status === 'error') {
+            setIsOnline(false);
+            toast.error(res.message || "Failed to go online");
+          }
+        };
+        
         if (socket.connected) {
-          socket.emit("expert_online", { userId: String(actualUserId) });
+          socket.emit("expert_online", { userId: String(actualUserId) }, handleResponse);
         } else {
           socket.once("connect", () => {
             if (isOnline) {
-              socket.emit("expert_online", { userId: String(actualUserId) });
+              socket.emit("expert_online", { userId: String(actualUserId) }, handleResponse);
             }
           });
           socket.connect();
@@ -161,6 +169,7 @@ export const useHeaderState = () => {
   const handleToggleAvailability = async () => {
     setLoading(true);
     const newStatus = !isOnline;
+    console.log(`[Frontend] User clicked toggle to set status to: ${newStatus}`);
 
     const [_, error] = await api.patch<{ is_available: boolean }>('/expert/status', { is_available: newStatus });
 

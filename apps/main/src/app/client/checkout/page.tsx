@@ -21,6 +21,7 @@ const CheckoutContent = () => {
     setCouponCode,
     appliedCoupon,
     isApplying,
+    availableCoupons,
     handleApplyCoupon,
     handleRemoveCoupon,
     discountAmount,
@@ -58,9 +59,10 @@ const CheckoutContent = () => {
 
       {/* Main Content Section */}
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 relative z-20">
           <div className="flex flex-col lg:flex-row items-start gap-12">
-            {/* Left: Summary */}
+            {/* Left Column: Order Summary */}
+            <div className="w-full lg:w-[400px] shrink-0 sticky top-32">
             <OrderSummary
               isOrder={isOrder}
               loadingProfile={loadingProfile}
@@ -77,14 +79,17 @@ const CheckoutContent = () => {
               setCouponCode={setCouponCode}
               appliedCoupon={appliedCoupon}
               isApplying={isApplying}
+              availableCoupons={availableCoupons}
               handleApplyCoupon={handleApplyCoupon}
               handleRemoveCoupon={handleRemoveCoupon}
               discountAmount={discountAmount}
               total={total}
               handleQuantityChange={handleQuantityChange}
             />
+          </div>
 
-            {/* Right: Payment */}
+          {/* Right: Payment */}
+          <div className="flex-grow w-full max-w-2xl">
             <PaymentMethod
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
@@ -94,6 +99,7 @@ const CheckoutContent = () => {
               isProcessing={isProcessing}
               isOrder={isOrder}
             />
+          </div>
           </div>
 
           {/* Footer Badges */}

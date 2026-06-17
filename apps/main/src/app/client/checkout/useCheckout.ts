@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { api as http } from "@/lib/api";
-import { getClientProfile, applyCoupon } from "@/libs/api-profile";
+import { getClientProfile, applyCoupon, getMyRewards } from "@/libs/api-profile";
 import { loadRazorpay } from "@/libs/razorpay";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
@@ -25,6 +25,7 @@ export const useCheckout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [isApplying, setIsApplying] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
 
   const [buyNowInfo, setBuyNowInfo] = useState<{
     productId: string;
@@ -67,6 +68,16 @@ export const useCheckout = () => {
       setBuyNowInfo(null);
     }
   }, [isOrder, searchParams]);
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      const [res, err] = await getMyRewards();
+      if (!err && res) {
+        setAvailableCoupons(res.data || res);
+      }
+    };
+    fetchRewards();
+  }, []);
 
   const baseTotal = isOrder
     ? buyNowInfo
@@ -417,6 +428,7 @@ export const useCheckout = () => {
     setCouponCode,
     appliedCoupon,
     isApplying,
+    availableCoupons,
     handleApplyCoupon,
     handleRemoveCoupon,
     discountAmount,

@@ -13,6 +13,8 @@ export interface User {
     phone_number?: string;
     gender?: string;
     date_of_birth?: string | Date | null;
+    avatar?: string;
+    profile_picture?: string;
     addresses?: {
       id: string;
       house_no?: string;
@@ -24,6 +26,12 @@ export interface User {
       pincode?: string;
       tag?: string;
     }[];
+  };
+
+  profile_expert?: {
+    id: string;
+    avatar?: string;
+    [key: string]: any;
   };
 
   // UI / Logic derived fields
