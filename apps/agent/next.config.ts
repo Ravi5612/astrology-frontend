@@ -18,7 +18,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
       "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://content.jdmagicbox.com",
-      "connect-src 'self' http://localhost:6543 http://127.0.0.1:6543 https://api.prokerala.com https://checkout.razorpay.com wss: ws:",
+      "connect-src 'self' http://localhost:6543 http://127.0.0.1:6543 https://api.prokerala.com https://checkout.razorpay.com https://astrology-in-bharat-services.onrender.com wss: ws:",
       "frame-src https://api.razorpay.com https://checkout.razorpay.com",
       "media-src 'self' blob:",
     ].join("; "),
