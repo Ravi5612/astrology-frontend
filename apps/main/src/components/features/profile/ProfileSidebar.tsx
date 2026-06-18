@@ -52,11 +52,11 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
     return (
         <div className="flex flex-col gap-0 lg:sticky lg:top-[140px] z-30 self-start w-full">
-            {/* Desktop Header - Hidden on Mobile */}
-            <div className="hidden lg:block bg-white rounded-t-2xl p-4 shadow-premium border-b border-gray-100">
+            {/* Profile Header - Visible on all devices */}
+            <div className="bg-white rounded-2xl lg:rounded-b-none lg:rounded-t-2xl p-4 shadow-premium lg:border-b lg:border-gray-100 mb-4 lg:mb-0">
                 <div className="flex items-center gap-4">
                     <div className="relative flex-shrink-0">
-                        <div className="w-[64px] h-[64px] rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <div className="w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-full overflow-hidden border-2 border-white shadow-md">
                             {loading ? (
                                 <Skeleton width="100%" height="100%" variant="circular" />
                             ) : savingSections.personal ? (
@@ -67,8 +67,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                                 <Image
                                     src={imagePreview}
                                     alt="Profile"
-                                    width={64}
-                                    height={64}
+                                    width={72}
+                                    height={72}
                                     className="object-cover w-full h-full text-[0]"
                                 />
                             )}
@@ -103,11 +103,11 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                             </div>
                         ) : (
                             <>
-                                <h6 className="font-bold text-gray-900 truncate flex items-center gap-1.5 m-0" style={fontStyle}>
+                                <h6 className="font-bold text-gray-900 text-base md:text-lg truncate flex items-center gap-1.5 m-0" style={fontStyle}>
                                     {profileData.full_name || profileData.username || t.sidebar.userNameFallback}
-                                    <i className="fa-solid fa-check-circle text-orange/80 text-[12px]"></i>
+                                    <i className="fa-solid fa-check-circle text-orange/80 text-[12px] md:text-sm"></i>
                                 </h6>
-                                <p className="text-xs text-gray-500 mt-0.5 truncate" style={fontStyle}>
+                                <p className="text-xs md:text-sm text-gray-500 mt-0.5 truncate" style={fontStyle}>
                                     {lang === "hi" ? "उपयोगकर्ता खाता" : "User Account"}
                                 </p>
                             </>
