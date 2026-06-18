@@ -72,97 +72,157 @@ const DisputesTab: React.FC<DisputesTabProps> = ({ disputes, loading, onViewChat
             </p>
           </div>
         ) : (
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th
-                  className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
-                  style={fontStyle}
-                >
-                  {t.ticketId}
-                </th>
-                <th
-                  className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
-                  style={fontStyle}
-                >
-                  {t.category}
-                </th>
-                <th
-                  className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
-                  style={fontStyle}
-                >
-                  {t.status}
-                </th>
-                <th
-                  className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-gray-400"
-                  style={fontStyle}
-                >
-                  {t.action}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {disputes.filter(Boolean).map((dispute) => (
-                <tr
-                  key={dispute.id}
-                  className="group hover:bg-gray-50/80 transition-colors"
-                >
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <span className="block font-black text-gray-900 mb-1">
-                      #DS-{dispute.id}
-                    </span>
-                    <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                      {dispute.createdAt || dispute.created_at
-                        ? new Date(
-                            dispute.createdAt || dispute.created_at
-                          ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric"
-                          })
-                        : t.na}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span
-                      className="inline-block px-3 py-1 mb-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-gray-700 shadow-sm"
+          <>
+            <div className="hidden md:block">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50">
+                    <th
+                      className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
                       style={fontStyle}
                     >
-                      {dispute.category || dispute.subject || t.defaultCategory}
-                    </span>
-                    <div className="text-sm text-gray-500 font-medium max-w-[200px] truncate group-hover:text-gray-700 transition-colors">
-                      {dispute.description}
+                      {t.ticketId}
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
+                      style={fontStyle}
+                    >
+                      {t.category}
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400"
+                      style={fontStyle}
+                    >
+                      {t.status}
+                    </th>
+                    <th
+                      className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-gray-400"
+                      style={fontStyle}
+                    >
+                      {t.action}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {disputes.filter(Boolean).map((dispute) => (
+                    <tr
+                      key={dispute.id}
+                      className="group hover:bg-gray-50/80 transition-colors"
+                    >
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        <span className="block font-black text-gray-900 mb-1">
+                          #DS-{dispute.id}
+                        </span>
+                        <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          {dispute.createdAt || dispute.created_at
+                            ? new Date(
+                                dispute.createdAt || dispute.created_at
+                              ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                              })
+                            : t.na}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span
+                          className="inline-block px-3 py-1 mb-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-gray-700 shadow-sm"
+                          style={fontStyle}
+                        >
+                          {dispute.category || dispute.subject || t.defaultCategory}
+                        </span>
+                        <div className="text-sm text-gray-500 font-medium max-w-[200px] truncate group-hover:text-gray-700 transition-colors">
+                          {dispute.description}
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        <span
+                          className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                            dispute.status === "open"
+                              ? "bg-blue-50 text-blue-600 border-blue-100 shadow-sm shadow-blue-100/50"
+                              : dispute.status === "pending"
+                                ? "bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-100/50"
+                                : dispute.status === "resolved"
+                                  ? "bg-emerald-50 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-100/50"
+                                  : "bg-gray-50 text-gray-600 border-gray-100 shadow-sm"
+                          }`}
+                        >
+                          {t.statusMap?.[dispute.status?.toLowerCase() as keyof typeof t.statusMap] || dispute.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap text-right">
+                        <button
+                          onClick={() => onViewChat(dispute)}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange text-white font-bold text-xs rounded-xl hover:bg-orange/90 transition-all shadow-lg shadow-orange/20"
+                          style={fontStyle}
+                        >
+                          <i className="fa-solid fa-comments"></i>
+                          {t.viewChat}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col gap-4 p-4">
+              {disputes.filter(Boolean).map((dispute) => (
+                <div key={dispute.id} className="border border-gray-100 rounded-2xl p-4 bg-white shadow-sm">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="block font-black text-gray-900 mb-1">
+                        #DS-{dispute.id}
+                      </span>
+                      <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        {dispute.createdAt || dispute.created_at
+                          ? new Date(
+                              dispute.createdAt || dispute.created_at
+                            ).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric"
+                            })
+                          : t.na}
+                      </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
                     <span
                       className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
                         dispute.status === "open"
-                          ? "bg-blue-50 text-blue-600 border-blue-100 shadow-sm shadow-blue-100/50"
+                          ? "bg-blue-50 text-blue-600 border-blue-100"
                           : dispute.status === "pending"
-                            ? "bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-100/50"
+                            ? "bg-amber-50 text-amber-600 border-amber-100"
                             : dispute.status === "resolved"
-                              ? "bg-emerald-50 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-100/50"
-                              : "bg-gray-50 text-gray-600 border-gray-100 shadow-sm"
+                              ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                              : "bg-gray-50 text-gray-600 border-gray-100"
                       }`}
                     >
                       {t.statusMap?.[dispute.status?.toLowerCase() as keyof typeof t.statusMap] || dispute.status}
                     </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-right">
-                    <button
-                      onClick={() => onViewChat(dispute)}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange text-white font-bold text-xs rounded-xl hover:bg-orange/90 transition-all shadow-lg shadow-orange/20"
-                      style={fontStyle}
+                  </div>
+                  <div className="mb-4">
+                    <span
+                      className="inline-block px-3 py-1 mb-2 bg-gray-50 border border-gray-200 rounded-lg text-[10px] font-bold text-gray-700"
                     >
-                      <i className="fa-solid fa-comments"></i>
-                      {t.viewChat}
-                    </button>
-                  </td>
-                </tr>
+                      {dispute.category || dispute.subject || t.defaultCategory}
+                    </span>
+                    <div className="text-sm text-gray-500 font-medium">
+                      {dispute.description}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onViewChat(dispute)}
+                    className="w-full flex justify-center items-center gap-2 px-5 py-2.5 bg-orange text-white font-bold text-xs rounded-xl hover:bg-orange/90 transition-all"
+                  >
+                    <i className="fa-solid fa-comments"></i>
+                    {t.viewChat}
+                  </button>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
     </div>
