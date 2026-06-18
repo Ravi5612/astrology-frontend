@@ -200,11 +200,11 @@ const LoveCalculatorPage = () => {
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#301118]/10 to-transparent pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 w-full animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="bg-white/80 backdrop-blur-3xl rounded-[4rem] p-1 md:p-2 shadow-[0_40px_100px_rgba(48,17,24,0.05)] border border-slate-100 relative overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[4rem] p-1 md:p-2 shadow-[0_40px_100px_rgba(48,17,24,0.05)] border border-slate-100 relative overflow-hidden">
              {/* Glowing Border effect */}
              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400"></div>
              
-             <div className="p-8 md:p-20">
+             <div className="p-6 sm:p-8 md:p-20">
                 {activeMode === "simple" ? (
                   <SimpleForm
                     t={t}

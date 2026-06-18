@@ -74,7 +74,7 @@ const AdvancedForm = ({
               <input
                 type="text"
                 required
-                className="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 focus:border-blue-500 focus:ring-8 focus:ring-blue-500/5 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                className="w-full px-6 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 focus:ring-8 focus:ring-orange-500/10 outline-none transition-all placeholder:text-slate-400 text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                 placeholder={t.form.fullName}
                 value={advancedData.boy.name}
                 onChange={(e) =>
@@ -91,7 +91,7 @@ const AdvancedForm = ({
                 <input
                   type="date"
                   required
-                  className="w-full px-4 py-5 rounded-2xl border-2 border-slate-50 focus:border-blue-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                  className="w-full px-4 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                   value={advancedData.boy.date}
                   onChange={(e) =>
                     handleAdvancedInputChange("boy", "date", e.target.value)
@@ -105,7 +105,7 @@ const AdvancedForm = ({
                 <input
                   type="time"
                   required
-                  className="w-full px-4 py-5 rounded-2xl border-2 border-slate-50 focus:border-blue-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                  className="w-full px-4 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                   value={advancedData.boy.time}
                   onChange={(e) =>
                     handleAdvancedInputChange("boy", "time", e.target.value)
@@ -122,7 +122,7 @@ const AdvancedForm = ({
                  <LocationAutocomplete
                     placeholder={t.form.birthPlace}
                     onSelect={(loc) => handleLocationSelect("boy", loc)}
-                    className="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 focus:border-blue-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 group-hover/location:bg-white transition-all shadow-sm"
+                    className="w-full px-6 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 group-hover/location:bg-white transition-all shadow-sm"
                   />
               </div>
             </div>
@@ -157,7 +157,7 @@ const AdvancedForm = ({
               <input
                 type="text"
                 required
-                className="w-full px-8 py-5 rounded-2xl border-2 border-slate-50 focus:border-pink-500 focus:ring-8 focus:ring-pink-500/5 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                className="w-full px-8 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 focus:ring-8 focus:ring-orange-500/10 outline-none transition-all placeholder:text-slate-400 text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                 placeholder={t.form.fullName}
                 value={advancedData.girl.name}
                 onChange={(e) =>
@@ -174,7 +174,7 @@ const AdvancedForm = ({
                 <input
                   type="date"
                   required
-                  className="w-full px-4 py-5 rounded-2xl border-2 border-slate-50 focus:border-pink-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                  className="w-full px-4 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                   value={advancedData.girl.date}
                   onChange={(e) =>
                     handleAdvancedInputChange("girl", "date", e.target.value)
@@ -188,7 +188,7 @@ const AdvancedForm = ({
                 <input
                   type="time"
                   required
-                  className="w-full px-4 py-5 rounded-2xl border-2 border-slate-50 focus:border-pink-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 hover:bg-white"
+                  className="w-full px-4 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 hover:bg-white shadow-sm"
                   value={advancedData.girl.time}
                   onChange={(e) =>
                     handleAdvancedInputChange("girl", "time", e.target.value)
@@ -205,7 +205,7 @@ const AdvancedForm = ({
                  <LocationAutocomplete
                     placeholder={t.form.birthPlace}
                     onSelect={(loc) => handleLocationSelect("girl", loc)}
-                    className="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 focus:border-pink-500 outline-none text-slate-700 font-bold text-sm bg-slate-50/50 group-hover/location:bg-white transition-all shadow-sm"
+                    className="w-full px-6 py-5 rounded-2xl border-2 border-orange-500/20 focus:border-orange-500 outline-none text-slate-900 font-bold text-sm bg-orange-50/50 group-hover/location:bg-white transition-all shadow-sm"
                   />
               </div>
             </div>
@@ -217,7 +217,7 @@ const AdvancedForm = ({
         <button
           type="submit"
           disabled={loading}
-          className="group relative inline-flex items-center gap-6 bg-slate-900 text-white px-20 py-7 rounded-full font-black uppercase tracking-[0.4em] text-[10px] hover:bg-orange hover:-translate-y-1 active:translate-y-0 transition-all duration-500 shadow-2xl hover:shadow-orange/30 disabled:opacity-50"
+          className="group relative inline-flex items-center gap-6 bg-brown text-white px-20 py-7 rounded-full font-black uppercase tracking-[0.4em] text-[10px] hover:bg-orange hover:-translate-y-1 active:translate-y-0 transition-all duration-500 shadow-2xl hover:shadow-orange/30 disabled:opacity-50"
         >
           <span className="relative z-10 flex items-center gap-4">
             {loading ? (

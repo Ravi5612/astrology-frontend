@@ -63,25 +63,25 @@ const HeroComponent = (props: HeroComponentProps) => {
               {t.hero.badge}
             </span>
             
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.95] py-4">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[1.05] md:leading-[0.95] py-4">
               {t.hero.titleMain}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 animate-pulse">
                 {t.hero.titleAccent}
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-orange-50/60 leading-relaxed font-bold italic max-w-2xl px-4">
+            <p className="text-lg md:text-2xl text-orange-50/60 leading-relaxed font-bold italic max-w-2xl px-4">
               {t.hero.paragraph}
             </p>
           </div>
 
           {/* Mode Switcher */}
-          <div className="inline-flex p-2 bg-black/30 backdrop-blur-2xl rounded-[3rem] border border-white/5 gap-2 shadow-2xl relative group overflow-hidden">
+          <div className="flex flex-col sm:flex-row p-2 bg-black/30 backdrop-blur-2xl rounded-[2rem] sm:rounded-[3rem] border border-white/5 gap-2 shadow-2xl relative group overflow-hidden">
              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
             <button
               onClick={() => props.setActiveMode("simple")}
-              className={`relative z-10 flex items-center gap-3 px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] transition-all duration-500 ${
+              className={`relative z-10 flex items-center justify-center gap-3 px-6 py-4 md:px-10 md:py-5 rounded-[1.5rem] sm:rounded-[2rem] text-[10px] md:text-xs font-black uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all duration-500 ${
                 props.activeMode === "simple"
                   ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xl shadow-orange-950/40 scale-105"
                   : "text-white/40 hover:text-white"
@@ -92,7 +92,7 @@ const HeroComponent = (props: HeroComponentProps) => {
             </button>
             <button
               onClick={() => props.setActiveMode("advanced")}
-              className={`relative z-10 flex items-center gap-3 px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] transition-all duration-500 ${
+              className={`relative z-10 flex items-center justify-center gap-3 px-6 py-4 md:px-10 md:py-5 rounded-[1.5rem] sm:rounded-[2rem] text-[10px] md:text-xs font-black uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all duration-500 ${
                 props.activeMode === "advanced"
                   ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xl shadow-orange-950/40 scale-105"
                   : "text-white/40 hover:text-white"
