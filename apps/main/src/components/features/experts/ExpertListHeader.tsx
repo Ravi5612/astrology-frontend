@@ -103,39 +103,39 @@ const ExpertListHeader: React.FC<ExpertListHeaderProps> = ({
         <div className="flex flex-col lg:flex-row items-center gap-6 mb-8 text-white">
             {/* Search Box */}
             <div className="w-full lg:w-5/12">
-                <div className="flex w-full shadow-lg h-[50px]">
+                <div className="flex w-full shadow-lg h-[50px] rounded-full overflow-hidden">
                     <input
                         type="text"
-                        className="flex-1 px-6 border-0 rounded-l-full outline-none text-base bg-white text-black h-full"
+                        className="flex-1 px-4 md:px-6 border-0 outline-none text-sm md:text-base bg-white text-black h-full min-w-0"
                         placeholder={t.expertSection.searchPlaceholder}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button type="button" className="px-8 bg-orange text-white rounded-r-full font-bold text-base hover:opacity-90 transition-all h-full shrink-0">
+                    <button type="button" className="px-4 md:px-8 bg-orange text-white font-bold text-sm md:text-base hover:opacity-90 transition-all h-full shrink-0">
                         {t.expertSection.searchBtn}
                     </button>
                 </div>
             </div>
 
             {/* Filter & Reset & Sort */}
-            <div className="w-full lg:w-3/12 flex items-center justify-center lg:justify-end gap-6 h-[50px]">
+            <div className="w-full lg:w-3/12 flex items-center justify-center lg:justify-end gap-3 md:gap-6">
                 <button
                     type="button"
-                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all relative whitespace-nowrap h-full"
+                    className="flex items-center gap-2 bg-orange text-white px-4 md:px-5 py-2 rounded-full font-medium hover:opacity-90 transition-all relative whitespace-nowrap text-sm md:text-base shadow-md"
                     onClick={onOpenFilter}
                 >
-                    <i className="fa-solid fa-filter text-orange"></i> {t.expertSection.filterBtn}
+                    <i className="fa-solid fa-filter"></i> {t.expertSection.filterBtn}
                     {hasActiveFilters && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-orange rounded-full animate-pulse"></span>
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-orange rounded-full animate-pulse"></span>
                     )}
                 </button>
 
                 <button
                     type="button"
-                    className="flex items-center gap-2 text-white font-medium hover:text-orange transition-all whitespace-nowrap h-full"
+                    className="flex items-center gap-2 bg-orange text-white px-4 md:px-5 py-2 rounded-full font-medium hover:opacity-90 transition-all whitespace-nowrap text-sm md:text-base shadow-md"
                     onClick={onOpenSort}
                 >
-                    <i className="fa-solid fa-sort text-orange"></i> {t.expertSection.sortByTitle}
+                    <i className="fa-solid fa-sort"></i> {t.expertSection.sortByTitle}
                 </button>
 
                 {hasActiveFilters && (
