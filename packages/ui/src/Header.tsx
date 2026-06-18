@@ -986,14 +986,14 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             <div className="flex-1 overflow-hidden">
               {!isClient ? (
                 /* Static fallback for SSR to prevent layout shift */
-                <div className="flex items-center gap-[25px] overflow-hidden">
+                <div className="flex items-center gap-[10px] sm:gap-[25px] overflow-hidden">
                   {SERVICES_DATA_KEYS.slice(0, 5).map((service) => (
-                    <div key={service.id} className="flex-1 min-w-0" style={{ flexBasis: '20%' }}>
-                      <div className="flex justify-center w-full p-[5px]">
-                        <div className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] opacity-80">
+                    <div key={service.id} className="flex-1 min-w-[45%] sm:min-w-0" style={{ flexBasis: '20%' }}>
+                      <div className="flex justify-center w-full p-[2px] sm:p-[5px]">
+                        <div className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-2 sm:px-3 py-1.5 sm:py-[10px] rounded-lg sm:rounded-xl text-[10px] sm:text-sm font-semibold text-white w-full h-[40px] sm:h-[52px] opacity-80">
                           <NextImage
                             src={`/${service.icon}`}
-                            className="w-[30px] mr-1 flex-shrink-0"
+                            className="w-[20px] sm:w-[30px] mr-1 flex-shrink-0"
                             alt={(t as any)[service.key] || service.key}
                             width={40}
                             height={40}
@@ -1014,8 +1014,8 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     prevEl: '.custom-swiper-prev',
                     nextEl: '.custom-swiper-next',
                   }}
-                  spaceBetween={25}
-                  slidesPerView={1}
+                  spaceBetween={10}
+                  slidesPerView={2}
                   grabCursor={true}
                   loop={SERVICES_DATA_KEYS.length > 5}
                   autoplay={{
@@ -1023,15 +1023,15 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     disableOnInteraction: false,
                   }}
                   breakpoints={{
-                    640: { slidesPerView: 3 },
-                    768: { slidesPerView: 4 },
-                    1024: { slidesPerView: 5 },
+                    640: { slidesPerView: 3, spaceBetween: 15 },
+                    768: { slidesPerView: 4, spaceBetween: 20 },
+                    1024: { slidesPerView: 5, spaceBetween: 25 },
                   }}
                   className="w-full relative"
                 >
                   {SERVICES_DATA_KEYS.map((service) => (
                     <SwiperSlide key={service.id}>
-                      <div className="flex justify-center w-full p-[5px]">
+                      <div className="flex justify-center w-full p-[2px] sm:p-[5px]">
                         <a
                           href={service.href}
                           onClick={(e) => {
@@ -1040,16 +1040,16 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               router.push(service.href);
                             }
                           }}
-                          className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-3 py-[10px] rounded-xl text-sm font-semibold text-white w-full h-[52px] transition-all duration-300 hover:bg-[#4a1923] hover:border-white hover:-translate-y-0.5 hover:shadow-lg no-underline cursor-pointer"
+                          className="flex items-center justify-center bg-[#301118] border border-[#fd9d69] px-2 sm:px-3 py-1.5 sm:py-[10px] rounded-lg sm:rounded-xl text-white w-full h-[40px] sm:h-[52px] transition-all duration-300 hover:bg-[#4a1923] hover:border-white hover:-translate-y-0.5 hover:shadow-lg no-underline cursor-pointer"
                         >
                           <NextImage
                             src={`/${service.icon}`}
-                            className="w-[30px] mr-1 flex-shrink-0"
+                            className="w-[20px] sm:w-[30px] mr-1 flex-shrink-0"
                             alt={(t as any)[service.key] || service.key}
                             width={40}
                             height={40}
                           />
-                          <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px]">
+                          <span className="whitespace-nowrap overflow-hidden text-ellipsis tracking-[0.3px] text-[10px] sm:text-sm font-bold sm:font-semibold">
                             {(t as any)[service.key] || service.key}
                           </span>
                         </a>
