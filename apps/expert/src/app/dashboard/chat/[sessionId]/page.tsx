@@ -57,11 +57,13 @@ function ExpertChatRoomContent() {
             } else if (sessionRes) {
                 const status = sessionRes.status;
                 setSessionStatus(status);
-                if (sessionRes.user?.name) {
-                    setClientName(sessionRes.user.name);
+                if (sessionRes.client?.user?.name || sessionRes.user?.name) {
+                    setClientName(sessionRes.client?.user?.name || sessionRes.user?.name);
                 }
-                if (sessionRes.user?.profile_picture || sessionRes.user?.avatar) {
-                    setClientAvatar(sessionRes.user.profile_picture || sessionRes.user.avatar);
+                
+                const clientAvatarUrl = sessionRes.client?.profile_picture || sessionRes.client?.user?.avatar || sessionRes.user?.profile_picture || sessionRes.user?.avatar;
+                if (clientAvatarUrl) {
+                    setClientAvatar(clientAvatarUrl);
                 }
 
                 if (sessionRes.startedAt || sessionRes.started_at) setStartedAt(sessionRes.startedAt || sessionRes.started_at);
