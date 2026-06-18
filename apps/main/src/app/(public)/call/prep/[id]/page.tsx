@@ -287,17 +287,19 @@ function CallPrepContent() {
                                 </div>
                             </div>
                             <div className="p-8 pt-10 space-y-4">
-                                <div className="flex items-center justify-between px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                            <LucideIcons.Wallet className="w-4 h-4 text-green-600" />
+                                {isAuthenticated && (
+                                    <div className="flex items-center justify-between px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                                <LucideIcons.Wallet className="w-4 h-4 text-green-600" />
+                                            </div>
+                                            <span className="text-sm font-bold text-gray-500">Your Balance</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-500">Your Balance</span>
+                                        <span className="text-xl font-black text-gray-900">₹{userBalance.toFixed(2)}</span>
                                     </div>
-                                    <span className="text-xl font-black text-gray-900">₹{userBalance.toFixed(2)}</span>
-                                </div>
+                                )}
 
-                                {userBalance < callPrice * 5 ? (
+                                {isAuthenticated && userBalance < callPrice * 5 ? (
                                     <div className="p-6 bg-red-50 rounded-3xl border border-red-100">
                                         <div className="flex items-start gap-4 mb-4">
                                             <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
