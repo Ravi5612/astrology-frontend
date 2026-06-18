@@ -599,7 +599,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                               height: "35px",
                               borderRadius: "50%",
                               overflow: "hidden",
-                              border: "2px solid var(--primary-color, black)",
+                              border: "2px solid #f25e0a",
                               padding: "2px",
                               display: "flex",
                               alignItems: "center",
