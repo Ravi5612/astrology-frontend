@@ -244,7 +244,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                              </div>
                              <div className="px-8 py-4 bg-white rounded-2xl border border-orange/10 shadow-sm flex flex-col items-center justify-center">
                                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ritual Value</span>
-                                <span className="text-2xl font-black text-orange">₹{order.amount}</span>
+                                <span className="text-xl md:text-2xl font-black text-orange">₹{order.amount}</span>
                              </div>
                         </div>
                     ) : (
@@ -259,7 +259,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                                         <span>Secure Delivery Verification</span>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-4xl font-black text-slate-900 tracking-[0.3em] font-mono">
+                                        <span className="text-3xl md:text-4xl font-black text-slate-900 tracking-[0.3em] font-mono">
                                             {order.deliveryOtp || order.delivery_otp || order.deliveryOTP}
                                         </span>
                                         <p className="text-[10px] text-orange-500 font-bold mt-2 uppercase tracking-widest text-center">Share this OTP only with the delivery person</p>
@@ -470,7 +470,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({
                               {t.total}
                             </span>
                             <div className="text-right">
-                              <span className="block text-3xl font-black text-orange leading-none">
+                              <span className="block text-2xl md:text-3xl font-black text-orange leading-none">
                                 ₹{order.amount || order.totalAmount || order.total_amount || 0}
                               </span>
                               <span
