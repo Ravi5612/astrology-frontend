@@ -11,10 +11,14 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    const backendUrl = BACKEND_URL
+      .replace(/\/api\/v1\/?$/, '')
+      .replace(/\/+$/, '');
+
     return [
       {
         source: "/api/v1/:path*",
-        destination: `${BACKEND_URL}/api/v1/:path*`,
+        destination: `${backendUrl}/api/v1/:path*`,
       },
     ];
   },
