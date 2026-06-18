@@ -365,10 +365,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   return (
     <>
       <header
-        className="bg-[#301118] text-white shadow-sm relative z-[1001] overflow-visible"
-        style={{ minHeight: '52px', padding: '10px 1rem', scrollbarWidth: 'none' }}
+        className="bg-[#301118] text-white shadow-sm relative z-[1001] overflow-visible py-2"
+        style={{ minHeight: '52px', scrollbarWidth: 'none' }}
       >
-        <div className="max-w-[1320px] mx-auto px-8 lg:px-16" style={{ overflow: 'visible' }}>
+        <div className="max-w-[1320px] mx-auto px-2 sm:px-4 md:px-8 lg:px-16" style={{ overflow: 'visible' }}>
           <div className="flex items-center w-full">
             {/* Left section: Welcome Text */}
             <div className="flex-1 hidden md:block">
@@ -378,18 +378,18 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             </div>
 
             {/* Right section: Balance + Icons */}
-            <div className="ml-auto">
-              <div className="flex justify-end items-center gap-4 md:gap-5">
+            <div className="ml-auto w-full md:w-auto">
+              <div className="flex justify-between md:justify-end items-center gap-1.5 sm:gap-3 md:gap-5 w-full">
 
                 {/* Language Switcher Dropdown */}
                 <div className="language-dropdown-container relative">
                   <button
                     onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                    className="flex items-center gap-1.5 focus:outline-none bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-all border border-white/20 select-none"
+                    className="flex items-center gap-1 sm:gap-1.5 focus:outline-none bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition-all border border-white/20 select-none"
                   >
-                    <i className="fa-solid fa-globe text-sm" />
-                    <span className="text-sm font-semibold">{lang === 'hi' ? 'हिंदी' : 'EN'}</span>
-                    <i className={`fa-solid fa-chevron-down text-[10px] transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} />
+                    <i className="fa-solid fa-globe text-[10px] sm:text-sm" />
+                    <span className="text-[10px] sm:text-sm font-semibold">{lang === 'hi' ? 'हिंदी' : 'EN'}</span>
+                    <i className={`fa-solid fa-chevron-down text-[8px] sm:text-[10px] transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} />
                   </button>
 
                   {showLanguageDropdown && (
@@ -436,7 +436,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   </div>
                 )}
 
-                <div className="flex gap-3 md:gap-4 items-center">
+                <div className="flex gap-1.5 sm:gap-3 md:gap-4 items-center">
 
                   {isAuthenticated ? (
                     <div className="flex gap-4 items-center justify-end">
@@ -720,10 +720,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                       </div>
                     </div>
                   ) : (
-                    <div className="flex gap-3">
+                    <div className="flex gap-1.5 sm:gap-3">
                       <a
                         href={PATHS.SIGN_IN}
-                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+                        className="bg-orange text-white rounded-xl sm:rounded-[14px] px-2.5 sm:px-[15px] py-1.5 sm:py-[6px] text-[10px] sm:text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer whitespace-nowrap"
                         onClick={(e) => {
                           e.preventDefault();
                           router.push(PATHS.SIGN_IN);
@@ -734,7 +734,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
                       <a
                         href={PATHS.REGISTER}
-                        className="bg-orange text-white rounded-[14px] px-[15px] py-[6px] text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+                        className="bg-orange text-white rounded-xl sm:rounded-[14px] px-2.5 sm:px-[15px] py-1.5 sm:py-[6px] text-[10px] sm:text-sm font-semibold inline-block no-underline transition-all hover:opacity-90 active:scale-95 cursor-pointer whitespace-nowrap"
                         onClick={(e) => {
                           e.preventDefault();
                           router.push(PATHS.REGISTER);
