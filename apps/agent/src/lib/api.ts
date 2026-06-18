@@ -26,7 +26,7 @@ async function handleRefresh(): Promise<boolean> {
 }
 
 const baseApi = createSafeFetchInstance({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1",
+  baseUrl: typeof window !== 'undefined' ? '/api/v1' : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1"),
   headers: {
     "Content-Type": "application/json",
   },
