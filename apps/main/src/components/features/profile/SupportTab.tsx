@@ -36,9 +36,9 @@ const SupportTab: React.FC<SupportTabProps> = ({ supportSettings }) => {
         {/* Quick Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Email Support */}
-          <div className="group bg-gray-50 hover:bg-white rounded-3xl p-8 text-center border border-transparent hover:border-gray-100 hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300">
-            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-orange group-hover:scale-110 transition-transform duration-500">
-              <i className="fa-solid fa-envelope text-3xl"></i>
+          <div className="group bg-gray-50 hover:bg-white rounded-3xl p-6 md:p-8 text-center border border-transparent hover:border-gray-100 hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300">
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-orange group-hover:scale-110 transition-transform duration-500">
+              <i className="fa-solid fa-envelope text-2xl md:text-3xl"></i>
             </div>
             <h6 className="font-bold text-gray-900 text-lg mb-2" style={fontStyle}>
               {t.emailSupport}
@@ -57,9 +57,9 @@ const SupportTab: React.FC<SupportTabProps> = ({ supportSettings }) => {
           </div>
 
           {/* WhatsApp Support */}
-          <div className="group bg-green-50/30 hover:bg-white rounded-3xl p-8 text-center border border-transparent hover:border-emerald-100 hover:shadow-xl hover:shadow-emerald-200/20 transition-all duration-300">
-            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-emerald-500 group-hover:scale-110 transition-transform duration-500">
-              <i className="fa-brands fa-whatsapp text-3xl"></i>
+          <div className="group bg-green-50/30 hover:bg-white rounded-3xl p-6 md:p-8 text-center border border-transparent hover:border-emerald-100 hover:shadow-xl hover:shadow-emerald-200/20 transition-all duration-300">
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-emerald-500 group-hover:scale-110 transition-transform duration-500">
+              <i className="fa-brands fa-whatsapp text-2xl md:text-3xl"></i>
             </div>
             <h6 className="font-bold text-gray-900 text-lg mb-2" style={fontStyle}>
               {t.whatsapp}
@@ -80,9 +80,9 @@ const SupportTab: React.FC<SupportTabProps> = ({ supportSettings }) => {
           </div>
 
           {/* Phone Support */}
-          <div className="group bg-blue-50/30 hover:bg-white rounded-3xl p-8 text-center border border-transparent hover:border-blue-100 hover:shadow-xl hover:shadow-blue-200/20 transition-all duration-300">
-            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-blue-600 group-hover:scale-110 transition-transform duration-500">
-              <i className="fa-solid fa-phone text-3xl"></i>
+          <div className="group bg-blue-50/30 hover:bg-white rounded-3xl p-6 md:p-8 text-center border border-transparent hover:border-blue-100 hover:shadow-xl hover:shadow-blue-200/20 transition-all duration-300">
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-blue-600 group-hover:scale-110 transition-transform duration-500">
+              <i className="fa-solid fa-phone text-2xl md:text-3xl"></i>
             </div>
             <h6 className="font-bold text-gray-900 text-lg mb-2" style={fontStyle}>
               {t.phoneSupport}
@@ -102,7 +102,7 @@ const SupportTab: React.FC<SupportTabProps> = ({ supportSettings }) => {
         </div>
 
         {/* Additional Resources */}
-        <div className="mt-12 p-8 bg-orange/5 rounded-[2rem] border border-orange/10 relative overflow-hidden group">
+        <div className="mt-12 p-6 md:p-8 bg-orange/5 rounded-[2rem] border border-orange/10 relative overflow-hidden group">
           <div className="relative z-10">
             <h6
               className="text-lg font-bold text-gray-900 mb-6 flex items-center"
