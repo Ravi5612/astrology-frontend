@@ -171,7 +171,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-black text-emerald-600">₹{booking.price}</div>
+                    <div className="text-xl md:text-2xl font-black text-emerald-600">₹{booking.price}</div>
                     <span className="text-[10px] font-black uppercase text-gray-300 tracking-[0.2em]" style={fontStyle}>
                         {t.pujas.ritualFee}
                     </span>
@@ -251,7 +251,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     <button
                       disabled={isProcessing === booking.id}
                       onClick={() => handleAction(booking.id, 'confirmed')}
-                      className="flex-1 sm:flex-none px-8 py-3 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-2"
+                      className="flex-1 sm:flex-none px-6 py-3 md:px-8 md:py-3 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-2"
                       style={fontStyle}
                     >
                       {isProcessing === booking.id ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-credit-card"></i>}
@@ -260,7 +260,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                     <button
                       disabled={isProcessing === booking.id}
                       onClick={() => setShowRescheduleForm(booking.id)}
-                      className="flex-1 sm:flex-none px-8 py-3 bg-gray-100 text-gray-700 font-bold rounded-2xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                      className="flex-1 sm:flex-none px-6 py-3 md:px-8 md:py-3 bg-gray-100 text-gray-700 font-bold rounded-2xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
                       style={fontStyle}
                     >
                       {t.pujas.btnReschedule}
@@ -271,7 +271,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                 {booking.status === 'pending' && (
                    <button
                     disabled={true}
-                    className="w-full sm:w-auto px-8 py-3 bg-gray-50 text-gray-400 font-bold rounded-2xl border border-gray-100 cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-3 bg-gray-50 text-gray-400 font-bold rounded-2xl border border-gray-100 cursor-not-allowed flex items-center justify-center gap-2"
                     style={fontStyle}
                   >
                     <i className="fa-solid fa-hourglass-half animate-spin"></i>
@@ -283,7 +283,7 @@ const PujaBookingsTab: React.FC<PujaBookingsTabProps> = ({
                    <button
                     disabled={isProcessing === booking.id}
                     onClick={() => handleAction(booking.id, 'confirmed')}
-                    className="w-full sm:w-auto px-10 py-4 bg-orange-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-orange-700 shadow-xl shadow-orange-100 transition-all flex items-center justify-center gap-3"
+                    className="w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 bg-orange-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-orange-700 shadow-xl shadow-orange-100 transition-all flex items-center justify-center gap-3"
                     style={fontStyle}
                   >
                     <i className="fa-solid fa-shield-halved text-lg"></i>
