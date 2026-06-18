@@ -18,14 +18,10 @@ const SecurityTipsModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-20 sm:p-6 sm:pt-24 bg-black/70 backdrop-blur-md animate-in fade-in duration-300 pointer-events-auto overflow-y-auto"
-      onWheel={(e) => {
-        e.stopPropagation();
-        if (e.target === e.currentTarget) e.preventDefault();
-      }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-md animate-in fade-in duration-300 pointer-events-auto"
     >
       <div
-        className="bg-white w-full max-w-lg my-auto max-h-[calc(100vh-7rem)] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative shrink-0"
+        className="bg-white w-full max-w-lg max-h-[85vh] md:max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative shrink-0"
       >
         {/* Header */}
         <div className="p-3 md:p-4 bg-gradient-to-br from-red-500 to-orange-500 text-white relative overflow-hidden flex-shrink-0">
