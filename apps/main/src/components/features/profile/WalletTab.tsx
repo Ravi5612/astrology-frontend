@@ -59,7 +59,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
               </div>
               <div>
                 <h5
-                  className="font-bold text-white text-2xl tracking-tight m-0"
+                  className="font-bold text-white text-xl md:text-2xl tracking-tight m-0"
                   style={fontStyle}
                 >
                   {t.title}
@@ -110,8 +110,8 @@ const WalletTab: React.FC<WalletTabProps> = ({
               {t.availableBalance}
             </p>
             <div className="flex items-center justify-center mb-2">
-              <span className="text-orange text-3xl font-bold mr-2 mt-1">₹</span>
-              <h1 className="font-black text-white text-6xl tracking-tight">
+              <span className="text-orange text-2xl md:text-3xl font-bold mr-2 mt-1">₹</span>
+              <h1 className="font-black text-white text-4xl md:text-6xl tracking-tight">
                 {walletBalance?.toLocaleString() || "0"}
               </h1>
             </div>
@@ -173,7 +173,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                       onChange={(e) =>
                         setRechargeAmount(parseInt(e.target.value) || 0)
                       }
-                      className="w-full pl-10 pr-4 py-5 bg-white border border-gray-200 rounded-xl font-black text-2xl text-gray-900 focus:ring-4 focus:ring-orange/10 focus:border-orange outline-none transition-all shadow-sm group-hover:border-gray-300"
+                      className="w-full pl-10 pr-4 py-4 md:py-5 bg-white border border-gray-200 rounded-xl font-black text-xl md:text-2xl text-gray-900 focus:ring-4 focus:ring-orange/10 focus:border-orange outline-none transition-all shadow-sm group-hover:border-gray-300"
                       placeholder="0"
                       min="100"
                       max="50000"
@@ -217,7 +217,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                       <div className="flex items-center transition-transform group-hover:scale-110 duration-300">
                         <span className="text-sm font-bold mr-1 text-gray-400 mt-0.5">₹</span>
                         <span
-                          className={`text-2xl font-black ${
+                          className={`text-xl md:text-2xl font-black ${
                             rechargeAmount === amt ? "text-orange" : "text-gray-800"
                           }`}
                         >
@@ -247,7 +247,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                     </div>
                     <div className="text-left">
                       <div
-                        className="text-white text-xl font-black tracking-tight"
+                        className="text-white text-lg md:text-xl font-black tracking-tight"
                         style={fontStyle}
                       >
                         {t.rechargeBtn} ₹{rechargeAmount.toLocaleString()}
