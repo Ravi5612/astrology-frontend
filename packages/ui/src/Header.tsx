@@ -393,7 +393,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                   </button>
 
                   {showLanguageDropdown && (
-                    <div className="absolute top-[120%] right-0 bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] overflow-hidden w-[120px] text-gray-800 z-[1002] border border-gray-100 flex flex-col">
+                    <div className="absolute top-[120%] left-0 md:left-auto md:right-0 bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] overflow-hidden w-[120px] text-gray-800 z-[1002] border border-gray-100 flex flex-col">
                       <button
                         onClick={() => { setLang('en'); setShowLanguageDropdown(false); }}
                         className={`px-4 py-2.5 text-left text-sm transition-colors hover:bg-orange-50 hover:text-orange ${lang === 'en' ? 'font-bold bg-orange-50/50 text-orange' : 'font-medium'}`}
