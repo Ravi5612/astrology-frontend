@@ -8,7 +8,7 @@ import { createSafeFetchInstance, ApiError } from '@repo/safe-fetch';
  * - Silent Refresh: Automatically handles 401s by calling /auth/refresh
  */
 const baseApi = createSafeFetchInstance({
-  baseUrl: 'http://localhost:6543/api/v1',
+  baseUrl: 'https://astrology-in-bharat-services.onrender.com/api/v1',
   credentials: 'include',
   timeoutMs: 120_000, // Increased to 120s for media uploads
 });
