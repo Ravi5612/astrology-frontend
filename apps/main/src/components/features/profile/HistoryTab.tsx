@@ -138,7 +138,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                       >
                         {t.amountPaid}
                       </span>
-                      <span className="font-bold text-blue-600 text-lg">
+                      <span className="font-bold text-blue-600 text-base md:text-lg">
                         ₹{session.total_cost || 0}
                       </span>
                     </div>
@@ -204,7 +204,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                       <div className="flex-1 text-center md:text-left">
                         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-4 mb-6">
                           <div>
-                            <h5 className="font-bold text-gray-900 text-2xl mb-1">
+                            <h5 className="font-bold text-gray-900 text-xl md:text-2xl mb-1">
                               {session.expert_name}
                             </h5>
                             <p className="text-gray-500 font-medium text-sm">
@@ -215,7 +215,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                             <div className="flex flex-col">
                               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t.amountPaid}</span>
                               <div className="flex items-baseline gap-2 justify-end">
-                                <span className="text-xl font-black text-blue-600">₹{session.total_cost || 0}</span>
+                                <span className="text-lg md:text-xl font-black text-blue-600">₹{session.total_cost || 0}</span>
                                 {session.rate && (
                                   <span className="text-[11px] font-bold text-gray-400">(@ ₹{session.rate}/min)</span>
                                 )}
