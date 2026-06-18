@@ -98,23 +98,23 @@ const PujaListSection = () => {
                     {/* Search and Filters */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto shrink-0 relative">
                         {/* Search Bar */}
-                        <div className="relative w-full sm:w-64">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500/50" />
+                        <div className="relative w-full sm:w-64 md:w-72">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500" />
                             <input 
                                 type="text"
                                 placeholder={t.filters.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all text-sm placeholder:text-gray-500"
+                                className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-orange-500/40 text-white rounded-xl focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 hover:border-orange-500/80 outline-none transition-all text-sm placeholder:text-gray-300"
                                 style={fontStyle}
                             />
                         </div>
 
                         {/* Puja Category Dropdown */}
-                        <div className="relative w-full sm:w-56" ref={dropdownRef}>
+                        <div className="relative w-full sm:w-48 md:w-56" ref={dropdownRef}>
                             <button 
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 border border-white/10 rounded-xl focus:ring-2 focus:ring-orange-500/20 outline-none text-sm font-bold text-gray-300 transition-all"
+                                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 border border-orange-500/40 rounded-xl focus:ring-2 focus:ring-orange-500/30 hover:border-orange-500/80 outline-none text-sm font-bold text-white transition-all"
                                 style={fontStyle}
                             >
                                 <span className="truncate pr-2">{selectedPujaName === t.filters.allPujas ? t.filters.allPujas : (content[selectedPujaName] || selectedPujaName)}</span>
