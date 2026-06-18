@@ -7,7 +7,7 @@ const AstrologyServices = () => {
     <section className="bg-edeef1 space-section">
       <div className="container">
         <div className="light-card mt-4">
-          <h2 className="title-line mb-3 text-black">
+          <h2 className="title-line mb-3 text-black !text-2xl md:!text-3xl lg:!text-4xl font-black">
             <span>Astrology Services </span>
           </h2>
           <div className="overflow-hidden">
