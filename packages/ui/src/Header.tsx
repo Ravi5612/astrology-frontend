@@ -776,14 +776,14 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
                 {/* Hamburger — mobile only */}
                 <button
-                  className="ml-auto lg:hidden flex flex-col gap-1.5 p-2 rounded-md hover:bg-gray-100 transition"
+                  className="ml-auto lg:hidden flex flex-col gap-1.5 p-2 rounded-lg border-2 border-orange/50 hover:border-orange hover:bg-orange/5 transition-all"
                   type="button"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   aria-label="Toggle navigation"
                 >
-                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? 'rotate-45 translate-y-2 bg-orange' : ''}`} />
                   <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? 'opacity-0' : ''}`} />
-                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                  <span className={`block w-6 h-0.5 bg-gray-700 transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2 bg-orange' : ''}`} />
                 </button>
 
                 {/* Nav links */}
