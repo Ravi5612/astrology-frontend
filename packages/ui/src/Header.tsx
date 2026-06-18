@@ -365,10 +365,10 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
   return (
     <>
       <header
-        className="bg-[#301118] text-white shadow-sm relative z-[1001] overflow-visible py-2"
+        className="bg-[#301118] text-white shadow-sm relative z-[1001] overflow-visible flex items-center"
         style={{ minHeight: '52px', scrollbarWidth: 'none' }}
       >
-        <div className="max-w-[1320px] mx-auto px-2 sm:px-4 md:px-8 lg:px-16" style={{ overflow: 'visible' }}>
+        <div className="max-w-[1320px] mx-auto px-2 sm:px-4 md:px-8 lg:px-16 w-full" style={{ overflow: 'visible' }}>
           <div className="flex items-center w-full">
             {/* Left section: Welcome Text */}
             <div className="flex-1 hidden md:block">
