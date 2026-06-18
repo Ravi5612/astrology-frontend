@@ -58,9 +58,17 @@ export const useAuthStore = create<AuthState>()(
                 });
 
                 try {
+                    // Call backend to invalidate token
                     await api.post('/auth/logout');
                 } catch {
                     // Silently fail logout cleanup
+                }
+
+                try {
+                    // Call Next.js API route to clear HttpOnly cookies
+                    await fetch('/api/auth/logout', { method: 'POST' });
+                } catch {
+                    // Silently fail
                 }
 
                 if (typeof window !== "undefined") {
