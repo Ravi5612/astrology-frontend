@@ -20,7 +20,7 @@ export const WishlistService = {
     },
 
     addExpertToWishlist: async (expertId: string): Promise<[any | null, ApiError | null]> => {
-        return await api.post("/expert-like/add", { expertId }) as any;
+        return await api.post("/expert-like/add", { expert_id: expertId }) as any;
     },
 
     removeExpertFromWishlist: async (expertId: string): Promise<[any | null, ApiError | null]> => {
