@@ -41,7 +41,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
         {notifications.length > 0 && (
           <button
             onClick={onClearAll}
-            className="px-4 py-2 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-xl transition-all flex items-center gap-2 border-0"
+            className="px-4 py-2 text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-xl transition-all flex items-center gap-2 border-0 shrink-0"
             style={fontStyle}
           >
             <i className="fa-solid fa-trash-can"></i>
@@ -82,7 +82,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
             {notifications.filter(Boolean).map((notif: any) => (
               <div
                 key={notif.id}
-                className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer group ${
+                className={`p-4 md:p-5 rounded-2xl border transition-all duration-300 cursor-pointer group ${
                   notif.isRead
                     ? "bg-white border-gray-100 opacity-70 hover:opacity-100"
                     : "bg-orange/5 border-orange/10 shadow-sm hover:shadow-md hover:bg-orange/10"
@@ -92,7 +92,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex gap-4">
                     <div
-                      className={`w-12 h-12 flex items-center justify-center rounded-xl transition-transform group-hover:scale-110 ${
+                      className={`w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-xl transition-transform group-hover:scale-110 ${
                         notif.isRead
                           ? "bg-gray-100 text-gray-400"
                           : "bg-orange text-white"
@@ -106,7 +106,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
                     </div>
                     <div className="flex-1 min-w-0">
                       <h6
-                        className={`text-base mb-1 truncate ${
+                        className={`text-sm md:text-base mb-1 truncate ${
                           notif.isRead ? "text-gray-600" : "text-gray-900 font-bold"
                         }`}
                         style={fontStyle}
@@ -114,7 +114,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
                         {notif.title}
                       </h6>
                       <p
-                        className="text-gray-500 text-sm mb-3 leading-relaxed line-clamp-2"
+                        className="text-xs md:text-sm text-gray-500 mb-2 md:mb-3 leading-relaxed line-clamp-2"
                         style={{ ...fontStyle, lineHeight: "1.5" }}
                       >
                         {notif.message}
@@ -150,7 +150,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
                 <button
                   onClick={onLoadMore}
                   disabled={loadingMore}
-                  className="px-10 py-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-2xl hover:border-orange-200 hover:text-orange hover:bg-orange-50/30 transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95 disabled:opacity-50"
+                  className="px-6 py-3 md:px-10 md:py-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-2xl hover:border-orange-200 hover:text-orange hover:bg-orange-50/30 transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95 disabled:opacity-50"
                   style={fontStyle}
                 >
                   {loadingMore ? (
