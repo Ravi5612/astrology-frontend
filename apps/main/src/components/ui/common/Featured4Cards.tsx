@@ -49,7 +49,7 @@ const Featured4Cards = () => {
             {/* card-hero → bg-[#301118], rounded-[20px], min-h-[250px], border, padding, hover, transition */}
             <div
               className="
-              m-[13px] text-center min-h-[250px] rounded-[20px] p-[14px]
+              m-[3px] sm:m-[13px] text-center min-h-[140px] sm:min-h-[250px] rounded-[10px] sm:rounded-[20px] p-[6px] sm:p-[14px]
               bg-[#301118] border border-[#fd9d69]
               flex flex-col items-center justify-center
               transition-all duration-200 ease-in-out
@@ -63,14 +63,14 @@ const Featured4Cards = () => {
                 alt={card.alt}
                 width={77}
                 height={77}
-                className="my-[11px]"
+                className="my-[4px] sm:my-[6px] md:my-[11px] w-[40px] sm:w-[50px] md:w-[77px] h-auto"
               />
               {/* card-hero h5 → color #fff, 20px, fw-600 */}
-              <h5 className="text-white text-[20px] font-semibold mt-2">
+              <h5 className="text-white text-[12px] sm:text-[14px] md:text-[20px] font-semibold mt-2 mb-1 md:mb-2 leading-tight">
                 {card.title}
               </h5>
               {/* color-light → text-white, card-hero p → 16px */}
-              <p className="text-white text-[16px] mb-0">
+              <p className="text-white/90 text-[10px] sm:text-[12px] md:text-[16px] mb-0 leading-tight md:leading-normal">
                 {card.desc}
               </p>
             </div>
