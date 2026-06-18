@@ -761,7 +761,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             <div className="flex-1">
               <nav className="flex items-center">
                 {/* Logo */}
-                <Link className="flex-shrink-0 mr-4" href="/">
+                <Link className="flex-shrink-0 mr-2 sm:mr-4 w-[130px] sm:w-[180px] lg:w-[200px] flex items-center" href="/">
                   <NextImage
                     src="/images/web-logo.png"
                     alt="logo"
@@ -769,7 +769,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                     height={60}
                     loading="eager"
                     priority
-                    style={{ width: 'auto', height: 'auto' }}
+                    style={{ width: '100%', height: 'auto', maxHeight: '50px' }}
                     className="object-contain"
                   />
                 </Link>
