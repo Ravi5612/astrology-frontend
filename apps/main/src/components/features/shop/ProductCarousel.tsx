@@ -22,6 +22,21 @@ interface ProductCarouselProps {
 const ProductCarousel: React.FC<ProductCarouselProps> = ({ products }) => {
     const [swiperInstance, setSwiperInstance] = React.useState<any>(null);
 
+    if (products.length > 0 && products.length <= 4) {
+        return (
+            <div className="flex flex-wrap justify-center gap-6 py-5 px-1">
+                {products.map((product) => (
+                    <div 
+                        key={product.id || product._id} 
+                        className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] max-w-[320px]"
+                    >
+                        <ProductCard product={product} />
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div
             className="w-full"

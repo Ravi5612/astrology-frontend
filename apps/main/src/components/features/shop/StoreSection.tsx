@@ -147,7 +147,15 @@ const StoreSection = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10">
                             {[1, 2, 3].map((i) => <StoreSkeletonCard key={`store-skeleton-${i}`} />)}
                         </div>
-                    ) : stores.length > 0 ? (
+                    ) : stores.length > 0 && stores.length <= 3 ? (
+                        <div className="flex flex-wrap justify-center gap-8 py-10 !pb-14">
+                            {stores.map((store) => (
+                                <div key={store.id || (store as any)._id} className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-21.33px)] max-w-[380px]">
+                                    <StoreCard store={store} />
+                                </div>
+                            ))}
+                        </div>
+                    ) : stores.length > 3 ? (
                         <Swiper
                             onSwiper={setSwiperInstance}
                             modules={[Navigation, Autoplay]}
