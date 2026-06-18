@@ -2,9 +2,11 @@ import parseBody from "./body-parser";
 import anySignal from "./any-signal";
 
 export interface SafeFetchInit extends Omit<RequestInit, 'body'> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any;
   timeoutMs?: number;
   controller?: AbortController;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>;
 }
 
@@ -24,6 +26,7 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public body?: any,
     public headers?: Headers,
   ) {
@@ -154,6 +157,7 @@ async function executeFetch<T>(
     }
 
     return [data as T, null];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     const error =
       err.name === "AbortError"

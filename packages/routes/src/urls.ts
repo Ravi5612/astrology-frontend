@@ -4,6 +4,7 @@ const getBaseUrl = (key: string, defaultUrl: string) => {
   if (typeof window === "undefined") {
     return process.env[key] || defaultUrl;
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (window as any).env?.[key] || process.env[key] || defaultUrl;
 };
 
