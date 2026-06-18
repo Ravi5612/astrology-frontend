@@ -15,10 +15,10 @@ const CTA = () => {
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="w-full lg:w-2/3 text-center lg:text-left">
-            <h2 className="text-3xl md:text-[40px] font-bold mb-4 text-white leading-tight">
+            <h2 className="text-2xl md:text-[40px] font-bold mb-3 md:mb-4 text-white leading-tight">
               {t.cta.title}
             </h2>
-            <p className="text-lg md:text-xl text-[#ffdcb2] max-w-[700px] mx-auto lg:mx-0 font-medium">
+            <p className="text-sm md:text-xl text-[#ffdcb2] max-w-[700px] mx-auto lg:mx-0 font-medium leading-relaxed">
               {t.cta.subtitle}
             </p>
           </div>
