@@ -43,17 +43,17 @@ const HeroSection = () => {
                     </span>
 
                     {/* banner-part h1 */}
-                    <h1 className="text-[40px] md:text-[50px] font-bold tracking-[1px] text-[#2b1b1b] leading-tight mb-4">
+                    <h1 className="text-[28px] sm:text-[34px] md:text-[40px] lg:text-[50px] font-bold tracking-[1px] text-[#2b1b1b] leading-tight mb-3 md:mb-4">
                       {t.hero.title}
                     </h1>
 
                     {/* card-title */}
-                    <h4 className="text-[22px] text-orange font-semibold mt-[15px] mb-[10px]">
+                    <h4 className="text-[18px] md:text-[22px] text-orange font-semibold mt-[10px] md:mt-[15px] mb-[10px]">
                       {t.hero.subtitle}
                     </h4>
 
                     {/* banner-part p */}
-                    <p className="text-[16px] text-[#1a1a1a] mb-[18px]">
+                    <p className="text-[14px] md:text-[16px] text-[#1a1a1a] mb-[14px] md:mb-[18px]">
                       {t.hero.description}
                     </p>
 
@@ -62,7 +62,7 @@ const HeroSection = () => {
                       {t.hero.features.map((point) => (
                         <li
                           key={point}
-                          className="flex items-center gap-2 text-[16px] text-[#1e1e1e] py-[7px]"
+                          className="flex items-start md:items-center gap-2 text-[14px] md:text-[16px] text-[#1e1e1e] py-[5px] md:py-[7px] leading-snug"
                         >
                           <i
                             className="fa-solid fa-check text-white text-xs flex items-center justify-center rounded-full flex-shrink-0"
@@ -82,10 +82,9 @@ const HeroSection = () => {
                     {/* wfc — width: fit-content, padding: 15px 23px, letter-spacing: 1px */}
                     <Link
                       href="/our-experts"
-                      className="mt-4 mb-4 inline-block no-underline bg-orange text-white font-bold rounded-full hover:opacity-90 active:scale-95 transition-all"
+                      className="mt-4 mb-4 inline-block no-underline bg-orange text-white font-bold rounded-full hover:opacity-90 active:scale-95 transition-all text-[14px] md:text-[16px] px-6 py-3 md:px-8 md:py-4"
                       style={{
                         width: "fit-content",
-                        padding: "15px 23px",
                         letterSpacing: "1px",
                       }}
                     >
