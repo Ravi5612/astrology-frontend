@@ -199,10 +199,10 @@ export const SignUpForm: React.FC = () => {
             </div>
 
             <div className="mb-6">
-                <h2 className="text-3xl font-black text-[#301118]">
+                <h2 className="text-[26px] md:text-3xl font-black text-[#301118]">
                     {step === 1 ? t.signUp.title : "Complete Profile"}
                 </h2>
-                <p className="text-gray-400 text-sm mt-1 font-medium">
+                <p className="text-gray-400 text-xs md:text-sm mt-1 font-medium">
                     {step === 1 ? t.signUp.subtitle : "Please fill in your details to finalize your registration."}
                 </p>
             </div>

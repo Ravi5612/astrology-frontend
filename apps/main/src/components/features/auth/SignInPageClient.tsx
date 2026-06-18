@@ -21,7 +21,7 @@ export default function SignInPageClient() {
                     <div className="w-full lg:w-5/12 pt-8">
                         <div className="mb-8">
                             <h3
-                                className="text-3xl md:text-5xl font-extrabold leading-tight mb-4"
+                                className="text-[28px] md:text-5xl font-extrabold leading-tight mb-4"
                                 style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
                                 <span className="text-[#301118]">{t.signIn.brandTitle}</span>{" "}
