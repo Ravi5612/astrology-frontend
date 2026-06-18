@@ -67,7 +67,7 @@ const TopExpertsSection: React.FC = () => {
     }, []);
 
     return (
-        <div className="mt-8 hidden md:block">
+        <div className="mt-8 mb-8 md:mb-0">
             <h3 className="text-2xl font-black text-[#301118] mb-6 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-orange/10 flex items-center justify-center">
                     <i className="fa-solid fa-crown text-orange text-sm"></i>
