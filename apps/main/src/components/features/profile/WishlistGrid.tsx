@@ -48,8 +48,8 @@ const WishlistGrid: React.FC = () => {
                 <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 shadow-premium border border-slate-100 text-slate-200">
                     <FaHeart size={40} className="animate-pulse" />
                 </div>
-                <h5 className="text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4" style={fontStyle}>{t.wishlist.emptyTitle}</h5>
-                <p className="text-lg text-slate-400 font-bold italic mb-0 max-w-sm mx-auto" style={fontStyle}>{t.wishlist.emptyDesc}</p>
+                <h5 className="text-2xl md:text-3xl font-black text-slate-950 uppercase tracking-tighter mb-4" style={fontStyle}>{t.wishlist.emptyTitle}</h5>
+                <p className="text-base md:text-lg text-slate-400 font-bold italic mb-0 max-w-sm mx-auto" style={fontStyle}>{t.wishlist.emptyDesc}</p>
             </div>
         );
     }
@@ -64,7 +64,7 @@ const WishlistGrid: React.FC = () => {
                               <FaGift className="text-primary text-[10px]" />
                               <span className="text-[10px] font-black text-primary uppercase tracking-widest" style={fontStyle}>{t.wishlist.savedItems}</span>
                            </div>
-                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedProducts}</h2>
+                           <h2 className="text-xl md:text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedProducts}</h2>
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm" style={fontStyle}>
                            <span className="tabular-nums">{wishlistItems.length}</span> {t.wishlist.itemsSaved}
@@ -102,7 +102,7 @@ const WishlistGrid: React.FC = () => {
                               <FaUserAstronaut className="text-indigo-500 text-[10px]" />
                               <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest" style={fontStyle}>{t.wishlist.favoriteExperts}</span>
                            </div>
-                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedExperts}</h2>
+                           <h2 className="text-xl md:text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedExperts}</h2>
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm" style={fontStyle}>
                            <span className="tabular-nums">{expertWishlistItems.length}</span> {t.wishlist.expertsSaved}
@@ -159,7 +159,7 @@ const WishlistGrid: React.FC = () => {
                               <MdStars className="text-orange-500 text-[10px]" />
                               <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest" style={fontStyle}>{t.wishlist.divineRituals}</span>
                            </div>
-                           <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedPujas}</h2>
+                           <h2 className="text-xl md:text-3xl font-black text-slate-900 uppercase tracking-tight" style={fontStyle}>{t.wishlist.likedPujas}</h2>
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 font-bold italic text-sm" style={fontStyle}>
                            <span className="tabular-nums">{pujaWishlistItems.length}</span> {t.wishlist.pujasSaved}
@@ -182,7 +182,7 @@ const WishlistGrid: React.FC = () => {
 
             {/* Premium Trust Banner */}
             <div className="text-center pt-24 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
-                <div className="inline-flex items-center gap-6 px-10 py-5 bg-white rounded-full border border-gray-100 shadow-sm">
+                <div className="inline-flex items-center gap-3 md:gap-6 px-6 md:px-10 py-3 md:py-5 bg-white rounded-full border border-gray-100 shadow-sm">
                     <HiOutlineSparkles className="text-orange" />
                     <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.4em]" style={fontStyle}>{t.wishlist.syncNote}</span>
                 </div>

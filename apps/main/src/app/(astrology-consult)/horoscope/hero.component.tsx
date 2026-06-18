@@ -43,7 +43,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
               </div>
               
               <h1
-                className="text-5xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
+                className="text-4xl md:text-5xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
                 style={{
                   fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
                 }}
@@ -54,7 +54,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
               </h1>
               
               <p
-                className="text-xl text-gray-400 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-8"
+                className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-6 md:pl-8"
                 style={{
                   fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
                 }}
@@ -78,7 +78,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
             <div className="pt-6">
               <a
                 href="#predictions"
-                className="group relative inline-flex items-center justify-center gap-4 bg-orange-600 text-white px-12 py-6 rounded-3xl font-black text-xs uppercase tracking-[0.4em] transition-all shadow-2xl shadow-orange-500/20 hover:bg-white hover:text-slate-950 hover:-translate-y-1 active:scale-95 overflow-hidden no-underline"
+                className="group relative inline-flex items-center justify-center gap-4 bg-orange-600 text-white px-8 py-4 md:px-12 md:py-6 rounded-3xl font-black text-xs uppercase tracking-[0.4em] transition-all shadow-2xl shadow-orange-500/20 hover:bg-white hover:text-slate-950 hover:-translate-y-1 active:scale-95 overflow-hidden no-underline"
               >
                 <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 <span className="relative z-10">{t.heroBtn}</span>

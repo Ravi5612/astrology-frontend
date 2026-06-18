@@ -69,7 +69,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-[3rem] p-10 lg:p-16 shadow-premium border border-gray-100 relative group overflow-hidden">
+          <div className="bg-white rounded-[3rem] p-6 md:p-10 lg:p-16 shadow-premium border border-gray-100 relative group overflow-hidden">
             {/* Sparkle Decoration */}
             <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
               <HiOutlineSparkles className="text-9xl text-orange-500" />
@@ -91,7 +91,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight uppercase">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight uppercase">
                     {selectedSign.title}{" "}
                     <span className="text-orange-500 italic block lg:inline">{t.dailyLabel}</span>
                   </h2>
@@ -107,7 +107,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-4 bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl hover:bg-orange-600 transition-colors group/badge cursor-default">
+              <div className="inline-flex items-center gap-4 bg-slate-900 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-2xl hover:bg-orange-600 transition-colors group/badge cursor-default">
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-orange-400 group-hover/badge:scale-110 transition-transform">
                   <FaStar size={12} />
                 </div>
@@ -124,7 +124,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
                 return (
                   <div key={i} className="group/item">
                     <div
-                      className={`h-full bg-gradient-to-br ${style!.gradient} p-8 lg:p-10 rounded-[2.5rem] border ${style!.border} relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 group-hover/item:border-orange-500/20`}
+                      className={`h-full bg-gradient-to-br ${style!.gradient} p-6 md:p-8 lg:p-10 rounded-[2.5rem] border ${style!.border} relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 group-hover/item:border-orange-500/20`}
                     >
                       {/* Accent Line */}
                       <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1.5 ${style!.accent} rounded-b-full opacity-30 group-hover/item:opacity-100 group-hover/item:w-32 transition-all`}></div>
@@ -151,7 +151,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
             </div>
 
             {/* Cosmic Insight Banner */}
-            <div className="bg-slate-950 p-12 lg:p-16 rounded-[3.5rem] relative overflow-hidden shadow-2xl group/cosmic shadow-black/20 border border-white/5">
+            <div className="bg-slate-950 p-8 md:p-12 lg:p-16 rounded-[3.5rem] relative overflow-hidden shadow-2xl group/cosmic shadow-black/20 border border-white/5">
               <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 via-transparent to-indigo-500/10 opacity-50 group-hover/cosmic:scale-110 transition-transform duration-1000"></div>
               
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-12">
@@ -167,7 +167,7 @@ const PredictionDetails: React.FC<PredictionDetailsProps> = ({
                       </h3>
                     </div>
                     
-                    <p className="text-white text-xl lg:text-3xl font-black italic leading-tight tracking-tight">
+                    <p className="text-white text-lg md:text-xl lg:text-3xl font-black italic leading-tight tracking-tight">
                       &quot;{t.cosmicText.replace("white", "").replace("सफेद", "")}
                       <span className="text-orange-500 underline underline-offset-8 decoration-orange-500/30">
                         {t.colorWhite}
