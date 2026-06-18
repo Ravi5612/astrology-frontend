@@ -191,12 +191,12 @@ const FamousPlacesPage = () => {
             {t.badge}
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 tracking-tight text-white leading-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-display font-black mb-8 tracking-tight text-white leading-tight">
             {t.heroTitle1} <br />
             <span className="text-orange drop-shadow-sm">{t.heroHighlight}</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-body leading-relaxed mb-10">
+          <p className="text-base md:text-xl text-white/80 max-w-3xl mx-auto font-body leading-relaxed mb-10">
             {t.heroDesc}
           </p>
 
@@ -217,7 +217,7 @@ const FamousPlacesPage = () => {
         {searchResults.length > 0 && (
           <section
             id="search-results"
-            className="relative p-8 md:p-12 rounded-[40px] overflow-hidden bg-white shadow-2xl border border-orange/10 scroll-mt-20"
+            className="relative p-6 md:p-12 rounded-[40px] overflow-hidden bg-white shadow-2xl border border-orange/10 scroll-mt-20"
           >
             {/* Soft Glow Background */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange/5 rounded-full blur-[80px]"></div>
@@ -228,7 +228,7 @@ const FamousPlacesPage = () => {
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange/10 border border-orange/20 text-orange text-[10px] font-bold uppercase tracking-widest mb-4">
                     {searchResults.length} {t.verifiedSites}
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-display font-bold text-brown mb-4">
+                  <h2 className="text-2xl md:text-4xl font-display font-bold text-brown mb-4">
                     {t.searchResultsTitle} <span className="text-orange">{t.searchResultsHighlight}</span>
                   </h2>
                   <p className="text-slate-500 text-lg leading-relaxed font-body">
@@ -257,7 +257,7 @@ const FamousPlacesPage = () => {
 
         {/* Mohali/Chandigarh Temples Section */}
         <section
-          className="relative p-8 md:p-12 rounded-[40px] overflow-hidden bg-brown/95 shadow-2xl border border-white/5"
+          className="relative p-6 md:p-12 rounded-[40px] overflow-hidden bg-brown/95 shadow-2xl border border-white/5"
         >
           {/* Decorative Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/images/white-background.png')", backgroundSize: 'cover' }}></div>
@@ -266,7 +266,7 @@ const FamousPlacesPage = () => {
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
-                <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
+                <h2 className="text-2xl md:text-4xl font-display font-bold text-white mb-4">
                   {templeSearchQuery.trim() ? (
                     <>Search results for <span className="text-orange">"{templeSearchQuery}"</span></>
                   ) : (
@@ -339,7 +339,7 @@ const FamousPlacesPage = () => {
 
         {/* Holy Pilgrimage Section */}
         <section
-          className="relative p-8 md:p-12 rounded-[40px] overflow-hidden bg-brown/95 shadow-2xl border border-white/5"
+          className="relative p-6 md:p-12 rounded-[40px] overflow-hidden bg-brown/95 shadow-2xl border border-white/5"
         >
           {/* Decorative Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/images/white-background.png')", backgroundSize: 'cover' }}></div>
@@ -348,7 +348,7 @@ const FamousPlacesPage = () => {
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div className="max-w-2xl">
-                <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
+                <h2 className="text-2xl md:text-4xl font-display font-bold text-white mb-4">
                   {pilgrimageSearchQuery.trim() ? (
                     <>Search results for <span className="text-orange">"{pilgrimageSearchQuery}"</span></>
                   ) : (
