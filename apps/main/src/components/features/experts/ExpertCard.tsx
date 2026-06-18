@@ -210,7 +210,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
                 className="
                   absolute 
                   top-[85%] 
-                  left-[60%] 
+                  left-[50%] 
                   -translate-x-1/2 
                   -translate-y-1/2 
                   text-white 
@@ -275,12 +275,12 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
             {name}
           </div>
 
-          {/* Expertise Tags — fixed, no overflow */}
+          {/* Expertise Tags — wrap properly */}
           <div className="px-3 mt-1 mb-1 flex flex-wrap justify-center gap-1" style={{ minHeight: '28px' }}>
             {allServices.slice(0, 3).map((service, index) => (
               <span
                 key={index}
-                className="inline-block bg-orange text-white text-[11px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[110px]"
+                className="inline-block bg-orange text-white text-[10px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[95%] sm:max-w-full"
                 title={service}
               >
                 {service}
@@ -311,18 +311,18 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
         </NextLink>
 
         {/* ACTION BUTTONS WITH PRICES POINTER */}
-        <div className="px-3 pb-4 space-y-2.5 mt-auto">
-          <div className="flex gap-2">
+        <div className="px-2 pb-3 space-y-2 mt-auto">
+          <div className="flex gap-1.5">
             {/* Chat Button */}
             <button
               onClick={handleChatClick}
-              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2 bg-[#ff6b00] text-white rounded-xl shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
             >
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <i className="fa-regular fa-comment-dots text-sm" />
-                <span className="text-[14px] font-bold">{t.expertCard.chat}</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <i className="fa-regular fa-comment-dots text-[10px] sm:text-sm" />
+                <span className="text-[12px] sm:text-[14px] font-bold">{t.expertCard.chat}</span>
               </div>
-              <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
+              <span className="text-[9px] sm:text-[11px] font-semibold opacity-95 truncate w-full text-center px-1">
                 {chat_price && chat_price > 0 ? `₹${chat_price}${t.expertCard.perMin}` : (price > 0 ? `₹${price}${t.expertCard.perMin}` : t.expertCard.free)}
               </span>
             </button>
@@ -330,13 +330,13 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
             {/* Call Button */}
             <button
               onClick={handleCallClick}
-              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
+              className="flex-1 min-w-0 flex flex-col items-center justify-center py-2 bg-[#ff6b00] text-white rounded-xl shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
             >
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <i className="fa-solid fa-phone-volume text-sm" />
-                <span className="text-[14px] font-bold">{t.expertCard.call}</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <i className="fa-solid fa-phone-volume text-[10px] sm:text-sm" />
+                <span className="text-[12px] sm:text-[14px] font-bold">{t.expertCard.call}</span>
               </div>
-              <span className="text-[11px] font-semibold opacity-95 truncate w-full text-center px-2">
+              <span className="text-[9px] sm:text-[11px] font-semibold opacity-95 truncate w-full text-center px-1">
                 {call_price && call_price > 0 ? `₹${call_price}${t.expertCard.perMin}` : (price > 0 ? `₹${price}${t.expertCard.perMin}` : t.expertCard.free)}
               </span>
             </button>
@@ -345,11 +345,11 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
           {/* Video Call Button */}
           <button
             onClick={handleVideoCallClick}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#ff6b00] text-white rounded-full shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-2 bg-[#ff6b00] text-white rounded-xl shadow-[0_4px_10px_rgba(255,107,0,0.2)] hover:shadow-[0_6px_15px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 transition-all duration-300 border-0 overflow-hidden cursor-pointer"
           >
-            <i className="fa-solid fa-video text-sm shrink-0" />
-            <span className="text-[14px] font-bold shrink-0">{t.expertCard.videoCall}</span>
-            <span className="text-[11px] font-semibold opacity-95 truncate">
+            <i className="fa-solid fa-video text-[10px] sm:text-sm shrink-0" />
+            <span className="text-[12px] sm:text-[14px] font-bold shrink-0">{t.expertCard.videoCall}</span>
+            <span className="text-[9px] sm:text-[11px] font-semibold opacity-95 truncate">
               {video_call_price && video_call_price > 0 ? `₹${video_call_price}${t.expertCard.perMin}` : (price > 0 ? `₹${price * 2}${t.expertCard.perMin}` : t.expertCard.free)}
             </span>
           </button>
