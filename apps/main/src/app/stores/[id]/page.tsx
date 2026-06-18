@@ -328,7 +328,13 @@ const StoreDetailsPage = () => {
 
               <div className="px-8 pb-8 pt-2 flex flex-col gap-4">
                 <button
-                  className="w-full flex items-center justify-center gap-3 bg-[#FDF8F4] text-orange border border-orange/10 py-4.5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] hover:bg-orange hover:text-white transition-all active:scale-95 leading-none"
+                  onClick={() => {
+                    const query = encodeURIComponent(`${shop.address || ''} ${shop.city || ''}`);
+                    if (query.trim()) {
+                      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                    }
+                  }}
+                  className="w-full flex items-center justify-center gap-3 bg-[#FDF8F4] text-orange border border-orange/10 py-4 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] hover:bg-orange hover:text-white transition-all active:scale-95 leading-none"
                   style={fontStyle}
                 >
                   <MapPin className="w-5 h-5" />
