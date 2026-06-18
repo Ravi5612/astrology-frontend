@@ -34,7 +34,7 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
             ></div>
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="relative w-[95%] sm:w-full max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h5 className="text-xl font-bold text-gray-900">{t.expertSection.filterTitle}</h5>
@@ -47,9 +47,9 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
                 </div>
 
                 {/* Body */}
-                <div className="p-6 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                <div className="p-4 sm:p-6 max-h-[65vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {/* 1. Availability */}
-                    <div className="mb-6 flex items-center justify-between p-4 bg-orange/5 rounded-2xl border border-orange/10">
+                    <div className="mb-4 sm:mb-6 flex items-center justify-between p-3 sm:p-4 bg-orange/5 rounded-xl sm:rounded-2xl border border-orange/10">
                         <div className="flex items-center gap-3">
                             <div className={`w-3 h-3 rounded-full ${localFilter.onlyOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-300'}`}></div>
                             <span className="font-bold text-gray-800">{t.expertSection.filterLabels.showOnlineOnly}</span>
@@ -66,7 +66,7 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
                     </div>
 
                     {/* 3. Sort Order (Simplified within filter) */}
-                    <div className="mb-6">
+                    <div className="mb-4 sm:mb-6">
                         <label className="block text-sm font-bold text-gray-700 mb-2">{t.expertSection.sortByTitle}</label>
                         <select
                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:ring-2 focus:ring-orange/20 focus:border-orange outline-none transition-all"
@@ -82,14 +82,14 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
                     </div>
 
                     {/* 4. Rating Filter */}
-                    <div className="mb-6">
+                    <div className="mb-4 sm:mb-6">
                         <label className="block text-sm font-bold text-gray-700 mb-2">{t.expertSection.filterLabels.minRating}</label>
                         <div className="flex gap-2">
                             {[0, 3, 4, 5].map((rating) => (
                                 <button
                                     key={rating}
                                     onClick={() => setLocalFilter({ ...localFilter, minRating: rating })}
-                                    className={`flex-1 py-2.5 rounded-xl border text-sm font-bold transition-all ${localFilter.minRating === rating
+                                    className={`flex-1 py-2 sm:py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition-all ${localFilter.minRating === rating
                                         ? 'bg-orange text-white border-orange shadow-lg shadow-orange/20'
                                         : 'bg-white border-gray-200 text-gray-600 hover:border-orange/50 hover:text-orange'
                                         }`}
@@ -101,7 +101,7 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
                     </div>
 
                     {/* 5. Price Range */}
-                    <div className="mb-6">
+                    <div className="mb-4 sm:mb-6">
                         <div className="flex justify-between items-center mb-4">
                             <label className="text-sm font-bold text-gray-700">{t.expertSection.filterLabels.priceRange}</label>
                             <span className="px-3 py-1 bg-orange text-white rounded-full font-bold text-xs">
@@ -150,16 +150,16 @@ const ExpertFilterModal: React.FC<ExpertFilterModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex gap-3">
+                <div className="p-4 sm:p-6 bg-gray-50/50 border-t border-gray-100 flex gap-3">
                     <button
                         onClick={resetFilters}
-                        className="flex-1 px-6 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-2xl hover:bg-gray-100 transition-all"
+                        className="flex-1 px-4 sm:px-6 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl sm:rounded-2xl hover:bg-gray-100 transition-all text-sm sm:text-base"
                     >
                         {t.expertSection.applyBtns.resetAll}
                     </button>
                     <button
                         onClick={applyFilters}
-                        className="flex-1 px-6 py-3 bg-orange text-white font-bold rounded-2xl shadow-lg shadow-orange/30 hover:opacity-90 active:scale-95 transition-all"
+                        className="flex-1 px-4 sm:px-6 py-3 bg-orange text-white font-bold rounded-xl sm:rounded-2xl shadow-lg shadow-orange/30 hover:opacity-90 active:scale-95 transition-all text-sm sm:text-base"
                     >
                         {t.expertSection.applyBtns.applyFilters}
                     </button>
