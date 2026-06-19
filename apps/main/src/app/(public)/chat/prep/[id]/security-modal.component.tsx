@@ -54,7 +54,7 @@ const SecurityTipsModal = ({
         </div>
 
         <div
-          className="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar overscroll-contain min-h-0 relative w-full"
+          className="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar touch-pan-y min-h-0 relative w-full"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           <div className="space-y-4 w-full">
