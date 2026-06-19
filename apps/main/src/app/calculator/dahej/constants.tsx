@@ -39,7 +39,7 @@ export const premiumStyles = `
   .text-burgundy { color: #301118; }
   .bg-burgundy { background-color: #301118; }
   .border-burgundy { border-color: #301118; }
-  .text-gold { color: #d4af37; }
+  .text-gold { color: #f97316; }
 `;
 
 export const cars = [
@@ -69,7 +69,7 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Classic Gold Set",
         items: ["3 Gold Rings", "2 Gold Chains", "1 Gold Watch"],
-        icon: <GiRing className="text-[#d4af37]" />
+        icon: <GiRing className="text-orange-500" />
     },
     {
         name: "Platinum Elegance",
@@ -84,7 +84,7 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Traditional Set",
         items: ["1 Heavy Gold Necklace", "2 Gold Bangles", "3 Gold Rings", "Gold Earrings"],
-        icon: <GiNecklace className="text-[#d4af37]" />
+        icon: <GiNecklace className="text-orange-500" />
     },
     {
         name: "Modern Collection",
@@ -94,17 +94,17 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Royal Heritage",
         items: ["Gold Crown", "2 Diamond Necklaces", "4 Gold Bangles", "3 Gold Rings"],
-        icon: <GiGoldBar className="text-[#d4af37]" />
+        icon: <GiGoldBar className="text-orange-500" />
     },
     {
         name: "Minimalist Set",
         items: ["1 Gold Chain", "1 Gold Ring", "Gold Bracelet", "Simple Earrings"],
-        icon: <GiRing className="text-[#d4af37]" />
+        icon: <GiRing className="text-orange-500" />
     },
     {
         name: "Festive Collection",
         items: ["Heavy Gold Necklace", "2 Gold Armlets", "3 Gold Rings", "Nose Ring", "Anklet"],
-        icon: <GiNecklace className="text-[#d4af37]" />
+        icon: <GiNecklace className="text-orange-500" />
     },
     {
         name: "Business Executive",
@@ -114,7 +114,7 @@ export const jewelrySets: JewelrySet[] = [
     {
         name: "Wedding Set",
         items: ["Mangalsutra", "2 Gold Chains", "4 Gold Bangles", "3 Rings", "Gold Earrings"],
-        icon: <GiDiamonds className="text-[#d4af37]" />
+        icon: <GiDiamonds className="text-orange-500" />
     }
 ];
 

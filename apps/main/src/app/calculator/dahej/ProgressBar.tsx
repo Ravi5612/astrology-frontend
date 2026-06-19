@@ -16,12 +16,12 @@ export const ProgressBar = ({ label, value, max = 100 }: ProgressBarProps) => {
                 <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-[#301118]/50">
                     {label}
                 </p>
-                <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-[#d4af37]">
+                <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-orange-500">
                     {value}
                 </p>
             </div>
             <div 
-                className="w-full h-3 rounded-full bg-[#d4af37]/10 overflow-hidden border border-yellow-100"
+                className="w-full h-3 rounded-full bg-orange-500/10 overflow-hidden border border-yellow-100"
                 role="progressbar"
                 aria-valuenow={value}
                 aria-valuemin={0}
@@ -29,7 +29,7 @@ export const ProgressBar = ({ label, value, max = 100 }: ProgressBarProps) => {
                 aria-label={label}
             >
                 <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#d4af37] to-[#f4d03f] transition-all duration-700"
+                    className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-700"
                     style={{ width: `${percentage}%` }}
                 />
             </div>

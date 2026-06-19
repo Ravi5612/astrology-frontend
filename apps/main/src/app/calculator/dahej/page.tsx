@@ -27,7 +27,7 @@ const DahejCalculatorPage = () => {
     } = useDahejCalculator();
 
     return (
-        <div className="min-h-screen bg-[#fffaf7] selection:bg-[#d4af37]/20 uppercase">
+        <div className="min-h-screen bg-[#fffaf7] selection:bg-orange-500/20 uppercase">
             <style dangerouslySetInnerHTML={{ __html: premiumStyles }} />
 
             <DahejHero lang={lang} toggleLang={toggleLang} t={t} />

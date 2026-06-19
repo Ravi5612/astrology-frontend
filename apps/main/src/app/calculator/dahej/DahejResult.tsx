@@ -19,40 +19,40 @@ const DahejResult: React.FC<DahejResultProps> = ({ result, t }) => {
 
                         <div className="relative z-10">
                             <div className="text-center mb-16">
-                                <span className="inline-block bg-[#d4af37]/10 text-[#d4af37] px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
+                                <span className="inline-block bg-orange-500/10 text-orange-500 px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8">
                                     {t.results.badge}
                                 </span>
 
                                 <h2 className="text-4xl md:text-6xl font-black text-[#301118] mb-6 tracking-tight">
-                                    {t.results.title.split("{package}")[0]} <span className="text-[#d4af37]">{t.results.package}</span>
+                                    {t.results.title.split("{package}")[0]} <span className="text-orange-500">{t.results.package}</span>
                                 </h2>
                                 <p className="text-lg text-[#301118]/60 mb-4">
-                                    {t.results.tierLabel} <span className="font-black text-[#d4af37]">{result.itemTier}</span> {t.results.packageLabel}
+                                    {t.results.tierLabel} <span className="font-black text-orange-500">{result.itemTier}</span> {t.results.packageLabel}
                                 </p>
-                                <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mb-16"></div>
+                                <div className="w-32 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto mb-16"></div>
                             </div>
 
                             <div className="flex flex-col items-center">
                                 {/* Main Amount Display */}
                                 <div className="relative mb-16">
                                     <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl flex items-center justify-center p-8 border-8 border-yellow-50 relative group">
-                                        <div className="absolute inset-0 rounded-full border-8 border-[#d4af37] border-t-transparent animate-spin-slow opacity-20"></div>
+                                        <div className="absolute inset-0 rounded-full border-8 border-orange-500 border-t-transparent animate-spin-slow opacity-20"></div>
                                         <div className="text-center">
                                             <span className="block text-4xl md:text-6xl font-black text-[#301118] leading-none group-hover:scale-110 transition-transform duration-500">
                                                 {result.formattedDahej}
                                             </span>
-                                            <span className="text-[12px] font-black uppercase tracking-[4px] text-[#d4af37] mt-4 block">
+                                            <span className="text-[12px] font-black uppercase tracking-[4px] text-orange-500 mt-4 block">
                                                 {t.results.totalValue}
                                             </span>
                                         </div>
-                                        <GiDiamonds className="absolute -top-4 -right-4 text-[#d4af37] text-5xl animate-bounce shadow-xl" />
+                                        <GiDiamonds className="absolute -top-4 -right-4 text-orange-500 text-5xl animate-bounce shadow-xl" />
                                     </div>
                                 </div>
 
                                 {/* Message */}
                                 <div className="max-w-2xl text-center mb-14">
                                     <div className="bg-[#301118] text-white p-10 rounded-[3rem] shadow-2xl relative">
-                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#d4af37] p-4 rounded-2xl shadow-lg">
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-orange-500 p-4 rounded-2xl shadow-lg">
                                             <GiSparkles size={28} />
                                         </div>
                                         <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0">
@@ -78,19 +78,19 @@ const DahejResult: React.FC<DahejResultProps> = ({ result, t }) => {
 
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                                             <IncludedItemCard
-                                                icon={<FaCar size={28} className="text-[#d4af37]" />}
+                                                icon={<FaCar size={28} className="text-orange-500" />}
                                                 title={t.results.items.car}
                                                 items={[result.includedItems.car]}
                                                 description={t.results.items.carDesc}
                                             />
                                             <IncludedItemCard
-                                                icon={<FaGem size={28} className="text-[#d4af37]" />}
+                                                icon={<FaGem size={28} className="text-orange-500" />}
                                                 title={result.includedItems.jewelry.name}
                                                 items={result.includedItems.jewelry.items}
                                                 description={t.results.items.jewelryDesc}
                                             />
                                             <IncludedItemCard
-                                                icon={<FaHome size={28} className="text-[#d4af37]" />}
+                                                icon={<FaHome size={28} className="text-orange-500" />}
                                                 title={t.results.items.land}
                                                 items={[result.includedItems.land]}
                                                 description={t.results.items.landDesc}
@@ -106,8 +106,8 @@ const DahejResult: React.FC<DahejResultProps> = ({ result, t }) => {
                                             {t.results.factorsTitle}
                                         </h4>
                                         <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-yellow-50 flex items-center gap-2">
-                                            <FaStar className="text-[#d4af37]" size={14} />
-                                            <span className="text-xs font-black text-[#d4af37] uppercase tracking-widest">
+                                            <FaStar className="text-orange-500" size={14} />
+                                            <span className="text-xs font-black text-orange-500 uppercase tracking-widest">
                                                 {t.results.weightLabel}
                                             </span>
                                         </div>
@@ -121,7 +121,7 @@ const DahejResult: React.FC<DahejResultProps> = ({ result, t }) => {
                                     </div>
 
                                     <div className="mt-10 flex items-start gap-4 bg-white rounded-2xl p-6 border border-yellow-50 shadow-sm">
-                                        <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/10 flex items-center justify-center text-[#d4af37]">
+                                        <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
                                             <FaBalanceScale size={18} />
                                         </div>
                                         <div>

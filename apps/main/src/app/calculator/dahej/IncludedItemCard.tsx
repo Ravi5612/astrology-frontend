@@ -2,9 +2,9 @@ import React from "react";
 import { IncludedItemCardProps } from "@/lib/types";
 
 export const IncludedItemCard = ({ icon, title, items, description }: IncludedItemCardProps) => (
-    <div className="glass-card rounded-3xl p-6 border border-[#301118]/5 hover:border-[#d4af37]/30 transition-all duration-300 group hover:shadow-lg">
+    <div className="glass-card rounded-3xl p-6 border border-[#301118]/5 hover:border-orange-500/30 transition-all duration-300 group hover:shadow-lg">
         <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d4af37]/10 to-[#f4d03f]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/10 to-orange-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                 {icon}
             </div>
             <div className="flex-1">
@@ -12,7 +12,7 @@ export const IncludedItemCard = ({ icon, title, items, description }: IncludedIt
                 <div className="space-y-2">
                     {items.map((item, index) => (
                         <div key={index} className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#d4af37]"></div>
+                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                             <p className="m-0 text-sm text-[#301118]/70">{item}</p>
                         </div>
                     ))}
