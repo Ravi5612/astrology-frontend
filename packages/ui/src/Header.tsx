@@ -776,7 +776,7 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
 
                 {/* Hamburger — mobile only */}
                 <button
-                  className="ml-auto lg:hidden flex flex-col gap-1.5 p-2 rounded-lg border-2 border-orange/50 bg-[#FAE8D6] hover:border-orange hover:bg-[#F2D9C1] transition-all"
+                  className="ml-auto lg:hidden flex flex-col gap-1.5 p-2 border-2 border-orange/50 bg-[#FAE8D6] hover:border-orange hover:bg-[#F2D9C1] transition-all"
                   type="button"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   aria-label="Toggle navigation"
