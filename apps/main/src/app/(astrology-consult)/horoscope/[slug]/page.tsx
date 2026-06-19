@@ -46,7 +46,7 @@ export default function ZodiacDetailsPage() {
       setLoading(true);
       setError(false);
       
-      const [data, fetchError] = await api.get<any>(`/astrology/horoscope/daily?sign=${slug}&lang=${lang}`);
+      const [data, fetchError] = await api.get<any>(`/astrology/horoscope-daily?sign=${slug}&lang=${lang}`);
       
       if (fetchError) {
           console.error("Error fetching data:", fetchError);
