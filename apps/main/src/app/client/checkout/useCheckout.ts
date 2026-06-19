@@ -248,6 +248,10 @@ export const useCheckout = () => {
         );
         refreshBalance();
 
+        if (isOrder && !buyNowInfo) {
+          useCartStore.getState().resetCart();
+        }
+
         if (isOrder) {
           router.push("/client/profile?tab=orders");
         } else {
@@ -358,6 +362,10 @@ export const useCheckout = () => {
               toast.success(
                 isOrder ? "Order placed successfully!" : "Payment successful!",
               );
+
+              if (isOrder && !buyNowInfo) {
+                useCartStore.getState().resetCart();
+              }
 
               if (isOrder) {
                 router.push("/client/profile?tab=orders");
