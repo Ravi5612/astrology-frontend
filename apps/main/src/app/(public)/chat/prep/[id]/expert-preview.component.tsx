@@ -227,12 +227,12 @@ const ExpertPreview = ({
               <button
                 onClick={handleStartConsultation}
                 disabled={actionLoading}
-                className={`relative w-full py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2.5rem] font-black lg:text-xl text-l flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-8 border-orange/80 overflow-hidden cursor-pointer ${
+                className={`relative w-full py-4 md:py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2rem] md:rounded-[2.5rem] font-black text-base md:text-xl flex items-center justify-center gap-2 md:gap-4 shadow-[0_15px_30px_rgba(255,107,0,0.25)] md:shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_20px_40px_rgba(255,107,0,0.35)] md:hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-[4px] md:border-b-8 border-orange/80 overflow-hidden cursor-pointer ${
                   actionLoading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
-                <MessageSquare className="w-7 h-7 fill-white/20" />
+                <MessageSquare className="w-5 h-5 md:w-7 md:h-7 fill-white/20" />
                 <span>
                   {actionLoading ? "CONNECTING..." : "START CONSULTATION"}
                 </span>
