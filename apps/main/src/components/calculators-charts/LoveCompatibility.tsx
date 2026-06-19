@@ -71,17 +71,17 @@ const ProgressBar: React.FC<ProgressBarProps & { fontStyle?: any }> = ({ label, 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-burgundy/50" style={fontStyle}>
+        <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-[#301118]/50" style={fontStyle}>
           {label}
         </p>
-        <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-primary">
+        <p className="m-0 text-[11px] font-black uppercase tracking-[3px] text-orange-500">
           {value}%
         </p>
       </div>
 
-      <div className="w-full h-3 rounded-full bg-primary/10 overflow-hidden border border-orange-100">
+      <div className="w-full h-3 rounded-full bg-orange-500/10 overflow-hidden border border-orange-100">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-700"
+          className="h-full rounded-full bg-orange-500 transition-all duration-700"
           style={{ width: `${value}%` }}
         />
       </div>
@@ -155,110 +155,106 @@ const LoveCompatibilityCalcultor: React.FC = () => {
           titleAccent={t.hero.titleAccent}
           paragraph={t.hero.paragraph}
         />
-
-        <div className="absolute top-6 right-6 z-50">
-          <button
-            onClick={toggleLang}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
-          >
-            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-            {lang === "en" ? "हिंदी" : "English"}
-          </button>
-        </div>
       </section>
 
-      <LoveCompatibilityForm
-        maleName={maleName}
-        setMaleName={setMaleName}
-        femaleName={femaleName}
-        setFemaleName={setFemaleName}
-        loading={loading}
-        canCalculate={canCalculate}
-        handleCalculate={handleCalculate}
-        t={t}
-        fontStyle={fontStyle}
-      />
+      {/* Main Content Area */}
+      <section className="py-12 md:py-24 relative overflow-hidden">
+        <div className="container px-4 md:px-6">
+          <div className="glass-card rounded-[2rem] md:rounded-[4rem] p-6 md:p-12 lg:p-16 shadow-[0_20px_60px_rgba(48,17,24,0.12)] border-t-4 border-t-orange-500/50 relative overflow-hidden">
+            
+            <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
+              <GiLotus size={150} />
+            </div>
 
-      {/* Result Section */}
-      <div ref={resultsRef}>
-        {result && (
-          <section className="py-24 bg-white relative overflow-hidden">
-            <div className="container px-6">
-              <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
-                    <GiLotus size={300} className="animate-spin-slow" />
-                  </div>
+            <div className="text-center mb-10 md:mb-16 relative z-10">
+              <h2 className="text-3xl md:text-5xl font-black text-[#301118] mb-2 tracking-tight" style={fontStyle}>
+                {t.form.title.replace("{percentage}", t.form.percentage)}
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto mt-4"></div>
+            </div>
 
-                  <div className="relative z-10">
-                    <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+            <div className={`grid gap-12 lg:gap-16 items-center ${result ? 'lg:grid-cols-2' : 'max-w-xl mx-auto'}`}>
+              
+              {/* Form Side */}
+              <div className="relative z-10 w-full">
+                <LoveCompatibilityForm
+                  maleName={maleName}
+                  setMaleName={setMaleName}
+                  femaleName={femaleName}
+                  setFemaleName={setFemaleName}
+                  loading={loading}
+                  canCalculate={canCalculate}
+                  handleCalculate={handleCalculate}
+                  t={t}
+                  fontStyle={fontStyle}
+                />
+              </div>
+
+              {/* Result Side */}
+              {result && (
+                <div ref={resultsRef} className="animate-in fade-in slide-in-from-right-8 duration-700 w-full h-full flex flex-col">
+                  <div className="bg-gradient-to-br from-[#301118] to-[#1a090d] rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden border border-orange-500/20 text-center flex-1 flex flex-col justify-center">
+                    <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
+                      <GiLotus size={200} className="text-orange-500 animate-spin-slow" />
+                    </div>
+
+                    <div className="relative z-10">
+                      <span className="inline-block bg-orange-500/20 text-orange-400 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
                         {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
-                        {t.results.title}
-                      </h2>
-
-                      <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
-                    </div>
-
-                    <div className="flex flex-col items-center">
-                      <div className="relative mb-16">
-                        <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl flex items-center justify-center p-8 border-8 border-orange-50 relative group">
-                          <div className="absolute inset-0 rounded-full border-8 border-primary border-t-transparent animate-spin-slow opacity-20"></div>
-
-                          <div className="text-center">
-                            <span className="block text-7xl md:text-9xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
-                              {result.love}
-                              <span className="text-4xl text-primary">%</span>
-                            </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
-                              {t.results.cosmicBond}
-                            </span>
-                          </div>
-
-                          <FaHeart className="absolute -top-4 -right-4 text-pink-500 text-5xl animate-bounce shadow-xl" />
-                        </div>
+                      <div className="flex justify-center mb-10">
+                         <div className="w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-orange-500/30 flex items-center justify-center relative bg-[#301118] group">
+                            <div className="absolute inset-0 rounded-full border-8 border-orange-500 border-t-transparent animate-spin-slow opacity-50"></div>
+                            <div className="text-center">
+                              <span className="block text-5xl md:text-7xl font-black text-white leading-none group-hover:scale-110 transition-transform duration-500">
+                                {result.love}
+                                <span className="text-2xl text-orange-500">%</span>
+                              </span>
+                              <span className="text-[10px] font-bold uppercase tracking-[2px] text-orange-400 mt-2 block" style={fontStyle}>
+                                {t.results.cosmicBond}
+                              </span>
+                            </div>
+                            <FaHeart className="absolute -top-3 -right-3 text-pink-500 text-4xl animate-bounce shadow-xl" />
+                         </div>
                       </div>
 
-                      <div className="max-w-2xl text-center mb-14">
-                        <div className="bg-burgundy text-white p-10 rounded-[3rem] shadow-2xl relative">
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary p-4 rounded-2xl shadow-lg">
-                            <GiSparkles size={28} />
+                      <div className="mb-8">
+                        <div className="bg-white/5 border border-white/10 text-white p-6 rounded-3xl shadow-xl relative">
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-orange-500 p-3 rounded-xl shadow-lg">
+                            <GiSparkles size={20} className="text-[#301118]" />
                           </div>
-
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
+                          <p className="text-base md:text-lg font-light italic leading-relaxed text-orange-100/90 m-0 mt-2" style={fontStyle}>
                             "{result.message}"
                           </p>
                         </div>
                       </div>
 
-                      <div className="w-full max-w-3xl bg-[#fff9f6] rounded-[3.5rem] p-8 md:p-12 border border-orange-100">
-                        <div className="flex items-center justify-between mb-10">
-                          <h4 className="text-xl font-black text-burgundy tracking-tight m-0" style={fontStyle}>
+                      <div className="w-full bg-white/5 rounded-3xl p-6 border border-orange-500/10 text-left">
+                        <div className="flex items-center justify-between mb-6">
+                          <h4 className="text-base font-black text-white tracking-tight m-0" style={fontStyle}>
                             {t.results.breakdownTitle}
                           </h4>
-                          <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-50 flex items-center gap-2">
-                            <FaStar className="text-primary" size={14} />
-                            <span className="text-xs font-black text-primary uppercase tracking-widest" style={fontStyle}>
+                          <div className="px-3 py-1 bg-orange-500/20 rounded-lg shadow-sm border border-orange-500/30 flex items-center gap-1.5">
+                            <FaStar className="text-orange-400" size={10} />
+                            <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest" style={fontStyle}>
                               {t.results.premiumInsight}
                             </span>
                           </div>
                         </div>
 
-                        <div className="space-y-8">
+                        <div className="space-y-4">
                           <ProgressBar label={t.results.trust} value={result.trust} fontStyle={fontStyle} />
                           <ProgressBar label={t.results.romance} value={result.romance} fontStyle={fontStyle} />
                           <ProgressBar label={t.results.communication} value={result.communication} fontStyle={fontStyle} />
                         </div>
 
                         <div className="mt-10 flex items-start gap-4 bg-white rounded-2xl p-6 border border-orange-50 shadow-sm">
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                          <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
                             <FaBalanceScale size={18} />
                           </div>
                           <div>
-                            <p className="m-0 text-sm font-black text-burgundy" style={fontStyle}>
+                            <p className="m-0 text-sm font-black text-[#301118]" style={fontStyle}>
                               {t.results.tipTitle}
                             </p>
                             <p className="m-0 text-sm text-gray-500 italic leading-relaxed" style={fontStyle}>
@@ -270,11 +266,11 @@ const LoveCompatibilityCalcultor: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-          </section>
-        )}
-      </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
