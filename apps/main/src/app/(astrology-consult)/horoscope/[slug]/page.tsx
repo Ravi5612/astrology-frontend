@@ -308,7 +308,10 @@ export default function ZodiacDetailsPage() {
                 </div>
 
                 {/* Prediction Cards Grid */}
-                <div className="flex md:grid md:grid-cols-2 gap-4 md:gap-10 mb-20 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
+                <div 
+                  className="flex md:grid md:grid-cols-2 gap-4 md:gap-10 mb-20 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0 touch-pan-x"
+                  data-lenis-prevent="true"
+                >
                   {horoscope.predictions.map((p: any, idx: number) => {
                     const cat = getPredictionCategory(p.type);
                     return (
