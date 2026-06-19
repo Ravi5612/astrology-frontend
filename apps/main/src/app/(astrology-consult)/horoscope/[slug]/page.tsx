@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguageStore } from "@repo/store";
 import { ZodiacSignsData } from "@/components/features/services/zodiac";
 import CTA from "@/components/layout/main/CTA";
 import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
@@ -23,7 +24,7 @@ export default function ZodiacDetailsPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
-  const [lang, setLang] = useState<"en" | "hi">("en");
+  const { lang } = useLanguageStore();
   const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
