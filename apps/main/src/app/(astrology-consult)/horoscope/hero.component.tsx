@@ -23,7 +23,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
 
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center lg:items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center lg:items-start">
           {/* Content Side */}
           <div className="lg:col-span-7 space-y-10 order-2 lg:order-1">
             <div className="space-y-6">
