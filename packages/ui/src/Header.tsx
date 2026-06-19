@@ -938,6 +938,48 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
                         {t.navLiveDarshan}
                       </Link>
                     </li>
+
+                    {/* Mobile Only: Profile and Auth */}
+                    <li className={`lg:hidden w-full mt-2 pt-2 ${isMenuOpen ? 'border-t border-white/20 pb-4' : 'hidden'}`}>
+                      {isAuthenticated ? (
+                        <>
+                          <Link
+                            className="text-[15px] text-white/90 no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors"
+                            href={PATHS.PROFILE}
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <i className="fa-solid fa-user-circle"></i>
+                              {t.myProfile || "My Profile"}
+                            </div>
+                          </Link>
+                          <Link
+                            className="text-[15px] text-white/90 no-underline px-3 py-[10px] font-medium block hover:text-orange transition-colors"
+                            href={`${PATHS.PROFILE}?tab=wallet`}
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <i className="fa-solid fa-wallet"></i>
+                              {t.myWallet || "My Wallet"}
+                            </div>
+                          </Link>
+                          <button
+                            className="text-[15px] text-red-400 no-underline px-3 py-[10px] font-medium block w-full text-left hover:text-red-300 transition-colors bg-transparent border-0"
+                            onClick={() => { setIsMenuOpen(false); handleLogout(); }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                              {t.logout || "Logout"}
+                            </div>
+                          </button>
+                        </>
+                      ) : (
+                        <div className="flex gap-2 px-3 py-2">
+                           <button onClick={() => { setIsMenuOpen(false); router.push(PATHS.SIGN_IN); }} className="flex-1 bg-orange text-white py-2 rounded-xl font-bold border-0">{t.signIn || "Sign In"}</button>
+                           <button onClick={() => { setIsMenuOpen(false); router.push(PATHS.REGISTER); }} className="flex-1 bg-white/10 border border-white/20 text-white py-2 rounded-xl font-bold">{t.register || "Register"}</button>
+                        </div>
+                      )}
+                    </li>
                   </ul>
                 </div>
               </nav>
