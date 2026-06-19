@@ -43,9 +43,9 @@ export default function ChatFooter({
                             </div>
                         )}
                         <div className="flex items-end gap-2 md:gap-4 overflow-visible px-2">
-                            <button onClick={() => fileInputRef.current?.click()} className={`p-4 rounded-full ${isDarkMode ? 'bg-white/5 text-gray-400 hover:text-white' : 'bg-white text-gray-400 hover:text-[#fd6410]'} transition-all hover:scale-110 active:scale-95 shadow-sm group relative overflow-visible`}>
-                                <Paperclip className={`w-5 h-5 md:w-6 md:h-6 ${uploading ? 'animate-pulse' : ''}`} />
-                                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap whitespace-nowrap uppercase tracking-widest shadow-xl border border-white/10 z-[100]">Attach File</div>
+                            <button onClick={() => fileInputRef.current?.click()} className={`p-2.5 md:p-4 rounded-full ${isDarkMode ? 'bg-white/5 text-gray-400 hover:text-white' : 'bg-white text-gray-400 hover:text-[#fd6410]'} transition-all hover:scale-110 active:scale-95 shadow-sm group relative overflow-visible`}>
+                                <Paperclip className={`w-4 h-4 md:w-6 md:h-6 ${uploading ? 'animate-pulse' : ''}`} />
+                                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap uppercase tracking-widest shadow-xl border border-white/10 z-[100]">Attach File</div>
                             </button>
                             <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*,.pdf,.doc,.docx" />
                             <textarea
@@ -72,10 +72,10 @@ export default function ChatFooter({
                 <button
                     onClick={handleSendMessage}
                     disabled={(!inputValue.trim() && !pendingAttachment) || uploading}
-                    className={`flex-shrink-0 w-13 md:w-16 h-13 md:h-16 rounded-[24px] md:rounded-[28px] mt-1 flex items-center justify-center transition-all shadow-xl active:scale-90 group relative overflow-hidden ${inputValue.trim() || pendingAttachment ? "bg-[#fd6410] text-white hover:shadow-[#fd6410]/40 hover:-translate-y-1 hover:scale-105" : "bg-gray-100 text-gray-300 md:cursor-not-allowed cursor-not-allowed"}`}
+                    className={`flex-shrink-0 w-12 md:w-16 h-12 md:h-16 rounded-[20px] md:rounded-[28px] mt-1 flex items-center justify-center transition-all shadow-xl active:scale-90 group relative overflow-hidden ${inputValue.trim() || pendingAttachment ? "bg-[#fd6410] text-white hover:shadow-[#fd6410]/40 hover:-translate-y-1 hover:scale-105" : "bg-gray-100 text-gray-300 md:cursor-not-allowed cursor-not-allowed"}`}
                 >
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#fd6410] to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <Send className={`w-6 h-6 md:w-7 md:h-7 relative z-10 transition-transform ${inputValue.trim() || pendingAttachment ? "group-hover:-translate-y-1 group-hover:translate-x-1" : ""}`} />
+                    <Send className={`w-5 h-5 md:w-7 md:h-7 relative z-10 transition-transform ${inputValue.trim() || pendingAttachment ? "group-hover:-translate-y-1 group-hover:translate-x-1" : ""}`} />
                 </button>
             </div>
 
