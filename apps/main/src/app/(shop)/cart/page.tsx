@@ -124,7 +124,7 @@ const CartPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Cart Items */}
             <div className="lg:col-span-8 space-y-6">
-              <div className="bg-white rounded-[3rem] shadow-premium border border-gray-100 p-8 md:p-10 divide-y divide-gray-100">
+              <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-premium border border-gray-100 p-4 sm:p-6 md:p-10 divide-y divide-gray-100">
                 {cartItems.map((item: any) => {
                   const imageUrl = getProductImageUrl(item.product);
 
@@ -153,11 +153,11 @@ const CartPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between w-full md:w-auto gap-8">
+                      <div className="flex items-center justify-between w-full md:w-auto gap-2 sm:gap-4 md:gap-8">
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
+                        <div className="flex items-center gap-1 md:gap-2 bg-gray-50 p-1 md:p-1.5 rounded-xl md:rounded-2xl border border-gray-100 shrink-0">
                           <button
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
+                            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg md:rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
                             onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, -1)}
                             disabled={cartLoading || item.quantity <= 1}
                           >
@@ -167,10 +167,10 @@ const CartPage: React.FC = () => {
                             type="text"
                             value={item.quantity}
                             readOnly
-                            className="w-12 text-center font-black text-gray-900 bg-transparent border-0 outline-none"
+                            className="w-8 md:w-12 text-center font-black text-gray-900 bg-transparent border-0 outline-none text-sm md:text-base"
                           />
                           <button
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
+                            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg md:rounded-xl bg-white text-gray-400 hover:text-orange transition-all active:scale-90 shadow-sm disabled:opacity-50"
                             onClick={() => handleQuantityChange(item.productId || item.product?.id || 0, 1)}
                             disabled={cartLoading}
                           >
@@ -179,13 +179,13 @@ const CartPage: React.FC = () => {
                         </div>
  
                         {/* Price */}
-                        <div className="text-xl font-black text-gray-900 italic w-24 text-right">
+                        <div className="text-base md:text-xl font-black text-gray-900 italic min-w-[60px] md:w-24 text-right shrink-0">
                           ₹{(item.product?.sale_price || item.product?.price || 0) * item.quantity}
                         </div>
  
                         {/* Remove */}
                         <button
-                          className="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm disabled:opacity-50"
+                          className="w-10 h-10 md:w-12 md:h-12 flex shrink-0 items-center justify-center rounded-xl md:rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm disabled:opacity-50"
                           onClick={() => handleRemoveItem(item.productId || item.product?.id || 0)}
                           disabled={cartLoading}
                         >
