@@ -50,10 +50,10 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                         <div className="w-2 h-2 bg-orange rounded-full animate-pulse"></div>
                         <span className="text-[10px] font-black text-orange-700 uppercase tracking-widest leading-none">Astro Shop Exclusive</span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none uppercase">
+                    <h2 className="text-2xl md:text-5xl font-black text-slate-900 tracking-tight leading-none uppercase">
                         {t.products.title}
                     </h2>
-                    <p className="text-lg text-slate-500 font-bold italic leading-relaxed">
+                    <p className="text-sm md:text-lg text-slate-500 font-bold italic leading-relaxed">
                         {t.products.subtitle}
                     </p>
                 </div>

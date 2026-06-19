@@ -58,7 +58,7 @@ const StoreSection = () => {
 
     return (
         <section
-            className="py-[80px] relative overflow-hidden font-outfit"
+            className="pt-8 pb-[80px] md:py-[80px] relative overflow-hidden font-outfit"
             style={{
                 backgroundColor: "#301118",
                 backgroundImage: "url(/images/bg-dark.png)",
