@@ -203,15 +203,15 @@ export default function ZodiacDetailsPage() {
                     unoptimized={true}
                     className="animate-[spin_60s_linear_infinite] opacity-60 object-contain p-2 lg:p-8"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 lg:p-16">
-                    <div className="relative w-full h-full lg:w-full lg:h-full scale-[1.05] lg:scale-100 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-6 lg:p-16">
+                    <div className="relative w-full h-full flex items-center justify-center">
                       <Image
                         src={signData.image}
                         alt={signData.title}
-                        width={320}
-                        height={320}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         unoptimized={true}
-                        className="object-contain rounded-full drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
+                        className="object-contain rounded-full drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6 pointer-events-auto"
                         priority
                       />
                     </div>
