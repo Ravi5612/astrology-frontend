@@ -11,7 +11,7 @@ const AstrologyServices = () => {
             <span>Astrology Services </span>
           </h2>
           <div className="overflow-hidden">
-            <div className="h-[550px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="max-h-[550px] overflow-y-auto pr-2 custom-scrollbar">
               <div className="row mx-0">
                 {AstrologyServicesData.map((service) => (
                   <div className="col-6 col-md-4 col-lg-3 px-2 mb-4" key={service.id}>
