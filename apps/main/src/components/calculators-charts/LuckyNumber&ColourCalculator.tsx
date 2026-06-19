@@ -55,31 +55,61 @@ const LuckyColorNumberCalculator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf7] selection:bg-primary/20">
+    <div className="min-h-screen bg-[#fffaf7] selection:bg-orange-500/20">
       <style dangerouslySetInnerHTML={{ __html: premiumCardStyles }} />
 
-      <CalculatorHero
-        badgeText={t.hero.badge}
-        titleMain={t.hero.titleMain}
-        titleAccent={t.hero.titleAccent}
-        paragraph={t.hero.description}
-      />
+      <section className="relative">
+        <CalculatorHero
+          badgeText={t.hero.badge}
+          titleMain={t.hero.titleMain}
+          titleAccent={t.hero.titleAccent}
+          paragraph={t.hero.description}
+        />
+      </section>
 
-      <LuckyVibesForm
-        fullName={fullName}
-        dob={dob}
-        zodiac={zodiac}
-        loading={loading}
-        canCalculate={canCalculate}
-        setFullName={setFullName}
-        setDob={setDob}
-        setZodiac={setZodiac}
-        handleCalculate={handleCalculate}
-      />
+      {/* Main Content Area */}
+      <section className="py-12 md:py-24 relative overflow-hidden">
+        <div className="container px-4 md:px-6">
+          <div className="glass-card rounded-[2rem] md:rounded-[4rem] p-6 md:p-12 lg:p-16 shadow-[0_20px_60px_rgba(48,17,24,0.12)] border-t-4 border-t-orange-500/50 relative overflow-hidden">
+            
+            <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
+              <GiLotus size={150} />
+            </div>
 
-      <div ref={resultsRef}>
-        {result && <LuckyVibesResult result={result} />}
-      </div>
+            <div className="text-center mb-10 md:mb-16 relative z-10">
+              <h2 className="text-3xl md:text-5xl font-black text-[#301118] mb-2 tracking-tight" style={fontStyle}>
+                {t.form.title}
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto mt-4"></div>
+            </div>
+
+            <div className={`grid gap-12 lg:gap-16 items-center ${result ? 'lg:grid-cols-2' : 'max-w-xl mx-auto'}`}>
+              
+              {/* Form Side */}
+              <div className="relative z-10 w-full">
+                <LuckyVibesForm
+                  fullName={fullName}
+                  dob={dob}
+                  zodiac={zodiac}
+                  loading={loading}
+                  canCalculate={canCalculate}
+                  setFullName={setFullName}
+                  setDob={setDob}
+                  setZodiac={setZodiac}
+                  handleCalculate={handleCalculate}
+                />
+              </div>
+
+              {/* Result Side */}
+              {result && (
+                <div ref={resultsRef} className="animate-in fade-in slide-in-from-right-8 duration-700 w-full h-full flex flex-col">
+                  <LuckyVibesResult result={result} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
