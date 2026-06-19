@@ -66,10 +66,10 @@ export default function Header({
                 </div>
             </div>
 
-            <div className="flex items-center gap-4 md:gap-8">
+            <div className="flex items-center gap-2 md:gap-8">
                 {/* Timers Section */}
                 {sessionStatus === 'active' && (
-                    <div className="flex items-center gap-4 md:gap-5">
+                    <div className="flex items-center gap-2 md:gap-5">
                         {/* Active Duration - High Contrast */}
                         <div className="hidden sm:flex flex-col items-end gap-0.5">
                             <span className="text-[9px] font-black uppercase tracking-[0.1em] text-white/80 whitespace-nowrap leading-none">Elapsed</span>
@@ -82,16 +82,16 @@ export default function Header({
                         <div className="w-px h-8 bg-white/20 hidden sm:block"></div>
 
                         {/* Time Left Capsule Design */}
-                        <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-4 border border-white/30 shadow-2xl relative overflow-hidden group">
+                        <div className="bg-black/20 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2 md:gap-4 border border-white/30 shadow-2xl relative overflow-hidden group">
                             <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div className="p-1.5 bg-white/10 rounded-full">
+                            <div className="p-1 md:p-1.5 bg-white/10 rounded-full">
                                 <Clock className="w-3.5 h-3.5 text-white" />
                             </div>
                             <div className="flex flex-col items-start gap-0.5">
-                                <span className="text-[9px] font-black uppercase tracking-[0.1em] text-white/80 whitespace-nowrap leading-none">
+                                <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.1em] text-white/80 whitespace-nowrap leading-none">
                                     {isFree ? 'Free Time' : 'Time Left'}
                                 </span>
-                                <span className="text-sm md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">
+                                <span className="text-xs md:text-base font-black tabular-nums text-white drop-shadow-sm leading-none">
                                     {mounted ? formatTime(timeLeft) : "--:--"}
                                 </span>
                             </div>
@@ -102,9 +102,9 @@ export default function Header({
                 {sessionStatus === 'active' && (
                     <button
                         onClick={handleEndChat}
-                        className="bg-white text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl font-bold text-xs md:text-sm shadow-lg flex items-center gap-2 transition-all active:scale-95 mx-2"
+                        className="bg-white text-red-600 hover:bg-red-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full md:rounded-xl font-bold text-xs md:text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
                     >
-                        <AlertCircle className="w-4 h-4" />
+                        <AlertCircle className="w-4 h-4 md:w-4 md:h-4" />
                         <span className="hidden sm:inline">End Session</span>
                     </button>
                 )}
@@ -113,18 +113,18 @@ export default function Header({
 
                 {/* Nav Buttons & Toggle */}
                 <div className="flex items-center gap-1">
-                    <button onClick={() => router.push('/')} className="p-2 hover:bg-black/10 rounded-xl transition-all active:scale-95 flex flex-col items-center gap-0.5 text-white">
+                    <button onClick={() => router.push('/')} className="p-1.5 hover:bg-black/10 rounded-xl transition-all active:scale-95 flex flex-col items-center gap-0.5 text-white">
                         <Home className="w-4 h-4" />
                         <span className="text-[8px] font-bold uppercase">Home</span>
                     </button>
-                    <button onClick={() => router.push('/profile')} className="p-2 hover:bg-black/10 rounded-xl transition-all active:scale-95 flex flex-col items-center gap-0.5 text-white">
+                    <button onClick={() => router.push('/profile')} className="hidden sm:flex p-2 hover:bg-black/10 rounded-xl transition-all active:scale-95 flex-col items-center gap-0.5 text-white">
                         <UserIcon className="w-4 h-4" />
                         <span className="text-[8px] font-bold uppercase">Profile</span>
                     </button>
-                    <div className="w-px h-5 bg-black/10 mx-1"></div>
+                    <div className="w-px h-5 bg-black/10 mx-1 hidden sm:block"></div>
                     <button
                         onClick={() => setIsDarkMode(!isDarkMode)}
-                        className="w-10 h-10 bg-black/20 hover:bg-black/30 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-inner"
+                        className="hidden sm:flex w-10 h-10 bg-black/20 hover:bg-black/30 rounded-full items-center justify-center transition-all active:scale-90 shadow-inner"
                     >
                         {isDarkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-white" />}
                     </button>
