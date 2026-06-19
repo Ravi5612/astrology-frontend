@@ -208,7 +208,8 @@ export default function ZodiacDetailsPage() {
                       <Image
                         src={signData.image}
                         alt={signData.title}
-                        fill
+                        width={320}
+                        height={320}
                         unoptimized={true}
                         className="object-contain rounded-full drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
                         priority
