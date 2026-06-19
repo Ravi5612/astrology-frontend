@@ -60,8 +60,8 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
                 
                 <div className="w-full lg:w-auto shrink-0">
                     <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-orange to-slate-950 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition duration-500"></div>
-                        <div className="relative flex items-center bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm focus-within:shadow-xl focus-within:border-slate-950 transition-all duration-500 min-w-[320px]">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-orange/80 to-orange rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition duration-500"></div>
+                        <div className="relative flex items-center bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm focus-within:shadow-xl focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 transition-all duration-500 w-full sm:min-w-[320px]">
                             <Search className="ml-5 w-5 h-5 text-slate-400" />
                             <input
                                 type="text"
