@@ -382,17 +382,24 @@ export default function ZodiacDetailsPage() {
       </section>
 
       {/* Navigation for other Signs */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        {/* Premium Light Background Elements */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none z-0"></div>
+      <section 
+        className="py-24 relative overflow-hidden bg-white"
+        style={{
+          backgroundImage: "url('/images/back-image.webp')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed"
+        }}
+      >
+        {/* Semi-transparent overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px]"></div>
         
         <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
         
         <div className="max-w-[1400px] mx-auto px-4 relative z-10">
           <div className="text-center mb-20 space-y-6">
-            <div className="inline-block px-5 py-1.5 bg-slate-50 border border-slate-200 rounded-full shadow-sm">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+            <div className="inline-block px-5 py-1.5 bg-white/50 backdrop-blur-md border border-slate-200/50 rounded-full shadow-sm">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
                   {lang === "hi" ? "राशि चक्र" : "The Zodiac Wheel"}
                 </span>
             </div>
