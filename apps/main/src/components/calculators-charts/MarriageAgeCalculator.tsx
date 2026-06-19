@@ -126,105 +126,95 @@ const MarriageAgeCalculator: React.FC = () => {
           paragraph={t.hero.paragraph}
         />
 
-      </section>
+      {/* Main Content Area */}
+      <section className="py-12 md:py-24 relative overflow-hidden">
+        <div className="container px-4 md:px-6">
+          <div className="glass-card rounded-[2rem] md:rounded-[4rem] p-6 md:p-12 lg:p-16 shadow-[0_20px_60px_rgba(48,17,24,0.12)] border-t-4 border-t-orange-500/50 relative overflow-hidden">
+            
+            <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
+              <GiLotus size={150} />
+            </div>
 
-      <MarriageAgeForm
-        name={name}
-        setName={setName}
-        dob={dob}
-        setDob={setDob}
-        loading={loading}
-        canCalculate={canCalculate}
-        handleCalculate={handleCalculate}
-        t={t.form}
-        fontStyle={fontStyle}
-      />
+            <div className="text-center mb-10 md:mb-16 relative z-10">
+              <h2 className="text-3xl md:text-5xl font-black text-[#301118] mb-2 tracking-tight" style={fontStyle}>
+                {t.form.title} <span className="text-orange-500">{t.form.titleAccent}</span>
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto mt-4"></div>
+            </div>
 
-      {/* Result Section */}
-      <div ref={resultsRef}>
-        {result && (
-          <section className="py-24 bg-white relative overflow-hidden">
-            <div className="container px-6">
-              <div className="max-w-5xl mx-auto">
-                <div className="glass-card rounded-[4rem] p-8 md:p-16 shadow-[0_30px_80px_rgba(48,17,24,0.18)] border border-burgundy/5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none">
-                    <GiLotus size={300} className="animate-spin-slow" />
-                  </div>
+            <div className={`grid gap-12 lg:gap-16 items-center ${result ? 'lg:grid-cols-2' : 'max-w-xl mx-auto'}`}>
+              
+              {/* Form Side */}
+              <div className="relative z-10 w-full">
+                <MarriageAgeForm
+                  name={name}
+                  setName={setName}
+                  dob={dob}
+                  setDob={setDob}
+                  loading={loading}
+                  canCalculate={canCalculate}
+                  handleCalculate={handleCalculate}
+                  t={t.form}
+                  fontStyle={fontStyle}
+                />
+              </div>
 
-                  <div className="relative z-10">
-                    <div className="text-center mb-16">
-                      <span className="inline-block bg-primary/10 text-primary px-6 py-2 rounded-full text-[12px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
+              {/* Result Side */}
+              {result && (
+                <div ref={resultsRef} className="animate-in fade-in slide-in-from-right-8 duration-700 w-full h-full flex flex-col">
+                  <div className="bg-gradient-to-br from-[#301118] to-[#1a090d] rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden border border-orange-500/20 text-center flex-1 flex flex-col justify-center">
+                    <div className="absolute top-0 right-0 -mr-10 -mt-10 opacity-10 pointer-events-none">
+                      <GiLotus size={200} className="text-orange-500 animate-spin-slow" />
+                    </div>
+                    
+                    <div className="relative z-10">
+                      <span className="inline-block bg-orange-500/20 text-orange-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[3px] mb-8" style={fontStyle}>
                         {t.results.badge}
                       </span>
 
-                      <h2 className="text-4xl md:text-6xl font-black text-burgundy mb-6 tracking-tight" style={fontStyle}>
-                        {t.results.title} <span className="text-primary">{t.results.titleAccent}</span>
-                      </h2>
-
-                      <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-16"></div>
-                    </div>
-
-                    <div className="flex flex-col items-center">
-                      {/* Ring */}
-                      <div className="relative mb-16">
-                        <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl flex items-center justify-center p-8 border-8 border-orange-50 relative group">
-                          <div className="absolute inset-0 rounded-full border-8 border-primary border-t-transparent animate-spin-slow opacity-20"></div>
-
-                          <div className="text-center">
-                            <span className="block text-5xl md:text-7xl font-black text-burgundy leading-none group-hover:scale-110 transition-transform duration-500">
-                              {result.startAge}–{result.endAge}
-                            </span>
-                            <span className="text-[12px] font-black uppercase tracking-[4px] text-primary mt-4 block" style={fontStyle}>
-                              {t.results.ageWindow}
-                            </span>
-                          </div>
-
-                          <FaRing className="absolute -top-4 -right-4 text-primary text-5xl animate-bounce shadow-xl" />
-                        </div>
+                      <div className="flex justify-center mb-10">
+                         <div className="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-orange-500/30 flex items-center justify-center relative bg-[#301118]">
+                            <div className="absolute inset-0 rounded-full border-4 border-orange-500 border-t-transparent animate-spin-slow"></div>
+                            <div>
+                              <span className="block text-4xl md:text-5xl font-black text-white leading-none">
+                                {result.startAge}–{result.endAge}
+                              </span>
+                              <span className="text-[10px] font-bold uppercase tracking-[2px] text-orange-400 mt-2 block" style={fontStyle}>
+                                {t.results.ageWindow}
+                              </span>
+                            </div>
+                            <div className="absolute -top-3 -right-3 bg-[#301118] p-2 rounded-full border border-orange-500/30 shadow-xl">
+                              <FaRing className="text-orange-500 text-2xl animate-bounce" />
+                            </div>
+                         </div>
                       </div>
 
-                      {/* Text Results */}
-                      <div className="max-w-2xl text-center">
-                        <div className="bg-burgundy text-white p-10 rounded-[3rem] shadow-2xl relative">
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary p-4 rounded-2xl shadow-lg">
-                            <GiSparkles size={28} />
-                          </div>
+                      <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/90 mb-4 m-0" style={fontStyle}>
+                        {t.results.windowLabel} <span className="font-black text-white ml-2">{result.startAge}–{result.endAge}</span>
+                      </p>
 
-                          <p className="text-xl md:text-2xl font-light italic leading-relaxed text-orange-100/90 m-0" style={fontStyle}>
-                            {t.results.windowLabel}{" "}
-                            <span className="font-black text-white ml-2">
-                              {result.startAge}–{result.endAge}
-                            </span>
+                      <p className="text-base md:text-lg font-light italic leading-relaxed text-orange-100/70 mb-8 m-0" style={fontStyle}>
+                        {t.results.bestYearLabel} <span className="font-black text-white ml-2">{result.bestYear}</span>
+                      </p>
+
+                      <div className="mt-auto">
+                        <span className="inline-block px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[3px] text-orange-100/50" style={fontStyle}>
+                          {t.results.disclaimer}
+                        </span>
+                        {!result.hasDob && (
+                          <p className="m-0 mt-4 text-[10px] text-orange-100/40 italic" style={fontStyle}>
+                            {t.results.dobNote}
                           </p>
-
-                          <p className="text-lg md:text-xl font-light italic leading-relaxed text-orange-100/80 mt-6 m-0" style={fontStyle}>
-                            {t.results.bestYearLabel}{" "}
-                            <span className="font-black text-white ml-2">
-                              {result.bestYear}
-                            </span>
-                          </p>
-
-                          <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                            <span className="text-[10px] font-black uppercase tracking-[4px] text-orange-100/70" style={fontStyle}>
-                              {t.results.disclaimer}
-                            </span>
-                          </div>
-
-                          {!result.hasDob && (
-                            <p className="m-0 mt-6 text-xs text-orange-100/50 italic" style={fontStyle}>
-                              {t.results.dobNote}
-                            </p>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-          </section>
-        )}
-      </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
