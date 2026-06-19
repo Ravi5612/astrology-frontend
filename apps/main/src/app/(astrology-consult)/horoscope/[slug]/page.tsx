@@ -157,7 +157,7 @@ export default function ZodiacDetailsPage() {
 
 
         <div className="max-w-[1400px] mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center font-display">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center lg:items-start font-display">
             <div className="lg:col-span-7 space-y-10 order-2 lg:order-1">
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-4">
@@ -191,7 +191,7 @@ export default function ZodiacDetailsPage() {
                 </div>
             </div>
 
-            <div className="lg:col-span-5 relative order-1 lg:order-2 lg:-mt-32">
+            <div className="lg:col-span-5 relative order-1 lg:order-2">
               <div className="relative group flex items-center justify-center">
                 <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-1000"></div>
                 
