@@ -54,8 +54,11 @@ const SecurityTipsModal = ({
         </div>
 
         <div
-          className="p-4 md:p-6 overflow-y-auto custom-scrollbar w-full"
-          style={{ WebkitOverflowScrolling: "touch", maxHeight: "calc(85vh - 140px)" }}
+          className="p-4 md:p-6 w-full relative h-[50vh] overflow-y-auto custom-scrollbar"
+          style={{ 
+            WebkitOverflowScrolling: 'touch', 
+            touchAction: 'pan-y'
+          }}
         >
           <div className="space-y-4 w-full">
             <div className="space-y-3">
