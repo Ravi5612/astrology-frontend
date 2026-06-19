@@ -210,7 +210,7 @@ export default function ZodiacDetailsPage() {
                         alt={signData.title}
                         fill
                         unoptimized={true}
-                        className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
+                        className="object-contain rounded-full drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
                         priority
                       />
                     </div>
@@ -272,7 +272,7 @@ export default function ZodiacDetailsPage() {
                             width={60}
                             height={60}
                             unoptimized={true}
-                            className="w-14 h-14 object-contain drop-shadow-xl"
+                            className="w-14 h-14 object-contain rounded-full drop-shadow-xl"
                         />
                         </div>
                     </div>
@@ -412,7 +412,7 @@ export default function ZodiacDetailsPage() {
                     alt={sign.title}
                     fill
                     unoptimized={true}
-                    className="object-contain"
+                    className="object-contain rounded-full"
                   />
                 </div>
                 <div className="text-center">

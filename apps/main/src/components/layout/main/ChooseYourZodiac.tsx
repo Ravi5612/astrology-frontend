@@ -55,7 +55,7 @@ const ChooseYourZodiac = () => {
                       fill
                       sizes="96px"
                       unoptimized={true}
-                      className="object-contain relative z-10 transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
+                      className="object-contain rounded-full relative z-10 transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
                     />
                   </div>
                   <h3 className="text-xl font-black mb-1 group-hover:text-primary transition-colors tracking-tight">
