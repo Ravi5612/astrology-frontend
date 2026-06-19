@@ -22,6 +22,7 @@ const SecurityTipsModal = ({
     >
       <div
         className="bg-white w-full max-w-lg max-h-[85vh] md:max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col relative shrink-0"
+        data-lenis-prevent="true"
       >
         {/* Header */}
         <div className="p-3 md:p-4 bg-gradient-to-br from-red-500 to-orange-500 text-white relative overflow-hidden flex-shrink-0">
@@ -54,11 +55,11 @@ const SecurityTipsModal = ({
         </div>
 
         <div
-          className="p-4 md:p-6 w-full relative h-[50vh] overflow-y-auto custom-scrollbar"
+          className="p-4 md:p-6 w-full relative overflow-y-auto flex-1 custom-scrollbar touch-pan-y"
           style={{ 
-            WebkitOverflowScrolling: 'touch', 
-            touchAction: 'pan-y'
+            WebkitOverflowScrolling: 'touch',
           }}
+          data-lenis-prevent="true"
         >
           <div className="space-y-4 w-full">
             <div className="space-y-3">
