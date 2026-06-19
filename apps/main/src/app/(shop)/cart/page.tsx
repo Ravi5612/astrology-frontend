@@ -252,12 +252,12 @@ const CartPage: React.FC = () => {
 
         {/* Suggested Products */}
         <div className="mt-32">
-          <div className="flex items-center gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 leading-none">
               {t.cart.completeJourney}
             </h2>
-            <div className="h-1.5 flex-grow bg-gray-100 rounded-full"></div>
-            <p className="text-gray-400 font-black text-xs uppercase tracking-widest shrink-0">{t.cart.personalizedRecs}</p>
+            <div className="hidden md:block h-1.5 flex-grow bg-gray-100 rounded-full"></div>
+            <p className="text-gray-400 font-black text-[10px] md:text-xs uppercase tracking-widest">{t.cart.personalizedRecs}</p>
           </div>
           <ProductCarousel products={suggestedProducts} />
         </div>
