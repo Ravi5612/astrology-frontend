@@ -52,12 +52,12 @@ const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
           </div>
         </div>
 
-        <div className="flex gap-6 border-b border-gray-100 mb-6">
+        <div className="flex overflow-x-auto whitespace-nowrap gap-5 md:gap-6 border-b border-gray-100 mb-6 pb-1" style={{ scrollbarWidth: 'none' }}>
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === tab.key ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'}`}
+              className={`flex-shrink-0 font-bold text-[15px] pb-2 px-1 transition-colors relative ${activeTab === tab.key ? 'text-gray-900 border-b-2 border-orange' : 'text-gray-500 hover:text-orange'}`}
             >
               {tab.label}
             </button>
