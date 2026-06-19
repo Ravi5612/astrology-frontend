@@ -44,12 +44,12 @@ const DahejForm: React.FC<DahejFormProps> = ({
                                             type="text"
                                             required
                                             style={{ borderRadius: "9999px" }}
-                                            className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                                            className="w-full bg-white border-2 border-orange-500 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all placeholder:text-gray-400 shadow-sm text-sm"
                                             placeholder={t.form.fullNamePlaceholder}
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-600">
                                             <FaUser size={14} />
                                         </div>
                                     </div>
@@ -64,12 +64,12 @@ const DahejForm: React.FC<DahejFormProps> = ({
                                             type="text"
                                             required
                                             style={{ borderRadius: "9999px" }}
-                                            className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                                            className="w-full bg-white border-2 border-orange-500 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all placeholder:text-gray-400 shadow-sm text-sm"
                                             placeholder={t.form.professionPlaceholder}
                                             value={job}
                                             onChange={(e) => setJob(e.target.value)}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-600">
                                             <FaBriefcase size={14} />
                                         </div>
                                     </div>
@@ -84,11 +84,11 @@ const DahejForm: React.FC<DahejFormProps> = ({
                                             type="date"
                                             required
                                             style={{ borderRadius: "9999px" }}
-                                            className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                                            className="w-full bg-white border-2 border-orange-500 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all shadow-sm text-sm"
                                             value={dob}
                                             onChange={(e) => setDob(e.target.value)}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-600">
                                             <FaBirthdayCake size={14} />
                                         </div>
                                     </div>
@@ -105,12 +105,12 @@ const DahejForm: React.FC<DahejFormProps> = ({
                                             min="0"
                                             step="10000"
                                             style={{ borderRadius: "9999px" }}
-                                            className="w-full bg-[#fdf8f2] border-2 border-[#301118]/5 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                                            className="w-full bg-white border-2 border-orange-500 px-5 py-3.5 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all placeholder:text-gray-400 shadow-sm text-sm"
                                             placeholder={t.form.salaryPlaceholder}
                                             value={salary}
                                             onChange={(e) => setSalary(e.target.value)}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-600">
                                             <FaMoneyBillWave size={14} />
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@ const DahejForm: React.FC<DahejFormProps> = ({
                                     type="submit"
                                     disabled={loading || !canCalculate}
                                     style={{ borderRadius: "9999px" }}
-                                    className="relative group inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-orange-400 text-[#301118] px-10 py-4 font-black uppercase tracking-[2px] text-xs hover:opacity-90 transition-all duration-500 shadow-xl disabled:opacity-50"
+                                    className="relative group inline-flex items-center justify-center gap-3 bg-orange-600 text-white w-full md:w-auto px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-orange-700 transition-all duration-500 shadow-xl disabled:opacity-75 disabled:cursor-not-allowed disabled:hover:bg-orange-600 cursor-pointer"
                                 >
                                     {loading ? <FaSpinner className="animate-spin" /> : <TbCrystalBall size={18} />}
                                     {loading ? t.form.calculating : t.form.button}
