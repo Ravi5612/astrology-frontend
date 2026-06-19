@@ -78,8 +78,8 @@ export default function MessageArea({
                                     </div>
                                 </div>
                             )}
-                            <div className={`flex flex-col gap-1.5 max-w-[85%] md:max-w-[70%] ${isAdmin ? "items-center w-full" : ""}`}>
-                                <div className={`px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                            <div className={`flex flex-col gap-1.5 max-w-[75%] md:max-w-[70%] ${isAdmin ? "items-center w-full" : ""}`}>
+                                <div className={`${msg.content.startsWith('[INTRO_CARD]') ? '' : `px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${
                                     isAdmin 
                                         ? "bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-center w-full shadow-red-100" 
                                         : isUser 
@@ -87,48 +87,69 @@ export default function MessageArea({
                                             : isDarkMode 
                                                 ? 'bg-white/10 text-white rounded-tl-none' 
                                                 : 'bg-white text-gray-800 border border-black/5 rounded-tl-none font-medium'
-                                }`}>
+                                }`}`}>
                                     {isAdmin && (
                                         <div className="flex items-center justify-center gap-2 mb-1 text-[10px] font-black uppercase tracking-tighter">
                                             <LucideIcons.AlertCircle className="w-3 h-3" /> System Intervention
                                         </div>
                                     )}
                                     {msg.content.startsWith('[INTRO_CARD]') ? (
-                                        <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-0.5 rounded-2xl shadow-lg border border-white/50 w-full min-w-[240px]">
-                                            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                                                <div className="flex items-center gap-2 mb-3 border-b border-black/5 pb-2">
+                                        <div className="bg-gradient-to-br from-[#FFD700] via-[#FFEA00] to-[#FFD700] p-0.5 rounded-2xl shadow-lg border border-black/10 w-full min-w-[240px]">
+                                            <div className="bg-yellow-400/20 backdrop-blur-sm rounded-xl p-4 border border-white/20 relative overflow-hidden">
+                                                <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none">
+                                                    <LucideIcons.User className="w-16 h-16 text-black" />
+                                                </div>
+                                                <div className="flex items-center gap-2 mb-4 border-b border-black/10 pb-3 relative z-10">
                                                     <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center">
                                                         <LucideIcons.User className="w-4 h-4 text-black" />
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-black font-black text-[10px] uppercase tracking-widest">Birth Details</h3>
+                                                        <h3 className="text-black font-black text-xs uppercase tracking-widest">Birth Details</h3>
                                                     </div>
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-3">
+                                                <div className="grid grid-cols-2 gap-4 relative z-10">
                                                     {(() => {
                                                         try {
                                                             const data = JSON.parse(msg.content.replace('[INTRO_CARD]', ''));
+                                                            
+                                                            const formatDate = (dateStr: string) => {
+                                                                if (!dateStr) return "N/A";
+                                                                try {
+                                                                    // Check if it's already a formatted string like DD/MM/YYYY or YYYY-MM-DD
+                                                                    if (dateStr.includes('/') || dateStr.includes('-')) {
+                                                                        const parsedDate = new Date(dateStr);
+                                                                        if (!isNaN(parsedDate.getTime())) {
+                                                                            return parsedDate.toLocaleDateString();
+                                                                        }
+                                                                        return dateStr;
+                                                                    }
+                                                                    return dateStr;
+                                                                } catch (e) {
+                                                                    return dateStr;
+                                                                }
+                                                            };
+
                                                             return (
                                                                 <>
-                                                                    <div className="space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Name</span>
-                                                                        <p className="text-xs font-black text-black">{data.name || "N/A"}</p>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/50 uppercase tracking-widest">Name</span>
+                                                                        <p className="text-sm font-black text-black truncate">{data.name || "N/A"}</p>
                                                                     </div>
-                                                                    <div className="space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Gender</span>
-                                                                        <p className="text-xs font-black text-black capitalize">{data.gender || "N/A"}</p>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/50 uppercase tracking-widest">Gender</span>
+                                                                        <p className="text-sm font-black text-black capitalize">{data.gender || "N/A"}</p>
                                                                     </div>
-                                                                    <div className="space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">DOB</span>
-                                                                        <p className="text-xs font-black text-black">{data.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString() : "N/A"}</p>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/50 uppercase tracking-widest">DOB</span>
+                                                                        <p className="text-sm font-black text-black">{formatDate(data.dob || data.dateOfBirth)}</p>
                                                                     </div>
-                                                                    <div className="space-y-0.5">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Time</span>
-                                                                        <p className="text-xs font-black text-black">{data.timeOfBirth || "N/A"}</p>
+                                                                    <div className="space-y-1">
+                                                                        <span className="text-[9px] font-black text-black/50 uppercase tracking-widest">Time</span>
+                                                                        <p className="text-sm font-black text-black">{data.tob || data.timeOfBirth || "N/A"}</p>
                                                                     </div>
-                                                                    <div className="space-y-0.5 col-span-2">
-                                                                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">Place</span>
-                                                                        <p className="text-xs font-black text-black truncate">{data.placeOfBirth || "N/A"}</p>
+                                                                    <div className="space-y-1 col-span-2">
+                                                                        <span className="text-[9px] font-black text-black/50 uppercase tracking-widest">Place</span>
+                                                                        <p className="text-sm font-black text-black truncate">{data.pob || data.placeOfBirth || "N/A"}</p>
                                                                     </div>
                                                                 </>
                                                             );
