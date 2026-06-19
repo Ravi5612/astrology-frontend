@@ -55,11 +55,13 @@ const SecurityTipsModal = ({
         </div>
 
         <div
-          className="p-4 md:p-6 w-full relative overflow-y-auto flex-1 custom-scrollbar touch-pan-y"
+          className="p-4 md:p-6 w-full relative overflow-y-auto flex-1 custom-scrollbar touch-pan-y overscroll-contain"
           style={{ 
             WebkitOverflowScrolling: 'touch',
           }}
           data-lenis-prevent="true"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           <div className="space-y-4 w-full">
             <div className="space-y-3">
