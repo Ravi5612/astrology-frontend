@@ -20,17 +20,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0"></div>
       
-      {/* Language Switcher */}
-      <div className="absolute top-6 right-6 z-50">
-        <button
-          onClick={toggleLang}
-          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all backdrop-blur-md hover:scale-105 active:scale-95 shadow-2xl"
-          title={t.switchLangLabel}
-        >
-          <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-          {t.switchLang}
-        </button>
-      </div>
+
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
@@ -99,6 +89,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                   alt="Zodiac Wheel"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  unoptimized={true}
                   className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
                 />
                 <div className="absolute inset-0 flex items-center justify-center p-16">
@@ -107,6 +98,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                     alt={selectedSign.title}
                     width={320}
                     height={320}
+                    unoptimized={true}
                     className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
                     priority
                   />
