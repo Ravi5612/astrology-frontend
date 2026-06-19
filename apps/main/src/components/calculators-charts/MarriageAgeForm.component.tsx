@@ -41,12 +41,12 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                     type="text"
                     required
                     style={{ borderRadius: "9999px", ...fontStyle }}
-                    className="w-full bg-white border-2 border-orange-500/30 px-6 py-4 text-[#301118] font-bold focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                    className="w-full bg-white border-2 border-orange-500 px-6 py-4 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all placeholder:text-gray-400 shadow-sm text-sm"
                     placeholder={t.namePlaceholder}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-500/50">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-600">
                     <FaUser size={14} />
                   </div>
                 </div>
@@ -61,11 +61,11 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                   <input
                     type="date"
                     style={{ borderRadius: "9999px", ...fontStyle }}
-                    className="w-full bg-white border-2 border-orange-500/30 px-6 py-4 text-[#301118] font-bold focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all shadow-sm text-sm"
+                    className="w-full bg-white border-2 border-orange-500 px-6 py-4 text-[#301118] font-bold focus:border-orange-600 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all shadow-sm text-sm"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-500/50">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-600">
                     <FaCalendar size={14} />
                   </div>
                 </div>
@@ -81,7 +81,7 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                   type="submit"
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
-                  className="relative group inline-flex items-center justify-center gap-3 bg-orange-500 text-white w-full md:w-auto px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-orange-600 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  className="relative group inline-flex items-center justify-center gap-3 bg-orange-600 text-white w-full md:w-auto px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-orange-700 transition-all duration-500 shadow-xl disabled:opacity-75 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
