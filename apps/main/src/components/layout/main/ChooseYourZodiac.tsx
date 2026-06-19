@@ -24,7 +24,7 @@ const ChooseYourZodiac = () => {
         <div className="bg-white p-8 md:p-12 rounded-3xl shadow-premium border border-primary/5">
           <div className="text-center mb-16">
             <h2
-              className="text-4xl md:text-5xl font-black text-secondary mb-4 relative inline-block"
+              className="text-3xl md:text-4xl lg:text-5xl font-black text-secondary mb-4 relative inline-block"
               style={{
                 fontFamily:
                   lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
@@ -35,7 +35,7 @@ const ChooseYourZodiac = () => {
               {title2}
               <div className="absolute -bottom-2 left-0 w-full h-1 bg-primary/20 rounded-full"></div>
             </h2>
-            <p className="text-gray-500 max-w-xl mx-auto text-lg mt-6">{desc}</p>
+            <p className="text-gray-500 max-w-xl mx-auto text-base md:text-lg mt-4 md:mt-6">{desc}</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8">
