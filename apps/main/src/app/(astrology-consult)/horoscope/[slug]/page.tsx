@@ -149,7 +149,7 @@ export default function ZodiacDetailsPage() {
   return (
     <div className="bg-white min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-36 lg:pb-32 bg-slate-950 text-white">
+      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-20 lg:pb-32 bg-slate-950 text-white">
           {/* Celestial background elements */}
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0"></div>
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0"></div>
