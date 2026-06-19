@@ -170,7 +170,7 @@ export default function ZodiacDetailsPage() {
                   {signData.title}{" "}
                   <span className="text-orange-500 italic">{lang === "hi" ? "दैनिक" : "Daily"}</span> {lang === "hi" ? "भविष्यवाणी" : "Predictions"}
                 </h1>
-                <p className="text-xl text-gray-400 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-8" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                <p className="text-xl text-orange-500 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-8" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}, the stars are aligning for you today.
                   Explore how planetary movements are influencing your personal
                   and professional life with our expert Vedic analysis.
