@@ -383,18 +383,19 @@ export default function ZodiacDetailsPage() {
 
       {/* Navigation for other Signs */}
       <section 
-        className="py-24 relative overflow-hidden bg-white"
+        className="py-24 relative overflow-hidden bg-[#faf8f5]"
         style={{
           backgroundImage: "url('/images/back-image.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundAttachment: "fixed"
+          backgroundAttachment: "fixed",
+          backgroundRepeat: "no-repeat"
         }}
       >
-        {/* Semi-transparent overlay to ensure text readability */}
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px]"></div>
+        {/* Very subtle overlay just to soften the image slightly */}
+        <div className="absolute inset-0 bg-white/30"></div>
         
-        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-orange-500/10 to-transparent"></div>
         
         <div className="max-w-[1400px] mx-auto px-4 relative z-10">
           <div className="text-center mb-20 space-y-6">
