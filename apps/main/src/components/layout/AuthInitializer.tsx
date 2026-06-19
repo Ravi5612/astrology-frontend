@@ -37,8 +37,8 @@ export const AuthInitializer = ({
                     const protectedPrefixes = ['/client'];
                     if (protectedPrefixes.some(p => currentPath.startsWith(p))) {
                         // BREAK THE LOOP: Clear stale/expired cookies before redirecting
-                        // logout() will clear state, call /api/auth/logout, and redirect to /?_logout=1
-                        useAuthStore.getState().logout();
+                        // logout() will clear state, call /api/auth/logout, and redirect to the provided URL
+                        useAuthStore.getState().logout("/sign-in?expired=1");
                     }
                     // Public pages (/, /sign-in, /register, etc.) — do NOT redirect
                 }

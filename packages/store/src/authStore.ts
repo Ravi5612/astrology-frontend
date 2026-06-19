@@ -23,7 +23,7 @@ interface AuthState {
 
     // Actions
     login: (userData?: ClientUser) => void;
-    logout: () => Promise<void>;
+    logout: (redirectUrl?: string) => Promise<void>;
     refreshAuth: () => Promise<void>;
     refreshBalance: () => Promise<void>;
     updateUser: (data: Partial<ClientUser>) => void;
@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
-            logout: async () => {
+            logout: async (redirectUrl?: string) => {
                 set({
                     user: null,
                     isAuthenticated: false,
@@ -73,7 +73,11 @@ export const useAuthStore = create<AuthState>()(
 
                 if (typeof window !== "undefined") {
                     // Use a more standard way for shared package
-                    window.location.href = "/?_logout=1";
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    } else if (redirectUrl !== "") {
+                        window.location.href = "/?_logout=1";
+                    }
                 }
             },
 
