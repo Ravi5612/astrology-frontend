@@ -149,7 +149,7 @@ export default function ZodiacDetailsPage() {
   return (
     <div className="bg-white min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-28 pb-20 lg:pt-36 lg:pb-32 bg-slate-950 text-white">
+      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-36 lg:pb-32 bg-slate-950 text-white">
           {/* Celestial background elements */}
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0"></div>
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0"></div>
@@ -195,16 +195,16 @@ export default function ZodiacDetailsPage() {
               <div className="relative group flex items-center justify-center">
                 <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-1000"></div>
                 
-                <div className="relative aspect-square max-w-md mx-auto p-12 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transform transition-transform duration-700 group-hover:-translate-y-4">
+                <div className="relative aspect-square w-[85%] lg:w-full max-w-[320px] lg:max-w-md mx-auto p-4 lg:p-12 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transform transition-transform duration-700 group-hover:-translate-y-4">
                   <Image
                     src="/images/horoscope-round2.png"
                     alt="Zodiac Wheel"
                     fill
                     unoptimized={true}
-                    className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
+                    className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-2 lg:p-8"
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="relative w-4/5 h-4/5">
+                    <div className="relative w-full h-full lg:w-4/5 lg:h-4/5 scale-[1.05] lg:scale-100">
                       <Image
                         src={signData.image}
                         alt={signData.title}

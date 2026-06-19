@@ -15,7 +15,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
   const t = horoscopeTranslations[lang];
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-20 lg:pt-40 lg:pb-32 bg-slate-950 text-white">
+    <section className="relative overflow-hidden pt-16 pb-20 lg:pt-40 lg:pb-32 bg-slate-950 text-white">
       {/* Premium Background Elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-orange-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0"></div>
@@ -83,25 +83,27 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
               {/* Animated Glow */}
               <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-1000"></div>
               
-              <div className="relative aspect-square max-w-md mx-auto p-12 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transform transition-transform duration-700 group-hover:-translate-y-4">
+              <div className="relative aspect-square w-[85%] lg:w-full max-w-[320px] lg:max-w-md mx-auto p-4 lg:p-12 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transform transition-transform duration-700 group-hover:-translate-y-4">
                 <Image
                   src="/images/horoscope-round2.png"
                   alt="Zodiac Wheel"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   unoptimized={true}
-                  className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-8"
+                  className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-2 lg:p-8"
                 />
-                <div className="absolute inset-0 flex items-center justify-center p-16">
-                  <Image
-                    src={selectedSign.image}
-                    alt={selectedSign.title}
-                    width={320}
-                    height={320}
-                    unoptimized={true}
-                    className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
-                    priority
-                  />
+                <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-16">
+                  <div className="relative w-full h-full lg:w-full lg:h-full scale-[1.05] lg:scale-100 flex items-center justify-center">
+                    <Image
+                      src={selectedSign.image}
+                      alt={selectedSign.title}
+                      width={320}
+                      height={320}
+                      unoptimized={true}
+                      className="object-contain drop-shadow-[0_0_50px_rgba(249,115,22,0.6)] transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-6"
+                      priority
+                    />
+                  </div>
                 </div>
                 
                 {/* Floating Orbit Bits */}
