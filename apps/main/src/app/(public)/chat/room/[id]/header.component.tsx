@@ -43,18 +43,18 @@ export default function Header({
     if (!expertData) return null;
 
     return (
-        <header className="bg-[#fd6410] px-4 md:px-8 py-1.5 flex items-center justify-between sticky top-0 z-20 shadow-lg border-b border-black/10">
-            <div className="flex items-center gap-3">
-                <button onClick={() => router.back()} className="p-1.5 hover:bg-black/10 rounded-xl transition-all active:scale-90 flex flex-col items-center">
-                    <ChevronLeft className="w-5 h-5 text-white" />
-                    <span className="text-[9px] font-bold uppercase tracking-tighter text-white">Back</span>
+        <header className="bg-[#fd6410] px-2 md:px-8 py-1.5 flex items-center justify-between sticky top-0 z-20 shadow-lg border-b border-black/10 shrink-0 w-full overflow-hidden">
+            <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
+                <button onClick={() => router.back()} className="p-1 md:p-1.5 hover:bg-black/10 rounded-xl transition-all active:scale-90 flex flex-col items-center">
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                    <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-tighter text-white">Back</span>
                 </button>
-                <div className="w-px h-6 bg-black/10 mx-1"></div>
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-white/20 overflow-hidden relative shadow-sm">
+                <div className="w-px h-6 bg-black/10 mx-0.5 md:mx-1"></div>
+                <div className="flex items-center gap-2 md:gap-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white/20 overflow-hidden relative shadow-sm shrink-0">
                         <Image src={(expertData as any).image} alt={expertData.name} width={40} height={40} className="object-cover" />
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden sm:block shrink-0">
                         <h1 className="font-bold text-sm leading-none text-white flex items-center gap-2">
                             {expertData.name}
                             {isFree && <span className="bg-white text-[#fd6410] px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter shadow-sm animate-bounce">Free Chat</span>}
@@ -66,7 +66,7 @@ export default function Header({
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-8">
+            <div className="flex items-center gap-1.5 md:gap-8 shrink-0">
                 {/* Timers Section */}
                 {sessionStatus === 'active' && (
                     <div className="flex items-center gap-2 md:gap-5">
