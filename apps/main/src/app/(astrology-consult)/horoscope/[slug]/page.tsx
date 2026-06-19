@@ -468,8 +468,7 @@ export default function ZodiacDetailsPage() {
         </div>
       </section>
 
-      <WhyChooseUs />
-      <CTA />
+
       
       <style jsx global>{`
         @keyframes shimmer {
