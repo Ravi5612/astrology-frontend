@@ -203,7 +203,7 @@ export default function ZodiacDetailsPage() {
                     unoptimized={true}
                     className="animate-[spin_60s_linear_infinite] opacity-60 object-contain p-2 lg:p-8"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-6 lg:p-16">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-10 lg:p-24">
                     <div className="relative w-full h-full flex items-center justify-center">
                       <Image
                         src={signData.image}
