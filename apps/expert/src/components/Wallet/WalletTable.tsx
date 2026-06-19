@@ -25,7 +25,7 @@ export const WalletTable: React.FC<TransactionTableProps> = ({ transactions }) =
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full min-w-[700px] text-left">
                     <thead>
                         <tr className="bg-gray-50/50 border-b border-gray-50">
                             <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction Info</th>

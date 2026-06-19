@@ -285,7 +285,7 @@ const ServicePricingPage = () => {
           <div className="flex items-center gap-3">
             <div className="relative group/dropdown">
               <button
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-orange-200 text-orange-600 font-bold rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95 cursor-pointer hover:cursor-pointer"
+                className="whitespace-nowrap flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-orange-200 text-orange-600 font-bold text-sm sm:text-base rounded-2xl shadow-sm transition-all hover:bg-orange-50 active:scale-95 cursor-pointer hover:cursor-pointer"
               >
                 Choose Suggested
                 <ChevronDown className="w-4 h-4" />
@@ -310,7 +310,7 @@ const ServicePricingPage = () => {
 
             <button
               onClick={() => openPujaAdd()}
-              className="group flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px] cursor-pointer hover:cursor-pointer"
+              className="whitespace-nowrap group flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg transition-all active:scale-95 hover:translate-y-[-2px] cursor-pointer hover:cursor-pointer"
             >
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
               Add Custom Puja

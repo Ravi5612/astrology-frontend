@@ -240,11 +240,11 @@ export default function ClientsPage() {
                     <div key={client.id} className="bg-white rounded-2xl border border-gray-200 p-0 overflow-hidden shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
                       {/* Collapsed Strip */}
                       <div className={`p-4 sm:p-5 flex justify-between items-center flex-wrap gap-4 ${isExpanded ? 'bg-gray-50/50 border-b border-gray-100' : 'bg-white'}`}>
-                        <div className="flex flex-col min-w-[100px]">
+                        <div className="flex flex-col w-[45%] sm:w-auto sm:min-w-[100px]">
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Session ID</span>
                           <span className="font-extrabold text-gray-800">#{session?.id || client.id}</span>
                         </div>
-                        <div className="flex flex-col min-w-[100px]">
+                        <div className="flex flex-col w-[45%] sm:w-auto sm:min-w-[100px]">
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Date</span>
                           <span className="font-bold text-gray-800">
                             {new Date(session?.startTime || session?.created_at || session?.createdAt || Date.now()).toLocaleDateString('en-IN', {
@@ -254,11 +254,11 @@ export default function ClientsPage() {
                             })}
                           </span>
                         </div>
-                        <div className="flex flex-col min-w-[100px]">
+                        <div className="flex flex-col w-[45%] sm:w-auto sm:min-w-[100px]">
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Earnings</span>
                           <span className="font-extrabold text-[#fd6410]">₹{client.payment}</span>
                         </div>
-                        <div className="flex flex-col min-w-[100px]">
+                        <div className="flex flex-col w-[45%] sm:w-auto sm:min-w-[100px]">
                           <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-1">Type</span>
                           <span className="font-bold text-gray-800 flex items-center gap-2">
                              {(session?.type === 'AUDIO_CALL' || session?.session_type === 'audio') ? (
@@ -270,7 +270,7 @@ export default function ClientsPage() {
                              )}
                           </span>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 ml-auto">
+                        <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:ml-auto gap-3 mt-2 sm:mt-0">
                           <span className={`px-4 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-sm border ${
                             (session?.status?.toLowerCase() === 'completed')
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-100'

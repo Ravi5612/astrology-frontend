@@ -67,9 +67,9 @@ export default function TopInsights({ topUsers, topServices }: TopInsightsProps)
                     {(topServices || []).map((service) => (
                         <div key={service.id} className="p-4 rounded-2xl bg-gray-50/50 border border-transparent hover:border-purple-100 hover:bg-purple-50 transition-all cursor-default">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: service.color }} />
-                                    <h3 className="text-sm font-bold text-gray-800">{service.name}</h3>
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: service.color }} />
+                                    <h3 className="text-sm font-bold text-gray-800 truncate">{service.name}</h3>
                                 </div>
                                 <p className="text-sm font-black text-gray-900">₹{(service.revenue || 0).toLocaleString('en-IN')}</p>
                             </div>

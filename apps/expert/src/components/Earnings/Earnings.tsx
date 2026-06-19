@@ -111,11 +111,11 @@ export default function EarningsPage() {
           <p className="text-gray-500 mt-1">Detailed breakdown of your earnings and service performance</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="relative group">
             <Button
               variant="outline"
-              className="bg-white border-gray-200 hover:border-orange-400 text-gray-700 shadow-sm rounded-xl gap-2 font-semibold cursor-pointer hover:cursor-pointer"
+              className="whitespace-nowrap bg-white border-gray-200 hover:border-orange-400 text-gray-700 shadow-sm rounded-xl gap-2 font-semibold cursor-pointer hover:cursor-pointer"
             >
               <CalendarIcon className="w-4 h-4 text-orange-500" />
               {timeRangeLabels[timeRange]}
@@ -147,7 +147,7 @@ export default function EarningsPage() {
             disabled={isExporting}
             loading={isExporting}
             variant="primary"
-            className="shadow-md rounded-xl cursor-pointer hover:cursor-pointer"
+            className="whitespace-nowrap shadow-md rounded-xl cursor-pointer hover:cursor-pointer"
           >
             <Download className={`w-4 h-4 ${isExporting ? 'animate-bounce' : ''}`} />
             {isExporting ? 'Exporting...' : 'Export PDF'}

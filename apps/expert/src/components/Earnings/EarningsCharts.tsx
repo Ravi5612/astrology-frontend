@@ -71,7 +71,7 @@ export default function EarningsCharts({
                     </div>
                 </div>
 
-                <div className="h-[300px] w-100%">
+                <div className="h-[300px] w-full min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>
