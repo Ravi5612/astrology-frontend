@@ -422,7 +422,7 @@ export default function ZodiacDetailsPage() {
                 className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full ${
                   slug?.toLowerCase() === sign.title.toLowerCase()
                     ? "border-orange-500/30 bg-orange-50/50 shadow-[0_20px_40px_-15px_rgba(249,115,22,0.2)] -translate-y-4 ring-2 ring-orange-500/10 ring-offset-2"
-                    : "border-slate-100 bg-white hover:border-orange-500/20 hover:bg-slate-50 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
+                    : "border-orange-500/20 bg-white hover:border-orange-500/30 hover:bg-orange-50/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(249,115,22,0.1)]"
                 }`}
               >
                 {/* Active Line Indicator */}
@@ -430,12 +430,12 @@ export default function ZodiacDetailsPage() {
                     <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]"></div>
                 )}
                 
-                {/* Hover Aura */}
-                <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                {/* Default subtle aura */}
+                <div className={`absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent transition-opacity duration-500 ${slug?.toLowerCase() === sign.title.toLowerCase() ? "opacity-100" : "opacity-50 group-hover:opacity-100"}`}></div>
 
                 <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-md">
-                  {/* Decorative aura behind image */}
-                  <div className="absolute inset-0 bg-orange-500/0 rounded-full blur-xl group-hover:bg-orange-500/10 transition-all duration-500"></div>
+                  {/* Decorative aura behind image always visible slightly */}
+                  <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/20 transition-all duration-500"></div>
                   <Image
                     src={sign.image}
                     alt={sign.title}
@@ -449,12 +449,12 @@ export default function ZodiacDetailsPage() {
                     className={`block text-[11px] font-black uppercase tracking-widest leading-none mb-1 transition-colors ${
                       slug?.toLowerCase() === sign.title.toLowerCase() 
                         ? "text-orange-600 drop-shadow-sm" 
-                        : "text-slate-500 group-hover:text-slate-900"
+                        : "text-slate-900 group-hover:text-orange-600"
                     }`}
                     >
                     {lang === "hi" ? sign.title : sign.title}
                     </span>
-                    <span className="text-[8px] font-black text-orange-500/50 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[8px] font-black text-orange-500/60 uppercase tracking-widest">
                         {sign.id}th House
                     </span>
                 </div>
