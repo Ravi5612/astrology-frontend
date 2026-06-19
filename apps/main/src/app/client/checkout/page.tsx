@@ -62,7 +62,7 @@ const CheckoutContent = () => {
         <div className="max-w-7xl mx-auto px-4 relative z-20">
           <div className="flex flex-col lg:flex-row items-start gap-12">
             {/* Left Column: Order Summary */}
-            <div className="w-full lg:w-[400px] shrink-0 sticky top-32">
+            <div className="w-full lg:w-[400px] shrink-0 lg:sticky lg:top-32">
             <OrderSummary
               isOrder={isOrder}
               loadingProfile={loadingProfile}
