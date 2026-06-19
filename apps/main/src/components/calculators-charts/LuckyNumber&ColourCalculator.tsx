@@ -44,6 +44,7 @@ const LuckyColorNumberCalculator: React.FC = () => {
   const { lang } = useLanguageStore();
   const translationSet = (homeTranslations[lang as "en" | "hi"] || homeTranslations.en) as any;
   const t = translationSet.calculators.luckyVibes;
+  const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
