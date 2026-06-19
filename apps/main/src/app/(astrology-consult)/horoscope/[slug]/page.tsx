@@ -382,28 +382,28 @@ export default function ZodiacDetailsPage() {
       </section>
 
       {/* Navigation for other Signs */}
-      <section className="py-24 bg-slate-950 relative overflow-hidden">
-        {/* Premium Background Elements */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] translate-x-1/3 translate-y-1/3 pointer-events-none z-0"></div>
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Premium Light Background Elements */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none z-0"></div>
         
-        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
         
         <div className="max-w-[1400px] mx-auto px-4 relative z-10">
           <div className="text-center mb-20 space-y-6">
-            <div className="inline-block px-5 py-1.5 bg-white/5 border border-white/10 backdrop-blur-md rounded-full shadow-2xl">
-                <span className="text-[10px] font-black text-orange-500/80 uppercase tracking-[0.4em]">
+            <div className="inline-block px-5 py-1.5 bg-slate-50 border border-slate-200 rounded-full shadow-sm">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
                   {lang === "hi" ? "राशि चक्र" : "The Zodiac Wheel"}
                 </span>
             </div>
-            <h2 className="text-4xl lg:text-6xl font-black text-white leading-tight tracking-tight uppercase drop-shadow-lg">
+            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 leading-tight tracking-tight uppercase">
               {lang === "hi" ? "हमारी " : "Explore Our "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-600 italic block lg:inline drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500 italic block lg:inline">
                 {lang === "hi" ? "राशि" : "Zodiac"}
               </span>{" "}
               {lang === "hi" ? "नक्षत्र देखें" : "Constellations"}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto rounded-full overflow-hidden opacity-70"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto rounded-full overflow-hidden opacity-30"></div>
           </div>
 
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6 gap-6">
@@ -411,23 +411,23 @@ export default function ZodiacDetailsPage() {
               <Link
                 key={sign.id}
                 href={`/horoscope/${sign.title.toLowerCase()}`}
-                className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full backdrop-blur-md ${
+                className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full ${
                   slug?.toLowerCase() === sign.title.toLowerCase()
-                    ? "border-orange-500/50 bg-gradient-to-b from-orange-500/10 to-transparent shadow-[0_0_30px_rgba(249,115,22,0.15)] -translate-y-4 ring-1 ring-orange-500/30"
-                    : "border-white/5 bg-white/5 hover:border-orange-500/30 hover:bg-white/10 hover:-translate-y-2 hover:shadow-2xl hover:shadow-orange-500/10"
+                    ? "border-orange-500/30 bg-orange-50/50 shadow-[0_20px_40px_-15px_rgba(249,115,22,0.2)] -translate-y-4 ring-2 ring-orange-500/10 ring-offset-2"
+                    : "border-slate-100 bg-white hover:border-orange-500/20 hover:bg-slate-50 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
                 }`}
               >
-                {/* Active Glow */}
+                {/* Active Line Indicator */}
                 {slug?.toLowerCase() === sign.title.toLowerCase() && (
-                    <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-600 via-amber-400 to-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.8)]"></div>
+                    <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]"></div>
                 )}
                 
-                {/* Hover Glow */}
+                {/* Hover Aura */}
                 <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-                  {/* Decorative aura on hover */}
-                  <div className="absolute inset-0 bg-orange-500/0 rounded-full blur-xl group-hover:bg-orange-500/20 transition-all duration-500"></div>
+                <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-md">
+                  {/* Decorative aura behind image */}
+                  <div className="absolute inset-0 bg-orange-500/0 rounded-full blur-xl group-hover:bg-orange-500/10 transition-all duration-500"></div>
                   <Image
                     src={sign.image}
                     alt={sign.title}
@@ -440,19 +440,19 @@ export default function ZodiacDetailsPage() {
                     <span
                     className={`block text-[11px] font-black uppercase tracking-widest leading-none mb-1 transition-colors ${
                       slug?.toLowerCase() === sign.title.toLowerCase() 
-                        ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" 
-                        : "text-slate-300 group-hover:text-white"
+                        ? "text-orange-600 drop-shadow-sm" 
+                        : "text-slate-500 group-hover:text-slate-900"
                     }`}
                     >
                     {lang === "hi" ? sign.title : sign.title}
                     </span>
-                    <span className="text-[8px] font-black text-orange-500/60 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[8px] font-black text-orange-500/50 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                         {sign.id}th House
                     </span>
                 </div>
 
                 {slug?.toLowerCase() === sign.title.toLowerCase() && (
-                  <div className="absolute top-4 right-4 w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]"></div>
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
                 )}
               </Link>
             ))}
