@@ -1,17 +1,10 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { GiGoldBar, GiDiamonds, GiStarShuriken } from "react-icons/gi";
 import { DahejHeroProps } from "@/lib/types";
 
 const DahejHero: React.FC<DahejHeroProps> = ({ lang, toggleLang, t }) => {
-    const [flagSrc, setFlagSrc] = React.useState("");
-
-    React.useEffect(() => {
-        setFlagSrc(lang === "en" ? "https://flagcdn.com/w40/in.png" : "https://flagcdn.com/w40/us.png");
-    }, [lang]);
-
     return (
         <section className="relative pt-32 pb-20 bg-gradient-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -34,23 +27,6 @@ const DahejHero: React.FC<DahejHeroProps> = ({ lang, toggleLang, t }) => {
 
             <div className="container relative z-10 px-6">
                 <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-                    <div className="flex justify-center mb-6">
-                        <button
-                            onClick={toggleLang}
-                            className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 transition-all group"
-                        >
-                            <Image
-                                src={flagSrc || "https://flagcdn.com/w40/in.png"}
-                                alt="flag"
-                                width={20}
-                                height={14}
-                                className="object-cover rounded-sm group-hover:scale-110 transition-transform"
-                            />
-                            <span className="text-xs font-black uppercase tracking-widest">
-                                {lang === "en" ? "हिन्दी" : "English"}
-                            </span>
-                        </button>
-                    </div>
                     <span className="inline-block bg-[#d4af37] text-[#301118] px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[4px] mb-8">
                         {t.hero.badge}
                     </span>
