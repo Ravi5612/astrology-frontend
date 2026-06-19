@@ -7,6 +7,7 @@ import LuckyVibesResult from "./LuckyVibesResult";
 import { useLuckyVibes } from "./useLuckyVibes";
 import { useLanguageStore } from "@repo/store";
 import { homeTranslations } from "@/lib/translations/home";
+import { GiLotus } from "react-icons/gi";
 
 const premiumCardStyles = `
   .glass-card {
