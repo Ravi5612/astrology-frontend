@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import React, { Suspense } from "react";
 import OurExpert from "@/components/layout/main/ourExpert";
 import { ExpertGridSkeleton } from "@/components/features/experts/SkeletonCard";

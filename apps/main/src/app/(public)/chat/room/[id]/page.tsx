@@ -327,7 +327,7 @@ function ChatRoomContent() {
     }
 
     return (
-        <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-[#1a0c0c] text-white' : 'bg-[#FFF9F5] text-[#2A0A0A]'} overflow-hidden font-outfit transition-colors duration-500`}>
+        <div className={`fixed inset-0 flex flex-col ${isDarkMode ? 'bg-[#1a0c0c] text-white' : 'bg-[#FFF9F5] text-[#2A0A0A]'} overflow-hidden font-outfit transition-colors duration-500 z-50`}>
             {sessionStatus === 'pending' && expiresAt && (
                 <WaitingCountdown expiresAt={expiresAt} onExpire={() => router.push('/')} />
             )}

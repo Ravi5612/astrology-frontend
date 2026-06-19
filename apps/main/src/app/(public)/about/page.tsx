@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Metadata } from "next";
 import React from "react";
 import HeroSection from "./HeroSection";

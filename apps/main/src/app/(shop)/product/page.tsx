@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import React from "react";
 import ProductGrid from "@/components/features/shop/ProductGrid";
 import { api } from "@/lib/api";
