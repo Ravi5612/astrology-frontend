@@ -166,9 +166,9 @@ export default function ZodiacDetailsPage() {
                     </span>
                     <div className="w-12 h-[1px] bg-white/20"></div>
                 </div>
-                <h1 className="text-5xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                <h1 className="text-4xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}{" "}
-                  <span className="text-orange-500 italic block lg:inline">{lang === "hi" ? "दैनिक" : "Daily"}</span> {lang === "hi" ? "भविष्यवाणी" : "Predictions"}
+                  <span className="text-orange-500 italic">{lang === "hi" ? "दैनिक" : "Daily"}</span> {lang === "hi" ? "भविष्यवाणी" : "Predictions"}
                 </h1>
                 <p className="text-xl text-gray-400 max-w-2xl leading-relaxed italic border-l-4 border-orange-500/30 pl-8" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}, the stars are aligning for you today.

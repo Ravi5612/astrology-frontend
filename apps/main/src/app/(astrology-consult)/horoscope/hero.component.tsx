@@ -33,13 +33,13 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
               </div>
               
               <h1
-                className="text-4xl md:text-5xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
+                className="text-5xl md:text-6xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
                 style={{
                   fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
                 }}
               >
                 {t.heroTitle1}{" "}
-                <span className="text-orange-500 italic block lg:inline">{t.heroHighlight}</span>{" "}
+                <span className="text-orange-500 italic">{t.heroHighlight}</span>{" "}
                 {t.heroTitle2}
               </h1>
               
