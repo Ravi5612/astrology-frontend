@@ -132,7 +132,7 @@ const StoreDetailsPage = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 mt-10">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* 👤 Left Column: Store Profile Card */}
-          <aside className="w-full lg:w-[360px] xl:w-[400px] shrink-0 sticky top-32">
+          <aside className="w-full lg:w-[360px] xl:w-[400px] shrink-0 lg:sticky lg:top-32">
             <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[40px] overflow-hidden shadow-premium border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:border-orange/30 group">
               <div className="relative pt-10 pb-4 flex flex-col items-center">
                 {/* Top Badges */}
@@ -346,13 +346,13 @@ const StoreDetailsPage = () => {
 
           {/* 📄 Right Column: Tabs & Content */}
           <main className="w-full flex-1">
-            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[32px] border border-orange/10 p-6 lg:p-10 shadow-premium min-h-[800px] transition-all duration-500 hover:shadow-2xl">
+            <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[32px] border border-orange/10 p-4 md:p-6 lg:p-10 shadow-premium min-h-[400px] md:min-h-[800px] transition-all duration-500 hover:shadow-2xl">
               {/* Header Intro */}
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-orange/10 pb-6 mb-8 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <h4
-                      className="text-3xl font-black text-slate-900 uppercase tracking-tight"
+                      className="text-xl md:text-3xl font-black text-slate-900 uppercase tracking-tight"
                       style={fontStyle}
                     >
                       {t.merchantDossier.title}
@@ -378,7 +378,7 @@ const StoreDetailsPage = () => {
               </div>
 
               {/* Tabs Navigation */}
-              <div className="sticky top-[110px] z-40 bg-white py-6 mb-10 border-b border-gray-100 overflow-x-auto no-scrollbar flex items-center gap-10">
+              <div className="sticky top-[110px] z-40 bg-white py-3 md:py-6 mb-6 md:mb-10 border-b border-gray-100 overflow-x-auto no-scrollbar flex items-center gap-4 md:gap-10">
                 {(["about", "collection", "reviews", "gallery"] as const).map(
                   (tab) => (
                     <button
