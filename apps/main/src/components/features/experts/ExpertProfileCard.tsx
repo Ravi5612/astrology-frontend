@@ -27,12 +27,14 @@ const ExpertProfileCard: React.FC<ExpertProfileCardProps> = ({
     <div className="w-full lg:w-[320px] xl:w-[360px] max-w-sm mx-auto lg:mx-0 shrink-0">
       <div className="bg-gradient-to-b from-[#fff7f0] to-white rounded-[32px] overflow-hidden shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-slate-100 transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] hover:border-orange/30 hover:-translate-y-1 group">
         <div className="relative pt-6 pb-2 flex flex-col items-center">
-          <div className="absolute top-4 right-6 flex flex-col items-end gap-2">
+          <div className="absolute top-4 left-6">
             <div className="bg-orange/10 text-orange px-3 py-1 rounded-full flex items-center gap-1 border border-orange/20">
               <i className="fa-solid fa-certificate text-[12px]"></i>
               <span className="text-[10px] font-bold uppercase tracking-wider">Top Rated</span>
             </div>
-            
+          </div>
+          
+          <div className="absolute top-4 right-6">
             <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5 shadow-sm border ${
               isAvailable 
                 ? 'bg-green-50 text-green-600 border-green-100' 
