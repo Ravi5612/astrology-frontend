@@ -57,13 +57,13 @@ const ChooseYourZodiac = () => {
                 key={sign.id}
                 className="block group no-underline"
               >
-                <div className="group relative p-6 rounded-[2.5rem] border border-orange-500/20 bg-white hover:border-orange-500/30 hover:bg-orange-50/30 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(249,115,22,0.1)] transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full">
+                <div className="group relative p-6 rounded-[2.5rem] border border-orange-500/20 bg-white hover:border-orange-500/50 hover:bg-slate-950 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full">
                   {/* Default subtle aura */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-50 group-hover:opacity-10 transition-opacity duration-500"></div>
                   
                   <div className="relative w-20 h-20 group-hover:scale-110 transition-transform duration-700 drop-shadow-md">
                     {/* Decorative aura behind image */}
-                    <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/20 transition-all duration-500"></div>
+                    <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/30 transition-all duration-500"></div>
                     <Image
                       src={sign.image}
                       alt={sign.title}
@@ -74,7 +74,7 @@ const ChooseYourZodiac = () => {
                     />
                   </div>
                   <div className="text-center relative z-10">
-                    <h3 className="text-sm md:text-base font-black mb-1 text-slate-900 group-hover:text-orange-600 transition-colors uppercase tracking-widest leading-none">
+                    <h3 className="text-sm md:text-base font-black mb-1 text-slate-900 group-hover:text-white transition-colors uppercase tracking-widest leading-none">
                       {lang === "hi" ? sign.title : sign.title} 
                     </h3>
                     <p className="text-[10px] text-orange-500/60 font-black uppercase tracking-[0.2em] relative z-10 mt-2">
