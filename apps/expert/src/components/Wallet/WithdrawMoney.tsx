@@ -82,16 +82,16 @@ export default function WithdrawMoney({ availableBalance, bankAccounts, onWithdr
                     )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 w-full lg:w-auto shrink-0 mt-4 lg:mt-0">
                     <Button
                         type="submit"
                         disabled={isLoading || !amount || bankAccounts.length === 0 || parseFloat(amount) < 500 || parseFloat(amount) > availableBalance}
-                        className="w-full sm:w-auto rounded-[1.5rem] bg-[#F25E0A] hover:bg-[#d45209] text-white font-black uppercase tracking-widest text-[12px] px-10 py-5 h-auto transition-all duration-300 shadow-lg shadow-orange/20 disabled:opacity-50 disabled:grayscale active:scale-95 border-none"
+                        className="whitespace-nowrap flex-1 sm:flex-none w-full sm:w-auto rounded-[1.5rem] bg-[#F25E0A] hover:bg-[#d45209] text-white font-black uppercase tracking-widest text-[12px] px-10 py-5 h-auto transition-all duration-300 shadow-lg shadow-orange/20 disabled:opacity-50 disabled:grayscale active:scale-95 border-none"
                     >
                         {isLoading ? "Processing..." : "Withdraw Now"}
                     </Button>
 
-                    <div className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-5 py-3.5 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-600">
+                    <div className="whitespace-nowrap flex-1 sm:flex-none w-full sm:w-auto flex items-center justify-center gap-2.5 px-5 py-3.5 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-600">
                         {/* @ts-ignore */}
                         <ShieldCheck className="w-4 h-4 shrink-0" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-center">Secure Payout System</span>
