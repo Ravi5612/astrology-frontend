@@ -263,40 +263,40 @@ export default function ZodiacDetailsPage() {
             </div>
           ) : (
             <div className="max-w-[1400px] mx-auto">
-              <div className="bg-white rounded-[3.5rem] p-10 lg:p-20 shadow-premium border border-gray-100 relative group overflow-hidden">
-                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
+              <div className="bg-white rounded-[2rem] md:rounded-[3.5rem] p-6 md:p-10 lg:p-20 shadow-premium border border-gray-100 relative group overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 md:p-12 opacity-5 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
                   <HiOutlineSparkles className="text-[12rem] text-orange-500" />
                 </div>
 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-12 mb-20 pb-16 border-b border-gray-100">
-                  <div className="flex items-center gap-10">
-                    <div className="relative group/sign">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 md:gap-12 mb-12 md:mb-20 pb-10 md:pb-16 border-b border-gray-100">
+                  <div className="flex items-center gap-5 md:gap-10">
+                    <div className="relative group/sign shrink-0">
                         <div className="absolute -inset-2 bg-orange-500/10 rounded-3xl blur-2xl opacity-0 group-hover/sign:opacity-100 transition-opacity"></div>
-                        <div className="relative w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-gray-100 shadow-sm transition-transform group-hover/sign:scale-105">
+                        <div className="relative w-16 h-16 md:w-24 md:h-24 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center border border-gray-100 shadow-sm transition-transform group-hover/sign:scale-105">
                         <Image
                             src={signData.image}
                             alt={signData.title}
                             width={60}
                             height={60}
                             unoptimized={true}
-                            className="w-14 h-14 object-contain rounded-full drop-shadow-xl"
+                            className="w-10 h-10 md:w-14 md:h-14 object-contain rounded-full drop-shadow-xl"
                         />
                         </div>
                     </div>
                     <div>
-                      <h2 className="text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight uppercase">
+                      <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight uppercase">
                         {signData.title}{" "}
                         <span className="text-orange-500 italic block lg:inline">Horoscope</span>
                       </h2>
-                      <div className="flex items-center gap-5 mt-2">
-                        <p className="text-slate-400 text-sm font-black uppercase tracking-[0.3em] italic">
+                      <div className="flex items-center gap-3 md:gap-5 mt-1 md:mt-2">
+                        <p className="text-slate-400 text-[9px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.3em] italic">
                           Forecast for {formattedDate}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                    <div className="inline-flex items-center gap-4 bg-slate-950 text-white px-8 py-5 rounded-3xl shadow-2xl relative group/live overflow-hidden">
+                    <div className="inline-flex items-center justify-center gap-3 md:gap-4 bg-slate-950 text-white px-6 md:px-8 py-4 md:py-5 rounded-2xl md:rounded-3xl shadow-2xl relative group/live overflow-hidden w-full md:w-auto">
                         <div className="absolute inset-0 bg-orange-600 translate-y-full group-hover/live:translate-y-0 transition-transform duration-500"></div>
                         <div className="relative z-10 flex items-center gap-4">
                             <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]"></span>
@@ -308,11 +308,11 @@ export default function ZodiacDetailsPage() {
                 </div>
 
                 {/* Prediction Cards Grid */}
-                <div className="flex md:grid md:grid-cols-2 gap-6 md:gap-10 mb-20 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+                <div className="flex md:grid md:grid-cols-2 gap-4 md:gap-10 mb-20 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                   {horoscope.predictions.map((p: any, idx: number) => {
                     const cat = getPredictionCategory(p.type);
                     return (
-                      <div key={idx} className="group/pred min-w-[85vw] md:min-w-0 snap-center md:snap-align-none">
+                      <div key={idx} className="group/pred min-w-[85%] md:min-w-0 snap-center md:snap-align-none shrink-0">
                         <div
                           className={`p-10 md:p-12 rounded-[2.5rem] border border-gray-100 group-hover/pred:border-orange-500/20 bg-gradient-to-br ${cat.gradient} h-full transition-all duration-500 hover:shadow-2xl md:hover:-translate-y-2 flex flex-col relative overflow-hidden`}
                         >
@@ -338,24 +338,24 @@ export default function ZodiacDetailsPage() {
                 </div>
 
                 {/* Cosmic Tip Section */}
-                <div className="relative rounded-[3rem] bg-slate-950 p-12 lg:p-20 shadow-2xl overflow-hidden group/tip border border-white/5 shadow-black/30">
+                <div className="relative rounded-[2rem] md:rounded-[3rem] bg-slate-950 p-6 md:p-12 lg:p-20 shadow-2xl overflow-hidden group/tip border border-white/5 shadow-black/30">
                   {/* Decorative background glow */}
                   <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover/tip:bg-orange-500/20 transition-all duration-1000"></div>
                   <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
 
-                  <div className="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
-                    <div className="lg:w-2/3 space-y-10">
-                      <div className="space-y-6 text-center lg:text-left">
+                  <div className="relative z-10 flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
+                    <div className="lg:w-2/3 space-y-6 md:space-y-10">
+                      <div className="space-y-4 md:space-y-6 text-center lg:text-left">
                         <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
                           <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                           <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.4em]">Expert Insight</span>
                         </div>
-                        <h3 className="text-4xl lg:text-5xl font-black text-white mb-0 tracking-tight leading-tight">
+                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-0 tracking-tight leading-tight">
                           Today&apos;s Spiritual{" "}
                           <span className="text-orange-500 italic block lg:inline underline underline-offset-8 decoration-orange-500/20">Alignment</span>
                         </h3>
                       </div>
-                      <p className="text-white/70 text-xl lg:text-2xl font-bold font-display leading-relaxed italic border-l-8 border-orange-500 pl-10 py-4 max-w-2xl bg-white/5 rounded-r-3xl backdrop-blur-sm shadow-2xl">
+                      <p className="text-white/70 text-base md:text-xl lg:text-2xl font-bold font-display leading-relaxed italic border-l-4 md:border-l-8 border-orange-500 pl-4 md:pl-10 py-4 max-w-2xl bg-white/5 rounded-r-2xl md:rounded-r-3xl backdrop-blur-sm shadow-2xl text-left">
                         &quot;Patience will be your greatest ally. The cosmic
                         energies favor thoughtful decisions. Wear colors that
                         resonate with your spirit and meditate for 10 minutes
