@@ -20,7 +20,7 @@ const ChooseYourZodiac = () => {
 
   return (
     <section 
-      className="py-20 relative overflow-hidden bg-[#faf8f5]"
+      className="pt-6 pb-20 md:py-20 relative overflow-hidden bg-[#faf8f5]"
       style={{
         backgroundImage: "url('/images/back-image.webp')",
         backgroundSize: "cover",
@@ -33,10 +33,10 @@ const ChooseYourZodiac = () => {
       <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-orange-500/10 to-transparent"></div>
 
       <div className="max-w-[1400px] mx-auto px-4 relative z-10">
-        <div className="p-8 md:p-12">
-          <div className="text-center mb-16">
+        <div className="p-4 md:p-8 lg:p-12">
+          <div className="text-center mb-8 md:mb-16">
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tighter relative inline-block"
+              className="text-2xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 md:mb-6 tracking-tighter relative inline-block"
               style={{
                 fontFamily:
                   lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
