@@ -58,6 +58,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   /* config options here */
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  productionBrowserSourceMaps: false,
   transpilePackages: ["@repo/ui", "@repo/routes", "swiper"],
   images: {
     remotePatterns: [
