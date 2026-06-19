@@ -42,16 +42,16 @@ const Featured4Cards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 mt-2">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 mt-2 items-stretch">
       {
         cards.map((card) => (
-          <Link key={card.href + card.title} href={card.href} className="no-underline">
+          <Link key={card.href + card.title} href={card.href} className="no-underline block h-full p-[3px] sm:p-[13px]">
             {/* card-hero → bg-[#301118], rounded-[20px], min-h-[250px], border, padding, hover, transition */}
             <div
               className="
-              m-[3px] sm:m-[13px] text-center min-h-[140px] sm:min-h-[250px] rounded-[10px] sm:rounded-[20px] p-[6px] sm:p-[14px]
+              h-full text-center min-h-[160px] sm:min-h-[280px] rounded-[10px] sm:rounded-[20px] px-[10px] pb-[20px] pt-[16px] sm:px-[20px] sm:pb-[40px] sm:pt-[30px]
               bg-[#301118] border border-[#fd9d69]
-              flex flex-col items-center justify-center
+              flex flex-col items-center justify-start
               transition-all duration-200 ease-in-out
               hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]
               cursor-pointer
