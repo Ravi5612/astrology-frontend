@@ -309,13 +309,13 @@ export default function ZodiacDetailsPage() {
 
                 {/* Prediction Cards Grid */}
                 <div 
-                  className="flex md:grid md:grid-cols-2 gap-4 md:gap-10 mb-20 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0 touch-pan-x"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 mb-20 max-h-[60vh] md:max-h-none overflow-y-auto md:overflow-y-visible pb-8 md:pb-0 hide-scrollbar -mx-2 px-2 md:mx-0 md:px-0 touch-pan-y"
                   data-lenis-prevent="true"
                 >
                   {horoscope.predictions.map((p: any, idx: number) => {
                     const cat = getPredictionCategory(p.type);
                     return (
-                      <div key={idx} className="group/pred min-w-[85%] md:min-w-0 snap-center md:snap-align-none shrink-0">
+                      <div key={idx} className="group/pred">
                         <div
                           className={`p-10 md:p-12 rounded-[2.5rem] border border-gray-100 group-hover/pred:border-orange-500/20 bg-gradient-to-br ${cat.gradient} h-full transition-all duration-500 hover:shadow-2xl md:hover:-translate-y-2 flex flex-col relative overflow-hidden`}
                         >
