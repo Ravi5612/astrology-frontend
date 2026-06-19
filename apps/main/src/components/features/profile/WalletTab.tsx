@@ -110,8 +110,8 @@ const WalletTab: React.FC<WalletTabProps> = ({
               {t.availableBalance}
             </p>
             <div className="flex items-center justify-center mb-2">
-              <span className="text-orange text-2xl md:text-3xl font-bold mr-2 mt-1">₹</span>
-              <h1 className="font-black text-white text-4xl md:text-6xl tracking-tight">
+              <span className="text-orange text-xl md:text-3xl font-bold mr-1 md:mr-2 mt-1">₹</span>
+              <h1 className="font-black text-white text-3xl sm:text-4xl md:text-6xl tracking-tight">
                 {walletBalance?.toLocaleString() || "0"}
               </h1>
             </div>
@@ -203,7 +203,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
                       key={amt}
                       type="button"
                       onClick={() => setRechargeAmount(amt)}
-                      className={`relative p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center min-h-[110px] group ${
+                      className={`relative p-3 md:p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center min-h-[80px] md:min-h-[110px] group ${
                         rechargeAmount === amt
                           ? "border-orange bg-orange/5 shadow-premium ring-2 ring-orange/10"
                           : "border-gray-100 bg-gray-50 hover:bg-white hover:border-gray-200 hover:shadow-md"
@@ -215,9 +215,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
                         </div>
                       )}
                       <div className="flex items-center transition-transform group-hover:scale-110 duration-300">
-                        <span className="text-sm font-bold mr-1 text-gray-400 mt-0.5">₹</span>
+                        <span className="text-xs md:text-sm font-bold mr-1 text-gray-400 mt-0.5">₹</span>
                         <span
-                          className={`text-xl md:text-2xl font-black ${
+                          className={`text-lg md:text-2xl font-black ${
                             rechargeAmount === amt ? "text-orange" : "text-gray-800"
                           }`}
                         >
@@ -237,30 +237,30 @@ const WalletTab: React.FC<WalletTabProps> = ({
                 fullWidth
                 loading={isProcessing}
                 onClick={handleRecharge}
-                className="h-20 !rounded-3xl bg-orange hover:bg-orange/90 border-0 shadow-lg shadow-orange/20 overflow-hidden group"
+                className="h-16 md:h-20 !rounded-2xl md:!rounded-3xl bg-orange hover:bg-orange/90 border-0 shadow-lg shadow-orange/20 overflow-hidden group"
                 disabled={rechargeAmount < 100}
               >
                 <div className="flex items-center justify-between w-full px-4">
                   <div className="flex items-center">
-                    <div className="w-12 h-12 flex items-center justify-center bg-white/20 rounded-2xl mr-5 group-hover:rotate-12 transition-transform duration-500 shadow-inner">
-                      <i className="fa-solid fa-bolt text-white text-xl"></i>
+                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/20 rounded-xl md:rounded-2xl mr-3 md:mr-5 group-hover:rotate-12 transition-transform duration-500 shadow-inner">
+                      <i className="fa-solid fa-bolt text-white text-lg md:text-xl"></i>
                     </div>
                     <div className="text-left">
                       <div
-                        className="text-white text-lg md:text-xl font-black tracking-tight"
+                        className="text-white text-base md:text-xl font-black tracking-tight"
                         style={fontStyle}
                       >
                         {t.rechargeBtn} ₹{rechargeAmount.toLocaleString()}
                       </div>
                       <div
-                        className="text-white/70 text-[11px] font-bold uppercase tracking-wider mt-0.5"
+                        className="text-white/70 text-[9px] md:text-[11px] font-bold uppercase tracking-wider mt-0.5"
                         style={fontStyle}
                       >
                         {t.rechargeHint}
                       </div>
                     </div>
                   </div>
-                  <i className="fa-solid fa-arrow-right text-xl text-white/40 group-hover:translate-x-2 transition-transform duration-300 ml-4"></i>
+                  <i className="fa-solid fa-arrow-right text-lg md:text-xl text-white/40 group-hover:translate-x-2 transition-transform duration-300 ml-2 md:ml-4"></i>
                 </div>
               </Button>
             </div>
