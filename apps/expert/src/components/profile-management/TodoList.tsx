@@ -56,20 +56,19 @@ export default function TodoList({
             {isExpanded && (
                 <div className="p-4 sm:p-6 pt-0 animate-in fade-in slide-in-from-top-2 duration-300">
                     {/* Add Todo Input */}
-                    <div className="flex space-x-2 mb-4">
+                    <div className="flex items-center gap-3 mb-5 mt-4">
                         <input
                             type="text"
                             value={newTodo}
                             onChange={(e) => setNewTodo(e.target.value)}
                             onKeyPress={(e) => e.key === "Enter" && handleAdd()}
                             placeholder="Add a new task..."
-                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="flex-1 h-11 px-4 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all shadow-sm"
                         />
                         <Button
                             onClick={handleAdd}
                             variant="primary"
-                            size="sm"
-                            className="p-2"
+                            className="h-11 w-11 p-0 flex items-center justify-center shrink-0 rounded-xl shadow-md hover:shadow-lg transition-all"
                         >
                             <Plus className="w-5 h-5" />
                         </Button>
