@@ -18,6 +18,11 @@ export default function ZodiacDetailsPage() {
   const [horoscope, setHoroscope] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // Force scroll to top when navigating to a new zodiac sign
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
   const [lang, setLang] = useState<"en" | "hi">("en");
   const [formattedDate, setFormattedDate] = useState("");
 
