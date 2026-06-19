@@ -58,7 +58,7 @@ const StoreSection = () => {
 
     return (
         <section
-            className="pt-8 pb-[80px] md:py-[80px] relative overflow-hidden font-outfit"
+            className="pt-8 pb-10 md:py-[80px] relative overflow-hidden font-outfit"
             style={{
                 backgroundColor: "#301118",
                 backgroundImage: "url(/images/bg-dark.png)",
@@ -202,7 +202,7 @@ const StoreSection = () => {
                     )}
                 </div>
 
-                <div className="mt-10 text-center">
+                <div className="mt-4 md:mt-10 text-center">
                     <button 
                         className="inline-flex items-center gap-4 px-12 py-5 bg-white border-2 border-slate-900 text-slate-900 rounded-[2rem] font-black text-[12px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl shadow-slate-100 hover:shadow-2xl"
                         style={fontStyle}
