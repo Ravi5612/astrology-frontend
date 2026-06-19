@@ -33,7 +33,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
               </div>
               
               <h1
-                className="text-5xl md:text-6xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter"
+                className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.1] tracking-tighter"
                 style={{
                   fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
                 }}

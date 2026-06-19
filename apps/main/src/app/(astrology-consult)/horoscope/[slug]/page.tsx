@@ -166,7 +166,7 @@ export default function ZodiacDetailsPage() {
                     </span>
                     <div className="w-12 h-[1px] bg-white/20"></div>
                 </div>
-                <h1 className="text-4xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-tighter" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
+                <h1 className="text-4xl lg:text-7xl font-black mb-6 leading-[1.1] tracking-tighter" style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}>
                   {signData.title}{" "}
                   <span className="text-orange-500 italic">{lang === "hi" ? "दैनिक" : "Daily"}</span> {lang === "hi" ? "भविष्यवाणी" : "Predictions"}
                 </h1>
