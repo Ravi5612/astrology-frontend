@@ -44,18 +44,15 @@ const LoveCompatibilityForm: React.FC<LoveCompatibilityFormProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="hidden md:flex flex-col items-center justify-center px-4 relative h-full self-stretch">
-            <div className="w-px bg-gray-100 h-full"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-9 h-9 bg-white rounded-full shadow-md border border-orange-200 flex items-center justify-center">
-                <FaHeart className="text-orange-500" size={16} />
-              </div>
+          <div className="hidden md:flex flex-col items-center justify-end px-4 pb-2">
+            <div className="w-9 h-9 bg-white rounded-full shadow-md border border-orange-200 flex items-center justify-center">
+              <FaHeart className="text-red-500 animate-pulse" size={16} />
             </div>
           </div>
 
           <div className="md:hidden flex items-center justify-center py-6">
             <div className="w-9 h-9 bg-white rounded-full shadow-md border border-orange-200 flex items-center justify-center">
-              <FaHeart className="text-orange-500" size={14} />
+              <FaHeart className="text-red-500 animate-pulse" size={14} />
             </div>
           </div>
 
