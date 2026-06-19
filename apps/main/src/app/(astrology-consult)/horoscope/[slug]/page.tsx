@@ -382,19 +382,28 @@ export default function ZodiacDetailsPage() {
       </section>
 
       {/* Navigation for other Signs */}
-      <section className="py-24 bg-white relative">
-          <div className="absolute top-0 inset-x-0 h-[1px] bg-linear-to-r from-transparent via-gray-100 to-transparent"></div>
-        <div className="max-w-[1400px] mx-auto px-4">
+      <section className="py-24 bg-slate-950 relative overflow-hidden">
+        {/* Premium Background Elements */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] translate-x-1/3 translate-y-1/3 pointer-events-none z-0"></div>
+        
+        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        
+        <div className="max-w-[1400px] mx-auto px-4 relative z-10">
           <div className="text-center mb-20 space-y-6">
-            <div className="inline-block px-5 py-1.5 bg-slate-50 border border-slate-100 rounded-full">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">The Zodiac Wheel</span>
+            <div className="inline-block px-5 py-1.5 bg-white/5 border border-white/10 backdrop-blur-md rounded-full shadow-2xl">
+                <span className="text-[10px] font-black text-orange-500/80 uppercase tracking-[0.4em]">
+                  {lang === "hi" ? "राशि चक्र" : "The Zodiac Wheel"}
+                </span>
             </div>
-            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 leading-tight tracking-tight uppercase">
-              Explore Our <span className="text-orange-500 italic block lg:inline">Zodiac</span> Constellations
+            <h2 className="text-4xl lg:text-6xl font-black text-white leading-tight tracking-tight uppercase drop-shadow-lg">
+              {lang === "hi" ? "हमारी " : "Explore Our "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-600 italic block lg:inline drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                {lang === "hi" ? "राशि" : "Zodiac"}
+              </span>{" "}
+              {lang === "hi" ? "नक्षत्र देखें" : "Constellations"}
             </h2>
-            <div className="w-24 h-2 bg-orange-500/10 mx-auto rounded-full overflow-hidden">
-                <div className="w-1/2 h-full bg-orange-500 animate-[shimmer_2s_infinite_linear]"></div>
-            </div>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto rounded-full overflow-hidden opacity-70"></div>
           </div>
 
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6 gap-6">
@@ -402,33 +411,42 @@ export default function ZodiacDetailsPage() {
               <Link
                 key={sign.id}
                 href={`/horoscope/${sign.title.toLowerCase()}`}
-                className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full ${
+                className={`group relative p-6 rounded-[2.5rem] border transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full backdrop-blur-md ${
                   slug?.toLowerCase() === sign.title.toLowerCase()
-                    ? "border-orange-500/30 bg-orange-500/5 shadow-2xl -translate-y-4 ring-2 ring-orange-500/10 ring-offset-4"
-                    : "border-gray-50 hover:border-orange-500/20 hover:bg-slate-50 hover:-translate-y-2"
+                    ? "border-orange-500/50 bg-gradient-to-b from-orange-500/10 to-transparent shadow-[0_0_30px_rgba(249,115,22,0.15)] -translate-y-4 ring-1 ring-orange-500/30"
+                    : "border-white/5 bg-white/5 hover:border-orange-500/30 hover:bg-white/10 hover:-translate-y-2 hover:shadow-2xl hover:shadow-orange-500/10"
                 }`}
               >
                 {/* Active Glow */}
                 {slug?.toLowerCase() === sign.title.toLowerCase() && (
-                    <div className="absolute top-0 inset-x-0 h-1.5 bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,1)]"></div>
+                    <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-600 via-amber-400 to-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.8)]"></div>
                 )}
+                
+                {/* Hover Glow */}
+                <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-lg">
+                <div className="relative w-16 h-16 group-hover:scale-110 transition-transform duration-700 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                  {/* Decorative aura on hover */}
+                  <div className="absolute inset-0 bg-orange-500/0 rounded-full blur-xl group-hover:bg-orange-500/20 transition-all duration-500"></div>
                   <Image
                     src={sign.image}
                     alt={sign.title}
                     fill
                     unoptimized={true}
-                    className="object-contain rounded-full"
+                    className="object-contain rounded-full relative z-10"
                   />
                 </div>
-                <div className="text-center">
+                <div className="text-center relative z-10">
                     <span
-                    className={`block text-[11px] font-black uppercase tracking-widest leading-none mb-1 transition-colors ${slug?.toLowerCase() === sign.title.toLowerCase() ? "text-orange-600" : "text-slate-400 group-hover:text-slate-900"}`}
+                    className={`block text-[11px] font-black uppercase tracking-widest leading-none mb-1 transition-colors ${
+                      slug?.toLowerCase() === sign.title.toLowerCase() 
+                        ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" 
+                        : "text-slate-300 group-hover:text-white"
+                    }`}
                     >
-                    {sign.title}
+                    {lang === "hi" ? sign.title : sign.title}
                     </span>
-                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[8px] font-black text-orange-500/60 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                         {sign.id}th House
                     </span>
                 </div>
