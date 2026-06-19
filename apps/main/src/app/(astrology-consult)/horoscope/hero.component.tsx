@@ -78,7 +78,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
           </div>
 
           {/* Image Side */}
-          <div className="lg:col-span-5 relative order-1 lg:order-2 lg:-mt-16">
+          <div className="lg:col-span-5 relative order-1 lg:order-2 lg:-mt-32">
             <div className="relative group">
               {/* Animated Glow */}
               <div className="absolute -inset-4 bg-orange-500/20 rounded-full blur-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-1000"></div>
