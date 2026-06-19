@@ -109,18 +109,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                 <div className="absolute bottom-1/4 left-1/4 w-2 h-2 bg-indigo-400 rounded-full blur-[1px] animate-pulse delay-700"></div>
               </div>
 
-              {/* Status Badge */}
-              <div className="absolute -bottom-4 -right-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-2xl animate-bounce">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-bolt animate-pulse"></i>
-                  </div>
-                  <div>
-                    <p className="text-[8px] font-black text-white/50 uppercase tracking-widest leading-none">Live Access</p>
-                    <p className="text-[10px] font-black text-white uppercase tracking-widest mt-1">Vedic Realtime</p>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>

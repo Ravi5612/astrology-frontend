@@ -217,15 +217,7 @@ export default function ZodiacDetailsPage() {
                   </div>
                 </div>
 
-                {/* Status Badge */}
-                <div className="absolute -bottom-4 -right-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-2xl">
-                    <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">
-                        Live Vedic Forecast
-                    </span>
-                    </div>
-                </div>
+
               </div>
             </div>
           </div>
