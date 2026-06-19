@@ -201,7 +201,7 @@ export default function ZodiacDetailsPage() {
                     alt="Zodiac Wheel"
                     fill
                     unoptimized={true}
-                    className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-2 lg:p-8"
+                    className="animate-[spin_60s_linear_infinite] opacity-60 object-contain p-2 lg:p-8"
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="relative w-full h-full lg:w-4/5 lg:h-4/5 scale-[1.05] lg:scale-100">

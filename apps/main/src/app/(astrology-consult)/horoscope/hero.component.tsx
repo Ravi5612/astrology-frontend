@@ -90,7 +90,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   unoptimized={true}
-                  className="animate-[spin_60s_linear_infinite] opacity-20 object-contain p-2 lg:p-8"
+                  className="animate-[spin_60s_linear_infinite] opacity-60 object-contain p-2 lg:p-8"
                 />
                 <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-16">
                   <div className="relative w-full h-full lg:w-full lg:h-full scale-[1.05] lg:scale-100 flex items-center justify-center">
