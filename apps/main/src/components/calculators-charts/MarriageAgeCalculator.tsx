@@ -125,6 +125,7 @@ const MarriageAgeCalculator: React.FC = () => {
           titleAccent={t.hero.titleAccent}
           paragraph={t.hero.paragraph}
         />
+      </section>
 
       {/* Main Content Area */}
       <section className="py-12 md:py-24 relative overflow-hidden">
