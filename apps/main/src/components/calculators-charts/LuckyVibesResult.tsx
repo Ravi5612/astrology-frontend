@@ -32,8 +32,6 @@ const LuckyVibesResult: React.FC<LuckyVibesResultProps> = ({ result }) => {
         </div>
 
               {/* Lucky Number Ring */}
-              <div className="flex flex-col items-center mb-14">
-              {/* Lucky Number Ring */}
               <div className="flex flex-col items-center mb-10">
                 <div className="relative mb-8">
                   <div className="w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-orange-500/30 flex items-center justify-center relative bg-[#301118] group">
