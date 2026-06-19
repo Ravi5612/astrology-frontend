@@ -308,32 +308,34 @@ export default function ZodiacDetailsPage() {
                 </div>
 
                 {/* Prediction Cards Grid */}
-                <div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 mb-20 max-h-[60vh] md:max-h-none overflow-y-auto md:overflow-y-visible pb-8 md:pb-0 hide-scrollbar -mx-2 px-2 md:mx-0 md:px-0 touch-pan-y"
-                  data-lenis-prevent="true"
-                >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-20">
                   {horoscope.predictions.map((p: any, idx: number) => {
                     const cat = getPredictionCategory(p.type);
                     return (
                       <div key={idx} className="group/pred">
                         <div
-                          className={`p-10 md:p-12 rounded-[2.5rem] border border-gray-100 group-hover/pred:border-orange-500/20 bg-gradient-to-br ${cat.gradient} h-full transition-all duration-500 hover:shadow-2xl md:hover:-translate-y-2 flex flex-col relative overflow-hidden`}
+                          className={`p-8 md:p-12 rounded-[2.5rem] border border-gray-100 group-hover/pred:border-orange-500/20 bg-gradient-to-br ${cat.gradient} h-full transition-all duration-500 hover:shadow-2xl md:hover:-translate-y-2 flex flex-col relative overflow-hidden`}
                         >
                             {/* Accent Line */}
-                            <div className={`absolute top-0 left-10 md:left-12 w-16 h-1.5 bg-orange-500 rounded-b-full opacity-20 group-hover/pred:opacity-100 group-hover/pred:w-24 transition-all duration-500`}></div>
+                            <div className={`absolute top-0 left-8 md:left-12 w-16 h-1.5 bg-orange-500 rounded-b-full opacity-20 group-hover/pred:opacity-100 group-hover/pred:w-24 transition-all duration-500`}></div>
 
-                            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-center justify-center text-3xl md:text-4xl mb-6 md:mb-8 group-hover/pred:scale-110 group-hover/pred:shadow-md transition-transform duration-500">
+                            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-sm border border-gray-50 flex items-center justify-center text-3xl md:text-4xl mb-6 md:mb-8 group-hover/pred:scale-110 group-hover/pred:shadow-md transition-transform duration-500 shrink-0">
                                 {getIcon(p.type)}
                             </div>
 
-                            <h4 className={`text-[10px] md:text-[11px] font-black ${cat.text} uppercase mb-4 tracking-[0.4em] flex items-center justify-between`}>
+                            <h4 className={`text-[10px] md:text-[11px] font-black ${cat.text} uppercase mb-4 tracking-[0.4em] flex items-center justify-between shrink-0`}>
                                 {cat.label}
                                 <FaChevronRight className="opacity-0 group-hover/pred:opacity-20 -translate-x-4 group-hover/pred:translate-x-0 transition-all" />
                             </h4>
 
-                            <p className="text-slate-700 text-[14px] md:text-[16px] leading-relaxed mb-0 font-bold italic opacity-90 border-l-4 border-orange-500/10 pl-5 md:pl-6 py-2 group-hover/pred:text-slate-950 transition-colors">
-                                &quot;{p.prediction}&quot;
-                            </p>
+                            <div 
+                              className="max-h-[120px] md:max-h-none overflow-y-auto hide-scrollbar touch-pan-y pr-2"
+                              data-lenis-prevent="true"
+                            >
+                              <p className="text-slate-700 text-[14px] md:text-[16px] leading-relaxed mb-0 font-bold italic opacity-90 border-l-4 border-orange-500/10 pl-4 md:pl-6 py-1 group-hover/pred:text-slate-950 transition-colors">
+                                  &quot;{p.prediction}&quot;
+                              </p>
+                            </div>
                         </div>
                       </div>
                     );
