@@ -198,16 +198,16 @@ const PaymentMethod = ({
             <button
               onClick={handlePayment}
               disabled={isProcessing}
-              className="group relative w-full py-6 bg-orange text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] shadow-premium hover:shadow-2xl hover:shadow-orange/20 overflow-hidden transition-all duration-500 active:scale-[0.98] disabled:opacity-70"
+              className="group relative w-full py-4 md:py-6 bg-orange text-white rounded-[1.5rem] md:rounded-[2rem] font-black text-[10px] md:text-xs uppercase tracking-widest md:tracking-[0.3em] shadow-premium hover:shadow-2xl hover:shadow-orange/20 overflow-hidden transition-all duration-500 active:scale-[0.98] disabled:opacity-70"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-              <div className="relative flex items-center justify-center gap-4">
+              <div className="relative flex items-center justify-center gap-2 md:gap-4 px-2">
                 {isProcessing ? (
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                 ) : (
-                  <i className="fa-solid fa-lock-keyhole text-sm"></i>
+                  <i className="fa-solid fa-lock-keyhole text-xs md:text-sm"></i>
                 )}
-                <span className="text-sm">
+                <span className="text-[11px] md:text-sm leading-tight text-center">
                   {isOrder ? `Pay ₹${total} & Place Order` : `Pay ₹${total} & Start Session`}
                 </span>
               </div>
