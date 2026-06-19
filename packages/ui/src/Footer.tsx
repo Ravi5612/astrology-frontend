@@ -46,11 +46,11 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Links columns wrapper */}
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-8 text-center md:text-left">
+            <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-left">
               {/* Free Calculator */}
               <div>
                 <h4 className="text-[16px] md:text-[18px] font-semibold text-[#ff6b00] mb-3 md:mb-[15px]">{t.freeCalculator}</h4>
-                <ul className="flex flex-col items-center md:items-start gap-2.5 pl-0">
+                <ul className="flex flex-col items-start gap-2.5 pl-0">
                   {[
                     { label: t.marriageAge, href: PATHS.MARRIAGE_AGE_CALCULATOR },
                     { label: t.dahejCalculator, href: PATHS.DAHEJ_CALCULATOR },
@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
               {/* Astrology Services */}
               <div>
                 <h4 className="text-[16px] md:text-[18px] font-semibold text-[#ff6b00] mb-3 md:mb-[15px]">{t.astrologyServices}</h4>
-                <ul className="flex flex-col items-center md:items-start gap-2.5 pl-0">
+                <ul className="flex flex-col items-start gap-2.5 pl-0">
                   <li><Link href={PATHS.ONLINE_PUJA} className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.onlinePuja}</span></Link></li>
                   <li><a href="/our-experts" className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.talkToExpert}</span></a></li>
                   <li><a href="#" className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.videoConsultation}</span></a></li>
@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
               {/* Important Links */}
               <div>
                 <h4 className="text-[16px] md:text-[18px] font-semibold text-[#ff6b00] mb-3 md:mb-[15px]">{t.importantLinks}</h4>
-                <ul className="flex flex-col items-center md:items-start gap-2.5 pl-0">
+                <ul className="flex flex-col items-start gap-2.5 pl-0">
                   <li><a href="#" className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.expertLogin}</span></a></li>
                   <li><a href="#" className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.expertRegistration}</span></a></li>
                   <li><Link href={PATHS.HINDU_CALENDAR} className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.shubhMuhurat}</span></Link></li>
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
               {/* Helpful Info */}
               <div>
                 <h4 className="text-[16px] md:text-[18px] font-semibold text-[#ff6b00] mb-3 md:mb-[15px]">{t.helpfulInfo}</h4>
-                <ul className="flex flex-col items-center md:items-start gap-2.5 pl-0">
+                <ul className="flex flex-col items-start gap-2.5 pl-0">
                   <li><Link href={PATHS.REFUND_POLICY} className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.refundPolicy}</span></Link></li>
                   <li><Link href={PATHS.PRIVACY_POLICY} className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.privacyPolicy}</span></Link></li>
                   <li><Link href={PATHS.TERMS_AND_CONDITIONS} className="text-[13px] md:text-[14px] text-[#f3f3f3] hover:text-[#ff6b00] transition-colors no-underline flex items-start md:items-center gap-2 group"><i className="fa-solid fa-angle-right text-[#ff6b00] text-[10px] transform group-hover:translate-x-1 transition-transform mt-1 md:mt-0" /><span className="leading-tight">{t.termsConditions}</span></Link></li>
