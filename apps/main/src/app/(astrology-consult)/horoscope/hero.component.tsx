@@ -92,7 +92,7 @@ const HeroComponent = ({ selectedSign }: HeroComponentProps) => {
                   unoptimized={true}
                   className="animate-[spin_60s_linear_infinite] opacity-60 object-contain p-2 lg:p-8"
                 />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-10 lg:p-24">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-8 lg:p-20">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <Image
                       src={selectedSign.image}
