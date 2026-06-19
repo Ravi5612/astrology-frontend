@@ -30,8 +30,7 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-2"></div>
           </div>
 
-          <form onSubmit={handleCalculate} className="max-w-3xl mx-auto">
-            <div className="glass-card rounded-[3rem] p-6 md:p-10 shadow-[0_15px_45px_rgba(48,17,24,0.1)] border border-[#301118]/5 relative overflow-hidden bg-white space-y-6">
+          <form onSubmit={handleCalculate} className="max-w-xl mx-auto space-y-6 md:space-y-8 relative z-10">
               {/* Name */}
               <div>
                 <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1" style={fontStyle}>
@@ -42,12 +41,12 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                     type="text"
                     required
                     style={{ borderRadius: "9999px", ...fontStyle }}
-                    className="w-full bg-[#fdf2f2] border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-red-500 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
+                    className="w-full bg-white border-2 border-orange-500/30 px-6 py-4 text-[#301118] font-bold focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder:text-gray-300 shadow-sm text-sm"
                     placeholder={t.namePlaceholder}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-500/50">
                     <FaUser size={14} />
                   </div>
                 </div>
@@ -62,16 +61,16 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                   <input
                     type="date"
                     style={{ borderRadius: "9999px", ...fontStyle }}
-                    className="w-full bg-white border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
+                    className="w-full bg-white border-2 border-orange-500/30 px-6 py-4 text-[#301118] font-bold focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all shadow-sm text-sm"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-orange-500/50">
                     <FaCalendar size={14} />
                   </div>
                 </div>
 
-                <p className="m-0 mt-3 text-xs text-gray-400 italic" style={fontStyle}>
+                <p className="m-0 mt-3 text-xs text-gray-500 italic text-center md:text-left" style={fontStyle}>
                   {t.dobTip}
                 </p>
               </div>
@@ -82,7 +81,7 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                   type="submit"
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
-                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  className="relative group inline-flex items-center justify-center gap-3 bg-orange-500 text-white w-full md:w-auto px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-orange-600 transition-all duration-500 shadow-xl disabled:opacity-50"
                 >
                   {loading ? (
                     <FaSpinner className="animate-spin" />
@@ -95,10 +94,9 @@ const MarriageAgeForm: React.FC<MarriageAgeFormProps> = ({
                   <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
-            </div>
 
-            <div className="mt-4 flex justify-center">
-              <div className="w-full h-2 bg-red-500/20 rounded-full blur-lg translate-y-2 opacity-50"></div>
+            <div className="mt-4 flex justify-center hidden">
+              <div className="w-full h-2 bg-orange-500/20 rounded-full blur-lg translate-y-2 opacity-50"></div>
             </div>
           </form>
         </div>
