@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Loader2, Info, Upload, Image as ImageIcon } from 'lucide-react';
+import { X, Plus, Trash2, Info, Upload, Image as ImageIcon } from 'lucide-react';
 import { PujaService, SamagriItem } from '../ProfileManagement/types';
 import { upsertPujaApi } from '@/lib/profile';
 import { toast } from 'react-toastify';
+import { Loading } from '@repo/ui';
 import { getErrorMessage } from '@repo/lib';
 
 interface PujaModalProps {
@@ -444,11 +445,12 @@ export const PujaModal = ({ mode, puja, onClose, onSaved }: PujaModalProps) => {
               disabled={loading}
               className="flex-1 py-3 px-6 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-all shadow-lg flex items-center justify-center gap-2 hover:translate-y-[-2px] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (mode === 'add' ? 'Save Service' : 'Update Service')}
+              {loading ? 'Saving...' : (mode === 'add' ? 'Save Service' : 'Update Service')}
             </button>
           </div>
         </form>
       </div>
+      {loading && <Loading fullScreen />}
     </div>
   );
 };

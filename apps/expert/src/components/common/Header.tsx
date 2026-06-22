@@ -8,7 +8,7 @@ import { getNotifications, deleteAllNotifications } from "@/lib/notifications";
 import { getErrorMessage } from "@repo/lib";
 
 import { Avatar } from "@repo/ui";
-import { NotificationBell } from "@repo/ui";
+import { NotificationBell, Loading } from "@repo/ui";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -390,6 +390,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </button>
         </div>
       </div>
+      {loading && <Loading fullScreen />}
     </header>
   );
 };

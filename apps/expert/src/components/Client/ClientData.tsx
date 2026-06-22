@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { getReviews } from "@/lib/reviews";
 import Button from "../ui/Button";
 import { HistorySkeleton } from "../dashboard/DashboardSkeletons";
+import { Loading } from "@repo/ui";
 
 const { X, MessageSquare, Clock, IndianRupee, Calendar, Star, Sun, ClipboardList, MapPin, Phone, Video, User, AlertCircle } = LucideIcons as any;
 
@@ -596,8 +597,7 @@ export default function ClientsPage() {
             <div className="flex-1 overflow-y-auto p-6 bg-[#fffbf9] space-y-6 custom-scrollbar-orange">
               {loadingChat ? (
                 <div className="flex flex-col justify-center items-center h-64 gap-4">
-                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#fd6410] border-t-transparent"></div>
-                  <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Loading Details...</p>
+                  <Loading size="lg" text="Loading Details..." />
                 </div>
               ) : (selectedSession.type || selectedSession.session_type || "").toLowerCase().includes("chat") ? (
                 /* Chat Messages View (Preserved but styled) */

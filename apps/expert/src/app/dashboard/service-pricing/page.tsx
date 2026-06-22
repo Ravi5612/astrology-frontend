@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Star, Edit3, Gift, Loader2, Trash2, Plus, MessageSquare, Phone, Video, Sparkles } from "lucide-react";
+import { Star, Edit3, Gift, Trash2, Plus, MessageSquare, Phone, Video, Sparkles } from "lucide-react";
 import { getProfile, updateProfile, deletePujaApi } from "@/lib/profile";
 import { Profile, PujaService } from "@/components/profile-management/types";
 import { PujaModal } from "@/components/shared/PujaModal";

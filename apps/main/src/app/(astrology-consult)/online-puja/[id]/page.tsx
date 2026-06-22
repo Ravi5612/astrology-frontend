@@ -13,6 +13,7 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
 import Image from "next/image";
 import Link from "next/link";
+import { Loading } from "@repo/ui";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@repo/lib";
@@ -431,7 +432,7 @@ const PujaDetailPage = () => {
                                 className="w-full py-5 bg-[#301118] text-white font-black rounded-3xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-900/10 active:scale-[0.98] flex items-center justify-center gap-3 group/book disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isBooking ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    "Processing Request..."
                                 ) : (
                                     <>
                                         Send request to expert for pooja
@@ -451,6 +452,8 @@ const PujaDetailPage = () => {
             {/* Placeholder for footer or bottom space */}
             <div className="pb-32" />
             
+            {isBooking && <Loading fullScreen />}
+
             <style jsx global>{`
                 @keyframes fade-in {
                     from { opacity: 0; transform: translateY(10px); }

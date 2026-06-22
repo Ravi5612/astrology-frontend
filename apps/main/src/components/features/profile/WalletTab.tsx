@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@repo/ui";
+import { Button, Loading } from "@repo/ui";
 import { useLanguageStore } from "@repo/store";
 import { profileTranslations } from "@/lib/translations/profile";
 import Skeleton from "@/components/ui/Skeleton";
@@ -508,6 +508,7 @@ const WalletTab: React.FC<WalletTabProps> = ({
           </div>
         )}
       </div>
+      {(isProcessing || loadingMore) && <Loading fullScreen />}
     </div>
   );
 };

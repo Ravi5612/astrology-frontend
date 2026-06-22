@@ -11,6 +11,7 @@ import {
 } from "@/lib/profile";
 import { getErrorMessage } from "@repo/lib";
 import Button from "../ui/Button";
+import { Loading } from "@repo/ui";
 
 interface BankAccount {
     id: string;
@@ -281,7 +282,7 @@ export default function PayoutInfo({ isActive }: { isActive?: boolean }) {
                         <div className="space-y-4">
                             {loading ? (
                                 <div className="flex justify-center py-10">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+                                    <Loading size="md" />
                                 </div>
                             ) : accounts.length > 0 ? (
                                 <div className="grid grid-cols-1 gap-4">

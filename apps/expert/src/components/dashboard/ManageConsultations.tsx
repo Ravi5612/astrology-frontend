@@ -8,13 +8,13 @@ import {
   Sparkles,
   Plus,
   Edit3,
-  Loader2,
   Trash2,
 } from "lucide-react";
 import { getProfile, updateProfile } from "@/lib/profile";
 import { Profile } from "@/components/profile-management/types";
 import { ServiceModal, ServiceModalService } from "@/components/shared/ServiceModal";
 import { toast } from "react-toastify";
+import { Loading } from "@repo/ui";
 
 // ---- Static standard services config ----
 const STANDARD_SERVICES = (profile: Profile | null) => [
@@ -138,8 +138,7 @@ export const ManageConsultations: React.FC = () => {
       {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-10 text-gray-400 gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span className="text-sm">Loading services…</span>
+          <Loading size="md" text="Loading services..." />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

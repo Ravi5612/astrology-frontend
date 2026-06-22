@@ -6,6 +6,7 @@ import { Product } from "@/types/product";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductForm } from "./ProductForm";
 import { ProductCard } from "./ProductCard";
+import { Loading } from "@repo/ui";
 
 export default function ProductManager() {
     const { 
@@ -98,8 +99,7 @@ export default function ProductManager() {
 
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-24">
-                        <div className="w-12 h-12 border-4 border-[#F25E0A]/20 border-t-[#F25E0A] rounded-full animate-spin" />
-                        <p className="text-gray-400 mt-4 font-bold text-xs uppercase tracking-widest">Loading Repository</p>
+                        <Loading size="lg" text="Loading Repository..." />
                     </div>
                 ) : filteredProducts.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center flex flex-col items-center shadow-sm">

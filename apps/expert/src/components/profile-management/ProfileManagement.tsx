@@ -21,6 +21,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useProfile, constructProfilePayload } from "@/hooks/useProfile";
 import { uploadDocument } from "@/lib/profile";
 import { ProfileSkeleton } from "../dashboard/DashboardSkeletons";
+import { Loading } from "@repo/ui";
 
 const ProfileManagement = () => {
     const { user: authUser } = useAuthStore();
@@ -353,6 +354,7 @@ const ProfileManagement = () => {
                     />
                 </div>
             </div>
+            {isSaving && <Loading fullScreen />}
         </div>
     );
 };

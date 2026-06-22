@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@repo/ui";
+import { Button, Loading } from "@repo/ui";
 import Skeleton from "@/components/ui/Skeleton";
 
 interface PersonalDetailsCardProps {
@@ -289,6 +289,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
           </div>
         </div>
       </div>
+      {saving && <Loading fullScreen />}
     </div>
   );
 };

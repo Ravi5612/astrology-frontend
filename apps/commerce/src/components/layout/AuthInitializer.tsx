@@ -39,7 +39,7 @@ export const AuthInitializer = ({
                     const newUrl = window.location.pathname;
                     window.history.replaceState({}, "", newUrl);
                     
-                    toast.success("Login successful!");
+                    // toast.success("Login successful!");
                     window.location.href = "/dashboard";
                 } catch (err) {
                     console.error("[AuthInitializer] Error setting cookies:", err);

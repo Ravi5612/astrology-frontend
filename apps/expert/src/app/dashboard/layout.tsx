@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { ChatNotificationListener } from "@/components/notifications/ChatNotificationListener";
 import { CallNotificationListener } from "@/components/notifications/CallNotificationListener";
 import { LayoutProps } from "@/types/expert";
+import { Loading } from "@repo/ui";
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,11 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   if (!isMounted || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50" suppressHydrationWarning>
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600" suppressHydrationWarning></div>
-      </div>
-    );
+    return <Loading fullScreen />;
   }
 
   if (!isAuthenticated) {

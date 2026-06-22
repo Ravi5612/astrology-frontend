@@ -4,11 +4,12 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { expertVerifyEmailAction } from "@/actions/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getErrorMessage } from "@repo/lib";
+import { Loading } from "@repo/ui";
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 
@@ -110,9 +111,8 @@ const VerifyEmailContent = () => {
 
         <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center bg-white text-center sm:text-left">
           {status === "verifying" && (
-            <div className="flex flex-col items-center sm:items-start animate-pulse">
-              <Loader2 className="w-14 h-14 text-orange-500 animate-spin mb-8" />
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Authenticating</h2>
+            <div className="flex flex-col items-center sm:items-start">
+              <Loading size="lg" text="Authenticating..." />
               <p className="mt-4 text-gray-500 font-medium italic">{message}</p>
             </div>
           )}
@@ -168,11 +168,7 @@ const VerifyEmailContent = () => {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#FFF9F4]">
-        <div className="w-12 h-12 border-4 border-orange-100 border-t-orange-600 rounded-full animate-spin"></div>
-      </div>
-    }>
+    <Suspense fallback={<Loading fullScreen />}>
       <VerifyEmailContent />
     </Suspense>
   );

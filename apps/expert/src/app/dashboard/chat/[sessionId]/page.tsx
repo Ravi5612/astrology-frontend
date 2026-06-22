@@ -16,7 +16,7 @@ const {
 
 import { SummaryModal } from "@/components/common/SummaryModal";
 import { ChatMessage, ChatSessionStatus, PendingAttachment } from "@/types/chat";
-import { Avatar } from "@repo/ui";
+import { Avatar, Loading } from "@repo/ui";
 
 function ExpertChatRoomContent() {
     const params = useParams();
@@ -610,7 +610,7 @@ function ExpertChatRoomContent() {
 
 export default function ExpertChatRoom() {
     return (
-        <Suspense fallback={<div>Loading chat session...</div>}>
+        <Suspense fallback={<Loading fullScreen />}>
             <ExpertChatRoomContent />
         </Suspense>
     );

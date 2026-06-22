@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { API_ROUTES as API_CONFIG } from "@/lib/api-routes";
 import { useLanguageStore } from "@repo/store";
 import { authTranslations } from "@/lib/translations/auth";
+import { Loading } from "@repo/ui";
 
 const Image = NextImage as any;
 const Link = NextLink as any;
@@ -72,7 +73,9 @@ const SignInForm: React.FC = () => {
         // Just update the Zustand UI state — NO token passed to client
         login(result.user);
 
-        toast.success(t.signIn.success);
+        // User requested removing the success toast as the UI change (profile pic) is enough
+        // toast.success(t.signIn.success);
+        
         // Redirect to callback URL or profile page
         router.push(callbackUrl);
       }
@@ -201,16 +204,11 @@ const SignInForm: React.FC = () => {
           className="w-full py-3.5 rounded-2xl bg-orange text-white text-base font-black shadow-[0_8px_20px_rgba(255,107,0,0.2)] hover:shadow-[0_12px_25px_rgba(255,107,0,0.3)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer hover:cursor-pointer mt-2"
           disabled={isLoading}
         >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              {t.signIn.signingIn}
-            </span>
-          ) : t.signIn.submit}
+          {isLoading ? t.signIn.signingIn : t.signIn.submit}
         </button>
       </form>
 
-
+      {isLoading && <Loading fullScreen />}
     </div>
   );
 };

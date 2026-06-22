@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import { Review } from "@/libs/api-experts";
 import { Expert } from "@/lib/types";
 import { renderStars } from "./renderStars";
+import { Loading } from "@repo/ui";
 
 const Image = NextImage as any;
 
@@ -107,9 +108,8 @@ const ExpertContentSection: React.FC<ExpertContentSectionProps> = ({
           {activeTab === 'reviews' && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300 max-h-[400px] overflow-y-auto pr-1">
               {loadingReviews ? (
-                <div className="flex flex-col items-center justify-center py-10 space-y-3">
-                  <div className="w-8 h-8 border-4 border-orange border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-gray-500 font-medium">Loading authentic reviews...</p>
+                <div className="flex flex-col items-center justify-center py-10">
+                  <Loading size="md" text="Loading authentic reviews..." />
                 </div>
               ) : reviews.length > 0 ? (
                 reviews.map((review) => (

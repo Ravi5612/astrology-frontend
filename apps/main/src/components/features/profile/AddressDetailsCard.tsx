@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@repo/ui";
+import { Button, Loading } from "@repo/ui";
 import Skeleton from "@/components/ui/Skeleton";
 
 interface AddressDetailsCardProps {
@@ -304,6 +304,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
           </div>
         )}
       </div>
+      {saving && <Loading fullScreen />}
     </div>
   );
 };

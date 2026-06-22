@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { X, Save, Loader2 } from "lucide-react";
+import { X, Sparkles, Save } from "lucide-react";
 import { toast } from "react-toastify";
 import { getProfile, updateProfile, updatePricing } from "@/lib/profile";
+import { Loading } from "@repo/ui";
 import { getErrorMessage } from "@repo/lib/utils/error";
 import { Profile, CustomService } from "@/components/profile-management/types";
 
@@ -262,15 +263,12 @@ export function ServiceModal({
             disabled={saving}
             className="w-full mt-2 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black text-base shadow-xl active:scale-95 transition-all disabled:opacity-60"
           >
-            {saving ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Save className="w-5 h-5" />
-            )}
+            {!saving && <Save className="w-5 h-5" />}
             {saving ? "Saving…" : isEdit ? "Save Changes" : "Add Service"}
           </button>
         </div>
       </div>
+      {saving && <Loading fullScreen />}
     </div>
   );
 }

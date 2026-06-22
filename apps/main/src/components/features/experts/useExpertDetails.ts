@@ -14,6 +14,7 @@ export const useExpertDetails = (expertId: string, userId?: string) => {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [totalReviews, setTotalReviews] = useState(0);
   const [isAvailable, setIsAvailable] = useState<boolean>(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,14 +60,17 @@ export const useExpertDetails = (expertId: string, userId?: string) => {
   }, [expertId, userId]);
 
   const handleChatClick = () => {
+    setIsNavigating(true);
     router.push(`/chat/prep/${expertId}`);
   };
 
   const handleCallClick = () => {
+    setIsNavigating(true);
     router.push(`/call/prep/${expertId}?type=audio`);
   };
 
   const handleVideoCallClick = () => {
+    setIsNavigating(true);
     router.push(`/call/prep/${expertId}?type=video`);
   };
 
@@ -77,7 +81,8 @@ export const useExpertDetails = (expertId: string, userId?: string) => {
     activeTab, setActiveTab,
     reviews, loadingReviews, totalReviews,
     handleChatClick, handleCallClick, handleVideoCallClick,
-    isAvailable, setIsAvailable
+    isAvailable, setIsAvailable,
+    isNavigating
   };
 };
 

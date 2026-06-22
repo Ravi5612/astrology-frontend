@@ -5,9 +5,9 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@repo/lib";
-import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle, AlertCircle } from "lucide-react";
+import { Loading } from "@repo/ui";
 
-const Loader2Icon = Loader2 as any;
 const CheckCircleIcon = CheckCircle as any;
 const AlertCircleIcon = AlertCircle as any;
 
@@ -40,7 +40,7 @@ const VerifyIpContent = () => {
                 login(data.accessToken, data.user);
                 setStatus("success");
                 setMessage("IP verified successfully! Logging you in...");
-                toast.success("Login successful!");
+                // toast.success("Login successful!");
                 setTimeout(() => {
                     router.push("/dashboard");
                 }, 2000);
@@ -58,8 +58,7 @@ const VerifyIpContent = () => {
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
                 {status === "loading" && (
                     <div className="flex flex-col items-center">
-                        <Loader2Icon className="h-12 w-12 text-orange-500 animate-spin mb-4" />
-                        <h1 className="text-2xl font-bold text-gray-800">Verifying IP</h1>
+                        <Loading size="lg" text="Verifying IP..." />
                         <p className="text-gray-600 mt-2">{message}</p>
                     </div>
                 )}
@@ -94,7 +93,7 @@ import { Suspense } from 'react';
 
 const VerifyIpPage = () => {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loading fullScreen />}>
             <VerifyIpContent />
         </Suspense>
     );

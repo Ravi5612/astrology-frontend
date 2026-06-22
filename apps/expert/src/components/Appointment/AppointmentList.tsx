@@ -16,6 +16,7 @@ import Button from "../ui/Button";
 import { api } from "@/lib/api";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@repo/lib/utils/error";
+import { Loading } from "@repo/ui";
 
 const Clock = LucideClock as any;
 const Video = LucideVideo as any;
@@ -184,6 +185,7 @@ function PujaActions({ appt, onUpdate }: { appt: Appointment, onUpdate?: () => v
                     </Button>
                 </div>
             )}
+            {isUpdating && <Loading fullScreen />}
         </div>
     );
 }
@@ -276,6 +278,7 @@ function StandardActions({ appt, onUpdate, onReschedule }: { appt: Appointment, 
                     <Video className="w-5 h-5" /> Join & Accept
                 </a>
             )}
+            {isUpdating && <Loading fullScreen />}
         </div>
     );
 }

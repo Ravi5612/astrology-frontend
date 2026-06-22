@@ -8,6 +8,7 @@ import ExpertContentSection from "./ExpertContentSection";
 import ExpertMediaModals from "./ExpertMediaModals";
 import { useExpertDetails } from "./useExpertDetails";
 import { Expert, Product } from "@/lib/types";
+import { Loading } from "@repo/ui";
 
 export default function ExpertDetailsClient({
   expert,
@@ -33,6 +34,7 @@ export default function ExpertDetailsClient({
     handleVideoCallClick,
     isAvailable,
     setIsAvailable,
+    isNavigating,
   } = useExpertDetails(String(expert.id!), String(expert.userId || ''));
 
   // Initialize with the data from the server-side fetch
@@ -88,6 +90,8 @@ export default function ExpertDetailsClient({
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
       />
+
+      {isNavigating && <Loading fullScreen />}
     </>
   );
 }

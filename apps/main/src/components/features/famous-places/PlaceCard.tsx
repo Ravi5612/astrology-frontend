@@ -16,7 +16,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
 
   const [realImage, setRealImage] = useState<string | null>(null);
 
-  const NO_IMAGE_URL = "/images/image-not-found.png";
+  const NO_IMAGE_URL = "/images/temple-placeholder.png";
 
   useEffect(() => {
     const loadImage = async () => {

@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Star, User, Loader2, ChevronDown } from "lucide-react";
+import { Star, User, ChevronDown } from "lucide-react";
 import { Review, getReviews } from "@/lib/reviews";
 import { getErrorMessage } from "@repo/lib";
+import { Loading } from "@repo/ui";
 
 const PAGE_SIZE = 10;
 
@@ -119,12 +120,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                         disabled={loadingMore}
                         className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
                     >
-                        {loadingMore ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Loading...
-                            </>
-                        ) : (
+                        {loadingMore ? "Loading..." : (
                             <>
                                 <ChevronDown className="w-4 h-4" />
                                 Load More Reviews
@@ -133,6 +129,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
                     </button>
                 </div>
             )}
+            {loadingMore && <Loading fullScreen />}
         </div>
     );
 };

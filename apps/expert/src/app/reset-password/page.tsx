@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 
-import { Button } from "@repo/ui";
+import { Button, Loading } from "@repo/ui";
 import { ResetPasswordSchema, ResetPasswordFormData } from "@/types/auth";
 import { expertResetPasswordAction } from "@/actions/auth";
 
@@ -209,9 +209,7 @@ const ResetPasswordContent: React.FC = () => {
 const ResetPasswordPage: React.FC = () => {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#FFF9F4]">
-        <div className="w-12 h-12 border-4 border-orange-100 border-t-orange-600 rounded-full animate-spin"></div>
-      </div>
+      <Loading fullScreen />
     }>
       <ResetPasswordContent />
     </Suspense>

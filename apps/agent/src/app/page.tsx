@@ -28,7 +28,6 @@ function AgentLoginForm() {
 
         if (result.success) {
             login(result.user);
-            toast.success("Login Successful! Redirecting...");
             // ✅ Full page reload — middleware needs fresh request to read the
             // newly set HttpOnly cookie (client-side router.push doesn't work)
             window.location.href = "/dashboard";

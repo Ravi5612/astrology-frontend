@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { X, Star, User, Loader2 } from "lucide-react";
+import { X, Star, User } from "lucide-react";
+import { Loading } from "@repo/ui";
 import { getReviews, Review } from "@/lib/reviews";
 import { getErrorMessage } from "@repo/lib";
 import Button from "../ui/Button";
@@ -64,8 +65,7 @@ export const ReviewsModal: React.FC<ReviewsModalProps> = ({ isOpen, onClose, exp
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {loading && page === 1 ? (
                         <div className="flex flex-col items-center justify-center py-20">
-                            <Loader2 className="w-10 h-10 text-orange-600 animate-spin mb-2" />
-                            <p className="text-gray-500">Loading all reviews...</p>
+                            <Loading size="lg" text="Loading all reviews..." />
                         </div>
                     ) : reviews.length > 0 ? (
                         reviews.map((review) => (

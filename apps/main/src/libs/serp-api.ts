@@ -88,7 +88,7 @@ export async function fetchPlaceImages(placeTitle: string): Promise<string[]> {
     });
 
     if (!response.ok) {
-      console.error("Failed to fetch images", response.statusText);
+      console.warn("Failed to fetch images, falling back to default:", response.statusText);
       return [];
     }
 
@@ -107,7 +107,7 @@ export async function fetchPlaceImages(placeTitle: string): Promise<string[]> {
       .filter(Boolean)
       .filter((url: string) => !url.includes("via.placeholder.com"));
   } catch (err) {
-    console.error("Error fetching images:", err);
+    console.warn("Error fetching images, falling back to default:", err);
     return [];
   }
 }

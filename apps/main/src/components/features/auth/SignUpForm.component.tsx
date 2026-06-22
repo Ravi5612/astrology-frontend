@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { initiateRegistrationAction, completeRegistrationAction } from "@/actions/auth";
 import { useLanguageStore } from "@repo/store";
 import { authTranslations } from "@/lib/translations/auth";
-import { VerificationPopup } from "@repo/ui";
+import { VerificationPopup, Loading } from "@repo/ui";
 import { useSearchParams, useRouter } from "next/navigation";
 
 const Image = NextImage as any;
@@ -164,7 +164,8 @@ export const SignUpForm: React.FC = () => {
             if (result.error) {
                 toast.error(result.error);
             } else if (result.success) {
-                toast.success("Profile completed successfully!");
+                // User requested removing the success toast as the UI redirection is enough
+                // toast.success("Profile completed successfully!");
                 router.push("/client/profile");
             }
         } catch {
@@ -359,6 +360,7 @@ export const SignUpForm: React.FC = () => {
             email={email}
             onClose={() => setShowVerification(false)}
         />
+        {isLoading && <Loading fullScreen />}
         </>
     );
 };

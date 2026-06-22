@@ -3,6 +3,7 @@
 import React, { FC, useState } from "react";
 import { X, Upload, Link as LinkIcon, Image as ImageIcon, ToggleLeft, ToggleRight } from "lucide-react";
 import { Product } from "@/types/product";
+import { Loading } from "@repo/ui";
 import { toast } from "react-toastify";
 
 interface ProductFormProps {
@@ -290,17 +291,11 @@ export const ProductForm: FC<ProductFormProps> = ({
                         disabled={isSubmitting}
                         className="px-8 py-2.5 text-sm font-bold text-white bg-[#F25E0A] hover:bg-[#d94f00] rounded-xl shadow-lg shadow-orange/20 transition-all active:scale-95 disabled:opacity-50"
                     >
-                        {isSubmitting ? (
-                            <span className="flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Saving...
-                            </span>
-                        ) : (
-                            editingProduct ? "Update Product" : "Publish Product"
-                        )}
+                        {isSubmitting ? "Saving..." : (editingProduct ? "Update Product" : "Publish Product")}
                     </button>
                 </div>
             </form>
+            {isSubmitting && <Loading fullScreen />}
         </div>
     );
 };
