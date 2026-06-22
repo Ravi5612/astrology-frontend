@@ -15,10 +15,10 @@ export default function RegisterPageClient() {
     return (
         <section className="relative py-2 md:py-4 bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden">
             <div className="max-w-[1320px] mx-auto px-4 md:px-8 relative z-10">
-                <div className="flex flex-col-reverse lg:flex-row gap-12 items-start">
+                <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-12 items-start">
 
                     {/* Left Section: branding and info */}
-                    <div className="w-full lg:w-5/12 pt-8">
+                    <div className="w-full lg:w-5/12 pt-0 lg:pt-8">
                         <div className="mb-8">
                             <h3
                                 className="text-[28px] md:text-5xl font-extrabold leading-tight mb-4"
