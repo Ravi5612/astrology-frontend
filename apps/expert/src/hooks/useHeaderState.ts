@@ -185,6 +185,14 @@ export const useHeaderState = () => {
       socket.emit(newStatus ? "expert_online" : "expert_offline", { userId: actualUserId });
     }
 
+    // Force end any active chats if toggling offline
+    if (!newStatus) {
+      const { chatSocket } = require("@/lib/socket");
+      if (chatSocket && user?.profileId) {
+        chatSocket.emit("force_end_active_chats", { expert_id: String(user.profileId) });
+      }
+    }
+
     toast.success(`You are now ${newStatus ? 'Online' : 'Offline'}`);
     setLoading(false);
   };

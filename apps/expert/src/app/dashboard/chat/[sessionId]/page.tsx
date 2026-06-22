@@ -37,6 +37,7 @@ function ExpertChatRoomContent() {
     const [pendingAttachment, setPendingAttachment] = useState<PendingAttachment | null>(null);
     const [showSummary, setShowSummary] = useState(false);
     const [summaryData, setSummaryData] = useState<any>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -239,10 +240,7 @@ function ExpertChatRoomContent() {
             setUploading(true);
             const formData = new FormData();
             formData.append('file', file);
-            const [data, error] = await api<any>(`/client/upload-document`, {
-                method: 'POST',
-                body: formData,
-            });
+            const [data, error] = await api.post<any>(`/expert/upload-file`, formData);
 
             if (error) {
                 console.error("Upload error:", error);
@@ -468,7 +466,13 @@ function ExpertChatRoomContent() {
                                                                     </div>
                                                                     <div className="space-y-1">
                                                                         <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Date of Birth</span>
-                                                                        <p className="text-sm font-black text-black">{data.dob || "N/A"}</p>
+                                                                        <p className="text-sm font-black text-black">
+                                                                            {data.dob && data.dob !== "N/A" ? (
+                                                                                !isNaN(new Date(data.dob).getTime()) 
+                                                                                ? new Date(data.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                                                                                : data.dob
+                                                                            ) : "N/A"}
+                                                                        </p>
                                                                     </div>
                                                                     <div className="space-y-1">
                                                                         <span className="text-[9px] font-black text-black/40 uppercase tracking-widest">Time of Birth</span>
@@ -500,7 +504,10 @@ function ExpertChatRoomContent() {
                                                         msg.attachment_type?.toLowerCase() === "image" ||
                                                         (msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl)?.match(/\.(jpg|jpeg|png|gif|webp)$|images/i)
                                                     ) ? (
-                                                        <a href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl} target="_blank" rel="noreferrer">
+                                                        <div 
+                                                            onClick={() => setPreviewImage(msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl || null)}
+                                                            className="cursor-pointer"
+                                                        >
                                                             <img
                                                                 src={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
                                                                 className="rounded-lg max-h-60 w-auto object-contain shadow-sm hover:opacity-90 transition border border-white/10"
@@ -509,7 +516,7 @@ function ExpertChatRoomContent() {
                                                                     (e.target as any).style.display = 'none';
                                                                 }}
                                                             />
-                                                        </a>
+                                                        </div>
                                                     ) : (
                                                         <a
                                                             href={msg.attachmentUrl || msg.attachment_url || msg.imageUrl || msg.mediaUrl}
@@ -598,6 +605,29 @@ function ExpertChatRoomContent() {
                     </div>
                 </div>
             </div>
+
+            {/* Image Preview Modal */}
+            {previewImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    onClick={() => setPreviewImage(null)}
+                >
+                    <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
+                        <button 
+                            className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors bg-black/50 p-2 rounded-full"
+                            onClick={() => setPreviewImage(null)}
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                        <img 
+                            src={previewImage} 
+                            alt="Preview" 
+                            className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/20"
+                            onClick={(e) => e.stopPropagation()} 
+                        />
+                    </div>
+                </div>
+            )}
 
             <SummaryModal 
                 isOpen={showSummary && !!summaryData} 

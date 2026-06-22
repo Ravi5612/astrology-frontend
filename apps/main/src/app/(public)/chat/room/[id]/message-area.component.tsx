@@ -31,6 +31,7 @@ export default function MessageArea({
     user
 }: MessageAreaProps) {
     const [mounted, setMounted] = React.useState(false);
+    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         setMounted(true);
@@ -38,9 +39,32 @@ export default function MessageArea({
 
     return (
         <div 
-            className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar"
+            className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar relative"
             data-lenis-prevent
         >
+            {/* Image Preview Modal */}
+            {previewImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    onClick={() => setPreviewImage(null)}
+                >
+                    <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
+                        <button 
+                            className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors bg-black/50 p-2 rounded-full"
+                            onClick={() => setPreviewImage(null)}
+                        >
+                            <LucideIcons.X className="w-6 h-6" />
+                        </button>
+                        <img 
+                            src={previewImage} 
+                            alt="Preview" 
+                            className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/20"
+                            onClick={(e) => e.stopPropagation()} 
+                        />
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-4xl mx-auto space-y-8">
                 <div className="flex justify-center mb-10">
                     <div className={`px-6 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] transition-all border ${sessionSummary?.status === 'terminated' ? 'bg-red-500/10 text-red-500 border-red-500/20' : isDarkMode ? 'bg-white/5 opacity-30 border-white/5' : 'bg-[#fd6410]/10 text-[#fd6410] border-[#fd6410]/20'}`}>
@@ -162,14 +186,26 @@ export default function MessageArea({
                                         </div>
                                     ) : (
                                         <>
-                                            {msg.attachmentUrl && (
+                                            {(msg.attachmentUrl || (msg as any).attachment_url) && (
                                                 <div className="mb-2 max-w-sm rounded-xl overflow-hidden border border-black/5 shadow-sm">
-                                                    {msg.attachmentType === 'image' ? (
-                                                        <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-                                                            <Image src={msg.attachmentUrl} alt="attachment" width={200} height={200} className="w-full object-cover" />
-                                                        </a>
+                                                    {(msg.attachmentType === 'image' || (msg as any).attachment_type === 'image' || 
+                                                      (msg.attachmentUrl || (msg as any).attachment_url)?.match(/\.(jpg|jpeg|png|gif|webp)$|images/i)
+                                                    ) ? (
+                                                        <div 
+                                                            className="block w-full cursor-pointer"
+                                                            onClick={() => setPreviewImage(msg.attachmentUrl || (msg as any).attachment_url)}
+                                                        >
+                                                            <img 
+                                                                src={msg.attachmentUrl || (msg as any).attachment_url} 
+                                                                alt="attachment" 
+                                                                className="w-full max-h-60 object-cover hover:opacity-90 transition-opacity" 
+                                                                onError={(e) => {
+                                                                    (e.target as any).style.display = 'none';
+                                                                }}
+                                                            />
+                                                        </div>
                                                     ) : (
-                                                        <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 p-2 rounded-lg ${isUser ? 'bg-white/10' : 'bg-black/5'} transition-colors`}>
+                                                        <a href={msg.attachmentUrl || (msg as any).attachment_url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 p-2 rounded-lg ${isUser ? 'bg-white/10' : 'bg-black/5'} transition-colors`}>
                                                             <div className="p-1.5 bg-orange-500 rounded flex-shrink-0">
                                                                 <FileText className="w-3.5 h-3.5 text-white" />
                                                             </div>

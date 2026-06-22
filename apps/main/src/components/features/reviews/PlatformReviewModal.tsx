@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { api as http } from "@/lib/api";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@repo/lib";
-
+import { CloseButton } from "@repo/ui";
 const QUICK_TAGS = [
   "Highly Accurate",
   "Life Changing",
@@ -118,14 +118,9 @@ const PlatformReviewModal: React.FC<PlatformReviewModalProps> = ({
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={handleClose}
-                  className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200 flex-shrink-0 ml-2"
-                >
-                  <svg className="w-3.5 h-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <div className="flex-shrink-0 ml-2 mt-1">
+                  <CloseButton onClick={handleClose} />
+                </div>
               </div>
 
               {/* Star Rating */}

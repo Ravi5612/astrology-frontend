@@ -11,7 +11,7 @@ type Props = {
 
 const HeroInfo = ({ expertName }: Props) => {
   return (
-    <div className="lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-left duration-1000">
+    <div className="order-2 lg:order-1 lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-left duration-1000">
       <div className="space-y-4">
         <span className="px-4 py-1.5 bg-orange/10 text-orange text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-orange/20 inline-block">
           Preparing Connection

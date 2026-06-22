@@ -93,7 +93,7 @@ const PersonalDetailsCard: React.FC<PersonalDetailsCardProps> = ({
               {t.personalDetails.cancel}
             </Button>
             <Button
-              variant="success"
+              variant="primary"
               size="md"
               loading={saving}
               onClick={handleSave}

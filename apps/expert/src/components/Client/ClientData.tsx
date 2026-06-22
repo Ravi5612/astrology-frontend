@@ -673,7 +673,13 @@ export default function ClientsPage() {
                                                 </div>
                                                 <div className="space-y-0.5">
                                                   <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">DOB</span>
-                                                  <p className="text-xs font-black text-black">{data.dob || "N/A"}</p>
+                                                  <p className="text-xs font-black text-black">
+                                                    {data.dob && data.dob !== "N/A" ? (
+                                                      !isNaN(new Date(data.dob).getTime()) 
+                                                      ? new Date(data.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                                                      : data.dob
+                                                    ) : "N/A"}
+                                                  </p>
                                                 </div>
                                                 <div className="space-y-0.5">
                                                   <span className="text-[8px] font-black text-black/40 uppercase tracking-widest">TOB</span>

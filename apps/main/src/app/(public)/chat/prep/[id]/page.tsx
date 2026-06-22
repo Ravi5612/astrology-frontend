@@ -211,27 +211,7 @@ export default function ConsultationPrep() {
                 `}
       </style>
 
-      {/* Top Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 flex items-center justify-between">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 group text-gray-400 hover:text-orange transition-colors"
-        >
-          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-orange/10 transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xs uppercase tracking-widest">
-            Back
-          </span>
-        </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            Astro-Secure Link
-          </span>
-        </div>
-      </nav>
 
       <main className="max-w-6xl mx-auto px-4 pt-10 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

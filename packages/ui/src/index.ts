@@ -11,6 +11,7 @@ export { NotificationBell } from "./components/NotificationBell";
 export { SearchInput } from "./components/SearchInput";
 export { StatsCards, type StatConfig } from "./components/StatsCard";
 export { VerificationPopup } from "./components/VerificationPopup";
+export { CloseButton, type CloseButtonProps } from "./components/CloseButton";
 
 // Profile components
 export * from "./components/profile";

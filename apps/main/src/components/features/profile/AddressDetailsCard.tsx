@@ -74,7 +74,7 @@ const AddressDetailsCard: React.FC<AddressDetailsCardProps> = ({
               {t.addressDetails.cancel}
             </Button>
             <Button
-              variant="success"
+              variant="primary"
               size="md"
               loading={saving}
               onClick={handleSave}

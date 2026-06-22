@@ -74,7 +74,7 @@ const AstroDetailsCard: React.FC<AstroDetailsCardProps> = ({
               {t.astroDetails.cancel}
             </Button>
             <Button
-              variant="success"
+              variant="primary"
               size="md"
               loading={saving}
               onClick={handleSave}

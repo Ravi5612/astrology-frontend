@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { CloseButton } from "@repo/ui";
 
 interface FilterState {
   location: string;
@@ -81,12 +82,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, onApply }) =
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">Refine your search</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-orange hover:text-white transition-all duration-300 hover:rotate-90"
-          >
-            <i className="fa-solid fa-xmark text-lg"></i>
-          </button>
+          <CloseButton onClick={onClose} />
         </div>
 
         {/* Body */}

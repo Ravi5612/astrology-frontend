@@ -6,7 +6,7 @@ import * as LucideIcons from "lucide-react";
 import { Expert } from "@/lib/types";
 
 const Image = NextImage as any;
-const { MessageSquare, MapPin } = LucideIcons as any;
+const { MessageSquare, MapPin, Sparkles, ArrowRight } = LucideIcons as any;
 
 type Props = {
   expert: Expert | null;
@@ -28,7 +28,7 @@ const ExpertPreview = ({
   actionLoading,
 }: Props) => {
   return (
-    <div className="lg:col-span-5 relative">
+    <div className="order-1 lg:order-2 lg:col-span-5 relative">
       <div className="sticky top-28">
         <div className="p-2 bg-white rounded-[3.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.08)] relative overflow-hidden">
           {/* Expert Image Section */}
@@ -73,31 +73,36 @@ const ExpertPreview = ({
             </div>
 
             {/* Bottom Info Overlay */}
-            <div className="absolute bottom-10 left-10 right-10">
-              <div className="flex items-center gap-6 mb-4">
-                <div className="flex flex-col">
-                  <span className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
-                    Experience
-                  </span>
-                  <span className="text-white font-bold">
-                    {expert?.experience}+ Years
+            <div className="absolute bottom-6 left-6 right-6">
+              <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-[2rem] p-5 flex flex-col gap-4 shadow-xl">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <span className="text-white/60 text-[9px] font-black uppercase tracking-widest mb-1">
+                      Expertise
+                    </span>
+                    <span className="text-white font-bold text-sm line-clamp-1 truncate" title={expert?.expertise}>
+                      {expert?.expertise || "Astrology, Vastu, Palmistry"}
+                    </span>
+                  </div>
+                  <div className="w-[1px] h-8 bg-white/20 flex-shrink-0"></div>
+                  <div className="flex flex-col flex-shrink-0">
+                    <span className="text-white/60 text-[9px] font-black uppercase tracking-widest mb-1 text-right">
+                      Experience
+                    </span>
+                    <span className="text-white font-bold text-right text-sm">
+                      {expert?.experience}+ Years
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="h-[1px] w-full bg-white/10"></div>
+                
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-orange" />
+                  <span className="text-white/80 text-xs font-medium">
+                    Verified Astro Expert • Bharat
                   </span>
                 </div>
-                <div className="w-[1px] h-8 bg-white/20"></div>
-                <div className="flex flex-col">
-                  <span className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
-                    Expertise
-                  </span>
-                  <span className="text-white font-bold">
-                    {expert?.expertise}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-orange" />
-                <span className="text-white/80 text-xs font-medium">
-                  Verified Astro Expert • Bharat
-                </span>
               </div>
             </div>
           </div>
@@ -227,15 +232,20 @@ const ExpertPreview = ({
               <button
                 onClick={handleStartConsultation}
                 disabled={actionLoading}
-                className={`relative w-full py-4 md:py-6 bg-gradient-to-br from-orange via-orange to-orange text-white rounded-[2rem] md:rounded-[2.5rem] font-black text-base md:text-xl flex items-center justify-center gap-2 md:gap-4 shadow-[0_15px_30px_rgba(255,107,0,0.25)] md:shadow-[0_20px_40px_rgba(255,107,0,0.25)] hover:shadow-[0_20px_40px_rgba(255,107,0,0.35)] md:hover:shadow-[0_25px_60px_rgba(255,107,0,0.35)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.99] transition-all duration-300 border-b-[4px] md:border-b-8 border-orange/80 overflow-hidden cursor-pointer ${
+                className={`group relative w-full py-4 md:py-5 bg-gradient-to-r from-[#FF8A00] to-[#FF5500] text-white rounded-[2rem] md:rounded-[2.5rem] font-extrabold text-base md:text-lg flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(255,85,0,0.3)] hover:shadow-[0_20px_40px_rgba(255,85,0,0.4)] hover:-translate-y-1 active:translate-y-0.5 active:scale-[0.98] transition-all duration-300 border-b-[5px] border-[#CC4400] overflow-hidden cursor-pointer ${
                   actionLoading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
+                {/* 3D Depth overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
-                <MessageSquare className="w-5 h-5 md:w-7 md:h-7 fill-white/20" />
-                <span>
+                {/* Hover shine effect */}
+                <div className="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-30deg] group-hover:animate-[none] group-hover:left-[200%] transition-all duration-1000 ease-in-out pointer-events-none"></div>
+                
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-300 relative z-10 group-hover:scale-125 transition-transform duration-300" fill="currentColor" />
+                <span className="tracking-wide relative z-10">
                   {actionLoading ? "CONNECTING..." : "START CONSULTATION"}
                 </span>
+                <ArrowRight className="w-5 h-5 text-white/70 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
 
               <div className="flex flex-col items-center gap-4 mt-8">

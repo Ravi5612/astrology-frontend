@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle, X } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import { CloseButton } from "./CloseButton";
 
 interface VerificationPopupProps {
   isOpen: boolean;
@@ -63,16 +64,14 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
           isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-8"
         }`}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <X size={20} />
-        </button>
+        <CloseButton onClick={onClose} className="absolute top-4 right-4" />
 
         <div className="flex flex-col items-center text-center">
-          <div className="w-20 h-20 mb-6 bg-orange/10 rounded-full flex items-center justify-center animate-pulse">
-            {icon || <CheckCircle className="w-10 h-10 text-orange" />}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-orange/20 rounded-full blur-xl transition-colors duration-500"></div>
+            <div className="w-20 h-20 bg-gradient-to-br from-orange/5 to-orange/15 rounded-full flex items-center justify-center animate-pulse relative z-10 border border-orange/20 shadow-[0_0_20px_rgba(255,107,0,0.1)]">
+              {icon || <CheckCircle className="w-10 h-10 text-orange" />}
+            </div>
           </div>
 
           <h3 className="text-2xl font-black text-gray-900 mb-2">
@@ -92,9 +91,13 @@ export const VerificationPopup: React.FC<VerificationPopupProps> = ({
 
           <button
             onClick={onClose}
-            className="w-full py-3.5 px-6 rounded-2xl bg-orange text-white font-bold text-base shadow-[0_8px_20px_rgba(249,115,22,0.25)] hover:shadow-[0_10px_25px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            className="group relative w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange to-[#FF5500] text-white font-extrabold text-base tracking-wide shadow-[0_8px_20px_rgba(255,107,0,0.25)] hover:shadow-[0_12px_25px_rgba(255,107,0,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.98] transition-all duration-300 border-b-[4px] border-[#CC4400] overflow-hidden"
           >
-            {buttonText}
+            {/* 3D Depth overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+            {/* Hover shine effect */}
+            <div className="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-30deg] group-hover:animate-[none] group-hover:left-[200%] transition-all duration-1000 ease-in-out pointer-events-none"></div>
+            <span className="relative z-10">{buttonText}</span>
           </button>
         </div>
       </div>

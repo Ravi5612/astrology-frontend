@@ -22,6 +22,7 @@ const Swiper = SwiperComponent as any;
 const SwiperSlide = SwiperSlideComponent as any;
 import { getNotificationSocket, connectNotificationSocket } from "./utils/socket";
 import { api } from "./utils/api";
+import { CloseButton } from "./components/CloseButton";
 
 
 
@@ -1139,26 +1140,15 @@ const Header: React.FC<HeaderProps> = ({ authState, userData, logoutHandler, bal
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              className="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center border-0 close-modal-btn"
+            <CloseButton 
+              onClick={() => setShowImageModal(false)}
               style={{
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
-                width: '35px',
-                height: '35px',
                 zIndex: 10,
-                backgroundColor: '#f25e0a',
-                color: '#fff',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                borderRadius: '50%'
               }}
-              onClick={() => setShowImageModal(false)}
-            >
-              <i className="fa-solid fa-xmark fs-5"></i>
-            </button>
-
+            />
             <div
               className="overflow-hidden rounded-3 d-flex align-items-center justify-content-center"
               style={{
