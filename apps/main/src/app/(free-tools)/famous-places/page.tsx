@@ -7,6 +7,7 @@ import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
 import CTA from "@/components/layout/main/CTA";
 import { useLanguageStore } from "@repo/store";
 import { famousPlacesTranslations } from "@/lib/famous-places-translations";
+import { Loading } from "@repo/ui";
 
 const FamousPlacesPage = () => {
   const { lang, toggleLang } = useLanguageStore();
@@ -174,17 +175,7 @@ const FamousPlacesPage = () => {
           <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-orange rounded-full blur-[100px]"></div>
         </div>
 
-        {/* Language Switcher — top right inside hero */}
-        <div className="absolute top-6 right-6 z-50">
-          <button
-            onClick={toggleLang}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
-            title={t.switchLangLabel}
-          >
-            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-            {t.switchLang}
-          </button>
-        </div>
+
 
         <div className="container relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange/10 border border-orange/20 text-orange text-xs font-bold uppercase tracking-widest mb-6 animate-fade-in">
@@ -421,6 +412,7 @@ const FamousPlacesPage = () => {
       </main>
       <WhyChooseUs />
       <CTA />
+      {(isSearching || isSearchingTemples || isSearchingPilgrimages) && <Loading fullScreen />}
     </div>
   );
 };

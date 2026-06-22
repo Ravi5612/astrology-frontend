@@ -127,14 +127,7 @@ const PlaceDetailPage = () => {
             </Link>
 
             <div className="flex items-center gap-3">
-              <button
-                onClick={toggleLang}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
-                title={t.switchLangLabel}
-              >
-                <span className="text-sm">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-                {t.switchLang}
-              </button>
+
 
               <div className="px-4 py-2 rounded-md bg-orange/80 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-widest shadow-lg">
                 {place.category || t.card.sacredSite}

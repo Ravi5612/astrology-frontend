@@ -8,7 +8,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
-import { Button, VerificationPopup } from "@repo/ui";
+import { Button } from "@repo/ui";
+import { Loading } from "@/components/ui/Loading";
+import { VerificationPopup } from "@/components/ui/VerificationPopup";
 import { expertInitiateRegistrationAction, expertCompleteRegistrationAction } from "@/actions/auth";
 import { CLIENT_API_URL } from "@/lib/config";
 
@@ -221,7 +223,7 @@ const RegisterPage: React.FC = () => {
 
                   <Button
                     type="submit"
-                    loading={isLoading}
+                    disabled={isLoading}
                     fullWidth
                     variant="primary"
                     className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest"
@@ -337,7 +339,7 @@ const RegisterPage: React.FC = () => {
 
                   <Button
                       type="submit"
-                      loading={isLoading}
+                      disabled={isLoading}
                       fullWidth
                       variant="primary"
                       className="bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl shadow-lg shadow-orange-600/20 transform active:scale-95 transition-all font-black text-sm uppercase tracking-widest mt-6"
@@ -354,6 +356,7 @@ const RegisterPage: React.FC = () => {
           email={email}
           onClose={() => setShowVerification(false)}
       />
+      {isLoading && <Loading fullScreen />}
     </div>
   );
 };

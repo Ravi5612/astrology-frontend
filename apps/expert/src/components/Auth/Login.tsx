@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
 import { Button } from "@repo/ui";
+import { Loading } from "@/components/ui/Loading";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoginSchema, LoginFormData } from "@/types/auth";
 import { expertLoginAction } from "@/actions/auth";
@@ -126,6 +127,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
+    setLoading(true);
     const baseUrl = CLIENT_API_URL.replace(/\/api\/v1\/?$/, "");
     const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
     window.location.href = `${baseUrl}/api/v1/auth/google/login?role=expert&redirect_uri=${redirectUri}`;
@@ -209,13 +211,13 @@ const LoginPage: React.FC = () => {
             <div className="pt-4 space-y-4">
               <Button
                 type="submit"
-                loading={loading}
+                disabled={loading}
                 fullWidth
                 variant="primary"
                 className="bg-orange-600 hover:bg-orange-700 py-4.5 rounded-2xl shadow-xl shadow-orange-600/20 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group"
               >
-                Sign In to Dashboard
-                <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {loading ? "Signing In..." : "Sign In to Dashboard"}
+                {!loading && <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
               </Button>
 
               <div className="relative flex items-center justify-center py-2">
@@ -251,6 +253,8 @@ const LoginPage: React.FC = () => {
           </form>
         </div>
       </div>
+      
+      {loading && <Loading fullScreen />}
     </div>
   );
 };

@@ -1,21 +1,20 @@
 import React from "react";
+import Image from "next/image";
 
 interface LoadingProps {
-    size?: "sm" | "md" | "lg";
-    variant?: "spinner"; // Expandable for "dots", "pulse" later
     fullScreen?: boolean;
-    className?: string;
     text?: string;
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
 }
 
-export const Loading: React.FC<LoadingProps> = ({
-    size = "md",
-    variant = "spinner",
-    fullScreen = false,
-    className = "",
-    text,
+export const Loading: React.FC<LoadingProps> = ({ 
+    fullScreen = false, 
+    text, 
+    size = 'md',
+    className = ''
 }) => {
-    // Map sizes to pixel values for the inner logo wrapper to keep proportions
+    // Map sizes to explicit pixel values to prevent any distortion
     const dimensions = {
         sm: { container: 64, logo: "30" },
         md: { container: 96, logo: "45" },
@@ -27,7 +26,7 @@ export const Loading: React.FC<LoadingProps> = ({
     const spinner = (
         <div className={`flex flex-col items-center justify-center gap-4 ${className}`}>
             <div 
-              className={`relative flex items-center justify-center`}
+              className="relative flex items-center justify-center"
               style={{ flexShrink: 0, width: `${currentSize.container}px`, height: `${currentSize.container}px`, borderRadius: '50%' }}
             >
               {/* Outer Ring */}
@@ -42,7 +41,7 @@ export const Loading: React.FC<LoadingProps> = ({
               ></div>
               {/* Logo */}
               <div className="relative z-10 bg-white rounded-full p-1.5 flex items-center justify-center w-[75%] h-[75%]">
-                <img src="/images/web-logo.png" alt="Loading" className="object-contain w-full h-full" />
+                <Image src="/images/web-logo.png" alt="Loading" fill className="object-contain p-1" />
               </div>
             </div>
             {text && <p className="text-gray-600 font-bold text-sm tracking-wide">{text}</p>}
@@ -61,6 +60,3 @@ export const Loading: React.FC<LoadingProps> = ({
 
     return spinner;
 };
-
-
-
