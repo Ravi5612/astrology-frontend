@@ -8,9 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
-import { Button } from "@repo/ui";
+import { Button, VerificationPopup } from "@repo/ui";
 import { Loading } from "@/components/ui/Loading";
-import { VerificationPopup } from "@/components/ui/VerificationPopup";
 import { expertInitiateRegistrationAction, expertCompleteRegistrationAction } from "@/actions/auth";
 import { CLIENT_API_URL } from "@/lib/config";
 
