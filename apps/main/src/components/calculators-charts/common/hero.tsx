@@ -69,7 +69,7 @@ const CalculatorHero: React.FC<CalculatorHeroProps> = ({
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
          
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-1 md:mb-2 tracking-tight leading-tight overflow-visible py-2">
+          <h1 className="text-[26px] sm:text-3xl md:text-5xl lg:text-6xl font-black mb-1 md:mb-2 tracking-tight leading-tight overflow-visible py-2">
             {titleMain}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-[#fd6410] via-[#ff8c42] to-[#fd6410]">
               {titleAccent}
