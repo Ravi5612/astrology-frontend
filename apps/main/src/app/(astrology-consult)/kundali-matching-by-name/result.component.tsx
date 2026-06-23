@@ -21,12 +21,12 @@ const ResultComponent = ({
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   return (
-    <section ref={resultsRef} className="py-24 bg-white relative overflow-hidden">
+    <section ref={resultsRef} className="py-24 bg-transparent relative overflow-hidden">
       {/* Decorative Background */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <div className="bg-white rounded-[3rem] shadow-premium border border-gray-100 overflow-hidden">
+        <div className="bg-[#2A1118] rounded-[3rem] shadow-premium border border-white/10 overflow-hidden">
           <div className="p-8 md:p-16 lg:p-24">
             {/* Result Header */}
             <div className="text-center mb-20 space-y-8">
@@ -34,7 +34,7 @@ const ResultComponent = ({
                  <i className="fa-solid fa-sparkles text-orange text-xs"></i>
                  <span className="text-[12px] font-black text-orange uppercase tracking-[.2em]" style={fontStyle}>{t.headerBadge}</span>
               </div>
-              <h2 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight" style={fontStyle}>
+              <h2 className="text-4xl md:text-6xl font-black text-white leading-tight" style={fontStyle}>
                 {t.headerTitle} <span className="text-orange italic">{t.headerHighlight}</span>
               </h2>
 
@@ -43,7 +43,7 @@ const ResultComponent = ({
                 <div className="group text-center space-y-4">
                   <div className="relative w-28 h-28 mx-auto">
                     <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:bg-blue-500/30 transition-all"></div>
-                    <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-blue-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                    <div className="relative w-full h-full bg-[#1f0b11] rounded-full flex items-center justify-center border-2 border-white/10 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
                       <Image src="/images/default-avatar.png" alt="Groom" fill className="p-4" />
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
@@ -52,7 +52,7 @@ const ResultComponent = ({
                   </div>
                   <div>
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1" style={fontStyle}>{t.groomBadge}</span>
-                    <h4 className="text-2xl font-black text-gray-900 tracking-tight italic" style={fontStyle}>
+                    <h4 className="text-2xl font-black text-white tracking-tight italic" style={fontStyle}>
                       {boyDetails.name || (lang === "hi" ? "दूल्हा" : "The Groom")}
                     </h4>
                   </div>
@@ -60,7 +60,7 @@ const ResultComponent = ({
 
                 {/* Heart Link */}
                 <div className="relative">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-rose-500 shadow-premium border border-rose-50 z-10 relative animate-pulse group hover:scale-125 transition-transform duration-500 cursor-default">
+                  <div className="w-16 h-16 bg-[#1f0b11] rounded-full flex items-center justify-center text-rose-500 shadow-premium border border-white/10 z-10 relative animate-pulse group hover:scale-125 transition-transform duration-500 cursor-default">
                     <FaHeart size={28} />
                   </div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-[1px] bg-gradient-to-r from-transparent via-rose-200 to-transparent hidden md:block"></div>
@@ -70,7 +70,7 @@ const ResultComponent = ({
                 <div className="group text-center space-y-4">
                   <div className="relative w-28 h-28 mx-auto">
                     <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-xl group-hover:bg-rose-500/30 transition-all"></div>
-                    <div className="relative w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-rose-50 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                    <div className="relative w-full h-full bg-[#1f0b11] rounded-full flex items-center justify-center border-2 border-white/10 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
                       <Image src="/images/default-avatar.png" alt="Bride" fill className="p-4" />
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg border-2 border-white">
@@ -79,7 +79,7 @@ const ResultComponent = ({
                   </div>
                   <div>
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1" style={fontStyle}>{t.brideBadge}</span>
-                    <h4 className="text-2xl font-black text-gray-900 tracking-tight italic" style={fontStyle}>
+                    <h4 className="text-2xl font-black text-white tracking-tight italic" style={fontStyle}>
                       {girlDetails.name || (lang === "hi" ? "दुल्हन" : "The Bride")}
                     </h4>
                   </div>
@@ -90,7 +90,7 @@ const ResultComponent = ({
             {/* Detailed Kundali Data */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
               {/* Groom's Kundali Card */}
-              <div className="bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
+              <div className="bg-black/20 rounded-[2.5rem] p-10 border border-white/5 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
                    <FaMars size={120} />
                 </div>
@@ -99,16 +99,16 @@ const ResultComponent = ({
                   {t.groomProfile}
                 </h4>
                 <div className="space-y-6 relative z-10">
-                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-blue-100/50 shadow-sm">
+                  <div className="flex justify-between items-center bg-black/30 p-5 rounded-2xl border border-white/5 shadow-sm">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.nakshatra}</span>
-                    <span className="text-sm font-black text-gray-900 text-right">
+                    <span className="text-sm font-black text-white text-right">
                       {renderContent(matchingResult.boy_info?.nakshatra?.name)}{" "}
                       <span className="text-gray-400 italic">({renderContent(matchingResult.boy_info?.nakshatra?.lord?.name)}, P{renderContent(matchingResult.boy_info?.nakshatra?.pada)})</span>
                     </span>
                   </div>
-                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-blue-100/50 shadow-sm">
+                  <div className="flex justify-between items-center bg-black/30 p-5 rounded-2xl border border-white/5 shadow-sm">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.rasi}</span>
-                    <span className="text-sm font-black text-gray-900 text-right">
+                    <span className="text-sm font-black text-white text-right">
                       {renderContent(matchingResult.boy_info?.rasi?.name)}{" "}
                       <span className="text-gray-400 italic">({renderContent(matchingResult.boy_info?.rasi?.lord?.name)})</span>
                     </span>
@@ -116,9 +116,9 @@ const ResultComponent = ({
 
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     {matchingResult.boy_info?.koot && Object.entries(matchingResult.boy_info.koot).map(([key, value]) => (
-                      <div key={key} className="flex flex-col gap-1 p-4 bg-white/50 rounded-xl border border-gray-100">
+                      <div key={key} className="flex flex-col gap-1 p-4 bg-black/30 rounded-xl border border-white/5">
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{key}</span>
-                        <span className="text-xs font-black text-gray-900 uppercase">{renderContent(value)}</span>
+                        <span className="text-xs font-black text-white uppercase">{renderContent(value)}</span>
                       </div>
                     ))}
                   </div>
@@ -126,7 +126,7 @@ const ResultComponent = ({
               </div>
 
               {/* Bride's Kundali Card */}
-              <div className="bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
+              <div className="bg-black/20 rounded-[2.5rem] p-10 border border-white/5 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
                    <FaVenus size={120} />
                 </div>
@@ -135,16 +135,16 @@ const ResultComponent = ({
                   {t.brideProfile}
                 </h4>
                 <div className="space-y-6 relative z-10">
-                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm">
+                  <div className="flex justify-between items-center bg-black/30 p-5 rounded-2xl border border-white/5 shadow-sm">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.nakshatra}</span>
-                    <span className="text-sm font-black text-gray-900 text-right">
+                    <span className="text-sm font-black text-white text-right">
                       {renderContent(matchingResult.girl_info?.nakshatra?.name)}{" "}
                       <span className="text-gray-400 italic">({renderContent(matchingResult.girl_info?.nakshatra?.lord?.name)}, P{renderContent(matchingResult.girl_info?.nakshatra?.pada)})</span>
                     </span>
                   </div>
-                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-rose-100/50 shadow-sm">
+                  <div className="flex justify-between items-center bg-black/30 p-5 rounded-2xl border border-white/5 shadow-sm">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{t.rasi}</span>
-                    <span className="text-sm font-black text-gray-900 text-right">
+                    <span className="text-sm font-black text-white text-right">
                       {renderContent(matchingResult.girl_info?.rasi?.name)}{" "}
                       <span className="text-gray-400 italic">({renderContent(matchingResult.girl_info?.rasi?.lord?.name)})</span>
                     </span>
@@ -152,9 +152,9 @@ const ResultComponent = ({
 
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     {matchingResult.girl_info?.koot && Object.entries(matchingResult.girl_info.koot).map(([key, value]) => (
-                      <div key={key} className="flex flex-col gap-1 p-4 bg-white/50 rounded-xl border border-gray-100">
+                      <div key={key} className="flex flex-col gap-1 p-4 bg-black/30 rounded-xl border border-white/5">
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest" style={fontStyle}>{key}</span>
-                        <span className="text-xs font-black text-gray-900 uppercase">{renderContent(value)}</span>
+                        <span className="text-xs font-black text-white uppercase">{renderContent(value)}</span>
                       </div>
                     ))}
                   </div>
@@ -166,7 +166,7 @@ const ResultComponent = ({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
               {/* Score Gauge */}
               <div className="lg:col-span-5 h-full">
-                <div className="bg-gray-900 rounded-[3rem] p-12 shadow-2xl text-center h-full flex flex-col items-center justify-center relative overflow-hidden group">
+                <div className="bg-black/40 rounded-[3rem] p-12 shadow-2xl text-center h-full flex flex-col items-center justify-center relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-orange/20 to-transparent opacity-30"></div>
                   <h3 className="text-[12px] font-black text-orange uppercase tracking-[0.4em] mb-12 relative z-10" style={fontStyle}>{t.finalScoreTitle}</h3>
                   
@@ -217,9 +217,9 @@ const ResultComponent = ({
 
               {/* Ashtakoot Progress Breakdown */}
               <div className="lg:col-span-7">
-                <div className="bg-white rounded-[3rem] p-12 h-full shadow-premium border border-gray-100 flex flex-col">
-                  <div className="flex items-center justify-between mb-12 border-b border-gray-50 pb-8">
-                    <h3 className="text-2xl font-black text-gray-900 leading-none" style={fontStyle}>{t.ashtakootTitle}</h3>
+                <div className="bg-black/20 rounded-[3rem] p-12 h-full shadow-premium border border-white/5 flex flex-col">
+                  <div className="flex items-center justify-between mb-12 border-b border-white/5 pb-8">
+                    <h3 className="text-2xl font-black text-white leading-none" style={fontStyle}>{t.ashtakootTitle}</h3>
                     <span className="text-[10px] font-black text-orange bg-orange/10 px-4 py-2 rounded-xl uppercase tracking-widest border border-orange/20" style={fontStyle}>{t.metricBreakdown}</span>
                   </div>
 
@@ -227,14 +227,14 @@ const ResultComponent = ({
                     {(matchingResult.guna_milan?.guna || []).map((item: any, idx: number) => (
                       <div key={idx} className="space-y-4 group">
                         <div className="flex justify-between items-end">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">
                             {item.name}
                           </span>
-                          <span className="text-sm font-black text-gray-900">
+                          <span className="text-sm font-black text-white">
                             {item.obtained_points} <span className="text-gray-300">/ {item.maximum_points}</span>
                           </span>
                         </div>
-                        <div className="w-full bg-gray-50 h-3 rounded-full overflow-hidden border border-gray-50 p-0.5">
+                        <div className="w-full bg-white/10 h-3 rounded-full overflow-hidden border border-white/5 p-0.5">
                           <div
                             className="bg-orange h-full rounded-full transition-all duration-1000 shadow-sm"
                             style={{ width: `${(item.obtained_points / (item.maximum_points || 1)) * 100}%` }}
@@ -251,7 +251,7 @@ const ResultComponent = ({
             {(matchingResult.girl_mangal_dosha_details || matchingResult.boy_mangal_dosha_details) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
                 {/* Groom Dosha */}
-                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-50/50 border-red-100" : "bg-emerald-50/50 border-emerald-100"}`}>
+                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.boy_mangal_dosha_details?.has_dosha ? "bg-red-900/20 border-red-500/20" : "bg-emerald-900/20 border-emerald-500/20"}`}>
                   <div className="absolute top-0 right-0 p-8 opacity-5">
                     {matchingResult.boy_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={80} /> : <FaCheckCircle size={80} />}
                   </div>
@@ -260,17 +260,17 @@ const ResultComponent = ({
                       {matchingResult.boy_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={20} /> : <FaCheckCircle size={20} />}
                     </div>
                     <div style={fontStyle}>
-                      <h4 className="text-xl font-black text-gray-900 italic">{t.groomMangal}</h4>
+                      <h4 className="text-xl font-black text-white italic">{t.groomMangal}</h4>
                       <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">{t.planetaryStatus}</p>
                     </div>
                   </div>
-                  <p className="text-sm font-bold text-gray-600 leading-bold relative z-10 leading-relaxed italic" style={fontStyle}>
+                  <p className="text-sm font-bold text-gray-300 leading-bold relative z-10 leading-relaxed italic" style={fontStyle}>
                     &quot;{renderContent(matchingResult.boy_mangal_dosha_details?.description) || t.noMalefic}&quot;
                   </p>
                 </div>
 
                 {/* Bride Dosha */}
-                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-50/50 border-red-100" : "bg-emerald-50/50 border-emerald-100"}`}>
+                <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 overflow-hidden relative ${matchingResult.girl_mangal_dosha_details?.has_dosha ? "bg-red-900/20 border-red-500/20" : "bg-emerald-900/20 border-emerald-500/20"}`}>
                   <div className="absolute top-0 right-0 p-8 opacity-5">
                     {matchingResult.girl_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={80} /> : <FaCheckCircle size={80} />}
                   </div>
@@ -279,11 +279,11 @@ const ResultComponent = ({
                       {matchingResult.girl_mangal_dosha_details?.has_dosha ? <FaExclamationTriangle size={20} /> : <FaCheckCircle size={20} />}
                     </div>
                     <div style={fontStyle}>
-                      <h4 className="text-xl font-black text-gray-900 italic">{t.brideMangal}</h4>
+                      <h4 className="text-xl font-black text-white italic">{t.brideMangal}</h4>
                       <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">{t.planetaryStatus}</p>
                     </div>
                   </div>
-                  <p className="text-sm font-bold text-gray-600 leading-bold relative z-10 leading-relaxed italic" style={fontStyle}>
+                  <p className="text-sm font-bold text-gray-300 leading-bold relative z-10 leading-relaxed italic" style={fontStyle}>
                     &quot;{renderContent(matchingResult.girl_mangal_dosha_details?.description) || t.noMalefic}&quot;
                   </p>
                 </div>
@@ -291,7 +291,7 @@ const ResultComponent = ({
             )}
 
             {/* Conclusion CTA */}
-            <div className="bg-gray-900 rounded-[3.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl group">
+            <div className="bg-[#1f0b11] rounded-[3.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl group">
                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
                
@@ -329,8 +329,8 @@ const ResultComponent = ({
 
         <div className="mt-12 text-center opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-opacity duration-700">
            <div className="flex items-center justify-center gap-3" style={fontStyle}>
-              <i className="fa-solid fa-shield-check text-orange"></i>
-              <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.5em]">{t.certified}</span>
+              <i className="fa-solid fa-shield-check text-rose-500"></i>
+              <span className="text-[10px] font-black text-white/80 uppercase tracking-[0.5em]">{t.certified}</span>
            </div>
         </div>
       </div>

@@ -126,15 +126,7 @@ const Planet = () => {
 
     return (
         <div className="bg-[#f8fafc] min-h-screen py-10 px-4 font-sans relative">
-            <div className="absolute top-6 right-6 z-50">
-                <button
-                    onClick={toggleLang}
-                    className="flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-sm"
-                >
-                    <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-                    {lang === "en" ? "हिंदी" : "English"}
-                </button>
-            </div>
+            
             <div className="container mx-auto mt-8">
                 {/* Header Section */}
                 <div className="text-center mb-12 relative z-10">

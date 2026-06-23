@@ -7,7 +7,7 @@ export const dahejTranslations = {
             paragraph: "A complete estimation including car, jewelry, and land properties. For entertainment purposes only!"
         },
         form: {
-            title: "Enter Details for {complete} Estimation",
+            title: "Enter Details for {complete}",
             complete: "Complete Estimation",
             subTitle: "*This calculator is purely for entertainment and fun. All results are randomly generated.",
             fullName: "Full Name",

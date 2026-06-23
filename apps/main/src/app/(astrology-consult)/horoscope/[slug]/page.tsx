@@ -368,14 +368,14 @@ export default function ZodiacDetailsPage() {
                       </p>
                     </div>
 
-                    <div className="lg:w-1/3 w-full">
+                    <div className="lg:w-1/3 w-full mt-4 md:mt-0">
                       <Link
                         href="/our-experts"
-                        className="group/btn relative w-full inline-flex items-center justify-center gap-6 bg-white hover:bg-orange-500 text-slate-950 hover:text-white px-10 py-8 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] no-underline transition-all shadow-2xl hover:-translate-y-2 overflow-hidden"
+                        className="group/btn relative w-full inline-flex items-center justify-center gap-4 md:gap-6 bg-white hover:bg-orange-500 text-slate-950 hover:text-white px-6 py-5 md:px-10 md:py-8 rounded-[1.5rem] md:rounded-[2rem] font-black text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] no-underline transition-all shadow-2xl hover:-translate-y-1 md:hover:-translate-y-2 overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                        <span className="relative z-10">Consult Expert</span>
-                        <FaArrowRight className="relative z-10 group-hover/btn:translate-x-2 transition-transform" />
+                        <span className="relative z-10 text-center">Consult Expert</span>
+                        <FaArrowRight className="relative z-10 group-hover/btn:translate-x-2 transition-transform shrink-0" />
                       </Link>
                     </div>
                   </div>

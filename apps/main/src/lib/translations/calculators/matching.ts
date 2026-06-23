@@ -35,6 +35,7 @@ export const matchingTranslations = {
             errorIncomplete: "Received incomplete data from the server.",
             btnLoading: "Analyzing Astral Alignment",
             btnDefault: "Generate Compatibility Report",
+            btnConsult: "Talk to Astrologer",
             footerPrivacy: "100% Private & Secure Analysis",
             footerEncrypted: "Data Encrypted"
         },
@@ -138,6 +139,7 @@ export const matchingTranslations = {
             errorIncomplete: "सर्वर से अधूरा डेटा प्राप्त हुआ।",
             btnLoading: "तारों के संरेखण का विश्लेषण",
             btnDefault: "अनुकूलता रिपोर्ट तैयार करें",
+            btnConsult: "ज्योतिषी से बात करें",
             footerPrivacy: "100% निजी और सुरक्षित विश्लेषण",
             footerEncrypted: "डेटा एन्क्रिप्टेड"
         },

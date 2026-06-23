@@ -130,15 +130,7 @@ const LoyalPartnerCalculator: React.FC = () => {
           paragraph={t.hero.paragraph}
         />
 
-        <div className="absolute top-6 right-6 z-50">
-          <button
-            onClick={toggleLang}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-full text-sm font-bold transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
-          >
-            <span className="text-base">{lang === "en" ? "🇮🇳" : "🇬🇧"}</span>
-            {lang === "en" ? "हिंदी" : "English"}
-          </button>
-        </div>
+        
       </section>
 
       <LoyalPartnerForm

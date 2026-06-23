@@ -41,11 +41,11 @@ const LifePathForm: React.FC<LifePathFormProps> = ({
                     type="date"
                     required
                     style={{ borderRadius: "9999px", ...fontStyle }}
-                    className="w-full bg-white border-2 border-[#301118]/5 px-6 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm"
+                    className="w-full bg-white border-2 border-[#301118]/5 pl-6 pr-12 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-datetime-edit-fields-wrapper]:p-0"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#301118]/30 pointer-events-none">
                     <FaCalendar size={14} />
                   </div>
                 </div>
@@ -57,23 +57,23 @@ const LifePathForm: React.FC<LifePathFormProps> = ({
                   type="submit"
                   disabled={loading || !canCalculate}
                   style={{ borderRadius: "9999px" }}
-                  className="relative group inline-flex items-center gap-3 bg-red-600 text-white px-12 py-4 font-black uppercase tracking-[2px] text-xs hover:bg-red-700 transition-all duration-500 shadow-xl disabled:opacity-50"
+                  className="relative group inline-flex justify-center items-center gap-2 md:gap-3 bg-orange-600 text-white w-full md:w-auto px-4 py-4 md:px-12 md:py-4 font-black uppercase tracking-[1px] md:tracking-[2px] text-[10px] sm:text-xs text-center hover:bg-orange-700 transition-all duration-500 shadow-xl disabled:opacity-50"
                 >
                   {loading ? (
-                    <FaSpinner className="animate-spin" />
+                    <FaSpinner className="animate-spin shrink-0" />
                   ) : (
-                    <TbCrystalBall size={18} />
+                    <TbCrystalBall size={18} className="shrink-0" />
                   )}
-                  <span style={fontStyle}>
+                  <span style={fontStyle} className="text-center">
                     {loading ? t.calculating : t.calculate}
                   </span>
-                  <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform" />
+                  <FaArrowRight className="opacity-70 group-hover:translate-x-1 transition-transform shrink-0" />
                 </button>
               </div>
             </div>
 
             <div className="mt-4 flex justify-center">
-              <div className="w-full h-2 bg-red-500/20 rounded-full blur-lg translate-y-2 opacity-50"></div>
+              <div className="w-full h-2 bg-orange-500/20 rounded-full blur-lg translate-y-2 opacity-50"></div>
             </div>
           </form>
         </div>

@@ -8,7 +8,7 @@ export const loveCompatibilityTranslations = {
         },
         form: {
             title: "Find Love {percentage} Between",
-            percentage: "(Percentage)%",
+            percentage: "%",
             maleName: "Male Name",
             malePlaceholder: "Type male name...",
             femaleName: "Female Name",
@@ -44,7 +44,7 @@ export const loveCompatibilityTranslations = {
         },
         form: {
             title: "इनके बीच प्रेम {percentage} खोजें",
-            percentage: "(प्रतिशत)%",
+            percentage: "%",
             maleName: "पुरुष का नाम",
             malePlaceholder: "पुरुष का नाम लिखें...",
             femaleName: "महिला का नाम",

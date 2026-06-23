@@ -9,7 +9,7 @@ const HeroComponent = () => {
   const fontStyle = lang === "hi" ? { fontFamily: "'Noto Sans Devanagari', sans-serif" } : {};
 
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden bg-gray-900 border-b border-white/5 min-h-[80vh] flex items-center">
+    <section className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-b from-black/80 via-[#301118]/90 to-[#301118]/40 border-b border-white/5 min-h-[80vh] flex items-center">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 opacity-50"></div>

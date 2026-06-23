@@ -125,7 +125,7 @@ const KundaliMatchingByNamePage = () => {
   };
 
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-[#301118]" style={{ backgroundImage: "url(/images/bg-dark.png)", backgroundSize: "cover", backgroundAttachment: "fixed" }}>
       <HeroComponent />
 
       <MatchingForm
