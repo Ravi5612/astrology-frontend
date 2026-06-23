@@ -2,89 +2,118 @@
 import React from "react";
 import { ZodiacSignsData } from "@/components/features/services/homePagaData";
 import NextLink from "next/link";
-import NextImage from "next/image";
 import { useLanguageStore } from "@repo/store";
 import { homeTranslations } from "../../../lib/translations/home";
+import { 
+  TbZodiacAries, TbZodiacTaurus, TbZodiacGemini, TbZodiacCancer, 
+  TbZodiacLeo, TbZodiacVirgo, TbZodiacLibra, TbZodiacScorpio, 
+  TbZodiacSagittarius, TbZodiacCapricorn, TbZodiacAquarius, TbZodiacPisces 
+} from "react-icons/tb";
 
 const Link = NextLink as any;
-const Image = NextImage as any;
 
-const ChooseYourZodiac = () => {
+interface ChooseYourZodiacProps {
+  selectedSignId?: number;
+  onSelectSign?: (sign: any) => void;
+  isDark?: boolean;
+}
+
+const ZodiacIcon = ({ title, className }: { title: string, className?: string }) => {
+  switch (title.toLowerCase()) {
+    case 'aries': return <TbZodiacAries className={className} strokeWidth={1.5} />;
+    case 'taurus': return <TbZodiacTaurus className={className} strokeWidth={1.5} />;
+    case 'gemini': return <TbZodiacGemini className={className} strokeWidth={1.5} />;
+    case 'cancer': return <TbZodiacCancer className={className} strokeWidth={1.5} />;
+    case 'leo': return <TbZodiacLeo className={className} strokeWidth={1.5} />;
+    case 'virgo': return <TbZodiacVirgo className={className} strokeWidth={1.5} />;
+    case 'libra': return <TbZodiacLibra className={className} strokeWidth={1.5} />;
+    case 'scorpio': return <TbZodiacScorpio className={className} strokeWidth={1.5} />;
+    case 'sagittarius': return <TbZodiacSagittarius className={className} strokeWidth={1.5} />;
+    case 'capricorn': return <TbZodiacCapricorn className={className} strokeWidth={1.5} />;
+    case 'aquarius': return <TbZodiacAquarius className={className} strokeWidth={1.5} />;
+    case 'pisces': return <TbZodiacPisces className={className} strokeWidth={1.5} />;
+    default: return <TbZodiacAries className={className} strokeWidth={1.5} />;
+  }
+};
+
+const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onSelectSign, isDark = false }) => {
   const { lang } = useLanguageStore();
   const tHome = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
 
-  const title1 = tHome.zodiac.title1;
-  const highlight = tHome.zodiac.highlight;
-  const title2 = tHome.zodiac.title2;
-  const desc = tHome.zodiac.desc;
-
   return (
     <section 
-      className="pt-6 pb-20 md:py-20 relative overflow-hidden bg-[#faf8f5]"
-      style={{
-        backgroundImage: "url('/images/back-image.webp')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-        backgroundRepeat: "no-repeat"
-      }}
+      className={`pt-6 md:pt-10 pb-10 md:pb-16 relative ${isDark ? "bg-fixed bg-cover bg-center text-white" : "bg-[#FAF8F5] text-[#2D1B15]"}`}
+      style={isDark ? { backgroundImage: "url('/images/cosmic/media__1782217293850.jpg')" } : {}}
     >
-      <div className="absolute inset-0 bg-white/30"></div>
-      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-orange-500/10 to-transparent"></div>
-
-      <div className="max-w-[1400px] mx-auto px-4 relative z-10">
-        <div className="p-4 md:p-8 lg:p-12">
-          <div className="text-center mb-8 md:mb-16">
-            <h2
-              className="text-2xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 md:mb-6 tracking-tighter relative inline-block"
-              style={{
-                fontFamily:
-                  lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit",
-              }}
-            >
-              {title1}{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500 italic pr-2">{highlight}</span>{" "}
-              {title2}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent rounded-full opacity-30"></div>
+      {isDark && (
+        <div className="absolute inset-0 bg-[#3B1C0A]/85 backdrop-blur-[2px] z-0"></div>
+      )}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="text-[#FF6B00]">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 4V2M12 22V20M4 12H2M22 12H20M17.6569 6.34315L19.0711 4.92893M6.34315 17.6569L4.92893 19.0711M17.6569 17.6569L19.0711 19.0711M6.34315 6.34315L4.92893 4.92893" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="4" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="2 2"/>
+               </svg>
+            </div>
+            <h2 className={`text-[20px] md:text-3xl font-black ${isDark ? "text-white" : "text-[#2D1B15]"}`}>
+              Choose Your Zodiac Sign
             </h2>
-            <p className="text-slate-600 max-w-xl mx-auto text-lg italic mt-8 border-l-4 border-orange-500/30 pl-6 leading-relaxed text-left md:text-center md:border-l-0 md:pl-0">{desc}</p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8 font-display">
-            {ZodiacSignsData.map((sign) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-5">
+          {ZodiacSignsData.map((sign) => {
+            const isSelected = selectedSignId === sign.id;
+            
+            const cardContent = (
+              <div
+                className={`flex flex-col items-center justify-center pt-6 pb-5 px-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                  isSelected
+                    ? "bg-[#FF6B00] border border-[#FF6B00] shadow-lg scale-[1.02]"
+                    : "border border-orange-200/50 bg-white hover:bg-slate-50 hover:border-orange-300/50 hover:-translate-y-1 hover:shadow-md"
+                }`}
+              >
+                <div className={`w-16 h-16 mb-4 relative flex items-center justify-center rounded-full border transition-colors ${isSelected ? "border-white" : "border-[#FF6B00]"}`}>
+                  <div className={`absolute top-1 right-2 w-1 h-1 rounded-full z-10 ${isSelected ? "bg-white" : "bg-[#FF6B00]"}`}></div>
+                  <div className={`absolute bottom-1 left-2 w-1 h-1 rounded-full z-10 ${isSelected ? "bg-white" : "bg-[#FF6B00]"}`}></div>
+                  <div className={`absolute top-4 left-0 w-[2px] h-[2px] rounded-full z-10 ${isSelected ? "bg-white" : "bg-[#FF6B00]"}`}></div>
+                  
+                  <ZodiacIcon title={sign.title} className={`w-10 h-10 transition-colors ${isSelected ? "text-white" : "text-[#FF6B00]"}`} />
+                </div>
+                <div className="text-center space-y-0.5">
+                  <h3 className={`text-[14px] font-bold transition-colors ${isSelected ? "text-white" : "text-[#2D1B15]"}`}>
+                    {sign.title}
+                  </h3>
+                  <p className={`text-[12px] transition-colors ${isSelected ? "text-white/90" : "text-slate-500"}`}>
+                    ({sign.title})
+                  </p>
+                </div>
+                <p className={`text-[10px] font-medium mt-2 text-center transition-colors ${isSelected ? "text-white/80" : "text-slate-400"}`}>
+                  {sign.date}
+                </p>
+              </div>
+            );
+
+            if (onSelectSign) {
+              return (
+                <div key={sign.id} onClick={() => onSelectSign(sign)}>
+                  {cardContent}
+                </div>
+              );
+            }
+
+            return (
               <Link
                 href={`/horoscope/${sign.title.toLowerCase()}`}
                 key={sign.id}
-                className="block group no-underline"
+                className="block no-underline"
               >
-                <div className="group relative p-6 rounded-[2.5rem] border border-orange-500/20 bg-white hover:border-orange-500/50 hover:bg-slate-950 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] transition-all duration-700 no-underline flex flex-col items-center justify-center gap-4 overflow-hidden h-full">
-                  {/* Default subtle aura */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent opacity-50 group-hover:opacity-10 transition-opacity duration-500"></div>
-                  
-                  <div className="relative w-20 h-20 group-hover:scale-110 transition-transform duration-700 drop-shadow-md">
-                    {/* Decorative aura behind image */}
-                    <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/30 transition-all duration-500"></div>
-                    <Image
-                      src={sign.image}
-                      alt={sign.title}
-                      fill
-                      sizes="96px"
-                      unoptimized={true}
-                      className="object-contain rounded-full relative z-10"
-                    />
-                  </div>
-                  <div className="text-center relative z-10">
-                    <h3 className="text-sm md:text-base font-black mb-1 text-slate-900 group-hover:text-white transition-colors uppercase tracking-widest leading-none">
-                      {lang === "hi" ? sign.title : sign.title} 
-                    </h3>
-                    <p className="text-[10px] text-orange-500/60 font-black uppercase tracking-[0.2em] relative z-10 mt-2">
-                      {sign.date}
-                    </p>
-                  </div>
-                </div>
+                {cardContent}
               </Link>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

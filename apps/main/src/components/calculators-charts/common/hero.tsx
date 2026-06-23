@@ -40,7 +40,7 @@ const CalculatorHero: React.FC<CalculatorHeroProps> = ({
   paragraph,
 }) => {
   return (
-    <section className="relative pt-32 pb-20 bg-linear-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
+    <section className="relative pt-20 pb-10 bg-linear-to-br from-[#301118] via-[#4a1c26] to-[#301118] text-white overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: premiumStyles }} />
 
       {/* Background Decorative Elements */}
@@ -67,9 +67,7 @@ const CalculatorHero: React.FC<CalculatorHeroProps> = ({
 
       <div className="container relative z-10 px-6">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          <span className="inline-block bg-[#fd6410] text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[4px] mb-8">
-            {badgeText}
-          </span>
+         
 
           <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-none overflow-visible py-2">
             {titleMain}{" "}

@@ -1,6 +1,4 @@
 import React from "react";
-import WhyChooseUs from "@/components/layout/main/WhyChooseUs";
-import CTA from "@/components/layout/main/CTA";
 
 export default function AstrologyConsultLayout({
   children,
@@ -10,8 +8,6 @@ export default function AstrologyConsultLayout({
   return (
     <>
       {children}
-      <WhyChooseUs />
-      <CTA />
     </>
   );
 }

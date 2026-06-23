@@ -28,7 +28,7 @@ export const API_ROUTES = {
         GET_USER_APPOINTMENTS: '/puja-appointments/user',
     },
     ASTROLOGY: {
-        HOROSCOPE_DAILY: '/astrology/horoscope/daily',
+        HOROSCOPE_DAILY: '/astrology/horoscope-daily',
         KUNDLI_MATCHING: '/astrology/matching/advanced',
         MANGAL_DOSHA: '/astrology/mangal-dosha',
         BIRTH_DETAILS: '/astrology/birth-details',
