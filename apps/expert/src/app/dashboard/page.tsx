@@ -47,18 +47,23 @@ const Page = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user?.profileId) {
+      // Use profileId if available, fallback to user.id
+      const expertId = user?.profileId || user?.id;
+      if (!expertId) {
+        console.warn('[Dashboard] No expertId found on user object:', JSON.stringify(user));
         setLoading(false);
         return;
       }
+
+      console.log('[Dashboard] Fetching data for expertId:', expertId, '| profileId:', user?.profileId, '| id:', user?.id);
 
       const [
         [stats, statsErr],
         [reviewsData, reviewsErr],
         [dStats, dStatsErr]
       ] = await Promise.all([
-        getReviewStats(user.profileId),
-        getReviews(user.profileId, 1, 10),
+        getReviewStats(expertId),
+        getReviews(expertId, 1, 10),
         getDashboardStats('total')
       ]);
 
@@ -66,7 +71,10 @@ const Page = () => {
       if (reviewsErr) console.error("[Dashboard] Reviews fetch failed:", reviewsErr);
       if (dStatsErr) console.error("[Dashboard] Dashboard stats fetch failed:", dStatsErr);
 
-      if (stats) setRatingStats(stats);
+      if (stats) {
+        console.log('[Dashboard] Rating stats received:', JSON.stringify(stats));
+        setRatingStats(stats);
+      }
       if (reviewsData) {
         setReviews(reviewsData.reviews || []);
         setReviewsTotal(reviewsData.total || 0);
@@ -77,7 +85,7 @@ const Page = () => {
     };
 
     fetchData();
-  }, [user?.profileId]);
+  }, [user?.profileId, user?.id]);
 
   const statsData = [
     {
