@@ -548,7 +548,7 @@ function ExpertChatRoomContent() {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-gray-100 bg-white">
+            <div className="p-2 sm:p-4 border-t border-gray-100 bg-white">
                 <div className="flex flex-col gap-2">
                     {/* Preview Area */}
                     {pendingAttachment && (
@@ -565,11 +565,11 @@ function ExpertChatRoomContent() {
                         </div>
                     )}
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1 sm:gap-4">
                         <button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={uploading}
-                            className={`p-3 text-gray-400 hover:text-[#fd6410] hover:bg-orange-50 rounded-xl transition-all ${uploading ? 'animate-pulse' : ''}`}
+                            className={`p-2 sm:p-3 text-gray-400 hover:text-[#fd6410] hover:bg-orange-50 rounded-xl transition-all ${uploading ? 'animate-pulse' : ''} shrink-0`}
                         >
                             {uploading ? <div className="w-5 h-5 border-2 border-[#fd6410]/30 border-t-[#fd6410] rounded-full animate-spin" /> : <Paperclip className="w-5 h-5" />}
                         </button>
@@ -580,7 +580,7 @@ function ExpertChatRoomContent() {
                             onChange={handleFileUpload}
                             accept="image/*,.pdf,.doc,.docx"
                         />
-                        <div className="flex-1 bg-gray-50 rounded-2xl border border-gray-200 px-4 py-2 focus-within:border-[#fd6410] focus-within:ring-1 focus-within:ring-[#fd6410] transition-all">
+                        <div className="flex-1 bg-gray-50 rounded-2xl border border-gray-200 px-3 sm:px-4 py-1.5 sm:py-2 focus-within:border-[#fd6410] focus-within:ring-1 focus-within:ring-[#fd6410] transition-all min-w-0">
                             <textarea
                                 rows={1}
                                 placeholder="Type your message..."
@@ -592,18 +592,19 @@ function ExpertChatRoomContent() {
                                         handleSendMessage();
                                     }
                                 }}
-                                className="bg-transparent border-none outline-none text-sm w-full text-black placeholder:text-gray-400 resize-none min-h-[40px] max-h-32 py-2"
+                                className="bg-transparent border-none outline-none text-sm w-full text-black placeholder:text-gray-400 resize-none min-h-[36px] sm:min-h-[40px] max-h-32 py-2"
                             />
                         </div>
                         <button
                             onClick={handleSendMessage}
                             disabled={!inputValue.trim() && !pendingAttachment}
-                            className={`p-4 rounded-full shadow-lg transition-all active:scale-90 flex items-center justify-center ${(!inputValue.trim() && !pendingAttachment)
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-[#fd6410] text-white hover:bg-[#e35d0f] shadow-orange-200'
-                                }`}
+                            className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all shrink-0 ${
+                                inputValue.trim() || pendingAttachment
+                                    ? 'bg-[#fd6410] text-white shadow-lg shadow-orange-500/30 hover:bg-[#e55a0e] hover:-translate-y-0.5'
+                                    : 'bg-gray-100 text-gray-400'
+                            }`}
                         >
-                            <Send className="w-5 h-5" />
+                            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                     </div>
                 </div>
