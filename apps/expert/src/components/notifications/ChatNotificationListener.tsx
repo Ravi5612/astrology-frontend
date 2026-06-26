@@ -100,6 +100,7 @@ export const ChatNotificationListener: React.FC = () => {
                     </div>
                 </div>),
                 {
+                    containerId: "notification",
                     position: "top-center",
                     autoClose: false,
                     closeOnClick: false,
