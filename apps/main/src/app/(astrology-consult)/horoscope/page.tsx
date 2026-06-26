@@ -1,78 +1,139 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-
-import ChooseYourZodiac from "@/components/layout/main/ChooseYourZodiac";
-import { ZodiacSignsData } from "@/components/features/services/homePagaData";
-import { horoscopeTranslations } from "@repo/store";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { api } from "@/lib/api";
 import { useLanguageStore } from "@repo/store";
+import { ZodiacSignsData } from "@/components/features/services/zodiac";
 import HeroComponent from "./hero.component";
-import PredictionDetails from "./prediction-details.component";
-import CTABanner from "./cta-banner.component";
-import TrustFeatures from "./trust-features.component";
-import HoroscopeInfo from "./horoscope-info.component";
-import { HoroscopeService } from "@/services/horoscope.service";
+import ZodiacGrid from "./zodiac-grid.component";
+import HoroscopeSidebar from "./horoscope-sidebar.component";
 
-const HoroscopePage = () => {
-  const [selectedSign, setSelectedSign] = useState(ZodiacSignsData[0]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [horoscopeData, setHoroscopeData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
+const HoroscopeContent = () => {
+  const router = useRouter();
   const { lang } = useLanguageStore();
-
-  const t = horoscopeTranslations[lang];
+  const [activeTab, setActiveTab] = useState("Daily Horoscope");
+  const [signPreviews, setSignPreviews] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchHoroscope = async () => {
-      setIsLoading(true);
-      const [data, error] = await HoroscopeService.getDailyHoroscope(selectedSign.title);
+    // Fetch preview for all signs.
+    const fetchAllSigns = async () => {
+      const signs = ZodiacSignsData.map((s) => s.title.toLowerCase());
+      const previews: Record<string, string> = {};
       
-      if (!error && data) {
-        setHoroscopeData(data);
-      } else {
-        console.error("Failed to fetch horoscope:", error);
-      }
-      setIsLoading(false);
+      await Promise.all(
+        signs.map(async (sign) => {
+          const [res, err] = await api.get<any>(`/astrology/horoscope-daily?sign=${sign}&lang=${lang}`);
+          if (!err && res?.data?.predictions) {
+            const overview = res.data.predictions.find((p: any) => p.type === 'love')?.description || res.data.predictions[0]?.description;
+            if (overview) {
+              previews[sign.charAt(0).toUpperCase() + sign.slice(1)] = overview.length > 80 ? overview.substring(0, 80) + '...' : overview;
+            }
+          }
+        })
+      );
+      setSignPreviews(previews);
     };
+    fetchAllSigns();
+  }, [lang]);
 
-    if (selectedSign) {
-      fetchHoroscope();
-    }
-  }, [selectedSign]);
+  const tabs = [
+    { id: "daily", label: "Daily Horoscope" },
+    { id: "weekly", label: "Weekly Horoscope" },
+    { id: "monthly", label: "Monthly Horoscope" },
+    { id: "yearly", label: "Yearly Horoscope" },
+  ];
 
-  if (!selectedSign) return null;
+  const handleSignSelect = (sign: any) => {
+    router.push(`/horoscope/${sign.title.toLowerCase()}`);
+  };
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Hero Section */}
-      <HeroComponent 
-        selectedSign={selectedSign} 
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-      />
+    <div className="bg-[#FAF8F5] min-h-screen pb-20">
+      <HeroComponent />
 
-      <div id="predictions" className="relative z-20">
-        <ChooseYourZodiac 
-          selectedSignId={selectedSign.id} 
-          onSelectSign={(sign: any) => setSelectedSign(sign)} 
-          isDark={true}
-        />
+      {/* Tabs */}
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 mt-6">
+        <div className="bg-[#FAF4EE] p-2 rounded-2xl flex flex-col md:flex-row items-center gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.label)}
+              className={`px-6 py-3.5 rounded-xl text-[14px] font-bold transition-all flex items-center gap-2 w-full md:flex-1 justify-center ${
+                activeTab === tab.label
+                  ? "bg-[#2D1205] text-white shadow-md"
+                  : "bg-white text-[#3D1A0B] hover:bg-gray-50 border border-[#F0E6DD]"
+              }`}
+            >
+              <i className={`fa-regular fa-calendar text-[#F26500] text-lg`}></i>
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Prediction Details Section */}
-      <PredictionDetails 
-        selectedSign={selectedSign} 
-        lang={lang} 
-        t={t} 
-        data={horoscopeData}
-        isLoading={isLoading}
-      />
-      
-      <HoroscopeInfo />
-      <CTABanner />
-      <TrustFeatures />
+      {/* Main Content Grid */}
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 mt-8">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Left Column (Zodiac Grid) */}
+          <div className="flex-1 w-full">
+            <ZodiacGrid onSelectSign={handleSignSelect} signPreviews={signPreviews} activeTab={activeTab} />
+            
+            {/* Bottom CTA (Generate My Horoscope) */}
+            <div className="bg-[#FFF8F0] border border-[#E8D5C0] rounded-xl p-4 sm:p-6 mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 relative opacity-30 shrink-0 flex items-center justify-center">
+                  <i className="fa-solid fa-dharmachakra text-[#F26500] text-[40px] sm:text-[48px]"></i>
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#3D1A0B] text-[15px] sm:text-[18px] leading-tight sm:leading-normal">Want a more accurate prediction?</h3>
+                  <p className="text-gray-600 text-[12px] sm:text-[13px] mt-0.5">Get a personalized horoscope based on your birth details.</p>
+                </div>
+              </div>
+              <button className="bg-transparent border border-[#F26500] text-[#F26500] hover:bg-[#F26500] hover:text-white transition-colors px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-bold whitespace-nowrap w-full sm:w-auto">
+                Generate My Horoscope &rarr;
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column (Sidebar) */}
+          <div className="w-full lg:w-[350px] shrink-0">
+            <HoroscopeSidebar />
+          </div>
+
+        </div>
+      </div>
+
+      {/* Very Bottom CTA (Talk to Expert) */}
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 mt-12">
+        <div className="bg-[#2D1205] rounded-[24px] p-5 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-[#3D1A0B]">
+          <div className="relative z-10 w-full text-center md:text-left">
+            <h3 className="text-[17px] sm:text-[19px] md:text-[22px] font-serif font-bold text-[#F26500] mb-2 leading-tight md:leading-normal">Want to know which temple is best for you?</h3>
+            <p className="text-white/80 text-[13px] md:text-[14px]">Talk to our Astrology Experts and get personalized temple recommendations.</p>
+          </div>
+          <div className="relative z-10">
+            <Link href="/expert" className="bg-[#F26500] hover:bg-orange-600 transition-colors text-white text-[15px] font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 whitespace-nowrap">
+              <i className="fa-solid fa-comments"></i> Talk to Expert
+            </Link>
+          </div>
+          {/* Decorative */}
+          <div className="absolute right-[-20px] bottom-[-60px] opacity-10 pointer-events-none transform rotate-45">
+            <i className="fa-solid fa-dharmachakra text-[#F26500] text-[200px]"></i>
+          </div>
+        </div>
+      </div>
+
     </div>
+  );
+};
+
+const HoroscopePage = () => {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">Loading...</div>}>
+      <HoroscopeContent />
+    </Suspense>
   );
 };
 

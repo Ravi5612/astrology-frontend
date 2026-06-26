@@ -30,7 +30,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ item }) => {
           className="rounded-[6px] border border-[#daa23ea1] object-cover mb-2"
         />
       </div>
-      <h4 className="font-medium text-xs text-black truncate mt-2 px-1">
+      <h4 className="text-xs sm:text-sm md:text-base font-bold text-[#1e0b0f] truncate mt-2 px-1">
         {displayTitle}
       </h4>
     </div>

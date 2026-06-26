@@ -24,6 +24,53 @@ interface ExpertListProps {
   title?: string;
 }
 
+const DUMMY_EXPERTS = [
+  {
+      id: "dummy-1",
+      user: { id: "d1", name: "Astrology Ravi Rai", avatar: "/images/dummy-expert.jpg" },
+      specialization: "Vedic, Numerology",
+      experience_in_years: 5,
+      languages: ["English", "Hindi"],
+      price: 51,
+      rating: 5,
+      is_available: true,
+      isDummy: true
+  },
+  {
+      id: "dummy-2",
+      user: { id: "d2", name: "Astrologer Shanti", avatar: "/images/dummy-expert.jpg" },
+      specialization: "Tarot, Vastu",
+      experience_in_years: 8,
+      languages: ["English", "Hindi", "Marathi"],
+      price: 101,
+      rating: 4.8,
+      is_available: false,
+      isDummy: true
+  },
+  {
+      id: "dummy-3",
+      user: { id: "d3", name: "Pandit Sharma", avatar: "/images/dummy-expert.jpg" },
+      specialization: "Kundli, Palmistry",
+      experience_in_years: 12,
+      languages: ["Hindi", "Sanskrit"],
+      price: 21,
+      rating: 4.9,
+      is_available: true,
+      isDummy: true
+  },
+  {
+      id: "dummy-4",
+      user: { id: "d4", name: "Astro Dev", avatar: "/images/dummy-expert.jpg" },
+      specialization: "Numerology, Nadi",
+      experience_in_years: 3,
+      languages: ["English", "Gujarati"],
+      price: 51,
+      rating: 4.7,
+      is_available: true,
+      isDummy: true
+  }
+];
+
 const ExpertList: React.FC<ExpertListProps> = ({
   initialExperts,
   initialPagination,
@@ -66,6 +113,12 @@ const ExpertList: React.FC<ExpertListProps> = ({
     t,
   );
 
+  const displayExperts = !loading && experts.length > 0 && experts.length < 4 
+      ? [...experts, ...DUMMY_EXPERTS.slice(0, 4 - experts.length)]
+      : !loading && experts.length === 0 
+          ? DUMMY_EXPERTS 
+          : experts;
+
   return (
     <section
       className="py-[50px] relative overflow-hidden"
@@ -79,11 +132,10 @@ const ExpertList: React.FC<ExpertListProps> = ({
       }}
     >
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-        <div className="relative mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={fontStyle}>
-            {title || (t as any).expertSection.title}
+        <div className="text-white mb-10" style={{ '--heading-border-color': 'rgba(255,255,255,0.2)' } as any}>
+          <h2 className="section-heading-premium" style={fontStyle}>
+            <span>{title || (t as any).expertSection.title}</span>
           </h2>
-          <div className="w-48 h-1 bg-orange"></div>
         </div>
 
         <ExpertListHeader
@@ -128,14 +180,14 @@ const ExpertList: React.FC<ExpertListProps> = ({
 
         {layout === "slider" ? (
           <ExpertSlider
-            experts={experts}
+            experts={displayExperts}
             loading={loading}
             initialError={initialError}
             lang={lang}
           />
         ) : (
           <ExpertGrid
-            experts={experts}
+            experts={displayExperts}
             loading={loading}
             hasMore={hasMore}
             initialError={initialError}

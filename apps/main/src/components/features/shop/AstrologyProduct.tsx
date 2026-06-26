@@ -25,8 +25,8 @@ const AstrologyProduct = () => {
 
   return (
     <section className="!bg-[#edeef1] py-10 md:py-16">
-      <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-        <div className="bg-white p-5 md:p-6 rounded-[3px] shadow-[0_4px_9px_0_rgba(0,0,0,0.08)]">
+      <div className="max-w-[1320px] mx-auto px-0 md:px-8 lg:px-16">
+        <div className="md:bg-white py-4 md:p-6 md:rounded-[3px] md:shadow-[0_4px_9px_0_rgba(0,0,0,0.08)]">
           <ProductSection products={productList} />
           {/* <!-- View All Button --> */}
           <div className="mt-8 mb-3 flex justify-center">

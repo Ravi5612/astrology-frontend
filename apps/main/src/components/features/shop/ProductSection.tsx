@@ -44,16 +44,14 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products }) => {
 
     return (
         <div className="w-full">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
-                <div className="max-w-2xl space-y-4">
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-orange/10 rounded-full border border-orange/10">
-                        <div className="w-2 h-2 bg-orange rounded-full animate-pulse"></div>
-                        <span className="text-[10px] font-black text-orange-700 uppercase tracking-widest leading-none">Astro Shop Exclusive</span>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-8 px-4 md:px-0">
+                <div className="w-full md:w-auto">
+                    <div className="w-full">
+                        <h2 className="section-heading-premium uppercase mb-0">
+                            <span>{t.products.title}</span>
+                        </h2>
                     </div>
-                    <h2 className="text-2xl md:text-5xl font-black text-slate-900 tracking-tight leading-none uppercase">
-                        {t.products.title}
-                    </h2>
-                    <p className="text-sm md:text-lg text-slate-500 font-bold italic leading-relaxed">
+                    <p className="text-slate-500 font-medium text-sm mt-4 md:mt-2 max-w-xl">
                         {t.products.subtitle}
                     </p>
                 </div>

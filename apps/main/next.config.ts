@@ -45,7 +45,7 @@ const securityHeaders = [
 
       // API & WebSocket connections
       // Whitelist both production (OnRender) and local development (Localhost), plus Razorpay Sentry telemetry
-      `connect-src 'self' https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.sentry.io https://*.sentry-cdn.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543 ${process.env.NEXT_PUBLIC_API_URL || ""} ${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/i, "").replace(/^http/, 'ws') || ""}`,
+      `connect-src 'self' https://nominatim.openstreetmap.org https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.sentry.io https://*.sentry-cdn.com https://www.youtube.com https://*.twilio.com wss: ws: wss://*.twilio.com https://astrology-in-bharat-services.onrender.com wss://astrology-in-bharat-services.onrender.com http://localhost:6543 http://127.0.0.1:6543 ws://localhost:6543 ${process.env.NEXT_PUBLIC_API_URL || ""} ${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/i, "").replace(/^http/, 'ws') || ""}`,
 
       // Frames: Razorpay checkout iframe and YouTube embeds
       "frame-src https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://www.youtube-nocookie.com",

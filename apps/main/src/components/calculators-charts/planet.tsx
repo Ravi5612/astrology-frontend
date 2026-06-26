@@ -10,6 +10,7 @@ import PlanetForm from "./PlanetForm.component";
 import { useLanguageStore } from "@repo/store";
 import { planetTranslations } from "@/lib/translations/calculators/planet";
 import { getErrorMessage } from "@repo/lib";
+import CalculatorHero from "./common/hero";
 
 // Planet Color and Icon Mapping
 const PLANET_META: Record<string, { color: string; icon: any }> = {
@@ -125,19 +126,14 @@ const Planet = () => {
     };
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen py-10 px-4 font-sans relative">
-            
-            <div className="container mx-auto mt-8">
-                {/* Header Section */}
-                <div className="text-center mb-12 relative z-10">
-                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight" style={fontStyle}>
-                        {t.hero.titlePart1} <span className="text-primary">{t.hero.titlePart2}</span> {t.hero.titlePart3}
-                    </h1>
-                    <div className="h-1 w-24 bg-primary mx-auto mb-6 rounded-full"></div>
-                    <p className="text-slate-600 max-w-2xl mx-auto text-lg" style={fontStyle}>
-                        {t.hero.paragraph}
-                    </p>
-                </div>
+        <div className="bg-[#f8fafc] min-h-screen pb-10 font-sans relative">
+            <CalculatorHero
+                 badgeText={(t.hero as any).badge || "PLANET CALCULATOR"}
+                 titleMain={t.hero.titlePart1}
+                 titleAccent={`${t.hero.titlePart2} ${t.hero.titlePart3 || ''}`}
+                 paragraph={t.hero.paragraph}
+            />
+            <div className="container mx-auto mt-8 px-4">
 
                 <div className="flex flex-col lg:flex-row gap-8">
                     <PlanetForm

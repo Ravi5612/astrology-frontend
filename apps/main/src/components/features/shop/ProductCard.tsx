@@ -101,7 +101,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
       {/* 🖼️ Image Area with Glow */}
       <div className={`relative w-full ${isCompact ? 'aspect-[4/3]' : 'aspect-square'} bg-gray-50/50 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-white transition-colors duration-500`}>
         <div className="absolute inset-0 bg-gradient-to-br from-orange/5 via-transparent to-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div className={`relative ${isCompact ? 'w-[70%] h-[70%]' : 'w-[80%] h-[80%]'} transition-transform duration-700 ease-out group-hover:scale-110`}>
+        <div className={`relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-110`}>
           <Image
             src={imageUrl}
             alt={product.name}
@@ -124,7 +124,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className, is
               <span>4.8</span>
             </div>
           </div>
-          <p className={`${isCompact ? 'text-[10px]' : 'text-sm'} font-bold text-gray-400 line-clamp-2 leading-relaxed`}>
+          <p className={`${isCompact ? 'text-[10px]' : 'text-sm'} font-medium text-gray-500 line-clamp-2 leading-snug`}>
             {product.description}
           </p>
         </div>

@@ -19,6 +19,66 @@ import { PujaSkeletonCard } from "./PujaSkeletonCard";
 const Swiper = SwiperComp as any;
 const SwiperSlide = SwiperSlideComp as any;
 
+const DUMMY_PUJAS: any[] = [
+    {
+        id: "dummy-puja-1",
+        expert_id: "dummy-1",
+        puja_id: "p1",
+        price: 199,
+        name: "Hanuman Chalisa Path",
+        description: "Hanuman Chalisa Path for peace, prosperity and protection from evil eyes.",
+        puja_mode: "Online, Offline",
+        districts: ["All India"],
+        image: "/images/pooja/pooja1.png",
+        expert: {
+            user: {
+                name: "Astrology Ravi Rai",
+                avatar: "/images/dummy-expert.jpg"
+            },
+            experience_in_years: 5,
+            rating: 4.8
+        }
+    },
+    {
+        id: "dummy-puja-2",
+        expert_id: "dummy-2",
+        puja_id: "p2",
+        price: 501,
+        name: "Navgraha Shanti Puja",
+        description: "Pacify the nine planets and remove obstacles from your life.",
+        puja_mode: "Online",
+        districts: ["All India"],
+        image: "/images/pooja/pooja2.png",
+        expert: {
+            user: {
+                name: "Pandit Sharma",
+                avatar: "/images/dummy-expert.jpg"
+            },
+            experience_in_years: 12,
+            rating: 4.9
+        }
+    },
+    {
+        id: "dummy-puja-3",
+        expert_id: "dummy-3",
+        puja_id: "p3",
+        price: 251,
+        name: "Saraswati Puja",
+        description: "Seek blessings of Goddess Saraswati for knowledge and wisdom.",
+        puja_mode: "Offline",
+        districts: ["Delhi", "Mumbai"],
+        image: "/images/pooja/pooja1.png",
+        expert: {
+            user: {
+                name: "Acharya Vivek",
+                avatar: "/images/dummy-expert.jpg"
+            },
+            experience_in_years: 8,
+            rating: 4.7
+        }
+    }
+];
+
 const PujaListSection = () => {
     const { lang } = useLanguageStore();
     const t = pujaTranslations[lang as "en" | "hi"] || pujaTranslations.en;
@@ -74,6 +134,12 @@ const PujaListSection = () => {
         return matchesSearch && matchesDropdown;
     });
 
+    const displayPujas = !loading && filteredPujas.length > 0 && filteredPujas.length < 3
+        ? [...filteredPujas, ...DUMMY_PUJAS.slice(0, 3 - filteredPujas.length)]
+        : !loading && filteredPujas.length === 0 && searchQuery === "" && selectedPujaName === t.filters.allPujas
+            ? DUMMY_PUJAS
+            : filteredPujas;
+
     return (
         <section
             className="py-[50px] relative overflow-hidden"
@@ -87,12 +153,11 @@ const PujaListSection = () => {
             }}
         >
             <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-                <div className="relative mb-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 z-20">
-                    <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={fontStyle}>
-                            {t.page.title} <span className="text-orange-600">{t.page.titleHighlight}</span>
+                <div className="relative mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 z-20">
+                    <div className="text-white mb-4 w-full md:w-auto" style={{ '--heading-border-color': 'rgba(255,255,255,0.2)' } as any}>
+                        <h2 className="section-heading-premium mb-0" style={fontStyle}>
+                            <span>{t.page.title} <span className="text-orange-600">{t.page.titleHighlight}</span></span>
                         </h2>
-                        <div className="w-48 h-1 bg-orange-600"></div>
                     </div>
 
                     {/* Search and Filters */}
@@ -177,7 +242,7 @@ const PujaListSection = () => {
                         }}
                         className="py-4 !pb-8"
                       >
-                        {filteredPujas.map((puja) => (
+                        {displayPujas.map((puja) => (
                            <SwiperSlide key={puja.id} className="h-auto">
                                <PujaCard puja={puja} />
                            </SwiperSlide>

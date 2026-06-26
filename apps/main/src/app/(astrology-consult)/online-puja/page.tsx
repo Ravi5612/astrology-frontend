@@ -68,7 +68,7 @@ const OnlinePujaPage = () => {
                         <Sparkles className="w-4 h-4" />
                         {t.page.badge}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" style={fontStyle}>
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4 tracking-tight" style={fontStyle}>
                         {t.page.title} <span className="text-orange-500">{t.page.titleHighlight}</span>
                     </h1>
                     <p className="text-orange-100/60 max-w-2xl mx-auto text-lg font-medium" style={fontStyle}>

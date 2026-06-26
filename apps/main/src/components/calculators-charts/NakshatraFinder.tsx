@@ -51,16 +51,16 @@ const NakshatraFinder: React.FC = () => {
 
   const [dob, setDob] = useState<string>("");
   const [birthTime, setBirthTime] = useState<string>(""); // optional
+  const [locationName, setLocationName] = useState<string>("");
+  const [latitude, setLatitude] = useState<string>("");
+  const [longitude, setLongitude] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<NakshatraResult | null>(null);
+  const [error, setError] = useState<string>("");
 
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  const canCalculate = useMemo(() => dob.length > 0, [dob]);
-
-  const stableKey = useMemo(() => {
-    return `${dob}|${birthTime || ""}`;
-  }, [dob, birthTime]);
+  const canCalculate = useMemo(() => dob.length > 0 && latitude.length > 0 && longitude.length > 0, [dob, latitude, longitude]);
 
   const handleCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,24 +68,88 @@ const NakshatraFinder: React.FC = () => {
 
     setLoading(true);
     setResult(null);
+    setError("");
 
-    await new Promise((r) => setTimeout(r, 650));
+    try {
+      const lat = parseFloat(latitude);
+      const lon = parseFloat(longitude);
+      
+      let year = 2000, month = 1, date = 1;
+      if (dob) {
+        const [y, m, d] = dob.split("-");
+        year = parseInt(y || "2000");
+        month = parseInt(m || "1");
+        date = parseInt(d || "1");
+      }
 
-    const seed = hashSeed(stableKey);
-    const index = seed % 27;
-    const selected = t.results.nakshatras[index];
+      let hours = 12, minutes = 0;
+      if (birthTime) {
+        const [h, m] = birthTime.split(":");
+        hours = parseInt(h || "12");
+        minutes = parseInt(m || "0");
+      }
 
-    setResult({
-      name: selected!.name,
-      nature: selected!.nature,
-      index,
-    });
+      const apiKey = process.env.NEXT_PUBLIC_FREE_ASTROLOGY_API_KEY || "YOUR_API_KEY_HERE";
+      const url = `${process.env.NEXT_PUBLIC_CALCULATOR_URL || "https://json.freeastrologyapi.com"}/planets`;
 
-    setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 200);
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          year,
+          month,
+          date,
+          hours,
+          minutes,
+          seconds: 0,
+          latitude: lat,
+          longitude: lon,
+          timezone: 5.5, // Indian Standard Time fallback
+          settings: {
+            observation_point: "topocentric",
+            ayanamsha: "lahiri",
+          },
+        }),
+      });
 
-    setLoading(false);
+      const resData = await res.json();
+      if (resData && resData.output && resData.output[0]) {
+        // Find Moon from the output
+        const moonData = resData.output[0]["Moon"] || resData.output[0]["moon"];
+        
+        if (moonData && moonData.fullDegree !== undefined) {
+          const moonLongitude = parseFloat(moonData.fullDegree);
+          // Calculate Nakshatra index (0 to 26)
+          // 360 degrees / 27 nakshatras = 13.333333 degrees per nakshatra
+          const nakshatraIndex = Math.floor(moonLongitude / (360 / 27));
+          
+          const index = nakshatraIndex % 27;
+          const selected = t.results.nakshatras[index];
+
+          setResult({
+            name: selected!.name,
+            nature: selected!.nature,
+            index,
+          });
+
+          setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 200);
+        } else {
+          setError("Could not parse Moon position from API.");
+        }
+      } else {
+        setError("Invalid response from API.");
+      }
+    } catch (err: any) {
+      console.error("API Error:", err);
+      setError("Failed to calculate. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -109,6 +173,10 @@ const NakshatraFinder: React.FC = () => {
         setDob={setDob}
         birthTime={birthTime}
         setBirthTime={setBirthTime}
+        locationName={locationName}
+        setLocationName={setLocationName}
+        setLatitude={setLatitude}
+        setLongitude={setLongitude}
         loading={loading}
         canCalculate={canCalculate}
         handleCalculate={handleCalculate}

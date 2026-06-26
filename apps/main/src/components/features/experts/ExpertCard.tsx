@@ -196,7 +196,7 @@ const ExpertCard: React.FC<ExpertCardProps> = ({
             {/* PROFILE IMAGE */}
             <div className="relative w-[120px] h-[120px] mx-auto mt-1 mb-2">
               <Image
-                src={image}
+                src={image || '/images/dummy-expert.jpg'}
                 alt={name}
                 fill
                 sizes="120px"

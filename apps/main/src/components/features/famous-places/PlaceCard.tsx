@@ -11,17 +11,12 @@ interface PlaceCardProps {
 }
 
 const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
-  const { lang } = useLanguageStore();
-  const t = famousPlacesTranslations[lang as keyof typeof famousPlacesTranslations] || famousPlacesTranslations.en;
-
   const [realImage, setRealImage] = useState<string | null>(null);
-
   const NO_IMAGE_URL = "/images/temple-placeholder.png";
 
   useEffect(() => {
     const loadImage = async () => {
       if (!place?.title) return;
-      // Prioritize thumbnails, but fetch real exterior photo if possible
       try {
         const images = await fetchPlaceImages(place.title);
         if (images && images.length > 0) {
@@ -36,75 +31,62 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
 
   const displayImage: string = realImage || place.thumbnailUrl || NO_IMAGE_URL;
 
+  // Generate a deterministic fake distance for demo since real API lacks it
+  const distance = ((place.title.length % 9) + 1) + "." + (place.title.length % 10) + " km";
+  const rating = place.rating || "4.8";
+  const ratingCount = place.ratingCount || "12k";
+
+  // Simplify the address to just City, State if possible (mocked by splitting)
+  const shortAddress = place.address ? place.address.split(",").slice(0, 2).join(",").trim() : "India";
+
   return (
-    <Link
-      href={`/famous-places/${place.slug}`}
-      className="group no-underline text-inherit"
-    >
-      <div className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-orange/20 transition-all duration-500 flex flex-col h-full shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(255,107,0,0.12)] hover:-translate-y-1">
+    <Link href={`/famous-places/${place.slug || "details"}`} className="group no-underline text-inherit block h-full">
+      <div className="bg-white rounded-2xl overflow-hidden border border-[#E8D5C0] shadow-sm flex flex-col h-full hover:shadow-md hover:-translate-y-1 transition-all">
+        
         {/* Image Section */}
-        <div className="relative h-60 w-full overflow-hidden bg-slate-100">
+        <div className="relative h-36 w-full overflow-hidden bg-slate-100">
           <Image
             src={displayImage}
             alt={place.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-brown/60 via-transparent to-transparent opacity-60"></div>
-
-          {/* Category Tag */}
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-brown text-[10px] font-bold uppercase tracking-wider shadow-sm">
-              {place.category || t.card.sacredSite}
-            </span>
+          {/* Distance Badge */}
+          <div className="absolute top-3 right-3 bg-[#FDEEDC] text-gray-800 text-[11px] font-bold px-2 py-1 rounded shadow-sm">
+            {distance}
           </div>
         </div>
 
         {/* Content Section */}
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center text-orange">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className={`w-3.5 h-3.5 ${i < Math.floor(place.rating || 4)
-                      ? "fill-current"
-                      : "text-gray-200 fill-current"
-                      }`}
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <span className="text-[11px] font-bold text-gray-400">
-                {place.ratingCount || "100+"} {t.card.reviews}
+        <div className="p-4 flex-1 flex flex-col">
+          <h3 className="text-[16px] font-bold text-[#3D1A0B] mb-1 line-clamp-1 group-hover:text-orange-600 transition-colors">
+            {place.title}
+          </h3>
+          
+          <div className="flex items-center gap-1.5 text-gray-500 mb-3">
+            <i className="fa-solid fa-location-dot text-[10px]"></i>
+            <p className="text-xs font-medium line-clamp-1">{shortAddress}</p>
+          </div>
+
+          {/* Bottom Row */}
+          <div className="mt-auto flex items-center justify-between pt-1">
+            {/* Rating */}
+            <div className="flex items-center gap-1">
+              <i className="fa-solid fa-star text-[#FFAA00] text-sm"></i>
+              <span className="text-sm font-bold text-gray-700">
+                {rating} <span className="font-medium text-gray-400 text-xs">({ratingCount})</span>
               </span>
             </div>
 
-            <h3 className="text-xl font-display font-bold text-brown leading-tight mb-3 group-hover:text-orange transition-colors line-clamp-2">
-              {place.title}
-            </h3>
-
-            <div className="flex items-start gap-2 text-gray-500">
-              <i className="fa-solid fa-location-dot mt-1 text-orange/60 text-xs"></i>
-              <p className="text-sm leading-relaxed line-clamp-2 italic">
-                {place.address || t.card.noAddress}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-            <span className="text-[11px] font-bold text-orange uppercase tracking-widest">
-              {t.card.viewDetails}
-            </span>
-            <div className="w-8 h-8 rounded-full bg-orange/5 flex items-center justify-center group-hover:bg-orange group-hover:text-white transition-all duration-300">
+            {/* View Details Button */}
+            <button className="border border-orange-300 text-orange-500 text-xs font-bold px-3 py-1.5 rounded hover:bg-orange-50 transition-colors flex items-center gap-1.5">
+              View Details
               <i className="fa-solid fa-arrow-right text-[10px]"></i>
-            </div>
+            </button>
           </div>
         </div>
+
       </div>
     </Link>
   );

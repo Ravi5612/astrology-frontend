@@ -31,6 +31,53 @@ interface PaginationInfo {
     hasMore: boolean;
 }
 
+const DUMMY_EXPERTS = [
+    {
+        id: "dummy-1",
+        user: { id: "d1", name: "Astrology Ravi Rai", avatar: "/images/dummy-expert.jpg" },
+        specialization: "Vedic, Numerology",
+        experience_in_years: 5,
+        languages: ["English", "Hindi"],
+        price: 51,
+        rating: 5,
+        is_available: true,
+        isDummy: true
+    },
+    {
+        id: "dummy-2",
+        user: { id: "d2", name: "Astrologer Shanti", avatar: "/images/dummy-expert.jpg" },
+        specialization: "Tarot, Vastu",
+        experience_in_years: 8,
+        languages: ["English", "Hindi", "Marathi"],
+        price: 101,
+        rating: 4.8,
+        is_available: false,
+        isDummy: true
+    },
+    {
+        id: "dummy-3",
+        user: { id: "d3", name: "Pandit Sharma", avatar: "/images/dummy-expert.jpg" },
+        specialization: "Kundli, Palmistry",
+        experience_in_years: 12,
+        languages: ["Hindi", "Sanskrit"],
+        price: 21,
+        rating: 4.9,
+        is_available: true,
+        isDummy: true
+    },
+    {
+        id: "dummy-4",
+        user: { id: "d4", name: "Astro Dev", avatar: "/images/dummy-expert.jpg" },
+        specialization: "Numerology, Nadi",
+        experience_in_years: 3,
+        languages: ["English", "Gujarati"],
+        price: 51,
+        rating: 4.7,
+        is_available: true,
+        isDummy: true
+    }
+];
+
 const OurExpert = () => {
     const { lang } = useLanguageStore();
     const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
@@ -222,11 +269,10 @@ const OurExpert = () => {
             }}
         >
             <div className="max-w-[1320px] mx-auto px-4 md:px-8 lg:px-16">
-                <div className="relative mb-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        {t.expertSection.title}
+                <div className="relative mb-10 text-white" style={{ '--heading-border-color': 'rgba(255,255,255,0.2)' } as any}>
+                    <h2 className="section-heading-premium">
+                        <span>{t.expertSection.title}</span>
                     </h2>
-                    <div className="w-48 h-1 bg-orange"></div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center mb-10 text-white">
@@ -424,12 +470,20 @@ const OurExpert = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mt-4">
-                    {experts.length === 0 ? (
+                    {loading && experts.length === 0 ? (
                         <ExpertGridSkeleton count={4} />
                     ) : (
-                        experts.map((item) => (
-                            <ExpertCard key={item.id} expertData={item} />
-                        ))
+                        (() => {
+                            const displayExperts = !loading && experts.length > 0 && experts.length < 4 
+                                ? [...experts, ...DUMMY_EXPERTS.slice(0, 4 - experts.length)]
+                                : !loading && experts.length === 0 
+                                    ? DUMMY_EXPERTS 
+                                    : experts;
+
+                            return displayExperts.map((item) => (
+                                <ExpertCard key={item.id} expertData={item} />
+                            ));
+                        })()
                     )}
                 </div>
 

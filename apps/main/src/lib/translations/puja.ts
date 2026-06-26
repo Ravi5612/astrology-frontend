@@ -22,7 +22,7 @@ export const pujaTranslations = {
         },
         page: {
             badge: "Sacred Vedic Rituals",
-            title: "Experience the Divine with",
+            title: "Book",
             titleHighlight: "Sacred Pujas",
             subtitle: "Connect with highly experienced Vedic pandits for personalized rituals at your home or online.",
             loading: "Invoking Divine Blessings",
@@ -72,8 +72,8 @@ export const pujaTranslations = {
         },
         page: {
             badge: "पवित्र वैदिक अनुष्ठान",
-            title: "दिव्य शक्ति का अनुभव करें",
-            titleHighlight: "पवित्र पूजा",
+            title: "पवित्र पूजा",
+            titleHighlight: "बुक करें",
             subtitle: "अपने घर या ऑनलाइन व्यक्तिगत अनुष्ठानों के लिए अत्यधिक अनुभवी वैदिक पंडितों से जुड़ें।",
             loading: "दैवीय आशीर्वाद का आह्वान",
             noPujas: "कोई पूजा नहीं मिली",

@@ -173,7 +173,7 @@ export const homeTranslations = {
             ]
         },
         cta: {
-            title: "Ready to Get Accurate Astrology Guidance?",
+            title: "Get Accurate Astrology Guidance",
             subtitle: "Connect with verified experts today and get personalized solutions for love, career, health, and life problems.",
             btn: "Consult Now",
         },
@@ -220,7 +220,7 @@ export const homeTranslations = {
         storeSection: {
             badge: "Verified Merchants",
             title: "Our Trusted Shops",
-            subtitle: "Explore our network of premium spiritual stores, certified for quality and authenticity.",
+            subtitle: "Explore certified premium spiritual stores.",
             searchPlaceholder: "Search shops or city...",
             allCities: "All Cities",
             noResults: "No Shops Found",
@@ -556,7 +556,7 @@ export const homeTranslations = {
             ]
         },
         cta: {
-            title: "क्या आप सटीक ज्योतिष मार्गदर्शन प्राप्त करने के लिए तैयार हैं?",
+            title: "सटीक ज्योतिष मार्गदर्शन प्राप्त करें",
             subtitle: "आज ही सत्यापित ज्योतिषियों से जुड़ें और प्रेम, करियर, स्वास्थ्य और जीवन की समस्याओं के लिए व्यक्तिगत समाधान प्राप्त करें।",
             btn: "अभी परामर्श करें",
         },
@@ -603,7 +603,7 @@ export const homeTranslations = {
         storeSection: {
             badge: "सत्यापित व्यापारी",
             title: "हमारे भरोसेमंद स्टोर",
-            subtitle: "गुणवत्ता और प्रामाणिकता के लिए प्रमाणित हमारे प्रीमियम आध्यात्मिक स्टोर के नेटवर्क का अन्वेषण करें।",
+            subtitle: "प्रमाणित और प्रीमियम आध्यात्मिक स्टोर खोजें।",
             searchPlaceholder: "दुकान या शहर खोजें...",
             allCities: "सभी शहर",
             noResults: "कोई दुकान नहीं मिली",

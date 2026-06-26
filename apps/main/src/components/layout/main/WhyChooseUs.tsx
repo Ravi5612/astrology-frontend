@@ -14,15 +14,15 @@ const WhyChooseUs = () => {
   const rightItems = homepageData.whyChooseUs.slice(3, 6);
 
   return (
-    <section className="relative py-16 md:py-24 bg-[#1a0b0b] bg-[url('/images/bg-dark.png')] bg-cover bg-no-repeat bg-fixed overflow-hidden min-h-[700px]">
+    <section className="relative pt-8 md:pt-10 pb-16 md:pb-24 bg-[#1a0b0b] bg-[url('/images/bg-dark.png')] bg-cover bg-no-repeat bg-fixed overflow-hidden min-h-[700px]">
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 relative z-10">
 
-        {/* Header - Top Left aligned */}
-        <div className="mb-8 md:mb-12 text-center md:text-left">
-          <h2 className="text-2xl md:text-4xl font-bold text-white mb-2">
-            {t.whyChooseUs.title}
+        {/* Header */}
+        <div className="mb-8 md:mb-12 text-white w-full md:w-auto" style={{ '--heading-border-color': 'rgba(255,255,255,0.2)' } as any}>
+          <h2 className="section-heading-premium uppercase mb-0">
+            <span>{t.whyChooseUs.title}</span>
           </h2>
-          <p className="text-[#dfdfdf] text-xs md:text-base">
+          <p className="text-gray-300 font-medium text-sm mt-2 max-w-xl">
             {t.whyChooseUs.subtitle}
           </p>
         </div>
@@ -34,10 +34,12 @@ const WhyChooseUs = () => {
             {leftItems.map((item, index) => (
               <div
                 key={item.id}
-                className="bg-[#1e0b0fa6] border border-white/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center min-h-[100px] md:min-h-[160px] text-center hover:border-white/40 transition-all duration-300"
+                className="group bg-[#1e0b0fa6] border border-white/10 hover:border-orange/30 rounded-3xl p-5 md:p-6 flex flex-col items-center justify-center min-h-[160px] text-center hover:bg-[#2a1016a6] transition-all duration-500 shadow-xl hover:shadow-orange/5 hover:-translate-y-1"
               >
-                <i className={`fa-solid ${item.icon} text-2xl md:text-3xl text-white mb-2 md:mb-4`}></i>
-                <h4 className="text-white text-sm md:text-lg font-bold leading-tight">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-orange flex items-center justify-center mb-4 md:mb-5 shadow-[0_0_15px_rgba(255,107,0,0.3)] group-hover:bg-orange/90 transition-all duration-500 border border-orange/50">
+                  <i className={`fa-solid ${item.icon} text-2xl md:text-2xl text-white group-hover:scale-110 transition-transform duration-500 drop-shadow-md`}></i>
+                </div>
+                <h4 className="text-white text-sm md:text-base font-bold leading-snug group-hover:text-orange-50 transition-colors duration-300">
                   {t.whyChooseUs.reasons[index]}
                 </h4>
               </div>
@@ -73,10 +75,12 @@ const WhyChooseUs = () => {
             {rightItems.map((item, index) => (
               <div
                 key={item.id}
-                className="bg-[#1e0b0fa6] border border-white/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center min-h-[100px] md:min-h-[160px] text-center hover:border-white/40 transition-all duration-300"
+                className="group bg-[#1e0b0fa6] border border-white/10 hover:border-orange/30 rounded-3xl p-5 md:p-6 flex flex-col items-center justify-center min-h-[160px] text-center hover:bg-[#2a1016a6] transition-all duration-500 shadow-xl hover:shadow-orange/5 hover:-translate-y-1"
               >
-                <i className={`fa-solid ${item.icon} text-2xl md:text-3xl text-white mb-2 md:mb-4`}></i>
-                <h4 className="text-white text-sm md:text-lg font-bold leading-tight">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-orange flex items-center justify-center mb-4 md:mb-5 shadow-[0_0_15px_rgba(255,107,0,0.3)] group-hover:bg-orange/90 transition-all duration-500 border border-orange/50">
+                  <i className={`fa-solid ${item.icon} text-2xl md:text-2xl text-white group-hover:scale-110 transition-transform duration-500 drop-shadow-md`}></i>
+                </div>
+                <h4 className="text-white text-sm md:text-base font-bold leading-snug group-hover:text-orange-50 transition-colors duration-300">
                   {t.whyChooseUs.reasons[index + 3]}
                 </h4>
               </div>

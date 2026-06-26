@@ -3,12 +3,17 @@ import { FaArrowRight, FaSpinner, FaRegCalendarAlt as FaCalendar, FaRegClock as 
 import { TbCrystalBall } from "react-icons/tb";
 import { GiLotus } from "react-icons/gi";
 import { NakshatraFinderFormProps } from "@/lib/types/calculator";
+import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 
 const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
   dob,
   setDob,
   birthTime,
   setBirthTime,
+  locationName,
+  setLocationName,
+  setLatitude,
+  setLongitude,
   loading,
   canCalculate,
   handleCalculate,
@@ -73,6 +78,24 @@ const NakshatraFinderForm: React.FC<NakshatraFinderFormProps> = ({
                 <p className="m-0 mt-3 text-xs text-gray-400 italic" style={fontStyle}>
                   {t.timeTip}
                 </p>
+              </div>
+
+              {/* Location */}
+              <div>
+                <label className="text-sm font-bold text-[#301118]/60 uppercase tracking-widest pl-1 mb-2 block" style={fontStyle}>
+                  Birth Location
+                </label>
+                <LocationAutocomplete
+                  value={locationName}
+                  onChange={(val) => setLocationName(val)}
+                  onSelect={(loc) => {
+                    setLocationName(loc.name);
+                    setLatitude(loc.lat);
+                    setLongitude(loc.lon);
+                  }}
+                  placeholder="Enter birth city..."
+                  className="w-full bg-white border-2 border-[#301118]/5 pl-6 pr-12 py-4 text-[#301118] font-bold focus:border-primary outline-none transition-all shadow-sm text-sm rounded-full"
+                />
               </div>
 
               {/* Button */}

@@ -32,6 +32,8 @@ export const API_ROUTES = {
         KUNDLI_MATCHING: '/astrology/matching/advanced',
         MANGAL_DOSHA: '/astrology/mangal-dosha',
         BIRTH_DETAILS: '/astrology/birth-details',
+        PANCHANG: '/astrology/panchang',
+        PLANETARY_POSITIONS: '/astrology/planetary-positions',
     },
     QUOTES: '/quotes',
     PRODUCTS: '/products',

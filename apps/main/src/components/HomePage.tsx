@@ -206,7 +206,7 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="mb-16 relative">
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 pb-4 relative inline-block">
-              Astrology Services
+              Astrology Siuiuiuervices
               <div className="absolute bottom-0 left-0 w-full h-1.5 bg-orange rounded-full"></div>
             </h2>
             <div className="w-full h-px bg-gray-100 absolute bottom-0 left-0 -z-10"></div>

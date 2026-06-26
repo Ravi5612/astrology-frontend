@@ -290,6 +290,10 @@ export interface NakshatraFinderFormProps {
     setDob: (val: string) => void;
     birthTime: string;
     setBirthTime: (val: string) => void;
+    locationName: string;
+    setLocationName: (val: string) => void;
+    setLatitude: (val: string) => void;
+    setLongitude: (val: string) => void;
     loading: boolean;
     canCalculate: boolean;
     handleCalculate: (e: React.FormEvent) => void;

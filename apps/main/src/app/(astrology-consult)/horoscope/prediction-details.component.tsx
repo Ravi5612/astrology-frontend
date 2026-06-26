@@ -93,15 +93,15 @@ const PredictionDetails = ({ selectedSign, lang, t, data, isLoading }: Predictio
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
             
             {/* Left Column - Zodiac Info */}
-            <div className="w-full lg:w-1/3 flex flex-col items-center justify-center">
-              <div className="relative w-48 h-48 mb-6 flex items-center justify-center">
+            <div className="w-full lg:w-1/3 flex flex-col items-center justify-center bg-orange-50/50 rounded-2xl border border-orange-100 py-8 px-4">
+              <div className="relative w-48 h-48 mb-6 flex items-center justify-center bg-white rounded-full border border-orange-200 p-8 shadow-md">
                 <ZodiacIcon title={selectedSign.title} className="w-full h-full text-[#FF6B00]" />
               </div>
               <div className="text-center">
-                <h2 className="text-[20px] font-black text-[#2D1B15] leading-none mb-2">
+                <h2 className="text-[20px] font-black text-black leading-none mb-2">
                   {selectedSign.title} ({t.title || selectedSign.title})
                 </h2>
-                <p className="text-[13px] text-slate-500 font-medium">
+                <p className="text-[13px] text-black font-medium">
                   {selectedSign.date}
                 </p>
               </div>
@@ -109,9 +109,13 @@ const PredictionDetails = ({ selectedSign, lang, t, data, isLoading }: Predictio
 
             {/* Right Column - Predictions */}
             <div className="w-full lg:w-2/3">
-              <h3 className="text-[17px] md:text-[19px] font-bold text-[#FF6B00] mb-6">
-                Today's Horoscope - {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-              </h3>
+              <div className="text-black mb-6" style={{ '--heading-border-color': 'rgba(255,107,0,0.2)' } as any}>
+                <h3 className="section-heading-premium uppercase mb-0">
+                  <span style={{ fontSize: '1.25rem' }}>
+                    Today's Horoscope - {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                  </span>
+                </h3>
+              </div>
               
               <div 
                 className="flex flex-col max-h-[400px] lg:max-h-[480px] overflow-y-auto pr-2 md:pr-4" 
@@ -125,14 +129,14 @@ const PredictionDetails = ({ selectedSign, lang, t, data, isLoading }: Predictio
                       index !== categories.length - 1 ? "border-b border-dashed border-orange-200/70" : ""
                     }`}
                   >
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full border border-orange-200 flex items-center justify-center bg-white mt-0.5 text-[#FF6B00] text-[20px] shadow-sm">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full border border-orange-200 flex items-center justify-center bg-orange-50 mt-0.5 text-[#FF6B00] text-[20px] shadow-sm">
                       {category.icon}
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-[14px] font-bold text-[#2D1B15] mb-1">
+                      <h4 className="text-[14px] font-bold text-black mb-1">
                         {category.title}
                       </h4>
-                      <p className="text-[13px] text-slate-500 leading-relaxed">
+                      <p className="text-[13px] text-black leading-relaxed">
                         {category.content}
                       </p>
                     </div>

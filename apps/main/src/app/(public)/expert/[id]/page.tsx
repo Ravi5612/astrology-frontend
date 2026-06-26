@@ -30,17 +30,39 @@ export default async function Page({
   }
 
   try {
-    // Fetch expert details + products in parallel using the centralized api client
+    // Fetch expert details + products
+    // If it's a dummy expert, mock the expert response to avoid backend UUID validation errors
     const [
       [data, astroError],
       [pData, productsError]
-    ] = await Promise.all([
-      api.get<any>(`/expert/details/${id}`, { cache: "no-store" }),
-      api.get<any>(`/products`, { cache: "no-store" }),
-    ]);
+    ] = id.startsWith("dummy-")
+      ? [
+          [
+            {
+              data: {
+                id: id,
+                userId: "dummy-user",
+                user: { name: "Expert " + id.replace('dummy-', ''), avatar: "/images/dummy-expert.jpg" },
+                specialization: "Vedic, Numerology",
+                experience_in_years: 5,
+                languages: ["English", "Hindi"],
+                price: 51,
+                rating: 5,
+                is_available: true,
+                bio: "This is a dummy expert profile used for placeholder layouts.",
+              }
+            }, 
+            null
+          ],
+          await api.get<any>(`/products`, { cache: "no-store" })
+        ]
+      : await Promise.all([
+          api.get<any>(`/expert/details/${id}`, { cache: "no-store" }),
+          api.get<any>(`/products`, { cache: "no-store" }),
+        ]);
 
     if (astroError) {
-      if (astroError.status === 404) return notFound();
+      if (astroError.status === 404 || astroError.status === 400) return notFound();
       throw new Error(getErrorMessage(astroError) || "Failed to fetch expert details");
     }
 

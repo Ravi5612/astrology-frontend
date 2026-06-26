@@ -26,7 +26,7 @@ const ExpertSlider: React.FC<ExpertSliderProps> = ({
   lang,
 }) => {
   return (
-    <div className="relative expert-swiper-wrapper mt-4 px-12">
+    <div className="relative expert-swiper-wrapper mt-4 px-2 md:px-12">
       <Swiper
         modules={[Navigation, Autoplay]}
         speed={800}
@@ -59,10 +59,10 @@ const ExpertSlider: React.FC<ExpertSliderProps> = ({
         )}
       </Swiper>
 
-      <button className="astro-prev absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0">
+      <button className="astro-prev absolute top-1/2 -translate-y-1/2 left-0 w-10 h-10 hidden md:flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0">
         <i className="fa-solid fa-chevron-left fa-lg"></i>
       </button>
-      <button className="astro-next absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0">
+      <button className="astro-next absolute top-1/2 -translate-y-1/2 right-0 w-10 h-10 hidden md:flex items-center justify-center text-orange bg-white shadow-lg rounded-full hover:scale-110 transition cursor-pointer z-10 p-0 border-0">
         <i className="fa-solid fa-chevron-right fa-lg"></i>
       </button>
     </div>

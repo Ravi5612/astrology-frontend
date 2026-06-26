@@ -49,18 +49,12 @@ const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onS
         <div className="absolute inset-0 bg-[#3B1C0A]/85 backdrop-blur-[2px] z-0"></div>
       )}
       <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-10">
-            <div className="text-[#FF6B00]">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 4V2M12 22V20M4 12H2M22 12H20M17.6569 6.34315L19.0711 4.92893M6.34315 17.6569L4.92893 19.0711M17.6569 17.6569L19.0711 19.0711M6.34315 6.34315L4.92893 4.92893" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="12" r="4" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="2 2"/>
-               </svg>
-            </div>
-            <h2 className={`text-[20px] md:text-3xl font-black ${isDark ? "text-white" : "text-[#2D1B15]"}`}>
-              Choose Your Zodiac Sign
-            </h2>
-          </div>
+        <div className="mb-12" style={isDark ? { '--heading-border-color': 'rgba(255,255,255,0.2)' } as any : {}}>
+          <h2 className="section-heading-premium">
+            <span>
+              {tHome.chooseYourZodiacSign || "Choose Your Zodiac Sign"}
+            </span>
+          </h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-5">
@@ -83,14 +77,14 @@ const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onS
                   <ZodiacIcon title={sign.title} className={`w-10 h-10 transition-colors ${isSelected ? "text-white" : "text-[#FF6B00]"}`} />
                 </div>
                 <div className="text-center space-y-0.5">
-                  <h3 className={`text-[14px] font-bold transition-colors ${isSelected ? "text-white" : "text-[#2D1B15]"}`}>
+                  <h3 className={`text-[14px] font-bold transition-colors ${isSelected ? "text-white" : "text-black"}`}>
                     {sign.title}
                   </h3>
-                  <p className={`text-[12px] transition-colors ${isSelected ? "text-white/90" : "text-slate-500"}`}>
+                  <p className={`text-[12px] transition-colors ${isSelected ? "text-white/90" : "text-black"}`}>
                     ({sign.title})
                   </p>
                 </div>
-                <p className={`text-[10px] font-medium mt-2 text-center transition-colors ${isSelected ? "text-white/80" : "text-slate-400"}`}>
+                <p className={`text-[10px] font-medium mt-2 text-center transition-colors ${isSelected ? "text-white/80" : "text-black"}`}>
                   {sign.date}
                 </p>
               </div>
@@ -106,7 +100,7 @@ const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onS
 
             return (
               <Link
-                href={`/horoscope/${sign.title.toLowerCase()}`}
+                href={`/horoscope?sign=${sign.title.toLowerCase()}`}
                 key={sign.id}
                 className="block no-underline"
               >
