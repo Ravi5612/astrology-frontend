@@ -203,7 +203,13 @@ export const useCallLogic = (): any => {
     await device.register();
     const call = await device.connect({ params: { sessionId } });
     callRef.current = call;
-    call.on("accept", () => { setStatus("connected"); startTimer(); });
+    
+    // For audio (Conference), we might get 'accept' when connected to Twilio. 
+    // Ideally we'd wait for expert, but 'accept' is the best indicator for Voice SDK.
+    call.on("accept", () => { 
+      setStatus("connected"); 
+      startTimer(); 
+    });
     call.on("disconnect", handleCallEnded);
   };
 
@@ -216,8 +222,13 @@ export const useCallLogic = (): any => {
     }
     const room = await TwilioVideo.connect(token, { name: roomName, tracks: localTracks });
     callRef.current = room;
-    setStatus("connected");
-    startTimer();
+
+    const checkAndStartTimer = () => {
+      if (room.participants.size > 0) {
+        setStatus("connected");
+        startTimer();
+      }
+    };
 
     const attachRemoteTrack = (track: any) => {
       if (track.kind === "video" && remoteVideoRef.current) {
@@ -234,9 +245,13 @@ export const useCallLogic = (): any => {
       p.tracks.forEach((pub: any) => pub.isSubscribed && pub.track && attachRemoteTrack(pub.track));
       p.on("trackSubscribed", attachRemoteTrack);
     });
+
     room.on("participantConnected", (p) => {
+      checkAndStartTimer();
       p.on("trackSubscribed", attachRemoteTrack);
     });
+
+    checkAndStartTimer();
     room.on("participantDisconnected", (p) => {
       console.log("Participant disconnected:", p.identity);
       handleCallEnded();

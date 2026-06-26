@@ -50,7 +50,8 @@ export const CallNotificationListener: React.FC = () => {
         };
 
         const handleNewCall = (data: any) => {
-            const { session } = data;
+            const session = data.session || data;
+            if (!session) return;
             const callerName = session.user?.name || "A Client";
             const callType = session.type || 'audio';
             const callerAvatar = 
