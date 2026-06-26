@@ -107,11 +107,11 @@ export const CallNotificationListener: React.FC = () => {
                     </div>
                 </div>),
                 {
-                    position: "bottom-right",
+                    position: "top-center",
                     autoClose: false,
                     closeOnClick: false,
                     draggable: false,
-                    className: "rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-white/20 p-2 bg-white/95 backdrop-blur-md overflow-hidden min-w-[320px]",
+                    className: "rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-white/20 p-2 bg-white/95 backdrop-blur-md overflow-hidden max-w-[95vw] mx-auto sm:min-w-[320px] !mb-2 mt-2",
                 }
             );
 
