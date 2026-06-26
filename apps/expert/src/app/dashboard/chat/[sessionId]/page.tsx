@@ -292,32 +292,32 @@ function ExpertChatRoomContent() {
     return (
         <div className="fixed inset-0 z-[100] flex flex-col bg-white md:relative md:inset-auto md:z-auto md:h-[calc(100vh-120px)] md:rounded-2xl md:shadow-sm md:border md:border-gray-100 overflow-hidden">
             {/* Header */}
-            <header className="bg-gradient-to-r from-[#fd6410] to-[#ff8c4a] px-6 py-4 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
+            <header className="bg-gradient-to-r from-[#fd6410] to-[#ff8c4a] px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between shadow-md gap-2">
+                <div className="flex items-center gap-1 sm:gap-4 min-w-0">
+                    <button onClick={() => router.back()} className="p-1 sm:p-2 hover:bg-white/10 rounded-full transition-colors text-white shrink-0">
                         <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-black overflow-hidden border border-white/30 shadow-sm">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-black overflow-hidden border border-white/30 shadow-sm shrink-0">
                             <Avatar
                                 src={clientAvatar}
                                 alt={clientName || "Client"}
                                 size="md"
                                 fallback="/images/default-avatar.svg"
-                                className="border-0 bg-transparent text-white"
+                                className="border-0 bg-transparent text-white w-full h-full"
                             />
                         </div>
-                        <div>
-                            <h2 className="font-bold text-white leading-tight">Consultation with {clientName}</h2>
-                            <p className="text-[10px] text-white/80 font-bold flex items-center gap-1.5 mt-0.5">
-                                <span className={`w-1.5 h-1.5 rounded-full ${sessionStatus === 'active' ? 'bg-green-400 animate-pulse' : 'bg-white/30'}`}></span>
+                        <div className="min-w-0 flex flex-col justify-center">
+                            <h2 className="font-bold text-white leading-tight truncate text-sm sm:text-base">Consultation with {clientName}</h2>
+                            <p className="text-[9px] sm:text-[10px] text-white/80 font-bold flex items-center gap-1.5 mt-0.5 truncate">
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sessionStatus === 'active' ? 'bg-green-400 animate-pulse' : 'bg-white/30'}`}></span>
                                 {sessionStatus === 'active' ? 'Live Session' : 'Pending'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 md:gap-6">
+                <div className="flex items-center gap-2 md:gap-6 shrink-0">
                     {/* Timers Section — hidden on mobile to save space */}
                     {sessionStatus === 'active' && (
                         <div className="hidden sm:flex items-center gap-4 md:gap-5">
