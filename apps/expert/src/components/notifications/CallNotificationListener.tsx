@@ -23,7 +23,7 @@ export const CallNotificationListener: React.FC = () => {
 
     const registerExpert = useCallback(() => {
         if (!user) return;
-        const expertId = String(user.profileId || user.id);
+        const expertId = user.profileId || user.id;
         if (!expertId) return;
         callSocket.emit('register_expert', { expert_id: expertId });
     }, [user]);

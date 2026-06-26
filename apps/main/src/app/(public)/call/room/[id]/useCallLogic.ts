@@ -81,7 +81,7 @@ export const useCallLogic = (): any => {
       setCallType(session.type);
 
       // 1. Transition to accepted/active
-      if (!hasAcceptedRef.current && (session.status === "active" || session.status === "ongoing")) {
+      if (!hasAcceptedRef.current && session.status === "active") {
         console.log("🔄 [Poll] Session active, connecting...");
         handleCallAccepted(session);
       } 
