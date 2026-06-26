@@ -346,7 +346,10 @@ function ChatRoomContent() {
             />
 
             <div className="flex-1 flex overflow-hidden relative">
-                <div className={`flex-1 flex flex-col ${isDarkMode ? 'bg-[#2A0A0A]' : 'bg-[#FFF9F5]'} relative transition-colors duration-500`}>
+                <div 
+                    className={`flex-1 flex flex-col ${isDarkMode ? 'bg-[#2A0A0A]' : ''} relative transition-colors duration-500`}
+                    style={!isDarkMode ? { backgroundImage: "url('/images/white-background.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                >
                     <div className={`md:hidden ${isDarkMode ? 'bg-[#3D1414]' : 'bg-[#FFF1E6]'} py-2 px-4 flex justify-between items-center border-b ${isDarkMode ? 'border-white/5' : 'border-black/5'}`}>
                         <span className={`text-[10px] uppercase font-bold ${isDarkMode ? 'text-orange-400' : 'text-[#fd6410]'}`}>
                             {sessionStatus === 'active' ? 'Session Live' : sessionStatus === 'completed' ? 'Finished' : 'Initializing...'}
