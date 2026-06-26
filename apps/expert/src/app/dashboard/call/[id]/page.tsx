@@ -25,6 +25,20 @@ export default function ExpertCallRoom() {
     const [sessionData, setSessionData] = useState<any>(null);
     const [showSummary, setShowSummary] = useState(false);
     const [summaryData, setSummaryData] = useState<any>(null);
+    const [errorInfo, setErrorInfo] = useState<string | null>(null);
+    const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+    const addLog = (msg: string) => {
+        const ts = new Date().toLocaleTimeString('en-IN');
+        const entry = `[${ts}] ${msg}`;
+        console.log(entry);
+        setDebugLogs(prev => [...prev.slice(-20), entry]);
+    };
+
+    const setError = (msg: string) => {
+        addLog('❌ ERROR: ' + msg);
+        setErrorInfo(msg);
+    };
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const deviceRef = useRef<any>(null);
@@ -54,47 +68,70 @@ export default function ExpertCallRoom() {
         let cancelled = false;
 
         const acceptAndConnect = async () => {
+            addLog('🚀 Starting call accept flow for sessionId: ' + sessionId);
             
             // Pre-check hardware
             try {
+                addLog('🔍 Checking hardware & network...');
                 await checkHardwareAndNetwork();
+                addLog('✅ Hardware check passed');
             } catch (hwErr: any) {
                 if (cancelled) return;
-                console.error('[ExpertCallRoom] ❌ Hardware check failed:', hwErr);
-                toast.error(getErrorMessage(hwErr) || 'Hardware check failed');
-                setTimeout(() => router.push('/dashboard'), 3000);
+                const msg = getErrorMessage(hwErr) || 'Hardware check failed';
+                setError('Hardware check failed: ' + msg);
+                toast.error(msg);
                 return;
             }
             
             if (cancelled) { return; }
 
             // Step 1: Accept call via REST API → get Twilio token for expert
-            const [data, error] = await api.post<any>('/call/accept', {
-                sessionId: parseInt(sessionId),
-            });
+            addLog('📡 Calling /call/accept API...');
+            let data: any, error: any;
+            try {
+                [data, error] = await api.post<any>('/call/accept', {
+                    sessionId: parseInt(sessionId),
+                });
+            } catch (apiEx: any) {
+                const msg = getErrorMessage(apiEx) || 'API call threw exception';
+                setError('API exception: ' + msg);
+                return;
+            }
 
             if (error) {
                 if (cancelled) return;
-                console.error('[ExpertCallRoom] ❌ Failed to accept call:', error);
-                toast.error(getErrorMessage(error) || 'Failed to join call');
-                setTimeout(() => router.push('/dashboard'), 3000);
+                const msg = getErrorMessage(error) || 'Failed to join call';
+                setError('/call/accept failed: ' + msg + ' | raw: ' + JSON.stringify(error));
+                toast.error(msg);
                 return;
             }
+
+            addLog('✅ /call/accept OK. data keys: ' + Object.keys(data || {}).join(', '));
 
             if (cancelled) { return; }
 
             if (!data?.token) {
-                toast.error('No token received from accept endpoint');
+                const msg = 'No Twilio token received. data=' + JSON.stringify(data);
+                setError(msg);
+                toast.error('No token received from server');
                 return;
             }
 
             setSessionData(data.session);
+            addLog('✅ Session data set. Joining socket room...');
 
             // Step 2: Join socket room so user gets notified
             callSocket.emit('join_call_room', { sessionId: parseInt(sessionId) });
+            addLog('📡 Socket room joined. Initializing Twilio device...');
 
             // Step 3: Init Twilio Device
-            await initTwilioDevice(data.token);
+            try {
+                await initTwilioDevice(data.token);
+                addLog('✅ Twilio device initialized');
+            } catch (twilioErr: any) {
+                const msg = getErrorMessage(twilioErr) || 'Twilio init failed';
+                setError('Twilio init error: ' + msg);
+            }
         };
 
         acceptAndConnect();
@@ -116,11 +153,13 @@ export default function ExpertCallRoom() {
     const initTwilioDevice = async (token: string) => {
         // Safety guard — don't create a second device if one already exists
         if (deviceRef.current) {
-            console.warn('[ExpertTwilio] Device already initialized, skipping.');
+            addLog('⚠️ Device already initialized, skipping.');
             return;
         }
 
+        addLog('📦 Importing @twilio/voice-sdk...');
         const { Device } = await import('@twilio/voice-sdk');
+        addLog('✅ SDK imported. Creating Device...');
 
         const device = new Device(token, {
             logLevel: 1,
@@ -129,37 +168,49 @@ export default function ExpertCallRoom() {
 
         deviceRef.current = device;
 
-        // Listen for when a call we made is connected (conference joined)
         device.on('connect', (call: any) => {
+            addLog('✅ Device connected!');
             toast.success('Connected! Call is live.');
             setStatus('connected');
             startTimer();
         });
 
         device.on('disconnect', (call: any) => {
+            addLog('📴 Device disconnected');
             handleCallEnded();
         });
 
         device.on('error', (err: any) => {
-            console.error('[ExpertTwilio] ❌ Device error:', { code: err.code, message: err.message, twilioError: err.twilioError });
+            const msg = `code=${err.code} msg=${err.message}`;
+            addLog('❌ Device error: ' + msg);
+            setError('Twilio Device error: ' + msg);
             toast.error(`Call error: ${getErrorMessage(err)}`);
             handleCallEnded();
         });
 
+        addLog('📡 Registering device...');
         await device.register();
+        addLog('✅ Device registered. Connecting to call...');
 
-        // Both user & expert call the TwiML App with sessionId.
         const call = await device.connect({ params: { sessionId } });
         callRef.current = call;
+        addLog('✅ device.connect() called successfully');
 
         call.on('accept', (call: any) => {
+            addLog('✅ call:accept fired!');
             toast.success('Connected! Call is live.');
             setStatus('connected');
             startTimer();
         });
-        call.on('disconnect', () => { handleCallEnded(); });
-        call.on('cancel', () => { handleCallEnded(); });
-        call.on('error', (err: any) => { console.error('[ExpertTwilio] ❌ call:error', err); toast.error(`Call error: ${getErrorMessage(err)}`); handleCallEnded(); });
+        call.on('disconnect', () => { addLog('📴 call:disconnect'); handleCallEnded(); });
+        call.on('cancel', () => { addLog('🚫 call:cancel'); handleCallEnded(); });
+        call.on('error', (err: any) => {
+            const msg = getErrorMessage(err);
+            addLog('❌ call:error: ' + msg);
+            setError('Call error: ' + msg);
+            toast.error(`Call error: ${msg}`);
+            handleCallEnded();
+        });
     };
 
     const startTimer = () => {
@@ -219,6 +270,40 @@ export default function ExpertCallRoom() {
         const sec = (s % 60).toString().padStart(2, '0');
         return `${m}:${sec}`;
     };
+
+    // ── ERROR SCREEN (shows instead of white screen) ──
+    if (errorInfo) {
+        return (
+            <div className="min-h-[calc(100vh-150px)] bg-neutral-900 rounded-[3rem] text-white flex flex-col p-6 gap-4 overflow-auto">
+                <div className="bg-red-500/20 border border-red-500/50 rounded-2xl p-4">
+                    <h2 className="text-red-400 font-black text-lg mb-2">❌ Error Occurred</h2>
+                    <p className="text-white/80 text-sm font-mono break-all">{errorInfo}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex-1">
+                    <h3 className="text-white/50 font-black text-xs uppercase tracking-widest mb-3">Debug Logs</h3>
+                    <div className="flex flex-col gap-1">
+                        {debugLogs.map((log, i) => (
+                            <p key={i} className="text-white/60 text-xs font-mono break-all">{log}</p>
+                        ))}
+                    </div>
+                </div>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => { setErrorInfo(null); setDebugLogs([]); setStatus('connecting'); }}
+                        className="flex-1 bg-orange-500 text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest"
+                    >
+                        Retry
+                    </button>
+                    <button
+                        onClick={() => router.push('/dashboard')}
+                        className="flex-1 bg-white/10 text-white py-3 rounded-2xl font-black text-xs uppercase tracking-widest"
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[calc(100vh-150px)] bg-neutral-900 rounded-[3rem] text-white flex flex-col items-center justify-center p-8 relative overflow-hidden shadow-2xl">
