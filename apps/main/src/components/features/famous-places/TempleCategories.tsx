@@ -31,6 +31,7 @@ const TempleCategories: React.FC<TemplateCategoriesProps> = ({
   onSelect,
   onClear,
 }) => (
+  <div className="flex flex-col w-full">
   <section className="mt-14 mb-10 w-full relative rounded-2xl overflow-hidden shadow-sm border border-orange-50">
     {/* Background Banner */}
     <div className="absolute inset-0 z-0">
@@ -76,40 +77,42 @@ const TempleCategories: React.FC<TemplateCategoriesProps> = ({
         })}
       </div>
     </div>
-
-    {/* Category results */}
-    {activeCategory && (
-      <div className="px-4 md:px-8 pb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-black text-gray-900">
-            {activeCategory} <span className="text-orange-500">Results</span>
-          </h3>
-          <button
-            onClick={onClear}
-            className="text-xs text-gray-400 hover:text-orange-500 font-medium flex items-center gap-1"
-          >
-            <i className="fa-solid fa-xmark" /> Clear
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : results.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {results.map((place, idx) => (
-              <PlaceCard key={place.id || `cat-${idx}`} place={place} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-200">
-            <p className="text-gray-400 text-sm font-medium">No results found for this category.</p>
-          </div>
-        )}
-      </div>
-    )}
   </section>
+
+  {/* Category results (moved outside the banner section) */}
+  {activeCategory && (
+    <div className="w-full mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl md:text-[24px] font-black text-gray-900">
+          {activeCategory} <span className="text-orange-500">Results</span>
+        </h3>
+        <button
+          onClick={onClear}
+          className="text-sm text-gray-500 hover:text-orange-500 font-bold flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 transition-colors"
+        >
+          <i className="fa-solid fa-xmark" /> Clear
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : results.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {results.map((place, idx) => (
+            <PlaceCard key={place.id || `cat-${idx}`} place={place} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
+          <div className="text-gray-300 text-4xl mb-3"><i className="fa-solid fa-box-open"></i></div>
+          <p className="text-gray-500 text-base font-medium">No results found for this category.</p>
+        </div>
+      )}
+    </div>
+  )}
+  </div>
 );
 
 export default TempleCategories;

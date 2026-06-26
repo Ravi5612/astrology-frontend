@@ -411,7 +411,10 @@ const PlaceDetailPage = () => {
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8">
-                <button className="w-full sm:flex-1 bg-[#D95F18] hover:bg-[#C25313] text-white font-bold py-3.5 px-4 sm:px-6 text-[15px] sm:text-base rounded-xl transition-colors flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.title} ${place.address || ''}`)}`, '_blank')}
+                  className="w-full sm:flex-1 bg-[#D95F18] hover:bg-[#C25313] text-white font-bold py-3.5 px-4 sm:px-6 text-[15px] sm:text-base rounded-xl transition-colors flex items-center justify-center gap-2"
+                >
                   <i className="fa-solid fa-location-arrow"></i> Get Directions
                 </button>
                 <button onClick={() => handleShare('native')} className="w-full sm:flex-1 bg-white border-[2px] border-[#D95F18] text-[#D95F18] hover:bg-orange-50 font-bold py-3.5 px-4 sm:px-6 text-[15px] sm:text-base rounded-xl transition-colors flex items-center justify-center gap-2">

@@ -32,13 +32,11 @@ export const Loading: React.FC<LoadingProps> = ({
             >
               {/* Outer Ring */}
               <div 
-                className="absolute inset-0 rounded-full opacity-80 animate-spin"
-                style={{ border: '3px solid transparent', borderTopColor: '#FF6B00', borderBottomColor: '#FF6B00', animationDuration: '2s', animationTimingFunction: 'linear', animationIterationCount: 'infinite' }}
+                className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#FF6B00] border-b-[#FF6B00] opacity-80 animate-[spin_2s_linear_infinite]"
               ></div>
               {/* Inner Ring */}
               <div 
-                className="absolute inset-2.5 rounded-full opacity-80 animate-spin"
-                style={{ border: '3px solid transparent', borderLeftColor: '#301118', borderRightColor: '#301118', animationDuration: '1.5s', animationTimingFunction: 'linear', animationIterationCount: 'infinite', animationDirection: 'reverse' }}
+                className="absolute inset-2.5 rounded-full border-[3px] border-transparent border-l-[#301118] border-r-[#301118] opacity-80 animate-[spin_1.5s_linear_infinite_reverse]"
               ></div>
               {/* Logo */}
               <div className="relative z-10 bg-white rounded-full p-1.5 flex items-center justify-center w-[75%] h-[75%]">

@@ -71,29 +71,29 @@ const WalletTab: React.FC<WalletTabProps> = ({
             </div>
           </div>
 
-          <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl backdrop-blur-sm border border-white/10">
+          <div className="flex gap-1.5 sm:gap-2 bg-white/5 p-1.5 rounded-2xl backdrop-blur-sm border border-white/10 w-full sm:w-auto mt-4 lg:mt-0">
             <button
               onClick={() => setWalletView("recharge")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 md:px-6 md:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${
                 walletView === "recharge"
                   ? "bg-orange text-white shadow-lg shadow-orange/30"
                   : "text-gray-300 hover:text-white hover:bg-white/5"
               }`}
               style={fontStyle}
             >
-              <i className="fa-solid fa-plus-circle text-sm"></i>
+              <i className="fa-solid fa-plus-circle text-[10px] sm:text-sm"></i>
               {t.addMoney}
             </button>
             <button
               onClick={() => setWalletView("history")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 md:px-6 md:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${
                 walletView === "history"
                   ? "bg-white text-gray-900 shadow-lg shadow-white/10"
                   : "text-gray-300 hover:text-white hover:bg-white/5"
               }`}
               style={fontStyle}
             >
-              <i className="fa-solid fa-list-ul text-sm"></i>
+              <i className="fa-solid fa-list-ul text-[10px] sm:text-sm"></i>
               {t.history}
             </button>
           </div>
@@ -116,7 +116,9 @@ const WalletTab: React.FC<WalletTabProps> = ({
               </h1>
             </div>
             <p className="text-white/40 text-xs font-medium" style={fontStyle}>
-              {t.lastUpdated}
+              {transactions && transactions.length > 0 
+                ? `Last updated: ${new Date(transactions[0].created_at).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}` 
+                : t.lastUpdated}
             </p>
           </div>
 
