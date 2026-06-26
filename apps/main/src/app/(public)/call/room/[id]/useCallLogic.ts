@@ -343,19 +343,23 @@ export const useCallLogic = (): any => {
 
   const toggleSpeaker = async () => {
     // Note: Manual output switching (setSinkId) is not supported on most mobile browsers.
-    // However, we can try to use Twilio's audio management if supported.
+    // On mobile, OS handles speaker routing. We just toggle UI state.
     if (callType !== "audio") {
-      toast.info("Speaker is managed automatically for video calls.");
+      // For video, just toggle UI silently
+      setIsSpeakerOn(!isSpeakerOn);
       return;
     }
 
     const device = deviceRef.current;
-    if (!device) return;
+    if (!device) {
+      // No device yet, just toggle UI
+      setIsSpeakerOn(!isSpeakerOn);
+      return;
+    }
 
     try {
-      if (!device.audio.isOutputSelectionSupported) {
-        toast.info("Speaker switching is not supported on this browser.");
-        // We still toggle state for UI feedback, but it might not have hardware effect
+      if (!device.audio?.isOutputSelectionSupported) {
+        // Not supported — just toggle UI silently, mobile OS handles it
         setIsSpeakerOn(!isSpeakerOn);
         return;
       }
