@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, MapPin, Monitor, Sparkles, ChevronDown, Loader2 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { 
+    Search, MapPin, Monitor, ChevronDown, Loader2, 
+    ShieldCheck, Sparkles, Star, Users, BookOpen, 
+    ThumbsUp, PhoneCall, MessageCircle, HeartHandshake
+} from "lucide-react";
 import { api as http } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { ExpertPuja } from "@/lib/types/puja";
@@ -10,6 +15,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLanguageStore } from "@repo/store";
 import { pujaTranslations } from "@/lib/translations/puja";
+import Link from "next/link";
 
 const OnlinePujaPage = () => {
     const { lang } = useLanguageStore();
@@ -22,6 +28,21 @@ const OnlinePujaPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedPujaName, setSelectedPujaName] = useState(t.filters.allPujas);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const { isAuthenticated } = useAuthStore();
     const { fetchWishlist } = useWishlistStore();
@@ -60,130 +81,137 @@ const OnlinePujaPage = () => {
     });
 
     return (
-        <div className="min-h-screen bg-[#301118]">
-            {/* Header Section */}
-            <div className="bg-[#301118] pt-24 pb-12 px-4 border-b border-white/5 shadow-2xl">
-                <div className="max-w-7xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-400 rounded-full text-sm font-bold mb-6 animate-fade-in border border-orange-500/20" style={fontStyle}>
-                        <Sparkles className="w-4 h-4" />
-                        {t.page.badge}
-                    </div>
-                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4 tracking-tight" style={fontStyle}>
-                        {t.page.title} <span className="text-orange-500">{t.page.titleHighlight}</span>
-                    </h1>
-                    <p className="text-orange-100/60 max-w-2xl mx-auto text-lg font-medium" style={fontStyle}>
-                        {t.page.subtitle}
-                    </p>
+        <div className="min-h-screen bg-[#FDFCFB] font-['Inter',sans-serif]">
+            
+            {/* Top Banner Section */}
+            <div className="max-w-7xl mx-auto px-4 pt-4 pb-8">
+                <div className="relative w-full h-[360px] md:h-[420px] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <Image 
+                        src="/images/online-puja-banner.png" 
+                        alt="Online Puja Banner" 
+                        fill 
+                        className="object-cover object-center"
+                        priority
+                    />
+                    
+
                 </div>
             </div>
 
-            {/* Sticky Filters Section */}
-            <div className="sticky top-20 z-40 bg-[#301118]/90 backdrop-blur-xl border-b border-white/5 shadow-2xl py-4 px-4 transition-all">
-                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-6">
+            {/* Filters Section */}
+            <div className="max-w-7xl mx-auto px-4 mb-10 z-30 relative">
+                <div className="bg-white rounded-lg border border-[#FF5500] shadow-sm flex flex-col md:flex-row items-center transition-colors">
                     
-                    {/* Toggle Switch */}
-                    <div className="flex bg-black/30 p-1.5 rounded-2xl w-full lg:w-auto shadow-inner border border-white/5">
-                        <button 
-                            onClick={() => setTypeFilter('all')}
-                            className={`flex-1 lg:flex-none lg:px-6 py-2 rounded-xl text-sm font-bold transition-all ${typeFilter === 'all' ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/40 transform scale-[1.02]' : 'text-gray-400 hover:text-white'}`}
-                            style={fontStyle}
-                        >
-                            {t.filters.all}
-                        </button>
-                        <button 
-                            onClick={() => setTypeFilter('online')}
-                            className={`flex-1 lg:flex-none lg:px-6 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${typeFilter === 'online' ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/40 transform scale-[1.02]' : 'text-gray-400 hover:text-white'}`}
-                            style={fontStyle}
-                        >
-                            <Monitor className="w-4 h-4" />
-                            {t.filters.online}
-                        </button>
-                        <button 
-                            onClick={() => setTypeFilter('home_visit')}
-                            className={`flex-1 lg:flex-none lg:px-6 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${typeFilter === 'home_visit' ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/40 transform scale-[1.02]' : 'text-gray-400 hover:text-white'}`}
-                            style={fontStyle}
-                        >
-                            <MapPin className="w-4 h-4" />
-                            {t.filters.homeVisit}
-                        </button>
+                    {/* Mode Toggle */}
+                    <div className="flex items-center gap-4 px-6 py-4 w-full md:w-auto">
+                        <span className="text-sm font-bold text-gray-800 shrink-0">Mode</span>
+                        <div className="flex items-center bg-gray-100 rounded-lg p-1 gap-1">
+                            <button 
+                                onClick={() => setTypeFilter('all')}
+                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'all' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                            >
+                                All
+                            </button>
+                            <button 
+                                onClick={() => setTypeFilter('online')}
+                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'online' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                            >
+                                Online
+                            </button>
+                            <button 
+                                onClick={() => setTypeFilter('home_visit')}
+                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'home_visit' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                            >
+                                Home Visit
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Search & Dropdown Group */}
-                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full grow">
-                        {/* Search Bar */}
-                        <div className="relative w-full">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-orange-500/50" />
+                    <div className="hidden md:block w-px h-10 bg-gray-200 shrink-0" />
+
+                    {/* Search Input */}
+                    <div className="relative flex-1 w-full px-4 py-3">
+                        <div className="relative flex items-center border border-gray-300 rounded-lg px-4 py-3.5 bg-white focus-within:border-[#FF5500] focus-within:ring-2 focus-within:ring-[#FF5500]/20 transition-colors">
+                            <Search className="w-4 h-4 text-gray-400 shrink-0 mr-3" />
                             <input 
                                 type="text"
-                                placeholder={t.filters.searchPlaceholder}
+                                placeholder="Search Puja, Pandit or City"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-black/40 border border-white/10 text-white rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium placeholder:text-gray-500 shadow-2xl"
-                                style={fontStyle}
+                                className="w-full bg-transparent text-gray-900 text-sm font-medium focus:outline-none placeholder:text-gray-400"
                             />
                         </div>
+                    </div>
 
-                        {/* Puja Dropdown */}
-                        <div className="relative w-full sm:w-64">
-                            <button 
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-black/40 border border-white/10 rounded-2xl focus:ring-4 focus:ring-orange-500/20 outline-none font-bold text-gray-300 shadow-2xl transition-all"
-                                style={fontStyle}
-                            >
-                                <span className="truncate">{selectedPujaName}</span>
-                                <ChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                            </button>
-                            
-                            {isDropdownOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-full bg-[#301118] border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-50 py-2 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2">
-                                    {uniquePujaNames.map((name) => (
-                                        <button
-                                            key={name}
-                                            onClick={() => {
-                                                setSelectedPujaName(name);
-                                                setIsDropdownOpen(false);
-                                            }}
-                                            className={`w-full text-left px-4 py-2.5 text-sm font-semibold hover:bg-orange-600 hover:text-white transition-colors ${selectedPujaName === name ? 'text-orange-500 bg-black/20' : 'text-gray-400'}`}
-                                            style={fontStyle}
-                                        >
-                                            {name}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                    <div className="hidden md:block w-px h-10 bg-gray-200 shrink-0" />
+
+                    {/* Select Dropdown */}
+                    <div className="relative flex-1 w-full min-w-0 pr-4 py-3" ref={dropdownRef}>
+                        <button 
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="w-full flex items-center justify-between px-4 py-3.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 transition-colors"
+                        >
+                            <div className="flex items-center gap-2 text-gray-700">
+                                <Sparkles className="w-4 h-4 text-[#FF5500]" />
+                                <span className="font-bold text-sm truncate">{selectedPujaName}</span>
+                            </div>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        {isDropdownOpen && (
+                            <div className="absolute top-full right-0 mt-2 w-full bg-white border border-gray-100 rounded-2xl shadow-xl z-50 py-2 max-h-60 overflow-y-auto">
+                                {uniquePujaNames.map((name) => (
+                                    <button
+                                        key={name}
+                                        onClick={() => {
+                                            setSelectedPujaName(name);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                        className={`w-full text-left px-5 py-3 text-sm font-medium hover:bg-orange-50 transition-colors ${selectedPujaName === name ? 'text-[#FF5500] bg-orange-50/50' : 'text-gray-700'}`}
+                                    >
+                                        {name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Results Grid */}
-            <div className="max-w-7xl mx-auto py-12 px-4 pb-32">
+
+            {/* Results Section */}
+            <div className="max-w-7xl mx-auto px-4 pb-16">
+                
+                {/* Header */}
+                <div className="flex items-end justify-between mb-8">
+                    <h2 className="text-3xl font-black text-gray-900 border-b-2 border-transparent" style={fontStyle}>Popular Puja</h2>
+                    <span className="text-sm font-bold text-gray-500 mb-1">{pujas.length}+ Puja Available</span>
+                </div>
+
+                {/* Grid */}
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-                        <p className="text-orange-200/40 font-bold animate-pulse uppercase tracking-[0.2em] text-xs" style={fontStyle}>{t.page.loading}</p>
+                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <Loader2 className="w-10 h-10 text-[#FF5500] animate-spin" />
+                        <p className="text-gray-500 font-bold uppercase tracking-wider text-xs">Loading Pujas...</p>
                     </div>
                 ) : filteredPujas.length === 0 ? (
-                    <div className="text-center py-32 bg-black/20 rounded-3xl border border-white/5 shadow-2xl">
-                        <div className="w-20 h-20 bg-black/40 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
-                            <Search className="w-10 h-10 text-gray-600" />
-                        </div>
-                        <h2 className="text-2xl font-black text-white mb-2" style={fontStyle}>{t.page.noPujas}</h2>
-                        <p className="text-gray-500" style={fontStyle}>{t.page.noPujasHint}</p>
+                    <div className="text-center py-20 bg-gray-50 rounded-3xl border border-gray-100">
+                        <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-bold text-gray-900 mb-2">No Pujas Found</h2>
+                        <p className="text-gray-500 text-sm">Try adjusting your filters or search criteria.</p>
                         <button 
                             onClick={() => {
                                 setTypeFilter('all');
                                 setSearchQuery("");
                                 setSelectedPujaName(t.filters.allPujas);
                             }}
-                            className="mt-6 px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-700 transition-all active:scale-95 shadow-lg shadow-orange-900/40 hover:translate-y-[-2px]"
-                            style={fontStyle}
+                            className="mt-6 px-6 py-2.5 bg-[#FF5500] text-white font-bold rounded-xl hover:bg-[#E64D00] transition-all"
                         >
-                            {t.page.btnReset}
+                            Reset Filters
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredPujas.map((puja) => (
                             <PujaCard key={puja.id} puja={puja} />
                         ))}
@@ -191,18 +219,41 @@ const OnlinePujaPage = () => {
                 )}
             </div>
 
-            <style jsx global>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
-                .animate-spin-slow { animation: spin 3s linear infinite; }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `}</style>
+            {/* Why Choose Our Online Puja */}
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <Image 
+                    src="/images/why-choose-puja-banner.png" 
+                    alt="Why Choose Our Online Puja" 
+                    width={1280}
+                    height={256}
+                    className="w-full h-auto"
+                />
+            </div>
+
+            {/* Bottom CTA Banner */}
+            <div className="max-w-7xl mx-auto px-4 pb-12">
+                <section className="bg-[#1a0b0b] rounded-3xl px-5 py-6 sm:px-8 sm:py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-5 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-10">
+                        <Image src="/images/horoscope-round2.png" alt="" fill className="object-cover" />
+                    </div>
+                    <div className="relative z-10 w-full text-center md:text-left">
+                        <p className="text-[#F26500] font-bold text-[13px] sm:text-sm mb-1">Personalized Guidance</p>
+                        <h3 className="text-white text-[15px] sm:text-[19px] md:text-2xl font-black leading-snug md:leading-normal text-balance mx-auto md:mx-0">
+                            Need Help in Choosing Right Puja?
+                        </h3>
+                        <p className="text-white/60 text-sm mt-1">
+                            Talk to our expert astrologers and get personalized recommendation for your needs.
+                        </p>
+                    </div>
+                    <Link
+                        href="/our-experts"
+                        className="relative z-10 flex-shrink-0 bg-[#F26500] hover:bg-[#D95A00] text-white font-black px-8 py-3 rounded-xl flex items-center gap-2 transition-colors text-sm"
+                    >
+                        <MessageCircle className="w-4 h-4" /> Talk to Astrologer
+                    </Link>
+                </section>
+            </div>
+
         </div>
     );
 };

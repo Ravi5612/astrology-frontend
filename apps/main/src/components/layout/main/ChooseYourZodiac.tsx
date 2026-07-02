@@ -14,6 +14,7 @@ const Link = NextLink as any;
 
 interface ChooseYourZodiacProps {
   selectedSignId?: number;
+  selectedSignIds?: number[];
   onSelectSign?: (sign: any) => void;
   isDark?: boolean;
 }
@@ -36,7 +37,7 @@ const ZodiacIcon = ({ title, className }: { title: string, className?: string })
   }
 };
 
-const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onSelectSign, isDark = false }) => {
+const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, selectedSignIds, onSelectSign, isDark = false }) => {
   const { lang } = useLanguageStore();
   const tHome = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.en;
 
@@ -59,7 +60,7 @@ const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onS
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-5">
           {ZodiacSignsData.map((sign) => {
-            const isSelected = selectedSignId === sign.id;
+            const isSelected = selectedSignId === sign.id || (selectedSignIds && selectedSignIds.includes(sign.id));
             
             const cardContent = (
               <div
@@ -100,7 +101,7 @@ const ChooseYourZodiac: React.FC<ChooseYourZodiacProps> = ({ selectedSignId, onS
 
             return (
               <Link
-                href={`/horoscope?sign=${sign.title.toLowerCase()}`}
+                href={`/horoscope/${sign.title.toLowerCase()}`}
                 key={sign.id}
                 className="block no-underline"
               >

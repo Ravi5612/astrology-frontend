@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { 
-    Clock, MapPin, Monitor, Sparkles, Star, 
-    ArrowLeft, CheckCircle2, ShieldCheck, 
-    Calendar, Users, Info, Filter, Loader2,
-    CalendarCheck, Image as LucideImage
+import {
+    Clock, MapPin, Monitor, Sparkles, Star, Heart,
+    ArrowLeft, ArrowRight, ShieldCheck,
+    Calendar, Info, Loader2, MessageCircle, Send,
+    Package, Users, ChevronRight, Video, CheckCircle2
 } from "lucide-react";
 import { api as http } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
@@ -29,6 +29,8 @@ const PujaDetailPage = () => {
     const [askExpertForDate, setAskExpertForDate] = useState(false);
     const [userMessage, setUserMessage] = useState("");
     const [isBooking, setIsBooking] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
     const { isAuthenticated } = useAuthStore();
 
     useEffect(() => {
@@ -37,13 +39,12 @@ const PujaDetailPage = () => {
             setLoading(true);
             const route = API_ROUTES.EXPERT.GET_PUJA_BY_ID.replace(':id', id as string);
             const [res, error] = await http.get<ExpertPuja>(route) as any;
-            
             if (error) {
-                console.error("Failed to fetch puja details:", error);
                 router.push('/online-puja');
             } else if (res) {
                 setPuja(res);
-                // Set default mode
+                setLikesCount(res.total_likes || 0);
+                
                 if (res.is_online) setSelectedMode('online');
                 else if (res.is_home_visit) setSelectedMode('home_visit_without');
             }
@@ -52,11 +53,23 @@ const PujaDetailPage = () => {
         fetchPujaDetails();
     }, [id, router]);
 
+    useEffect(() => {
+        const fetchUserWishlist = async () => {
+            if (!isAuthenticated) return;
+            const [res] = await http.get<any[]>('/puja-like');
+            if (res && Array.isArray(res)) {
+                const isLiked = res.some((item) => item.puja_id === id || item.puja?.id === id);
+                setLiked(isLiked);
+            }
+        };
+        fetchUserWishlist();
+    }, [id, isAuthenticated]);
+
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#301118] flex flex-col items-center justify-center p-4">
-                <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
-                <p className="text-orange-200/40 font-bold uppercase tracking-[0.2em] text-xs">Preparing Sacred Space</p>
+            <div className="min-h-screen bg-[#FDF6F0] flex flex-col items-center justify-center">
+                <div className="w-14 h-14 rounded-full border-4 border-[#FF5500]/20 border-t-[#FF5500] animate-spin mb-4" />
+                <p className="text-[#FF5500]/60 font-bold text-xs uppercase tracking-widest">Loading...</p>
             </div>
         );
     }
@@ -70,19 +83,41 @@ const PujaDetailPage = () => {
         return 0;
     };
 
-    const handleBookingRequest = async () => {
+    const handleLikeToggle = async () => {
         if (!isAuthenticated) {
-            toast.error("Please login to send puja request");
+            toast.error("Please login to like this puja");
             return;
         }
+        
+        // Optimistic update
+        const newLikedState = !liked;
+        setLiked(newLikedState);
+        setLikesCount(prev => newLikedState ? prev + 1 : prev - 1);
+        
+        if (newLikedState) {
+            const [, error] = await http.post('/puja-like/add', { pujaId: id });
+            if (error) {
+                setLiked(!newLikedState);
+                setLikesCount(prev => !newLikedState ? prev + 1 : prev - 1);
+                toast.error(getErrorMessage(error) || "Failed to add to wishlist");
+            }
+        } else {
+            const [, error] = await http.delete(`/puja-like/remove/${id}`);
+            if (error) {
+                setLiked(!newLikedState);
+                setLikesCount(prev => !newLikedState ? prev + 1 : prev - 1);
+                toast.error(getErrorMessage(error) || "Failed to remove from wishlist");
+            }
+        }
+    };
 
+    const handleBookingRequest = async () => {
+        if (!isAuthenticated) { toast.error("Please login to send puja request"); return; }
         if (!askExpertForDate && (!scheduledDate || !scheduledTime)) {
-            toast.error("Please select a date and time OR ask expert for date");
-            return;
+            toast.error("Please select a date and time OR ask expert for date"); return;
         }
-
         setIsBooking(true);
-        const bookingData = {
+        const [, error] = await http.post(API_ROUTES.PUJA.BOOKING, {
             puja_id: id as string,
             scheduled_date: askExpertForDate ? null : scheduledDate,
             scheduled_time: askExpertForDate ? null : scheduledTime,
@@ -90,378 +125,445 @@ const PujaDetailPage = () => {
             mode: selectedMode,
             price: getCurrentCost(),
             user_message: userMessage
-        };
-
-        const [res, error] = await http.post(API_ROUTES.PUJA.BOOKING, bookingData) as any;
-
-        if (error) {
-            toast.error(getErrorMessage(error) || "Failed to send booking request");
-        } else {
-            toast.success("Puja request sent successfully! Wait for expert to confirm.");
-            setScheduledDate("");
-            setScheduledTime("");
-            setAskExpertForDate(false);
-            setUserMessage("");
-        }
+        }) as any;
+        if (error) toast.error(getErrorMessage(error) || "Failed to send booking request");
+        else { toast.success("Puja request sent!"); setScheduledDate(""); setScheduledTime(""); setAskExpertForDate(false); setUserMessage(""); }
         setIsBooking(false);
     };
 
     return (
-        <div className="min-h-screen bg-[#FDFCFB] selection:bg-orange-100 selection:text-orange-900">
-            {/* Header / Hero Section */}
-            <div className="relative h-[45vh] sm:h-[60vh] overflow-hidden group">
-                {/* Hero Background */}
-                <div className="absolute inset-0 bg-[#301118]">
-                    {puja.puja_image_url ? (
-                        <Image 
-                            src={puja.puja_image_url} 
-                            alt={puja.name} 
-                            fill 
-                            className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-[3s] ease-out"
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center opacity-20">
-                            <Sparkles className="w-48 h-48 text-orange-500" />
-                        </div>
-                    )}
-                    <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-[#FDFCFB]" />
-                </div>
+        <div className="min-h-screen bg-[#FDF6F0]" style={{ fontFamily: "'Inter', sans-serif" }}>
 
-                {/* Top Actions */}
-                <div className="absolute top-8 left-4 right-4 max-w-7xl mx-auto flex items-center justify-between z-20">
-                    <button 
-                        onClick={() => router.back()}
-                        className="p-3 bg-white/10 backdrop-blur-md rounded-2xl text-white hover:bg-white/20 transition-all border border-white/20 group/back flex items-center gap-2 pr-5"
-                    >
-                        <ArrowLeft className="w-5 h-5 group-hover/back:-translate-x-1 transition-transform" />
-                        <span className="text-sm font-bold">Return</span>
-                    </button>
-                    
-                    <button className="p-3 bg-white/10 backdrop-blur-md rounded-2xl text-white hover:bg-white/20 transition-all border border-white/20">
-                        <Sparkles className="w-5 h-5" />
-                    </button>
-                </div>
-
-                {/* Hero Content */}
-                <div className="absolute inset-x-0 bottom-0 max-w-7xl mx-auto px-4 pb-12 z-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-500 text-white rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4 shadow-xl shadow-orange-900/20">
-                        <Star className="w-3 h-3 fill-white" />
-                        Vedic Certified Ritual
-                    </div>
-                    <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
-                        {puja.name}
-                    </h1>
-                    <div className="flex flex-wrap items-center gap-4 mt-6 text-white/80">
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10">
-                            <Clock className="w-4 h-4 text-orange-400" />
-                            <span className="text-sm font-bold">{puja.min_duration_hours}-{puja.max_duration_hours} Hours</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10">
-                            <Monitor className="w-4 h-4 text-blue-400" />
-                            <span className="text-sm font-bold">Multiple Modes</span>
-                        </div>
-                    </div>
-                </div>
+            {/* Breadcrumb */}
+            <div className="max-w-7xl mx-auto px-4 py-3">
+                <p className="text-sm text-gray-500">
+                    <Link href="/" className="hover:text-[#FF5500]">Home</Link>
+                    <span className="mx-2 text-gray-300">›</span>
+                    <Link href="/online-puja" className="text-[#FF5500] font-semibold">Online Puja</Link>
+                    <span className="mx-2 text-gray-300">›</span>
+                    <span className="text-gray-700">{puja.name}</span>
+                </p>
             </div>
 
-            {/* Main Content Grid */}
-            <div className="max-w-7xl mx-auto px-4 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
-                
-                {/* Left Column: Details */}
-                <div className="lg:col-span-8 space-y-12">
-                    
-                    {/* About the Puja */}
-                    <section>
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
-                                <Info className="w-6 h-6 text-orange-500" />
+            {/* ── TOP: Image (left) + Booking Widget (right) ── */}
+            <div className="max-w-7xl mx-auto px-4 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                {/* LEFT: Hero Image */}
+                <div className="lg:col-span-8">
+                    <div className="relative rounded-3xl overflow-hidden h-[280px] sm:h-[360px] bg-[#1a0b0b]">
+                        {puja.puja_image_url ? (
+                            <Image
+                                src={puja.puja_image_url}
+                                alt={puja.name}
+                                fill
+                                className="object-cover opacity-80"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                                <Sparkles className="w-24 h-24 text-orange-500 opacity-20" />
                             </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Ritual Significance</h2>
-                                <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1 text-[10px]">What makes this ceremony divine</p>
+                        )}
+                        {/* Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                        {/* Top Buttons */}
+                        <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                            <button
+                                onClick={() => router.back()}
+                                className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-bold border border-white/20 hover:bg-white/30 transition-all"
+                            >
+                                <ArrowLeft className="w-4 h-4" /> Return
+                            </button>
+                            <button
+                                onClick={handleLikeToggle}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-all ${liked ? 'bg-white text-gray-900 border-white' : 'bg-white/20 backdrop-blur-sm text-white border-white/20 hover:bg-white/30'}`}
+                            >
+                                <Heart className={`w-4 h-4 ${liked ? "fill-red-500 text-red-500" : ""}`} />
+                                {likesCount > 0 ? likesCount : (liked ? "1" : "Like")}
+                            </button>
+                        </div>
+
+                        {/* Bottom Content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                            <h1 className="text-3xl sm:text-4xl font-black text-white mb-3 drop-shadow-xl">{puja.name}</h1>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/10">
+                                    <Clock className="w-3.5 h-3.5 text-orange-300" />
+                                    <span className="text-xs font-bold text-white">{puja.min_duration_hours} - {puja.max_duration_hours} Hours (Approx.)</span>
+                                </div>
+                                {puja.is_online && (
+                                    <span className="px-3 py-1.5 bg-[#FF5500] text-white text-xs font-black rounded-xl">Online</span>
+                                )}
+                                {puja.is_home_visit && (
+                                    <span className="px-3 py-1.5 bg-emerald-500 text-white text-xs font-black rounded-xl">Home Visit</span>
+                                )}
                             </div>
                         </div>
-                        <p className="text-lg text-gray-600 leading-relaxed font-medium">
-                            {puja.description || "This sacred Vedic ceremony is performed by our highly experienced pandits following strict traditional protocols. It aims to invoke divine energy and blessings into your life, ensuring spiritual growth, protection, and prosperity for you and your family."}
-                        </p>
-                        
-                        {/* Key Benefits / Points */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                    </div>
+
+                    {/* ── BELOW IMAGE: All Content Sections ── */}
+                    <div className="mt-6 space-y-5">
+
+                        {/* About */}
+                        <div className="bg-white rounded-3xl p-6 border border-[#F0E0D0] shadow-sm">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-xl">🕉️</div>
+                                <h2 className="text-lg font-black text-[#1A1A1A]">About {puja.name}</h2>
+                            </div>
+                            <p className="text-gray-600 leading-relaxed text-sm font-medium">
+                                {puja.description || "This sacred Vedic ceremony is performed by our highly experienced pandits following strict traditional protocols. It aims to invoke divine energy and blessings into your life, ensuring spiritual growth, protection, and prosperity."}
+                            </p>
+                        </div>
+
+                        {/* Key Benefits */}
+                        <div className="bg-white rounded-3xl p-6 border border-[#F0E0D0] shadow-sm">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                                    <Star className="w-5 h-5 text-[#FF5500]" />
+                                </div>
+                                <h2 className="text-lg font-black text-[#1A1A1A]">Key Benefits</h2>
+                            </div>
+                            <div className="flex flex-wrap gap-x-8 gap-y-4">
+                                {[
+                                    { icon: "🙏", label: "Brings Peace", sub: "& Prosperity" },
+                                    { icon: "🌿", label: "Removes Negative", sub: "Energy" },
+                                    { icon: "❤️", label: "Good Health", sub: "& Longevity" },
+                                    { icon: "💼", label: "Success in Career", sub: "& Business" },
+                                    { icon: "⭐", label: "Spiritual Growth", sub: "& Protection" },
+                                ].map((b, i) => (
+                                    <div key={i} className="flex items-center gap-3 min-w-[140px]">
+                                        <div className="w-10 h-10 bg-[#FFF0E6] border border-[#F5D5C0] rounded-full flex items-center justify-center text-lg shrink-0">
+                                            {b.icon}
+                                        </div>
+                                        <div>
+                                            <p className="text-[11px] font-bold text-[#333] leading-tight">{b.label}</p>
+                                            <p className="text-[10px] text-gray-400 leading-tight">{b.sub}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Pandit */}
+                        <div className="bg-white rounded-3xl p-6 border border-[#F0E0D0] shadow-sm">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-[#FF5500]" />
+                                </div>
+                                <h2 className="text-lg font-black text-[#1A1A1A]">Pandit Performing this Puja</h2>
+                            </div>
+                            <div className="flex gap-5 items-start">
+                                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-[#F0E0D0] relative">
+                                    {puja.expert?.user?.avatar ? (
+                                        <Image src={puja.expert.user.avatar} alt="Pandit" fill className="object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full bg-[#FFF0E6] flex items-center justify-center text-3xl font-black text-[#FF5500]">
+                                            {(puja.expert?.user?.name || "P").charAt(0)}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex-1 flex flex-col md:flex-row gap-4 justify-between">
+                                    <div className="flex-1">
+                                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                                            <h3 className="text-base font-black text-[#1A1A1A]">{puja.expert?.user?.name || puja.expert?.name || "Pandit Ji"}</h3>
+                                            <span className="px-2 py-0.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-[9px] font-black rounded-lg uppercase flex items-center gap-1">
+                                                <Star className="w-2 h-2 fill-yellow-500 text-yellow-500" /> Top Rated Pandit
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1 mb-2">
+                                            {[1,2,3,4,5].map(s => <Star key={s} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />)}
+                                            <span className="text-xs font-bold text-gray-700 ml-1">4.8</span>
+                                            <span className="text-[11px] text-gray-400">(128 Reviews)</span>
+                                        </div>
+                                        <p className="text-[11px] font-bold text-[#1A1A1A] mb-1">12+ Years of Experience <span className="text-gray-300 mx-1">|</span> Vedic Expert</p>
+                                        <p className="text-[11px] text-gray-500 mb-3">Specialized in Shiva Puja, Rudra Abhishek, Mahamrityunjaya Jaap and other Vedic Rituals.</p>
+                                        <Link href={`/expert/${puja.expert_id}`} className="inline-flex items-center gap-1 text-[#FF5500] text-xs font-black hover:underline">
+                                            View Full Profile <ArrowRight className="w-3.5 h-3.5" />
+                                        </Link>
+                                    </div>
+                                    <div className="bg-[#FCF9F7] rounded-3xl p-5 shrink-0 min-w-[180px] flex flex-col gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 text-[#FF5500] bg-white rounded-[10px] flex items-center justify-center border border-[#FFD9BF] text-sm shrink-0 shadow-sm">📜</div>
+                                            <div>
+                                                <p className="text-[11px] font-bold text-gray-600 leading-tight mb-1">Pujas Performed</p>
+                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight">2,500+</p>
+                                            </div>
+                                        </div>
+                                        <div className="h-px bg-[#F0E0D0] w-full" />
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 text-[#FF5500] bg-white rounded-[10px] flex items-center justify-center border border-[#FFD9BF] text-sm shrink-0 shadow-sm">🗣️</div>
+                                            <div>
+                                                <p className="text-[11px] font-bold text-gray-600 leading-tight mb-1">Languages</p>
+                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight">Hindi, Sanskrit</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Samagri */}
+                        {puja.samagri_list && puja.samagri_list.length > 0 && (
+                            <div className="bg-white rounded-3xl p-6 border border-[#F0E0D0] shadow-sm">
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                                        <Package className="w-5 h-5 text-[#FF5500]" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-black text-[#1A1A1A]">Essential Samagri</h2>
+                                        <p className="text-[10px] text-gray-400">(Provided by Pandit for Home Visit - Premium)</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-6">
+                                    {puja.samagri_list.map((item, idx) => (
+                                        <div key={idx} className="flex items-center gap-3">
+                                            <div className="w-10 h-10 flex items-center justify-center text-2xl shrink-0">
+                                                🌿
+                                            </div>
+                                            <div>
+                                                <p className="text-[11px] font-black text-[#1A1A1A] leading-tight">{item.name}</p>
+                                                <p className="text-[10px] text-gray-500 leading-tight">{item.quantity}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-3 italic">Note: Samagri may vary slightly based on availability and local customs.</p>
+                            </div>
+                        )}
+
+                        {/* Districts */}
+                        {puja.is_home_visit && puja.districts && puja.districts.length > 0 && (
+                            <div className="bg-white rounded-3xl p-6 border border-[#F0E0D0] shadow-sm">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                                        <MapPin className="w-5 h-5 text-green-500" />
+                                    </div>
+                                    <h2 className="text-lg font-black text-[#1A1A1A]">Available Districts for Home Visit</h2>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {puja.districts.map((district, idx) => (
+                                        <span key={idx} className="px-3 py-1.5 bg-[#F5FFF8] border border-green-100 text-green-700 rounded-xl text-xs font-bold">
+                                            {district}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Trust Badges */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                             {[
-                                "Performed with pure Samagri",
-                                "Traditional Vedic Mantras",
-                                "Personalized Sankalp",
-                                "Authentic Procedures"
-                            ].map((point, idx) => (
-                                <div key={idx} className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                    <span className="font-bold text-gray-700">{point}</span>
+                                { icon: "📜", title: "Vedic Certified Ritual", sub: "Performed as per Vedic\nscriptures and tradition" },
+                                { icon: "✅", title: "Verified Pandit", sub: "Experienced & background\nverified pandits" },
+                                { icon: "🌺", title: "Pure & Authentic", sub: "Pure Samagri &\nauthentic rituals" },
+                                { icon: "🔒", title: "Secure & Trusted", sub: "Your booking is safe\nand secure with us" },
+                            ].map((b, i) => (
+                                <div key={i} className="bg-white rounded-2xl p-3 border border-[#F0E0D0] flex items-center gap-3">
+                                    <div className="text-2xl shrink-0 text-[#FF5500] opacity-80">{b.icon}</div>
+                                    <div>
+                                        <p className="text-[11px] font-black text-[#1A1A1A] leading-tight mb-0.5">{b.title}</p>
+                                        <p className="text-[9px] text-gray-400 leading-tight whitespace-pre-line">{b.sub}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                    </section>
 
-                    {/* Pandit Profile Mini */}
-                    <div className="p-8 bg-[#301118] rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-orange-500/20 transition-colors" />
-                        
-                        <div className="flex flex-col sm:flex-row items-center gap-8 relative z-10">
-                            <div className="relative w-32 h-32 rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/10 ring-offset-4 ring-offset-[#301118]">
-                                {puja.expert?.user?.avatar ? (
-                                    <Image 
-                                        src={puja.expert.user.avatar} 
-                                        alt={puja.expert.user.name || puja.expert?.name || "Expert"} 
-                                        fill 
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gray-800 text-3xl font-black">
-                                        {(puja.expert?.user?.name || puja.expert?.name || "E").charAt(0)}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="text-center sm:text-left grow">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 border border-emerald-500/20">
-                                    Top Rated Pandit
-                                </div>
-                                <h3 className="text-3xl font-black tracking-tight">{puja.expert?.user?.name || puja.expert?.name || "Pandit Ji"}</h3>
-                                <div className="flex items-center justify-center sm:justify-start gap-4 mt-2">
-                                    <div className="flex items-center gap-1.5">
-                                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                        <span className="font-black">4.9/5</span>
-                                    </div>
-                                    <div className="h-4 w-px bg-white/20" />
-                                    <span className="text-white/60 font-medium">10+ Years Exp.</span>
-                                </div>
-                                <Link 
-                                    href={`/expert/${puja.expert_id}`}
-                                    className="inline-flex items-center gap-2 mt-6 text-sm font-black text-orange-400 hover:text-orange-300 transition-colors group/link"
-                                >
-                                    View Full Profile
-                                    <ArrowLeft className="w-4 h-4 rotate-180 group-hover/link:translate-x-1 transition-transform" />
-                                </Link>
-                            </div>
-                        </div>
+
                     </div>
-
-                    {/* Samagri List */}
-                    {puja.samagri_list && puja.samagri_list.length > 0 && (
-                        <section>
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
-                                    <Filter className="w-6 h-6 text-orange-500" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Essential Samagri</h2>
-                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1 text-[10px]">What is required for the ritual</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {puja.samagri_list.map((item, idx) => (
-                                    <div key={idx} className="flex justify-between items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm group hover:border-orange-200 transition-all">
-                                        <span className="font-bold text-gray-700 group-hover:text-gray-900 transition-colors">{item.name}</span>
-                                        <span className="text-[11px] font-black text-orange-600 uppercase bg-orange-50 px-3 py-1 rounded-lg border border-orange-100">
-                                            {item.quantity}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    {/* Service Areas */}
-                    {puja.is_home_visit && puja.districts && puja.districts.length > 0 && (
-                        <section>
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center">
-                                    <MapPin className="w-6 h-6 text-green-500" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Available Districts</h2>
-                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1 text-[10px]">Locations where Pandit ji visits</p>
-                                </div>
-                            </div>
-                            <div className="flex flex-wrap gap-3">
-                                {puja.districts.map((district, idx) => (
-                                    <div key={idx} className="px-6 py-3 bg-white text-gray-700 rounded-2xl border border-gray-100 shadow-sm font-black text-sm hover:scale-105 hover:bg-green-50 hover:text-green-700 transition-all cursor-default">
-                                        {district}
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
                 </div>
 
-                {/* Right Column: Booking Widget */}
-                <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
-                    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl overflow-hidden p-8 space-y-8">
-                        <div>
-                            <h3 className="text-xl font-black text-gray-900 mb-2">Configure Ritual</h3>
-                            <p className="text-sm text-gray-400 font-bold">Select your preferred mode</p>
+                {/* RIGHT: Sticky Booking Widget */}
+                <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit">
+                    <div className="bg-white rounded-3xl border border-[#F0E0D0] shadow-lg overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-5 border-b border-[#F0E0D0]">
+                            <h3 className="text-lg font-black text-[#1A1A1A]">Book Your Puja</h3>
+                            <p className="text-gray-400 text-xs font-medium mt-0.5">Send request to our expert pandit</p>
                         </div>
 
-                        {/* Mode Selection */}
-                        <div className="space-y-3">
-                            {puja.is_online && (
-                                <button 
-                                    onClick={() => setSelectedMode('online')}
-                                    className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${selectedMode === 'online' ? 'border-orange-500 bg-orange-50' : 'border-gray-100 hover:border-gray-200'}`}
-                                >
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${selectedMode === 'online' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                                        <Monitor className="w-6 h-6" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className={`font-black text-sm ${selectedMode === 'online' ? 'text-orange-900' : 'text-gray-900'}`}>Online / Video Call</p>
-                                        <p className="text-xs font-bold text-gray-400 mt-0.5">Vedic Ritual via Digital Space</p>
-                                    </div>
-                                </button>
-                            )}
-                            
-                            {puja.is_home_visit && (
-                                <>
-                                    <button 
-                                        onClick={() => setSelectedMode('home_visit_without')}
-                                        className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${selectedMode === 'home_visit_without' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-100 hover:border-gray-200'}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${selectedMode === 'home_visit_without' ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                                            <MapPin className="w-6 h-6" />
-                                        </div>
-                                        <div className="text-left">
-                                            <p className={`font-black text-sm ${selectedMode === 'home_visit_without' ? 'text-emerald-900' : 'text-gray-900'}`}>Home Visit (Basic)</p>
-                                            <p className="text-xs font-bold text-gray-400 mt-0.5">Excludes Samagri</p>
-                                        </div>
-                                    </button>
-                                    <button 
-                                        onClick={() => setSelectedMode('home_visit_with')}
-                                        className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${selectedMode === 'home_visit_with' ? 'border-orange-500 bg-orange-50' : 'border-gray-100 hover:border-gray-200'}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${selectedMode === 'home_visit_with' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                                            <Sparkles className="w-6 h-6" />
-                                        </div>
-                                        <div className="text-left">
-                                            <p className={`font-black text-sm ${selectedMode === 'home_visit_with' ? 'text-orange-900' : 'text-gray-900'}`}>Home Visit (Premium)</p>
-                                            <p className="text-xs font-bold text-gray-400 mt-0.5">Includes Full Samagri Kit</p>
-                                        </div>
-                                    </button>
-                                </>
-                            )}
-                        </div>
-
-                        {/* Date & Time Selection */}
-                        <div className="space-y-4 pt-4 border-t border-gray-100">
+                        <div className="p-5 space-y-5">
+                            {/* Mode Selection */}
                             <div>
-                                <h3 className="text-sm font-black text-gray-900 mb-3">Preferred Schedule</h3>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <input 
-                                        type="checkbox" 
-                                        id="askExpertForDate"
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">1. Select Puja Mode</p>
+                                <div className="space-y-2">
+                                    {puja.is_online && (
+                                        <button
+                                            onClick={() => setSelectedMode('online')}
+                                            className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left ${selectedMode === 'online' ? 'border-[#FF5500] bg-orange-50' : 'border-gray-100 hover:border-gray-200'}`}
+                                        >
+                                            <div className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${selectedMode === 'online' ? 'border-[#FF5500]' : 'border-gray-300'}`}>
+                                                {selectedMode === 'online' && <div className="w-2 h-2 rounded-full bg-[#FF5500]" />}
+                                            </div>
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${selectedMode === 'online' ? 'bg-[#FF5500]/10 text-[#FF5500]' : 'bg-gray-50 text-gray-400'}`}>
+                                                <Video className="w-5 h-5" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className={`text-xs font-black ${selectedMode === 'online' ? 'text-[#FF5500]' : 'text-gray-800'}`}>Online / Video Call</p>
+                                                <p className="text-[10px] text-gray-400 leading-tight">Participate from the comfort of your home</p>
+                                            </div>
+                                        </button>
+                                    )}
+                                    {puja.is_home_visit && (
+                                        <>
+                                            <button
+                                                onClick={() => setSelectedMode('home_visit_without')}
+                                                className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left ${selectedMode === 'home_visit_without' ? 'border-[#FF5500] bg-orange-50' : 'border-gray-100 hover:border-gray-200'}`}
+                                            >
+                                                <div className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${selectedMode === 'home_visit_without' ? 'border-[#FF5500]' : 'border-gray-300'}`}>
+                                                    {selectedMode === 'home_visit_without' && <div className="w-2 h-2 rounded-full bg-[#FF5500]" />}
+                                                </div>
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${selectedMode === 'home_visit_without' ? 'bg-[#FF5500]/10 text-[#FF5500]' : 'bg-gray-50 text-gray-400'}`}>
+                                                    <MapPin className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-xs font-black ${selectedMode === 'home_visit_without' ? 'text-[#FF5500]' : 'text-gray-800'}`}>Home Visit (Basic)</p>
+                                                    <p className="text-[10px] text-gray-400 leading-tight">Pandit ji will come to your home (Without Samagri)</p>
+                                                </div>
+                                            </button>
+                                            <button
+                                                onClick={() => setSelectedMode('home_visit_with')}
+                                                className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left ${selectedMode === 'home_visit_with' ? 'border-[#FF5500] bg-orange-50' : 'border-gray-100 hover:border-gray-200'}`}
+                                            >
+                                                <div className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${selectedMode === 'home_visit_with' ? 'border-[#FF5500]' : 'border-gray-300'}`}>
+                                                    {selectedMode === 'home_visit_with' && <div className="w-2 h-2 rounded-full bg-[#FF5500]" />}
+                                                </div>
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${selectedMode === 'home_visit_with' ? 'bg-[#FF5500]/10 text-[#FF5500]' : 'bg-gray-50 text-gray-400'}`}>
+                                                    <Package className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-xs font-black ${selectedMode === 'home_visit_with' ? 'text-[#FF5500]' : 'text-gray-800'}`}>Home Visit (Premium)</p>
+                                                    <p className="text-[10px] text-gray-400 leading-tight">Pandit ji will come with Full Samagri Kit</p>
+                                                </div>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Date & Time */}
+                            <div className="border-t border-gray-100 pt-4">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">2. Select Date & Time</p>
+                                <label className="flex items-center gap-2 mb-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
                                         checked={askExpertForDate}
                                         onChange={(e) => setAskExpertForDate(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                                        className="w-4 h-4 accent-[#FF5500]"
                                     />
-                                    <label htmlFor="askExpertForDate" className="text-xs font-bold text-gray-600 cursor-pointer">
-                                        Ask the expert for date and time
-                                    </label>
-                                </div>
-
+                                    <span className="text-xs font-bold text-gray-600">Ask the expert for date and time</span>
+                                    <Info className="w-3.5 h-3.5 text-gray-300" />
+                                </label>
                                 {!askExpertForDate && (
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Date</label>
-                                            <div className="relative">
-                                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500" />
-                                                <input 
-                                                    type="date" 
-                                                    value={scheduledDate}
-                                                    onChange={(e) => setScheduledDate(e.target.value)}
-                                                    min={new Date().toISOString().split('T')[0]}
-                                                    className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
-                                                />
-                                            </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase">OR Choose your preferred date & time</p>
+                                        <div className="relative">
+                                            <input type="text" placeholder="Select Date" onFocus={(e) => e.target.type = 'date'} onBlur={(e) => !e.target.value && (e.target.type = 'text')} value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} min={new Date().toISOString().split('T')[0]}
+                                                className="w-full px-4 pr-10 py-3 border border-gray-200 rounded-xl text-xs font-medium focus:border-[#FF5500] outline-none transition-all text-gray-700" />
+                                            <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                         </div>
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Time</label>
-                                            <div className="relative">
-                                                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-500" />
-                                                <input 
-                                                    type="time" 
-                                                    value={scheduledTime}
-                                                    onChange={(e) => setScheduledTime(e.target.value)}
-                                                    className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
-                                                />
-                                            </div>
+                                        <div className="relative">
+                                            <input type="text" placeholder="Select Time" onFocus={(e) => e.target.type = 'time'} onBlur={(e) => !e.target.value && (e.target.type = 'text')} value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)}
+                                                className="w-full px-4 pr-10 py-3 border border-gray-200 rounded-xl text-xs font-medium focus:border-[#FF5500] outline-none transition-all text-gray-700" />
+                                            <Clock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                         </div>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="space-y-1.5 pt-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Message for Pandit Ji (Optional)</label>
-                                <textarea 
-                                    placeholder="e.g. Special ritual requests or family details..."
+                            {/* Message */}
+                            <div className="border-t border-gray-100 pt-4">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">3. Add a Message <span className="text-gray-300 normal-case font-medium">(Optional)</span></p>
+                                <textarea
+                                    placeholder="Enter any special request or family details..."
                                     value={userMessage}
                                     onChange={(e) => setUserMessage(e.target.value)}
                                     rows={3}
-                                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none transition-all resize-none"
+                                    maxLength={250}
+                                    className="w-full p-3 border-2 border-gray-100 rounded-2xl text-xs focus:border-[#FF5500] outline-none resize-none text-gray-600 placeholder-gray-300"
                                 />
+                                <p className="text-right text-[10px] text-gray-300">{userMessage.length}/250</p>
                             </div>
-                        </div>
 
-                        {/* Price Display */}
-                        <div className="pt-6 border-t border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Ritual Dakshina</p>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-4xl font-black text-gray-900">₹{getCurrentCost()}</span>
-                                        <span className="text-xs font-bold text-gray-400">Total</span>
+                            {/* Price Summary */}
+                            <div className="border-t border-gray-100 pt-4">
+                                <div className="flex items-center justify-between mb-3">
+                                    <p className="text-sm font-black text-gray-700">Price Summary</p>
+                                    <div className="flex items-center gap-1 text-emerald-500 text-[10px] font-black">
+                                        <ShieldCheck className="w-3 h-3" /> Secure Price
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest mb-1 flex items-center justify-end gap-1">
-                                        <ShieldCheck className="w-3 h-3" />
-                                        Secure Price
-                                    </p>
-                                    <p className="text-xs font-bold text-gray-400">All Taxes Inc.</p>
+                                <div className="space-y-2 mb-4">
+                                    <div className="flex justify-between text-xs">
+                                        <span className="text-gray-400 font-medium">Puja Price (Online)</span>
+                                        <span className="font-black text-[#1A1A1A]">₹ {getCurrentCost()}</span>
+                                    </div>
+                                    <div className="flex justify-between text-xs">
+                                        <span className="text-gray-400 font-medium">Taxes & Charges</span>
+                                        <span className="font-black text-emerald-500">₹ 0</span>
+                                    </div>
+                                    <div className="h-px bg-[#F0E0D0]" />
+                                    <div className="flex justify-between">
+                                        <span className="text-sm font-black text-[#1A1A1A]">Total (All Taxes Inc.)</span>
+                                        <span className="text-base font-black text-[#FF5500]">₹ {getCurrentCost()}</span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={handleBookingRequest}
+                                    disabled={isBooking}
+                                    className="w-full py-3.5 bg-[#FF5500] hover:bg-[#E64D00] text-white font-black rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-orange-200 active:scale-[0.98] transition-all disabled:opacity-50"
+                                >
+                                    {isBooking ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</> : <><Send className="w-4 h-4" /> Send request to expert for pooja</>}
+                                </button>
+
+                                <p className="mt-3 text-[10px] text-center text-gray-400 flex items-start justify-center gap-1">
+                                    <Info className="w-3 h-3 shrink-0 mt-0.5" />
+                                    You will not be charged at this stage. Your request will be sent to the pandit for confirmation.
+                                </p>
+
+                                <div className="flex items-center justify-around pt-4 border-t border-gray-100 mt-3">
+                                    {[{ icon: "🔒", label: "Secure\nBooking" }, { icon: "✅", label: "Verified\nPandits" }, { icon: "💯", label: "100%\nAuthentic" }].map((b, i) => (
+                                        <div key={i} className="flex flex-col items-center gap-1">
+                                            <span className="text-lg">{b.icon}</span>
+                                            <p className="text-[9px] text-gray-400 font-bold text-center whitespace-pre-line leading-tight">{b.label}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                            
-                            <button 
-                                onClick={handleBookingRequest}
-                                disabled={isBooking}
-                                className="w-full py-5 bg-[#301118] text-white font-black rounded-3xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-900/10 active:scale-[0.98] flex items-center justify-center gap-3 group/book disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isBooking ? (
-                                    "Processing Request..."
-                                ) : (
-                                    <>
-                                        Send request to expert for pooja
-                                        <Sparkles className="w-5 h-5 group-hover/book:animate-spin-slow" />
-                                    </>
-                                )}
-                            </button>
-                            
-                            <p className="mt-4 text-[10px] text-center text-gray-400 font-bold leading-relaxed">
-                                By proceeding, you agree to our spiritual service guidelines and traditional ritual protocols.
-                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Placeholder for footer or bottom space */}
-            <div className="pb-32" />
-            
-            {isBooking && <Loading fullScreen />}
+            {/* You May Also Like (Full Width Bottom) */}
+            <div className="max-w-7xl mx-auto px-4 pb-12 mt-8 border-t border-[#F0E0D0] pt-8">
+                <h2 className="text-2xl font-black text-[#1A1A1A] mb-6">You May Also Like</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                    {[
+                        { name: "Maha Mrityunjaya Jaap", rating: "4.9", reviews: "96", price: "999", badge: "Online", color: "bg-[#FF5500]" },
+                        { name: "Satyanarayan Katha", rating: "4.8", reviews: "64", price: "1,099", badge: "Home Visit", color: "bg-emerald-500" },
+                        { name: "Hanuman Chalisa Path", rating: "4.8", reviews: "48", price: "499", badge: "Online", color: "bg-[#FF5500]" },
+                        { name: "Grah Shanti Puja", rating: "4.7", reviews: "35", price: "1,299", badge: "Home Visit", color: "bg-emerald-500" },
+                    ].map((p, i) => (
+                        <div key={i} className="bg-white rounded-2xl border border-[#F0E0D0] overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+                            <div className="h-32 bg-gradient-to-br from-[#FFF0E6] to-[#FFD9BF] relative">
+                                <span className={`absolute top-2 left-2 ${p.color} text-white text-[9px] font-black px-2 py-0.5 rounded-md`}>{p.badge}</span>
+                            </div>
+                            <div className="p-4">
+                                <p className="text-sm font-black text-[#1A1A1A] leading-tight mb-2 group-hover:text-[#FF5500] transition-colors">{p.name}</p>
+                                <div className="flex items-center gap-1 mb-2">
+                                    <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                                    <span className="text-[11px] font-bold text-gray-500">{p.rating} ({p.reviews})</span>
+                                </div>
+                                <p className="text-[10px] text-gray-400">Starting from</p>
+                                <p className="text-base font-black text-[#FF5500]">₹ {p.price}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
-            <style jsx global>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
-                .animate-spin-slow { animation: spin 4s linear infinite; }
-            `}</style>
+            {isBooking && <Loading fullScreen />}
         </div>
     );
 };

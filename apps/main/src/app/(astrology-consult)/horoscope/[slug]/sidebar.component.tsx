@@ -30,7 +30,7 @@ export default function ZodiacDetailsSidebar({ signData }: { signData: any }) {
         <div className="space-y-5">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full border border-[#E8D5C0] flex items-center justify-center shrink-0">
-              <i className="fa-solid fa-planet-ringed text-[#F26500]"></i>
+              <i className="fa-solid fa-globe text-[#F26500]"></i>
             </div>
             <div>
               <p className="text-xs text-slate-500 font-semibold mb-0.5">Ruling Planet</p>
