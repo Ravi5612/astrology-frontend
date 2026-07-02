@@ -93,39 +93,6 @@ const OnlinePujaPage = () => {
                         className="object-cover object-center"
                         priority
                     />
-                    {/* Dark overlay for text readability on mobile */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-
-                    {/* Overlay Content */}
-                    <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-12">
-                        <div className="text-yellow-400 text-xs sm:text-sm mb-1 sm:mb-2 font-bold tracking-widest">✦ ✦ ✦</div>
-                        <h1 className="text-white text-2xl sm:text-4xl md:text-5xl font-black leading-tight mb-1 sm:mb-2">
-                            Online <span className="text-[#FF6B00]">Puja</span> 🔱
-                        </h1>
-                        <p className="text-white/80 text-xs sm:text-sm md:text-base max-w-xs sm:max-w-sm md:max-w-md mb-3 sm:mb-6 leading-relaxed">
-                            Perform sacred rituals with verified pandits from the comfort of your home.
-                        </p>
-                        <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
-                            {[
-                                { icon: "🛕", label: "Vedic Certified\nRituals" },
-                                { icon: "👨‍💼", label: "Verified &\nExperienced Pandits" },
-                                { icon: "🛡️", label: "Secure &\nTrusted Puja" },
-                                { icon: "🎧", label: "Support in\nYour Language" },
-                            ].map((item, i) => (
-                                <div key={i} className="flex flex-col items-center gap-1 hidden sm:flex">
-                                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-yellow-400/60 flex items-center justify-center text-base sm:text-xl bg-black/20 backdrop-blur-sm">
-                                        {item.icon}
-                                    </div>
-                                    <p className="text-white/80 text-[9px] sm:text-[10px] text-center whitespace-pre-line font-semibold leading-tight">{item.label}</p>
-                                </div>
-                            ))}
-                            {/* Mobile: only show 2 trust badges */}
-                            <div className="flex gap-2 sm:hidden">
-                                <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-white/30">✅ Verified Pandits</span>
-                                <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-white/30">🛡️ Secure &amp; Trusted</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
