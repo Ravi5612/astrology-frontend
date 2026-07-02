@@ -283,12 +283,14 @@ const PujaDetailPage = () => {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1 mb-2">
-                                            {[1,2,3,4,5].map(s => <Star key={s} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />)}
-                                            <span className="text-xs font-bold text-gray-700 ml-1">4.8</span>
-                                            <span className="text-[11px] text-gray-400">(128 Reviews)</span>
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star key={s} className={`w-3.5 h-3.5 ${s <= (puja.expert?.rating || 4.8) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}`} />
+                                            ))}
+                                            <span className="text-xs font-bold text-gray-700 ml-1">{puja.expert?.rating || "4.8"}</span>
+                                            <span className="text-[11px] text-gray-400">({puja.expert?.total_reviews || 128} Reviews)</span>
                                         </div>
-                                        <p className="text-[11px] font-bold text-[#1A1A1A] mb-1">12+ Years of Experience <span className="text-gray-300 mx-1">|</span> Vedic Expert</p>
-                                        <p className="text-[11px] text-gray-500 mb-3">Specialized in Shiva Puja, Rudra Abhishek, Mahamrityunjaya Jaap and other Vedic Rituals.</p>
+                                        <p className="text-[11px] font-bold text-[#1A1A1A] mb-1">{puja.expert?.experience_in_years || "12+"} Years of Experience <span className="text-gray-300 mx-1">|</span> Vedic Expert</p>
+                                        <p className="text-[11px] text-gray-500 mb-3">{puja.expert?.specialization || "Specialized in Shiva Puja, Rudra Abhishek, Mahamrityunjaya Jaap and other Vedic Rituals."}</p>
                                         <Link href={`/expert/${puja.expert_id}`} className="inline-flex items-center gap-1 text-[#FF5500] text-xs font-black hover:underline">
                                             View Full Profile <ArrowRight className="w-3.5 h-3.5" />
                                         </Link>
@@ -298,7 +300,7 @@ const PujaDetailPage = () => {
                                             <div className="w-9 h-9 text-[#FF5500] bg-white rounded-[10px] flex items-center justify-center border border-[#FFD9BF] text-sm shrink-0 shadow-sm">📜</div>
                                             <div>
                                                 <p className="text-[11px] font-bold text-gray-600 leading-tight mb-1">Pujas Performed</p>
-                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight">2,500+</p>
+                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight">{puja.expert?.consultation_count ? `${puja.expert.consultation_count}+` : "2,500+"}</p>
                                             </div>
                                         </div>
                                         <div className="h-px bg-[#F0E0D0] w-full" />
@@ -306,7 +308,7 @@ const PujaDetailPage = () => {
                                             <div className="w-9 h-9 text-[#FF5500] bg-white rounded-[10px] flex items-center justify-center border border-[#FFD9BF] text-sm shrink-0 shadow-sm">🗣️</div>
                                             <div>
                                                 <p className="text-[11px] font-bold text-gray-600 leading-tight mb-1">Languages</p>
-                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight">Hindi, Sanskrit</p>
+                                                <p className="text-sm font-black text-[#1A1A1A] leading-tight capitalize">{puja.expert?.languages?.length ? puja.expert.languages.join(", ") : "Hindi, Sanskrit"}</p>
                                             </div>
                                         </div>
                                     </div>
