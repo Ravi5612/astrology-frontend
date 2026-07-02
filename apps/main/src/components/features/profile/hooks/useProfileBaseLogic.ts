@@ -59,11 +59,22 @@ export const useProfileBaseLogic = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [imagePreview, setImagePreview] = useState<string>("/images/aa.webp");
 
-    // Auth Redirection
+    // Auth Redirection — small delay to allow Google OAuth cookie hydration
     useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
-            router.push("/sign-in?callbackUrl=/profile");
-        }
+        if (authLoading) return; // still loading, don't redirect yet
+        if (isAuthenticated) return; // already authenticated, no redirect
+
+        // Wait a bit before redirecting — allows time for refreshAuth to run
+        // and pick up newly set cookies (e.g. after Google OAuth)
+        const timer = setTimeout(() => {
+            const currentState = useAuthStore.getState();
+            if (!currentState.isAuthenticated) {
+                console.log('[ProfileBaseLogic] Not authenticated after wait, redirecting to sign-in');
+                router.push("/sign-in?callbackUrl=/client/profile");
+            }
+        }, 1500); // 1.5s grace period
+
+        return () => clearTimeout(timer);
     }, [authLoading, isAuthenticated, router]);
 
     // Tab Initialization

@@ -87,6 +87,9 @@ export const SignUpForm: React.FC = () => {
         const redirectUri = `${window.location.origin}/client/profile`;
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
         const googleLoginUrl = `${baseUrl.replace(/\/+$/, "")}/auth/google/login?role=client&redirect_uri=${encodeURIComponent(redirectUri)}`;
+        console.log("[DEBUG] NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+        console.log("[DEBUG] redirectUri:", redirectUri);
+        console.log("[DEBUG] Redirecting to:", googleLoginUrl);
         window.location.href = googleLoginUrl;
     };
 

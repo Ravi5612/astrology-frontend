@@ -57,7 +57,7 @@ const BrandingSection = ({ stats }: { stats: { totalSeekers: string; averageRati
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
-  const { login } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -85,6 +85,12 @@ const LoginPage: React.FC = () => {
     }
     fetchStats();
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   const fetchStats = async () => {
     try {
@@ -129,7 +135,7 @@ const LoginPage: React.FC = () => {
   const handleGoogleLogin = () => {
     setLoading(true);
     const baseUrl = CLIENT_API_URL.replace(/\/api\/v1\/?$/, "");
-    const redirectUri = typeof window !== "undefined" ? window.location.origin : "";
+    const redirectUri = typeof window !== "undefined" ? window.location.origin + "/dashboard" : "";
     window.location.href = `${baseUrl}/api/v1/auth/google/login?role=expert&redirect_uri=${redirectUri}`;
   };
 

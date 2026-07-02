@@ -35,15 +35,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         if (text) {
           try {
             const data = JSON.parse(text);
+            // data could be the full profile or a stub {id: null, user: {...}}
+            const userData = data.user || {};
+            const combinedData = { ...userData, ...data };
+
             initialUser = { 
-              ...(data.user || {}), 
-              ...data, 
+              ...combinedData,
               profileId: data.id,
-              userId: data.user_id || data.userId || data.user?.id
+              userId: data.user_id || data.userId || userData.id
             };
 
-            const isExpert = initialUser?.roles?.some(
-              (r: any) => (typeof r === 'string' ? r : r.name).toUpperCase() === "EXPERT"
+            // Roles can be on the top-level data or on data.user
+            const roles: any[] = combinedData.roles || userData.roles || [];
+            const isExpert = roles.some(
+              (r: any) => (typeof r === 'string' ? r : r?.name || '').toUpperCase() === "EXPERT"
             );
 
             if (!isExpert) {

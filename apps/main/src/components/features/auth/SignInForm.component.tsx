@@ -95,6 +95,11 @@ const SignInForm: React.FC = () => {
     ).toString();
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6543/api/v1";
     const googleLoginUrl = `${baseUrl.replace(/\/+$/, "")}/auth/google/login?role=client&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    
+    console.log("[DEBUG] NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+    console.log("[DEBUG] redirectUri:", redirectUri);
+    console.log("[DEBUG] Redirecting to:", googleLoginUrl);
+    
     globalThis.window.location.href = googleLoginUrl;
   };
 

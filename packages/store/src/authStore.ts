@@ -107,6 +107,14 @@ export const useAuthStore = create<AuthState>()(
 
                 const [res, error] = await api.get<any>('/client/profile');
                 if (error) {
+                    // 403 = user is authenticated but wrong role (e.g. expert accessing client profile)
+                    // Do NOT clear auth on 403 — only clear on 401 (truly unauthenticated)
+                    const status = (error as any)?.status || (error as any)?.response?.status || (error as any)?.statusCode;
+                    if (status === 403) {
+                        console.warn('[refreshAuth] 403 Forbidden — user authenticated but wrong role, keeping session.');
+                        set({ loading: false });
+                        return;
+                    }
                     set({ isAuthenticated: false, user: null, loading: false });
                     return;
                 }

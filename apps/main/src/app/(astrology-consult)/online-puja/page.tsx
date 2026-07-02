@@ -85,7 +85,7 @@ const OnlinePujaPage = () => {
             
             {/* Top Banner Section */}
             <div className="max-w-7xl mx-auto px-4 pt-4 pb-8">
-                <div className="relative w-full h-[360px] md:h-[420px] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl">
                     <Image 
                         src="/images/online-puja-banner.png" 
                         alt="Online Puja Banner" 
@@ -93,45 +93,77 @@ const OnlinePujaPage = () => {
                         className="object-cover object-center"
                         priority
                     />
-                    
+                    {/* Dark overlay for text readability on mobile */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
 
+                    {/* Overlay Content */}
+                    <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-12">
+                        <div className="text-yellow-400 text-xs sm:text-sm mb-1 sm:mb-2 font-bold tracking-widest">✦ ✦ ✦</div>
+                        <h1 className="text-white text-2xl sm:text-4xl md:text-5xl font-black leading-tight mb-1 sm:mb-2">
+                            Online <span className="text-[#FF6B00]">Puja</span> 🔱
+                        </h1>
+                        <p className="text-white/80 text-xs sm:text-sm md:text-base max-w-xs sm:max-w-sm md:max-w-md mb-3 sm:mb-6 leading-relaxed">
+                            Perform sacred rituals with verified pandits from the comfort of your home.
+                        </p>
+                        <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
+                            {[
+                                { icon: "🛕", label: "Vedic Certified\nRituals" },
+                                { icon: "👨‍💼", label: "Verified &\nExperienced Pandits" },
+                                { icon: "🛡️", label: "Secure &\nTrusted Puja" },
+                                { icon: "🎧", label: "Support in\nYour Language" },
+                            ].map((item, i) => (
+                                <div key={i} className="flex flex-col items-center gap-1 hidden sm:flex">
+                                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-yellow-400/60 flex items-center justify-center text-base sm:text-xl bg-black/20 backdrop-blur-sm">
+                                        {item.icon}
+                                    </div>
+                                    <p className="text-white/80 text-[9px] sm:text-[10px] text-center whitespace-pre-line font-semibold leading-tight">{item.label}</p>
+                                </div>
+                            ))}
+                            {/* Mobile: only show 2 trust badges */}
+                            <div className="flex gap-2 sm:hidden">
+                                <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-white/30">✅ Verified Pandits</span>
+                                <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-white/30">🛡️ Secure &amp; Trusted</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Filters Section */}
             <div className="max-w-7xl mx-auto px-4 mb-10 z-30 relative">
-                <div className="bg-white rounded-lg border border-[#FF5500] shadow-sm flex flex-col md:flex-row items-center transition-colors">
+                <div className="bg-white rounded-2xl border border-[#FF5500] shadow-sm overflow-hidden">
                     
-                    {/* Mode Toggle */}
-                    <div className="flex items-center gap-4 px-6 py-4 w-full md:w-auto">
+                    {/* Row 1 on mobile: Mode Toggle */}
+                    <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 md:border-b-0 md:border-r md:w-auto">
                         <span className="text-sm font-bold text-gray-800 shrink-0">Mode</span>
-                        <div className="flex items-center bg-gray-100 rounded-lg p-1 gap-1">
+                        <div className="flex items-center bg-gray-100 rounded-lg p-1 gap-1 flex-1 md:flex-none">
                             <button 
                                 onClick={() => setTypeFilter('all')}
-                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'all' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                                className={`flex-1 md:flex-none px-4 py-1.5 rounded-md text-sm font-bold transition-all ${typeFilter === 'all' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
                             >
                                 All
                             </button>
                             <button 
                                 onClick={() => setTypeFilter('online')}
-                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'online' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                                className={`flex-1 md:flex-none px-4 py-1.5 rounded-md text-sm font-bold transition-all ${typeFilter === 'online' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
                             >
                                 Online
                             </button>
                             <button 
                                 onClick={() => setTypeFilter('home_visit')}
-                                className={`px-5 py-2 rounded-md text-sm font-bold transition-all ${typeFilter === 'home_visit' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
+                                className={`flex-1 md:flex-none px-3 py-1.5 rounded-md text-xs font-bold transition-all ${typeFilter === 'home_visit' ? 'bg-[#FF5500] text-white shadow-sm' : 'text-gray-900 hover:text-black'}`}
                             >
                                 Home Visit
                             </button>
                         </div>
                     </div>
 
-                    <div className="hidden md:block w-px h-10 bg-gray-200 shrink-0" />
-
+                    {/* Row 2 on mobile: Search + Dropdown side by side */}
+                    <div className="flex flex-col sm:flex-row md:flex-row md:flex-1">
+                    
                     {/* Search Input */}
-                    <div className="relative flex-1 w-full px-4 py-3">
-                        <div className="relative flex items-center border border-gray-300 rounded-lg px-4 py-3.5 bg-white focus-within:border-[#FF5500] focus-within:ring-2 focus-within:ring-[#FF5500]/20 transition-colors">
+                    <div className="relative flex-1 px-4 py-3 border-b sm:border-b-0 sm:border-r border-gray-100">
+                        <div className="relative flex items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus-within:border-[#FF5500] focus-within:ring-2 focus-within:ring-[#FF5500]/20 transition-colors">
                             <Search className="w-4 h-4 text-gray-400 shrink-0 mr-3" />
                             <input 
                                 type="text"
@@ -143,13 +175,11 @@ const OnlinePujaPage = () => {
                         </div>
                     </div>
 
-                    <div className="hidden md:block w-px h-10 bg-gray-200 shrink-0" />
-
                     {/* Select Dropdown */}
-                    <div className="relative flex-1 w-full min-w-0 pr-4 py-3" ref={dropdownRef}>
+                    <div className="relative flex-1 min-w-0 px-4 py-3" ref={dropdownRef}>
                         <button 
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className="w-full flex items-center justify-between px-4 py-3.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 transition-colors"
+                            className="w-full flex items-center justify-between px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 transition-colors"
                         >
                             <div className="flex items-center gap-2 text-gray-700">
                                 <Sparkles className="w-4 h-4 text-[#FF5500]" />
@@ -175,8 +205,10 @@ const OnlinePujaPage = () => {
                             </div>
                         )}
                     </div>
-                </div>
-            </div>
+                    </div> {/* end Row 2 flex */}
+                </div> {/* end filter container */}
+            </div> {/* end filters section */}
+
 
 
             {/* Results Section */}

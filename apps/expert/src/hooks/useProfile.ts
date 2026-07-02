@@ -117,12 +117,12 @@ export const constructProfilePayload = (profile: Profile) => {
     const hasAddressData = profile.houseNo || profile.district || profile.state || profile.country || profile.pincode;
     const addressesArray = hasAddressData ? [{
         line1: profile.houseNo || "",
-        houseNo: profile.houseNo || "",
+        house_no: profile.houseNo || "",
         city: profile.district || "",
         district: profile.district || "",
         state: profile.state || "",
         country: profile.country || "",
-        zipCode: profile.pincode || "",
+        zip_code: profile.pincode || "",
         pincode: profile.pincode || ""
     }] : [];
 

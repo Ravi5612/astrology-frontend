@@ -86,11 +86,8 @@ const StoreSection = () => {
         limit: 10
     });
 
-    const displayStores = !isStoresLoading && stores.length > 0 && stores.length < 3
-        ? [...stores, ...DUMMY_STORES.slice(0, 3 - stores.length)]
-        : !isStoresLoading && stores.length === 0 && searchQuery === "" && selectedCity === "all"
-            ? DUMMY_STORES
-            : stores;
+    // Only show real stores from API - dummy stores cause backend UUID errors
+    const displayStores = stores;
 
     return (
         <section
@@ -165,6 +162,12 @@ const StoreSection = () => {
                     {isStoresLoading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10">
                             {[1, 2, 3].map((i) => <StoreSkeletonCard key={`store-skeleton-${i}`} />)}
+                        </div>
+                    ) : displayStores.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <StoreIcon className="w-16 h-16 text-white/20 mb-4" />
+                            <p className="text-white/50 text-lg font-medium">No stores found</p>
+                            <p className="text-white/30 text-sm mt-1">Check back later for nearby stores</p>
                         </div>
                     ) : (
                         <Swiper

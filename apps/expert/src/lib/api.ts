@@ -62,7 +62,7 @@ export const api = {
             state.logout();
             toast.error("Session expired. Please login again.");
             if (typeof window !== 'undefined') {
-                window.location.href = "/login?expired=1";
+                window.location.href = "/?expired=1";
             }
         }
         return [res, err];
@@ -77,7 +77,7 @@ export const api = {
             state.logout();
             toast.error("Session expired. Please login again.");
             if (typeof window !== 'undefined') {
-                window.location.href = "/login?expired=1";
+                window.location.href = "/?expired=1";
             }
         }
         return [res, err];
@@ -92,7 +92,7 @@ export const api = {
             state.logout();
             toast.error("Session expired. Please login again.");
             if (typeof window !== 'undefined') {
-                window.location.href = "/login?expired=1";
+                window.location.href = "/?expired=1";
             }
         }
         return [res, err];
@@ -107,7 +107,7 @@ export const api = {
             state.logout();
             toast.error("Session expired. Please login again.");
             if (typeof window !== 'undefined') {
-                window.location.href = "/login?expired=1";
+                window.location.href = "/?expired=1";
             }
         }
         return [res, err];
@@ -122,7 +122,7 @@ export const api = {
             state.logout();
             toast.error("Session expired. Please login again.");
             if (typeof window !== 'undefined') {
-                window.location.href = "/login?expired=1";
+                window.location.href = "/?expired=1";
             }
         }
         return [res, err];

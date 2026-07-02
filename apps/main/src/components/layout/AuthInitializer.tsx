@@ -32,7 +32,7 @@ export const AuthInitializer = ({
 
             refreshAuth().finally(() => {
                 const state = useAuthStore.getState();
-                if (!state.isAuthenticated) {
+                if (!state.isAuthenticated && !state.loading) {
                     // Only redirect if user was trying to access a protected page
                     const protectedPrefixes = ['/client'];
                     if (protectedPrefixes.some(p => currentPath.startsWith(p))) {
