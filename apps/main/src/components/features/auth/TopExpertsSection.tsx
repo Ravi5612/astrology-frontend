@@ -78,7 +78,7 @@ const TopExpertsSection: React.FC = () => {
                 {expertsLoading || topExperts.length === 0 ? (
                     [1, 2, 3].map((_, idx) => (
                         <div className="w-full" key={idx}>
-                            <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center animate-pulse">
+                            <div className="bg-white rounded-3xl border-2 border-orange/50 p-4 text-center animate-pulse">
                                 <div className="relative inline-block mb-3">
                                     <Skeleton variant="circular" width={80} height={80} className="border-2 border-orange/20 p-1" />
                                 </div>
@@ -93,7 +93,7 @@ const TopExpertsSection: React.FC = () => {
                 ) : (
                     topExperts.map((expert, idx) => (
                         <div className="group" key={expert.id || idx}>
-                            <div className="bg-white rounded-3xl border-2 border-gray-100 p-4 text-center hover:border-orange/20 hover:shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300">
+                            <div className="bg-white rounded-3xl border-2 border-orange p-4 text-center hover:shadow-[0_10px_30px_rgba(255,107,0,0.15)] transition-all duration-300">
                                 <div className="relative inline-block mb-3">
                                     <Image
                                         src={expert.user?.avatar || "/images/dummy-expert.jpg"}

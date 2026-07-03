@@ -40,7 +40,7 @@ export const Loading: React.FC<LoadingProps> = ({
               ></div>
               {/* Logo */}
               <div className="relative z-10 bg-white rounded-full p-1.5 flex items-center justify-center w-[75%] h-[75%]">
-                <img src="/images/web-logo.png" alt="Loading" className="object-contain w-full h-full" />
+                <img src="/images/Expert.png" alt="Loading" className="object-contain w-full h-full" />
               </div>
             </div>
             {text && <p className="text-gray-600 font-bold text-sm tracking-wide">{text}</p>}

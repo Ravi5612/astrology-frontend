@@ -32,6 +32,10 @@ const CheckoutContent = () => {
     handlePayment,
     isProcessing,
     handleQuantityChange,
+    useSplitPayment,
+    setUseSplitPayment,
+    walletAmountToUse,
+    setWalletAmountToUse,
   } = useCheckout();
 
   return (
@@ -98,6 +102,10 @@ const CheckoutContent = () => {
               handlePayment={handlePayment}
               isProcessing={isProcessing}
               isOrder={isOrder}
+              useSplitPayment={useSplitPayment}
+              setUseSplitPayment={setUseSplitPayment}
+              walletAmountToUse={walletAmountToUse}
+              setWalletAmountToUse={setWalletAmountToUse}
             />
           </div>
           </div>

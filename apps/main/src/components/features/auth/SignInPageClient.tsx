@@ -13,20 +13,19 @@ export default function SignInPageClient() {
     const { signIn } = authContent;
 
     return (
-        <section className="relative py-2 md:py-4 bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden">
-            <div className="max-w-[1320px] mx-auto px-4 md:px-8 relative z-10">
-                <div className="flex flex-col-reverse lg:flex-row gap-6 lg:gap-12 items-start">
+        <section className="relative py-4 md:py-8 bg-[#FFF9F4] bg-[url('/images/white-background.png')] bg-cover bg-no-repeat overflow-hidden">
+            <div className="w-full max-w-[1140px] mx-auto px-4 md:px-8 relative z-10">
+                <div className="flex flex-col-reverse lg:flex-row gap-10 lg:gap-16 items-start justify-between">
 
                     {/* Left Side: Branding and Astrology Info */}
-                    <div className="w-full lg:w-5/12 pt-0 lg:pt-8">
+                    <div className="w-full lg:w-1/2 pt-0 md:pt-4">
                         <div className="mb-8">
                             <h3
-                                className="text-[28px] md:text-5xl font-extrabold leading-tight mb-4"
+                                className="text-[28px] md:text-4xl lg:text-[42px] font-extrabold leading-tight mb-4 whitespace-nowrap"
                                 style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
                                 <span className="text-[#301118]">{t.signIn.brandTitle}</span>{" "}
-                                {t.signIn.brandTo}
-                                <br />
+                                {t.signIn.brandTo}{" "}
                                 <span className="text-orange">
                                     {t.signIn.brandName}
                                 </span>
@@ -35,9 +34,7 @@ export default function SignInPageClient() {
                                 className="text-gray-600 text-base md:text-lg leading-relaxed"
                                 style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit" }}
                             >
-                                {signIn.description1}
-                                <br />
-                                {signIn.description2}
+                                {signIn.description1} {signIn.description2}
                             </p>
                         </div>
 
@@ -46,7 +43,7 @@ export default function SignInPageClient() {
                     </div>
 
                     {/* Right Side: Sign In Form */}
-                    <div className="w-full lg:w-7/12">
+                    <div className="w-full lg:w-1/2">
                         <Suspense fallback={<div className="flex items-center justify-center p-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange"></div></div>}>
                             <SignInForm />
                         </Suspense>

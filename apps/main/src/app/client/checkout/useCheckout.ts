@@ -26,6 +26,9 @@ export const useCheckout = () => {
   const [isApplying, setIsApplying] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
+  // Split Payment
+  const [useSplitPayment, setUseSplitPayment] = useState(false);
+  const [walletAmountToUse, setWalletAmountToUse] = useState(0);
 
   const [buyNowInfo, setBuyNowInfo] = useState<{
     productId: string;
@@ -202,11 +205,10 @@ export const useCheckout = () => {
 
     setIsProcessing(true);
 
+    // ── Full Wallet Payment ──
     if (paymentMethod === "wallet") {
       if (balance < total) {
-        toast.error(
-          "Insufficient wallet balance. Please recharge or select another method.",
-        );
+        toast.error("Insufficient wallet balance. Please recharge or select another method.");
         setIsProcessing(false);
         return;
       }
@@ -222,7 +224,6 @@ export const useCheckout = () => {
           coupon_code: appliedCoupon?.code || undefined,
           payment_method: "wallet",
         };
-        console.log("[CHECKOUT] Wallet order payload:", payload);
         endpoint = "/order";
       } else {
         payload = {
@@ -241,17 +242,9 @@ export const useCheckout = () => {
         console.error("Wallet Payment Error:", error);
         toast.error(getErrorMessage(error) || "Wallet payment failed. Please try again.");
       } else if (res) {
-        toast.success(
-          isOrder
-            ? "Order placed successfully using wallet!"
-            : "Consultation booked successfully!",
-        );
+        toast.success(isOrder ? "Order placed successfully using wallet!" : "Consultation booked successfully!");
         refreshBalance();
-
-        if (isOrder && !buyNowInfo) {
-          useCartStore.getState().resetCart();
-        }
-
+        if (isOrder && !buyNowInfo) useCartStore.getState().resetCart();
         if (isOrder) {
           router.push("/client/profile?tab=orders");
         } else {
@@ -261,6 +254,125 @@ export const useCheckout = () => {
       }
       setIsProcessing(false);
       return;
+    }
+
+    // ── Split Payment (Wallet + Razorpay) ──
+    if (useSplitPayment && walletAmountToUse > 0 && isOrder) {
+      const razorpayAmount = total - walletAmountToUse;
+
+      if (walletAmountToUse > balance) {
+        toast.error(`Insufficient wallet balance. You have ₹${balance} but trying to use ₹${walletAmountToUse}.`);
+        setIsProcessing(false);
+        return;
+      }
+      if (razorpayAmount <= 0) {
+        toast.error("Wallet amount covers full order. Please select Wallet as payment method.");
+        setIsProcessing(false);
+        return;
+      }
+
+      try {
+        const isLoaded = await loadRazorpay();
+        if (!isLoaded) {
+          toast.error("Razorpay SDK failed to load. Are you online?");
+          setIsProcessing(false);
+          return;
+        }
+
+        // Step 1: Create order on backend (wallet portion is deducted here)
+        const splitOrderPayload = {
+          shipping_address: address,
+          product_id: buyNowInfo ? String(buyNowInfo.productId) : undefined,
+          quantity: buyNowInfo ? Number(buyNowInfo.quantity) : undefined,
+          coupon_code: appliedCoupon?.code || undefined,
+          payment_method: "split",
+          wallet_amount_to_use: walletAmountToUse,
+        };
+        console.log("[CHECKOUT] Split payment order payload:", splitOrderPayload);
+        const [splitOrderRes, splitOrderError] = await http.post<any>("/order", splitOrderPayload);
+
+        if (splitOrderError) {
+          toast.error(getErrorMessage(splitOrderError) || "Failed to initiate split payment.");
+          setIsProcessing(false);
+          return;
+        }
+
+        const splitOrderData = (splitOrderRes as any)?.data ?? splitOrderRes;
+        const dbOrderId = splitOrderData.id;
+        const razorpayAmountDue = splitOrderData.razorpay_amount_due ?? razorpayAmount;
+
+        // Step 2: Create Razorpay order for remaining amount
+        const [paymentOrderRes, paymentOrderError] = await http.post<any>("/payment/orders/create", {
+          amount: razorpayAmountDue,
+          type: "product",
+          coupon_code: undefined, // already applied
+          notes: {
+            is_order: true,
+            order_id: dbOrderId,
+            split_payment: true,
+            wallet_amount_used: walletAmountToUse,
+          },
+        });
+
+        if (paymentOrderError) {
+          toast.error(getErrorMessage(paymentOrderError) || "Failed to create Razorpay order.");
+          setIsProcessing(false);
+          return;
+        }
+
+        const paymentOrderData: any = (paymentOrderRes as any)?.data ?? paymentOrderRes;
+        const { id: order_id, amount, currency, key_id } = paymentOrderData || {};
+
+        if (!order_id || !amount || !currency) throw new Error("Invalid payment order response");
+
+        const options = {
+          key: key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount,
+          currency,
+          name: "Astrology in Bharat",
+          description: `Split Payment - ₹${walletAmountToUse} from Wallet + ₹${razorpayAmountDue} via Razorpay`,
+          order_id,
+          handler: async (response: any) => {
+            try {
+              const [verifyRes, verifyError] = await http.post<any>("/payment/orders/verify", {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                shipping_address: address,
+              });
+              if (verifyError) {
+                toast.error(getErrorMessage(verifyError) || "Payment verification failed!");
+                setIsProcessing(false);
+                return;
+              }
+              const verifyPayload: any = (verifyRes as any)?.data ?? verifyRes;
+              if (verifyPayload?.success) {
+                toast.success("Order placed! ₹" + walletAmountToUse + " from wallet + ₹" + razorpayAmountDue + " via Razorpay.");
+                refreshBalance();
+                if (!buyNowInfo) useCartStore.getState().resetCart();
+                router.push("/client/profile?tab=orders");
+              } else {
+                toast.error("Payment verification failed!");
+              }
+            } catch (err) {
+              toast.error("Error verifying payment.");
+            } finally {
+              setIsProcessing(false);
+            }
+          },
+          prefill: { name: user?.name || "", email: user?.email || "", contact: "" },
+          theme: { color: "#fd6410" },
+          modal: { ondismiss: () => { setIsProcessing(false); } },
+        };
+
+        const rzp1 = new (window as any).Razorpay(options);
+        rzp1.open();
+        return;
+      } catch (err: any) {
+        toast.error(err.message || "Something went wrong with the split payment.");
+        setIsProcessing(false);
+        return;
+      }
     }
 
     try {
@@ -446,5 +558,10 @@ export const useCheckout = () => {
     balance,
     handlePayment,
     isProcessing,
+    // Split Payment
+    useSplitPayment,
+    setUseSplitPayment,
+    walletAmountToUse,
+    setWalletAmountToUse,
   };
 };

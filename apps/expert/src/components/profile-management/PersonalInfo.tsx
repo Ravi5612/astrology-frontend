@@ -168,6 +168,7 @@ export default function PersonalInfo({
                                     <input
                                         type="date"
                                         name="date_of_birth"
+                                        max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                                         value={tempProfile.date_of_birth ? tempProfile.date_of_birth.split('T')[0] : ""}
                                         onChange={onChange}
                                         className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange/50 outline-none text-sm text-black"

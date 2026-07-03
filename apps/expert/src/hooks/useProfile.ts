@@ -222,10 +222,53 @@ export const useProfile = () => {
             return res;
         },
         onSuccess: (_, variables) => {
+            const sentData = variables.data;
+
+            // Map sent backend fields → frontend Profile cache fields (no extra API call)
             queryClient.setQueryData(["profile", authUser?.id], (oldData: any) => {
                 if (!oldData) return oldData;
-                return { ...oldData, ...variables.data };
+
+                const updated: any = { ...oldData };
+
+                // Direct field mappings
+                if (sentData.gender !== undefined) updated.gender = sentData.gender;
+                if (sentData.bio !== undefined) updated.bio = sentData.bio;
+                if (sentData.specialization !== undefined) updated.specialization = sentData.specialization;
+                if (sentData.experience_in_years !== undefined) updated.experience_in_years = sentData.experience_in_years;
+                if (sentData.date_of_birth !== undefined) updated.date_of_birth = sentData.date_of_birth;
+                if (sentData.languages !== undefined) updated.languages = Array.isArray(sentData.languages) ? sentData.languages : [];
+                if (sentData.phone_number !== undefined) updated.phoneNumber = sentData.phone_number;
+                if (sentData.avatar !== undefined) updated.profilePic = sentData.avatar;
+
+                // Pricing fields
+                if (sentData.price !== undefined) updated.price = sentData.price;
+                if (sentData.chat_price !== undefined) updated.chat_price = sentData.chat_price;
+                if (sentData.call_price !== undefined) updated.call_price = sentData.call_price;
+                if (sentData.video_call_price !== undefined) updated.video_call_price = sentData.video_call_price;
+                if (sentData.report_price !== undefined) updated.report_price = sentData.report_price;
+                if (sentData.horoscope_price !== undefined) updated.horoscope_price = sentData.horoscope_price;
+
+                // Address mapping: backend array → flattened frontend fields
+                if (sentData.addresses && Array.isArray(sentData.addresses) && sentData.addresses.length > 0) {
+                    const addr = sentData.addresses[0];
+                    updated.houseNo = addr.house_no || addr.line1 || "";
+                    updated.district = addr.district || addr.city || "";
+                    updated.state = addr.state || "";
+                    updated.country = addr.country || "";
+                    updated.pincode = addr.pincode || addr.zip_code || "";
+                }
+
+                // Portfolio/Experience fields
+                if (sentData.gallery !== undefined) updated.gallery = sentData.gallery;
+                if (sentData.videos !== undefined) updated.videos = sentData.videos;
+                if (sentData.video !== undefined) updated.video = sentData.video;
+                if (sentData.certificates !== undefined) updated.certificates = sentData.certificates;
+                if (sentData.detailed_experience !== undefined) updated.detailed_experience = sentData.detailed_experience;
+                if (sentData.documents !== undefined) updated.documents = sentData.documents;
+
+                return updated;
             });
+
             toast.success(`${variables.section.charAt(0).toUpperCase() + variables.section.slice(1).replace('_', ' ')} updated!`);
         },
         onError: (error: any) => {
