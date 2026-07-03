@@ -172,7 +172,7 @@ To get the project up and running on your local machine, follow these steps.
 2.  **Install dependencies:**
 
     ```bash
-    npm install
+    pnpm install
     ```
 
 3.  **Setup environment variables:**
@@ -182,20 +182,20 @@ To get the project up and running on your local machine, follow these steps.
     You can start all applications simultaneously using TurboRepo's command:
 
     ```bash
-    npm run dev
+    pnpm dev
     ```
 
     Alternatively, you can run each application individually:
 
     ```bash
     # Run the main application
-    npm run dev --workspace=main
+    pnpm dev --filter main
 
     # Run the consultation application
-    npm run dev --workspace=consultation
+    pnpm dev --filter consultation
 
     # Run the ecommerce application
-    npm run dev --workspace=ecommerce
+    pnpm dev --filter ecommerce
     ```
 
 ## 🤝 Contributing
